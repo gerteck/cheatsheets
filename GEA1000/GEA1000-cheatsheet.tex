@@ -31,7 +31,7 @@
 %\usepackage{makecell}
 
 \pdfinfo{
-  /Title (GEA1000-cheatsheet-gt.pdf)
+  /Title (GEA1000-cheatsheet.pdf)
   /Creator (Ger Teck)
   /Author (Ger Teck)
   /Subject (GEA1000)
@@ -186,16 +186,16 @@ Either category or label values (mutually exclusive, variable cannot be placed i
 	\includegraphics[width = \linewidth]{meanmediancomment}
 
 \subsection{Experimental Study}
-	Controlled experiment, manipulate independent variable to observe effect on dependent variable. Goal is to provide evidence for cause-effect relationship. Make sure independent varible is the only factor, through random assignment. (Uses probability to allocate subjects into treatment and control groups) By law of probability, subjects will tend to be similar in all aspects. \\
-	\textbf{Placebo}: Inactive subtance, likely caused by the psychology of believing. \\
+	Controlled experiment, manipulate independent variable to observe effect on dependent variable. Goal is to provide evidence for cause-effect relationship. Make sure independent variable is the only factor, through random assignment. (Uses probability to allocate subjects into treatment and control groups) By law of probability, subjects will tend to be similar in all aspects. \\
+	\textbf{Placebo}: Inactive substance, likely caused by the psychology of believing. \\
 	\textbf{Double Blinding}: Patients and researchers both unaware of grouping. \\
 
 \subsection{Observational Study}
 	Used when there are ethical issues. Observes individuals and measures variable of interest, without direct manipulation of variables. Does not provide convincing evidence of cause-effect relationship, and only Association.
 
 \section{2. Categorical Data}
-	\textbf{Joint Rate}: Chance of an event occuring out of all the possible outcomes:\\
-	\textbf{Conditional Rate}: Based on a given conditiion (X) , in which rate of success/failure is found. \\
+	\textbf{Joint Rate}: Chance of an event occurring out of all the possible outcomes:\\
+	\textbf{Conditional Rate}: Based on a given condition (X) , in which rate of success/failure is found. \\
 	\centerline	{$ Rate(Success | X) $ } 
 	\textbf{Association}: Positive / Negative Association: If there is no association, we write that
 	\centerline { $rate(A|B) = rate(A|NB)$ } 
@@ -234,11 +234,11 @@ They can be addressed by the \textbf{splicing of data} according to the confound
  and Spread.} \\
 	\textbf{Shape}: left-skewed vs right-skewed (variability of data on lower and upper half respectively). \\
 	\textbf{Centre}: Described by Median. Cross represents mean. We can compare the relative positions of the median and mean from the boxplot. \\
-	\textbf{Spread}: IQR gives us idea of the spread for the middle 50\% of the data set, used to measure across diferent distributions.
+	\textbf{Spread}: IQR gives us idea of the spread for the middle 50\% of the data set, used to measure across different distributions.
 \end{itemize}
 
 	\textbf{Boxplots vs. Histograms}:\\
-Histogram: Better sense of shape of distibution of a variable. Boxplot: Better identifies and indicates outliers. Bottom line: Used together to complement each other.
+Histogram: Better sense of shape of distribution of a variable. Boxplot: Better identifies and indicates outliers. Bottom line: Used together to complement each other.
 
 \subsection{Bivariate EDA}
 	Focus on relationship between two variables in a population.
@@ -265,16 +265,16 @@ Histogram: Better sense of shape of distibution of a variable. Boxplot: Better i
 	\item \textbf{Properties of r}: r is not affected by adding a number to all values of a variable, or by multiplying a positive number to all values of a variable.
 	\item \textbf{Limitations of r}: Association is not causation. \\
 	r does not give indication of non-linear association. \\
-	Outliers can affect the correlation coefficent r significantly.
+	Outliers can affect the correlation coefficient r significantly.
 \end{itemize}
 
 \subsection{Linear Regression}
 If we believe that two variables are linearly associated, we may model relationship by fitting a straight line to the observed data, known as linear regression.
 \begin{itemize}
 	\item \textbf{The slope of the line} is the amount of change in Y when the value of X increases by 1.
-	\item \textbf{Finding Regression Line: Method of least squares}: Fit the line to minimise the square of error terms. Hence, two regression lines are different and not interchangeable.
+	\item \textbf{Finding Regression Line: Method of least squares}: Fit the line to minimize the square of error terms. Hence, two regression lines are different and not interchangeable.
 	\includegraphics[width = \linewidth]{leastsquares}
-	\item \textbf{Slope vs. Correlation Coefficient} Slope of regression line and correlation coefficent related by: \\
+	\item \textbf{Slope vs. Correlation Coefficient} Slope of regression line and correlation coefficient related by: \\
 	\centerline{ \large $ m = \frac{s_y}{s_x} r $ }
 	where $s_y$ is the standard deviation for y and $s_x$ is the standard deviation for x.
 	
@@ -303,7 +303,7 @@ Probability as a mathematical means to reason about uncertainty.
 \\ ~\\	\centerline{ $P( E \vert F ) = \frac{P( E \cap F )}{ P(F)} $ } ~\\
 
 \begin{itemize}
-	\item \textbf{Mutually Exclusive Events}: No overlap between E and F, meaning not simulatenously possible. Then, $P(E \cap F) = 0 $. If an event F itself cannot occur, then by convention $P(E \cap F) $ is also equal 0.
+	\item \textbf{Mutually Exclusive Events}: No overlap between E and F, meaning not simultaneously possible. Then, $P(E \cap F) = 0 $. If an event F itself cannot occur, then by convention $P(E \cap F) $ is also equal 0.
 	\item \textbf{Law of Total Probability}:
 	\includegraphics[width = \linewidth]{lawoftotalprobability}
 	\item Analogy between Probability and Sampling:
@@ -361,7 +361,7 @@ Using a sample statistic to estimate the population parameter is subjected to in
 	\item \textbf{Interpreting Confidence Interval: } \\ Two parts: \textbf{Confidence Level} (e.g. 95\%) and \textbf{	Interval} (e.g. 0.254 $\pm$ 0.0191 [margin of error]) \\
 	This means: we are 95\% confident that the population proportion (parameter in this case) of food transactions that are from Terrace (a certain category), lies within the confidence interval. \\
 	\textbf{Idea of confidence level}: 95 of 100 SRS of same size will contain population parameter. (Exact value not known) (** Not \sout{95\% chance}, chances are in sampling procedure, not parameter.)
-	\item \textbf{Properties of CI}: The larger the sample size, the smaller the ranom error, narrower CI. The higher the confidence level, the wider the CI. CI is way to quantify random error.
+	\item \textbf{Properties of CI}: The larger the sample size, the smaller the random error, narrower CI. The higher the confidence level, the wider the CI. CI is way to quantify random error.
 
 \end{itemize}
 
