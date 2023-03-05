@@ -1,5 +1,8 @@
 # Cheatsheets
 
-Personal Project to make Module Cheatsheets~
+Module Cheatsheets made using LaTex
+---
 
-Let me know if there are any typos, thanks!
+
+
+
