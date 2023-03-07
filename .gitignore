@@ -1,0 +1,6 @@
+
+#Aux Files produced by TexWorks when editing .tex
+*.aux
+*.log
+*.gz
+
