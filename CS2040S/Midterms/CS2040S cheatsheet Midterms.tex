@@ -207,6 +207,15 @@
 	\item Notations: Big-$O$ (Upper bounded by), Big-$\Omega$ (Lower Bounded by), Big-$\theta$ (Tight Bounded by - Grows at same rate)
 \end{itemize}
 
+\subsubsection{master theorem}
+$T(n) = aT(\frac{n}{b}) + f(n) \quad a \geq 0, b > 1$
+$= \begin{cases}
+    \Theta(n^{\log_ba}) & \quad \text{ if } f(n) < n^{\log_ba} \text{ polynomially}
+    \\ \Theta(n^{\log_ba} \log n) & \quad \text{ if } f(n) = n^{\log_ba} 
+    \\ \Theta(f(n)) & \quad \text{ if } f(n) > n^{\log_ba} \text{ polynomially}
+\end{cases}$
+~\\ ~\\ 
+
 \subsection{Complexity Rules}
 Let $T(n) = O(f(n))$ and $S(n) = O(g(n))$ 
 \begin{itemize}
@@ -256,14 +265,8 @@ Consider the \textbf{Monotonic} Properties of the problem at hand, and the \text
     	
     \item \textbf{HeapSort (Array Implementation)}
     	\\ • \textbf{(Heapify)} Creating a Heap: Naive insert: \code{O(n log n)} vs. Recursive divide and conquer. \code{O(n)}. 
-    	\\ • \textbf{Heap as Array:}
-    \begin{itemize}
-        \item \code{left(x)} $= 2x + 1$, $\quad$ \code{right(x)} $= 2x + 2$
-        \item \code{parent(x)} $= \floor{\frac{x-1}{2}}$
-    \end{itemize}
-    	~\\ • \textbf{HeapSort}: Repeated extract Max from heap, placing it at newly available last index. Time Complexity (log n) extract max, for n elements:  \code{Deterministic: O(n log n)}
+  	\\ • \textbf{HeapSort}: Repeated extract Max from heap, placing it at newly available last index. Time Complexity (log n) extract max, for n elements:  \code{Deterministic: O(n log n)}
     	\\ • \textbf{Invariant:} Last k elements are sorted (Max)
-    	\\ • Notes: Faster than mergesort, slightly slower than quicksort. In place algorithm. Not stable.
     	~\\ ~\\
     	
     \item \textbf{QuickSort}
@@ -366,7 +369,7 @@ Consider the \textbf{Monotonic} Properties of the problem at hand, and the \text
     \centerline{$h(L) = h(M) + 1, \quad h(R) = h(M)$}
     \centerline{\includegraphics[width=0.85\linewidth]{cs2040s-rebalance-case-2.png}}
 
-\columnbreak 
+%\columnbreak 
 
 [case 3] B is  \textbf{right-heavy: left-rotate(v.left), right-rotate(v)}
     \centerline{$h(L) = h(M) - 1, \quad h(R) = h(L)$}
