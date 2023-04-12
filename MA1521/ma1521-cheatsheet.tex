@@ -344,7 +344,7 @@ unit vector, $\hat{\vv{p}} = \frac{\vv{p}}{\abs{\vv{p}}}$
     \end{multicols}
 \end{center}
 
-\subsection{Dot product}
+\subsection{Dot (Scalar) product}
 \begin{center}
     $\vv{a} \cdot \vv{b} = \abs{\vv{a}} \abs{\vv{b}} \cos \theta$
     \\* $\cvv{a_1 \\ a_2 \\ a_3} \cdot \cvv{b_1 \\ b_2 \\ b_3} = a_1b_1 + a_2b_2 + a_3b_3$
@@ -357,7 +357,7 @@ unit vector, $\hat{\vv{p}} = \frac{\vv{p}}{\abs{\vv{p}}}$
     \end{multicols}
 \end{center}
 
-\subsection{Cross product}
+\subsection{Cross (Vector) product}
 \begin{center}
     $\vv{a} \times \vv{b} = \abs{\vv{a}} \abs{\vv{b}} \sin \theta \hat{\vv{n}}$
     \\* $\cvv{a_1 \\ a_2 \\ a_3} \times \cvv{b_1 \\ b_2 \\ b_3} 
@@ -389,6 +389,9 @@ $\triangle ANO = \frac{1}{2} \abs{\VV{OA} \times \VV{ON}}$
     \\* $\VV{ON} = (\vv{a} \cdot \hat{\vv{b}})\hat{\vv{b}} = \frac{\abs{\vv{a} \cdot \vv{b}}}{\abs{\vv{b}}^2}\vv{b}$
 \end{center}
 \end{multicols}
+~\\
+
+\textbf{Sphere}: Normal Vector: Passes through centre of sphere
 
 \subsection{Planes}
 \subsubsection{Equation of a Plane}
@@ -407,9 +410,13 @@ Length of projection of $\vv{a}$ on $\vv{n} = \abs{\vv{a} \cdot \hat{\vv{n}}} = 
     \\* $\frac{\abs{ax_0 + by_0 + cz_0 - d}}{\sqrt{a^2 + b^2 + c^2}}$
 \end{center}
 
+
+
+% PARTIAL DIFFERENTIATION ----------------------
+
 \section{06. PARTIAL DIFFERENTIATION}
 \subsection{Partial Derivatives}
-For $f(x, y)$,
+For $f(x, y)$, (some function of 2 variables)
 \begin{center}
     first-order partial derivatives:
     \begin{multicols}{2}
@@ -437,10 +444,14 @@ For $f(x, y)$,
 \end{center}
 
 \subsection{Directional Derivatives}
-\begin{center}
-    The directional derivative of $f$ at $(a, b)$ in the direction of unit vector $\hat{\vv{u}} = u_1\vv{i} + u_2\vv{j}$ is 
+
+    The directional derivative of $f$ at $(a, b)$ in the direction of 
+    unit vector $\hat{\vv{u}} = u_1\vv{i} + u_2\vv{j}$ is \\ ~\\
+
     $D_uf(a, b) = f_x(a, b) \cdot u_1 + f_y(a, b) \cdot u_2$
-\end{center}
+    $D_uf(a, b) = \nabla f(a, b) \cdot \hat{\vv{u}}$ 
+    \\(gradient vector . unit direction)
+
 
 \includegraphics[width=0.8\linewidth]{MA1521-ch6-fig1}
 
@@ -458,21 +469,21 @@ For $f(x, y)$,
 % \end{center}
 
 \subsubsection{Gradient Vector}
-\begin{center}
+
     The \textbf{gradient} at $f(x, y)$ is the vector 
-    \\* $\nabla f = f_x\vv{i} + f_y\vv{j}$
-    \begin{align*}
-        D_uf(a, b) &= \nabla f(a, b) \cdot \hat{\vv{u}}
-        \\ &= \abs{\nabla f(a, b)} \cos\theta
-    \end{align*}
-\end{center}
+    \\* $\nabla f = f_x\vv{i} + f_y\vv{j} = (f_x, f_y)$
+    
+~\\ \textbf{In Direction of} $\vv{u}$:
+        \\ $D_uf(a, b) = \nabla f(a, b) \cdot \hat{\vv{u}}$
+        \\ \hspace{36pt}   $ = \abs{\nabla f(a, b)} \cos\theta$
+\\~\\
+
 \begin{itemize}
     \item $f$ increases most rapidly in the direction $\nabla f(a, b)$
     \item $f$ decreases most rapidly in the direction $-\nabla f(a, b)$
     \item largest possible value of $D_uf(a, b) = \vert \nabla f(a, b)\vert$
-    \begin{itemize}
-        \item occurs in the same direction as $f_x(a, b)\vv{i} + f_y(a, b)\vv{j}$
-    \end{itemize}
+    \item (occurs in the same direction as $(f_x, f_y)$)
+
 \end{itemize}
 
 \subsubsection{Physical Meaning}
@@ -517,8 +528,11 @@ $f(x, y)$ has a \textbf{local maximum} at $(a, b)$ if $f(x, y) \leq f(a, b)$ for
 
 \subsubsection{Second Derivative Test}
 \begin{center}
-    Let $f_x(a, b) = 0$ and $f_y(a, b) = 0$.
-    \\* $D = f_{xx}(a, b)f_{yy}(a, b) - f_{xy}(a, b)^2$
+    Where $f_x(a, b) = 0$ and $f_y(a, b) = 0$.
+\end{center}
+Discriminant D: 
+\begin{center}
+    $D = f_{xx}(a, b)f_{yy}(a, b) - f_{xy}(a, b)^2$
 
     \def\arraystretch{1.2}
     \begin{tabular}{| c | c | c |}
@@ -572,7 +586,7 @@ $\iint_R f(x, y) dA$ is the volume under the surface $z = f(x, y)$ and above the
 \end{center}
 
 \subsection{General Regions}
-\subsubsection{Type A}
+\subsubsection{Type I: Integrate against complicated y first}
 \begin{center}    
     \begin{multicols}{2}
         \includegraphics[width=0.9\linewidth]{ma1521-ch7-typeA}
@@ -588,7 +602,7 @@ $\iint_R f(x, y) dA$ is the volume under the surface $z = f(x, y)$ and above the
     \\* $\displaystyle\iint_R f(x,y) dA = \int^b_a\Big [ \int^{g_2(x)}_{g_1(x)}f(x,y)dy \Big ]dx$
 \end{center}
 
-\subsubsection{Type B}
+\subsubsection{Type II: Integrate against complicated x first}
 \begin{center}    
     \begin{multicols}{2}
         \includegraphics[width=0.9\linewidth]{ma1521-ch7-typeB}
@@ -610,7 +624,9 @@ $\iint_R f(x, y) dA$ is the volume under the surface $z = f(x, y)$ and above the
         \includegraphics[width=0.85\linewidth]{ma1521-ch7-polar}
         \\ $x = r\cos\theta$
         \\* $y = r\sin\theta$
+        \\* Hence, $x^2 + y^2 = r^2$
         \\* $dxdy \Rightarrow rdrd\theta$
+
 
         \begin{align*}
             \Delta A &\approx (r \Delta \theta)(\Delta r)
@@ -622,7 +638,10 @@ $\iint_R f(x, y) dA$ is the volume under the surface $z = f(x, y)$ and above the
     The region $R$ is given by
     \\* $R: a \leq r \leq b, \ \alpha \leq \theta \leq \beta$
     $\displaystyle\iint_Rf(x, y) dA = \int^\beta_\alpha \int^b_a f(r \cos \theta, r \sin \theta)r\ drd\theta$
+    
 \end{center}
+Where, $D = \{ (r, \theta)$ $|$ $0 \leq \theta \leq \_\_ , 0 \leq r \leq \_\_ \} $
+
 
 \subsection{Applications}
 \subsubsection{Volume}
@@ -647,7 +666,7 @@ $\iint_R f(x, y) dA$ is the volume under the surface $z = f(x, y)$ and above the
     \item the general solution of the $n$-th order DE will have $n$ arbitrary constants
 \end{itemize}
 
-\subsection{Separable Equations}
+\subsection{Separable Equations (dx/dy separable)}
 \begin{center}
     A first-order DE is \textbf{separable} if it can be written in the form 
     \\* $M(x) - N(y)y' = 0$ \quad or \quad $M(x)dx = N(y)dy$
@@ -660,33 +679,52 @@ $\iint_R f(x, y) dA$ is the volume under the surface $z = f(x, y)$ and above the
     {\setlength{\tabcolsep}{1em}
     \begin{tabular}{|>{\color{black}}c | >{\color{black}}c|}
         \hline
-        form & change of variable
+        form & rec change of variable
+        
+        % First Row
         \\ \hline
         \rule{0pt}{3.5ex}
             $y' = g(\frac{y}{x})$ & \makecell{
                 set $v = \frac{y}{x}$ 
                 \\ $\Then y' = v + xv'$
             }
+            
+        % Second Row
         \\ \hline 
         \rule{0pt}{4ex}
             \makecell{
                 $y' = f(ax + by + c)$
                 \\ $\Then y' = \frac{ax + by + c}{\alpha x + \beta y + \gamma}$
-            } & set $v = ax + by$
+            } & 
+            	\makecell{ 
+            		set $v = ax + by$
+            		\\ get eqn in terms of $v$ \& $v'$
+            	}
+
+        % Third Row
         \\[2ex] \hline
         \rule{0pt}{3.5ex}
-            $y' + P(x)y = Q(x)$ & \makecell{
+            \makecell{
+            		\textbf{Standard Form:}
+            		\\ $y' + P(x)y = Q(x)$ 
+           } & \makecell{
                 $R = e^{\int P dx}$ 
                 \\ $\Then y = \frac{1}{R} \int RQdx$ 
                 }
+
+        % Fourth Row
         \\[1.5ex] \hline
         \rule{0pt}{6.5ex}
-        $y' + P(x)y = Q(x)y^n$ & \makecell{
-            set $z = y^{1-n}$
-            \\ $\Then y' = \frac{y^n}{1-n} z'$
-            \\ $R = e^{\int P dx}$ 
-            \\ $\Then y = \frac{1}{R} \int RQdx$ 
-        }
+        \makecell{
+        \textbf{Bernoulli Equation:}
+        \\~\\$y' + P(x)y = Q(x)y^n$ } 
+        	& \makecell{
+	            set $z = y^{1-n}$
+	            \\ sub $z$ and $z'$ obtain eqn
+	            \\ $\Then y' = \frac{y^n}{1-n} z'$
+	            \\ $R = e^{\int P dz}$ 
+	            \\ $\Then z = \frac{1}{R} \int RQdx$ 
+	        }
         \\[4.5ex] \hline
 
     \end{tabular}
