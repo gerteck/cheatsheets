@@ -841,20 +841,151 @@ InfiniteList<Integer> altEvens = odds.map(x -> x * 2);
 
 \section{Parallel Streams}
 \begin{itemize}
-\item
+\item \textbf{Concurrency:} dividing the computation, separate unrelated tasks.
+\item \textbf{Parallelism:} While concurrency is illusion, parallel computing is the scenario where multiple subtasks are truly running at the same time → multiple cores/processors. 
+\item add \code{.parallel()} before the terminator or use \code{parallelStream()}
 
+\subsubsection{What can be Parallelized?}
+\item \textbf{Stateless: Not Stateful:} Result should not depend on any state that may change during exectution of stream (e.g. \code{generate}, \code{generate} operations. Not suitable to run in parallel.
+\item \textbf{Not interfering with stream data}: Stream operations that modify source of stream during execution of terminal operation throws \code{ConcurrentModificationException}
+\item \textbf{Side Effects} →  use \code{collect()} for ArrayList to avoid.
+
+\subsubsection{Associativity}
+\item \textbf{Accumulator}: takes all the tasks in the batch and aggregates it (intra) 
+\item \textbf{Combiner}: aggregate across task. (inter)
+\item Operation is parallelisable by reducing each substream and combining them with a \code{combiner} if:
+\item \code{combiner.apply(identity, i)} is equal to \code{i}.
+\item \code{combiner} and \code{accumulator} are associative (order does not matter)
+\item \code{combiner} and \code{accumulator} are compatible. aka \code{combiner.apply(u, accumulator.apply(identity, t))} is equal to \code{accumulator.apply(u, t)}
+
+\subsubsection{Ordered vs. Unordered Source}
+\item \code{ordered} → created from \code{iterate} / \code{of} / ordered collections like \code{list}
+\item \code{unordered} → created from \code{generate} / ordered collections like \code{set}
+\item \code{distinct} , \code{sorted} preserve order (stable). Only for finite streams.
+\item use \code{.unordered()} to make parallel operations more efficient, as there is no need to coordinate between streams to maintain order. 
+\end{itemize}
+
+\section{11. Parallel (Asynchronous) Prog}
+\begin{itemize}
+\item \textbf{Concurrency} → divides computation into subtasks called threads. Separate unrelated tasks into different threads, write each thread separately. Improves utilization of processor (by switching between threads)
+\item \textbf{Parallelism} → multiple subtasks are truly running at the same time.
+\item parallelism is subset of concurrency.
+\end{itemize}
+
+\vfill\null
+\columnbreak
+
+\section{Threads \code{java.lang.Thread}}
+\begin{itemize}
+\item \textbf{Synchronous:} Single Thread Model, Methods blocks until it returns.
+\item \textbf{Threads}: A single flow of execution.
+\item \textbf{\code{new Thread}} constructor: takes in a \code{Runnable}
+\item \textbf{\code{Runnable}}: functional interface with \code{run()} method (returns void)
+\item \textbf{\code{.start()}}: thread begins execution (returns immediately)
+\item \textbf{\code{isAlive()}}: returns boolean representing if thread is alive.
+\item \textbf{\code{Thread.currentThread().getName()}} returns reference of current running thread.\
+\item \textbf{\code{Thread.sleep(ms)}}: Pauses execution of current thread.
+\end{itemize}
+
+\textbf{Parallel Streams:}
+\begin{lstlisting}
+Stream.of(1, 2, 3, 4)
+      .parallel()
+      .reduce(0, (x, y) -> { 
+        System.out.println(Thread.currentThread().getName()); 
+        return x + y; 
+      });
+
+//see something like this: prints
+main
+ForkJoinPool.commonPool-worker-5
+ForkJoinPool.commonPool-worker-5
+ForkJoinPool.commonPool-worker-9
+ForkJoinPool.commonPool-worker-3 //3 , 3
+\end{lstlisting}
+
+\textbf{Initializing and Constructing and Running Threads:}
+\begin{lstlisting}
+Thread threadA = new Thread(() -> {
+System.out.print(Thread.currentThread().getName());
+  for (int i = 1; i < 100; i += 1) {
+    System.out.print("_");
+  } });
+threadA.start();
+
+while (threadA.isAlive()) {
+  try {
+    Thread.sleep(1000);
+    System.out.print(".");
+  } catch (InterruptedException e) {
+    System.out.print("interrupted");
+  } }
+\end{lstlisting}
+
+
+
+\section{\textbf{\code{CompletableFuture}} Monad}
+\begin{itemize}
+\item \code{java.util.concurrent.CompletableFuture}
+\item We can perform multi-threading operations without worrying between threads. 
+\item \code{CompletableFuture<T>} is a monad that encapsulates a value either there or not there yet. (Completed) Such is also known as a promise (to produce value) (e.g., Promise in JavaScript and std::promise in C++) 
+\item \textbf{to instantiate:}
+\begin{itemize}
+\item \textbf{\code{.completedFuture(thing)}}
+\item \textbf{\code{.runAsync(Runnable)}}: returns a \code{CompletableFuture<Void>} that completes when given lambda (Runnable) finishes.
+\item \textbf{\code{.supplyAsync(Supplier<T>)}}: returns a \code{CompletableFuture<T>} that completes when given lambda finishes.
+\item \textbf{\code{.allOf(...)}}, \textbf{\code{.anyOf(...)}}: returns a \code{CompletableFuture<Void>} that completes when all/any complete.
+\end{itemize}
+\item \textbf{chaining in the same thread}
+\begin{itemize}
+\item \textbf{\code{.thenApply(x -> f(x) )}}: map equivalent
+\item \textbf{\code{.thenCompose(x -> CF}}: flatMap equivalent
+\item \textbf{\code{.thenCombine(CF, (thisCF, givenCF) -> ...}}: combine equivalent
+\end{itemize}
+\item \textbf{Getting Result}
+\begin{itemize}
+\item \textbf{\code{.get() )}}: returns results (synchronous - blocks until CF completes). Throws \code{InterruptedException} \& \code{ExecutionException} - Should catch and handle.
+\item \textbf{\code{.join()}}: behaves like \code{.get()} but no checked exception thrown. May throw \code{CompletionException} - whoever calls join will handle this.
+\end{itemize}
+\item \textbf{Handling Exceptions}
+\begin{lstlisting}
+.handle(result, exception) -> (exception == null) ? result : somethingElse
+\end{lstlisting}
+\end{itemize}
+
+
+\section{Thread Pool}
+\begin{itemize}
+\item \textbf{Thread Pool}: Reuse existing threads to perform different tasks. Avoid overhead cost of creating new threads.
+\item \textbf{Comprises}: Collection of threads waiting for a task to execute and collection of tasks to be executed. 
+\item Tasks are put in a shared queue where an idle thread picks up a task (dequeue) from the shared queue to execute. 
+\item \code{fork()} → caller (task) adds itself to the thread pool
+\item \code{join()} → blocks computation until completed.
 \end{itemize}
 
 
 
+\subsection{\textbf{ForkJoinPool \code{ForkJoinPool}}}
+\begin{itemize}
+\item \textbf{Fork-join model} is essentially a parallel divide-and-conquer model of computation. Break up the problem into identical problems but with smaller size (fork), then solve the smaller version of the problem recursively, then combine the results (join). Repeat recursively till size is small enough (base case), solve.
 
-
-
-
-
-
-
-
+\item \code{ForkJoinPool} Fine tuned for the fork-join model of recursive parallel execution.
+\item In Java, we can create a task that we can fork and join as an instance of abstract class RecursiveTask. 
+\end{itemize}
+\centerline{\includegraphics[width=\linewidth]{forkjointask}}
+\begin{itemize}
+\item Each thread has a queue of tasks
+\item When a thread is idle, it will \code{compute()} the task at the \textbf{head of its queue}.
+\item \textbf{Work Stealing} → If the queue is empty, it will \code{compute()} a task at the \textbf{tail of the queue of another thread}
+\item \code{fork()} → caller (task) adds itself to the \textbf{head} of the queue of the executing thread. \textbf{Most recently forked task gets executed next!}
+\item \code{join()} → if the subtask is joined: 
+\begin{itemize}
+\item \textbf{Has not been executed} → \code{compute()} the subtask
+\item \textbf{has been completed} → (work stealing) read result and return
+\item \textbf{has been stolen / being executed by another thread} → current thread finds another task to work on.
+\end{itemize}
+\item \textbf{Should \code{join()} the most recently \code{fork()}-ed task first (fork, compute and join should form palindrome, at most one compute in the middle.)}
+\end{itemize}
 
 
 
