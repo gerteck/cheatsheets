@@ -172,7 +172,7 @@
     }
   \end{center}
 
-\section{Variables \& Types}
+\section{1. Variables \& Types}
 \subsection{Type Systems}
 \begin{itemize}
 	\item Dynamically typed: Variables can hold values of different types, checking of right type is done during execution of the program.
@@ -214,7 +214,7 @@ If \code{S <: T }, then
 
 
 
-\section{OOP Principles}
+\section{2 - 4. OOP Principles}
 \textbf{Abstraction, Encapsulation, Polymorphism and Inheritance. }
 \subsubsection{Abstraction}
 \begin{itemize}
@@ -453,7 +453,7 @@ public Circle(Point c, double r) throws IllegalCircleException {
 
 
 
-\section{Generics}
+\section{5. Generics}
 \begin{itemize}
 	\item Allows classes/methods (that use reference types) to be defined without resorting to use of Object type.
 	\item Ensures \textbf{type safety} $\rightarrow$ binds a generic type to a specfic type at compile time. Attempt to pass an incompatible type would lead to a compilation error.
@@ -517,7 +517,7 @@ this.array = a;
 	\item The compiler cannot check e.g. if it is safe to pass an \code{Integer} to the \code{keep} method. (in case it is populated with some other type, which could e.g. cause a \code{ClassCastException} trying to cast \code{Integer} to a \code{String}. Hence, allow, but warn the programmer (unsafe). (Raw types must not be used)
 \end{itemize}
 
-\section{Wildcards}
+\section{6. Wildcards}
 \begin{itemize}
 	\item \textbf{upper-bounded}: \code{? extends} \textbf{covariant} 
 	\begin{itemize}
@@ -546,8 +546,8 @@ this.array = a;
 \begin{itemize}
 	\item Ensures \textbf{Type Safety} $\rightarrow$ compiler can ensure that \code{List<myObj>} holds objects of type \code{myObj} at compile type instead of runtime. 
 	\item Type inference always chooses narrowest bound
-	\item \code{<? super Integer>} $\rightarrow$ $\implies$ inferred as \code{Object} (supertype of Integer)
-	\item \code{<? extends Integer>} $\rightarrow$ $\implies$ inferred as \code{Integer}
+	\item \code{<? super Integer>}  $\implies$ inferred as \code{Object} (supertype of Integer)
+	\item \code{<? extends Integer>} $\implies$ inferred as \code{Integer}
 
 \subsubsection{Diamond Operator \code{<>}}
 \begin{lstlisting}
@@ -564,14 +564,294 @@ Pair<String, Integer> p = new Pair<>();
 	\item 2. type parameter bounds $\rightarrow$ \code{<T extends GetAreable>}
 	\item 3. parameter bounds \\
 	$\rightarrow$ \code{Array<Circle>} $<:$ \code{Array<? extends T>}. So, \code{Circle <: T}
-
 \begin{lstlisting}
 public static <T extends GetAreable> T findLargest(Array<? extends T> array)
 
 Shape o = A.findLargest(new Array<Circle>(0));
 \end{lstlisting}
+\end{itemize}
+
+
+\vfill\null
+\columnbreak
+
+
+\section{7. Immutability}
+An immutable class $\rightarrow$ an instance cannot have any visible changes outside its abstraction barrier.
+
+\subsubsection{Making Immutable Classes}
+\begin{itemize}
+\item \code{private final}: We make the class itself \code{final} to disallow inheritance and overriding. Note the the \code{final} keyword prevents assigning new value to the field, but does not prevent the field from being mutated. \textbf{final not sufficient for immutabilitiy.}
+\item We return a new instance every time to prevent mutating the current instance. (Copy on write semantic allows us to avoid aliasing bugs without creating excessive copies of objects.)
+\end{itemize}
+\textbf{Advantages of Immutability:}
+\begin{itemize}
+\item \textbf{Ease of Understanding \& Safe Sharing:} We are sure that an object’s properties are unchanged unless explicitly re-assigned. Allows us to safely share instances of the class and reduces need to create multiple copies of the object.
+\item \textbf{Saves Space}: Share references until instances need to be modified (which creates a new copy)
+\item \textbf{Safe Concurrent Execution:} Allows multiple threads of code to run in interleaved fashion, without objects being changed.
+\end{itemize}
+
+
+\subsubsection{Varargs (variable arguments)}
+\begin{itemize}
+\item Java 5 Introduced the concept of varargs, \textbf{a method parameter of variable length}.
+\item will be passed to the method as an array of items.
+\item \code{public void of(T... items)\{\}} $\rightarrow$ items will be \code{T[]}
+\item \code{@SafeVarargs} annotation if \code{T} is a generic type.
+\end{itemize}
+
+\section{Nested Classes: Static Nested \& Inner Classes}
+\textbf{Static nested, inner class}: Java allows us to define a class within another class/method. \textbf{Nested Classes} are used to group logically relevant classes together. Nested class is a field of the containing class, and and can access fields and methods of the container class.
+\begin{itemize}
+\item \code{static nested class} $\rightarrow$ associated with the containg class. Can only access \textbf{static} field / methods of containing class.
+\item \code{inner class (non static)} $\rightarrow$ associated with an instance. Can access all fields/methods of containing class.
+\end{itemize}
+
+\subsubsection{qualified \code{this}}
+e.g. \code{A.this.x} : Used to reference container classes' variables. Otherwise we can't.
+\begin{lstlisting}
+class A {
+ private int x;
+
+ class B {
+   void foo() {
+     this.x = 1; // error
+     A.this.x = 1; // ok
+   }
+ } 
+}
+\end{lstlisting}
+
+
+\section{Local Class (Class in Methods)}
+\begin{itemize}
+\item class defined within a method, like a local variable.
+\item can access class and instance variables from the enclosing class (use qualified \code{this}) + local variables of enclosing method.
+\item \code{effectively final} $\rightarrow$ variable does not change after initialisation.
+\item \textbf{Will not compile} if variables accessed are NOT effectively final.
+ 
+\subsubsection{Variable Capture}
+\item When method returns, the local variables are removed from stack. But an instance of that local class may still exist.
+\item The local class, as it can access the local variables in the enclosing method, makes a copy of the local variables inside itself. We say that the local class captures the local variables.
+\item In order to prevent bugs, Java only allows a local class to access variables that are explicitly declared final or implicitly final . (effectively final).
+\end{itemize}
+
+\section{Anonymous Class}
+Declare a class and instantiate it in a single statement. It is anonymous as no name, just like a local class, captures the variables of the enclosing scope.
+\begin{itemize}
+\item \textbf{Format:} \code{new Constructor(arguments) \{ body \} }, or \code{new ( className implements interface) (arguments) \{ body \} }
+\item Cannot implement more than one interface, Cannot extend a class and implement an interface at same time.
+\item Same rule as local class for variable access.
+\end{itemize}
+
+
+\subsubsection{Stack \& Heap:}
+\begin{itemize}
+\item \textbf{Static Class:} Java RT: Static fields in memory metaspace. 
+\centerline{\includegraphics[width = \linewidth]{staticClassStackHeap}}
+
+\item \textbf{Local Class:}
+Local Class: Variables in method will be captured.
+\centerline{\includegraphics[width = \linewidth]{localClassStackHeap}}
+\centerline{\includegraphics[width = \linewidth]{local2ClassStackHeap}}
+
+\item \textbf{Anonymous Class}
+\centerline{\includegraphics[width = \linewidth]{anonClassStackHeap}}
+
 
 \end{itemize}
+
+\section{8. Functions (F. Programming)}
+\subsubsection{Functions}
+\begin{itemize}
+\item Idea of Function: Some mapping from domain to codomain. It has to be deterministic, immutable, so that we can pass these methods around as objects.
+\item \textbf{Cross state barrier:} with functions, you can now pass in functions into a class to use instead of making a new class method for every time of data manipulation.
+\item \textbf{Functions as first class citizens:} functions are treated like any other variables, passed around.
+\item \textbf{Referential Transparency:} if $f(x) = y$, then any $y$ can be substituted with $f(x)$.
+\item \textbf{Pure Function}: No side effects (e.g. printing, changing value, throwing exceptions), every input mapped to an output (null is not within codomain), deterministic, and must return a value.
+\end{itemize}
+
+\subsubsection{Functional Interface:} 
+Conceptually, a functional interface has exactly one abstract method. We annotate function interfaces with \code{@FunctionalInterface} annotation.
+\begin{lstlisting}
+@FunctionalInterface
+interface Transformer<T, R> {
+  R transform(T t);
+}
+\end{lstlisting}
+\subsubsection{Lambda Expressions}
+Functional interfaces have only one abstract method with \code{@FunctionalInterface} annotation. There is no ambiguity about which method is being overridden by an implementing subclass.  The type can be inferred, simplify the instantiation of the class into a lambda expression!
+\begin{lstlisting}
+Transformer<Integer, Integer> square = x -> { return x * x; };
+Transformer<Integer, Integer> incr = x -> { return x + 1; };
+
+Transformer<Integer, Integer> square = x -> x * x;
+Transformer<Integer, Integer> incr = x -> x + 1;
+\end{lstlisting}
+
+\subsubsection{Method Reference}
+\begin{itemize}
+\item \textbf{Double Colon Notation} for method reference.
+\item For \textbf{static method in class} (\code{ClassName::staticMethodName})
+\item For \textbf{instance method in class} (\code{instanceName::MethodName})
+\item For \textbf{constructor of a class} (\code{ClassName::new})
+
+\begin{lstlisting}
+Box::of            // x -> Box.of(x)
+Box::new           // x -> new Box(x)
+x::compareTo       // y -> x.compareTo(y)
+A::foo             // (x, y) -> x.foo(y) or (x, y) -> A.foo(x,y)
+\end{lstlisting}
+
+\item \textbf{at compile time}: Java searches for the matching method, performing type inferences to find the method that matches the given method reference. A compilation error will be thrown if there are multiple matches or if there is ambiguity in which method matches.
+\end{itemize}
+
+\subsubsection{Currying}
+ Converting functions with multiple arguments into a sequence of function that each take in a single argument 
+\begin{itemize}
+\item Basically the act of returning a function that stores / computes the data of the previous input.
+\begin{lstlisting}
+Transformer<Integer, Transformer<Integer, Integer>> add = x -> y -> (x + y);
+	
+add.transform(1)		//gives a lambda
+add.transform(1).transform(2)	//returns 3
+increment.transform(3)	//returns 4
+\end{lstlisting}
+
+\item translate a general n-ary functions a n unary functions.
+\item stores the data from the environment it is defined. \code{closure}: construct that stores a function together with the enclosing environment.
+\item \textbf{closure} $\rightarrow$ same concept as variable capture → variable must be either explicitly declared as final or effectively final.
+\end{itemize}
+
+
+\section{Lazy Evaluation}
+Lambda expressions → Nothing is executed by simply declaring them, we are saving them to be executed later. Allows us to delay the execution of code, saving them until we need it later, enabling lazy evaluation (a powerful mechanism). We can build up a sequence of complex computations, evaluated on demand.
+\subsection{Delayed computation with lambda functions}
+\begin{lstlisting}
+@FunctionalInterface
+interface Producer<T> { T produce(); }
+
+@FunctionalInterface
+interface Task {void run(); }
+\end{lstlisting}
+
+\subsection{Memoization}
+\begin{lstlisting}
+class Lazy<T> {
+  T value;
+  boolean evaluated;
+  Producer<T> producer;
+
+  public Lazy(Producer<T> producer) {
+    evaluated = false;
+    value = null;
+    this.producer = producer;
+  }
+
+  public T get() {
+    if (!evaluated) {
+      value = producer.produce();
+      evaluated = true;
+    }
+    return value;
+  }
+}
+\end{lstlisting}
+
+
+\vfill\null
+\columnbreak
+
+\section{9. Monad}
+\begin{itemize}
+\item A monad is a structure with at lest two methods of and flatMap that obeys three laws. Contains a value + side information
+\item \textbf{\code{of}} method to initalize the value \& side information
+\item \textbf{\code{flatMap}} method to update value \& side information (takes in some function)
+\end{itemize}
+
+\subsection{Monad Laws}
+\subsubsection{Left Identity Law:}
+\begin{itemize}
+\item \code{Monad.of(x).flatMap(y -> f(y))} is equivalent to \code{f(x)}.
+\item Basically that flatMap does not modify \code{f(x)}.
+\end{itemize}
+
+\subsubsection{Right Identity Law:}
+\begin{itemize}
+\item \code{monad.flatMap(y -> Monad.of(y)} is equivalent to \code{monad}.
+\item Basically that \code{.of()} should behave like an identity.
+\end{itemize}
+
+\subsubsection{Associative Law:}
+\begin{itemize}
+\item \code{monad.flatMap(x -> f(x)).flatMap(x -> g(x))} is equivalent to \code{monad.flatMap( x -> f(x).flatMap(x -> g(x)) )}.
+\item Aka same result regardless of how it is composed.
+\end{itemize}
+
+\section{Functor}
+\begin{itemize}
+\item Has two methods \code{of} and \code{map}, does not carry side information.
+\end{itemize}
+\subsection{Functor Laws}
+\subsubsection{Preserving Identity}
+\begin{itemize}
+\item \code{functor.map(x -> x)} is same as \code{functor}
+\end{itemize}
+\subsubsection{Preserving Composition}
+\begin{itemize}
+\item \code{functor.map(x -> f(x)).map(x -> g(x))} is same as \code{functor.map(x -> g(f(x))}
+\end{itemize}
+
+\vfill\null
+\columnbreak
+
+\section{InfiniteList}
+\begin{itemize}
+\item Lazy evaluation allows us to delay the computation that produces data until the data is needed. This powerful concept enables us to build computationally-efficient data structures. List with a possibly infinite number of elements.
+\item we can delay a computation by using the Producer functional interface (or anything equivalent).
+\end{itemize}
+
+\begin{lstlisting}
+InfiniteList<Integer> evens = 
+	InfiniteList.iterate(0, x -> x + 2); 
+\end{lstlisting}
+\includegraphics[width = \linewidth]{evens}
+
+\begin{lstlisting}
+InfiniteList<Integer> odds = evens.map(x -> x + 1);
+\end{lstlisting}
+\includegraphics[width = \linewidth]{evensMap}
+
+\begin{lstlisting}
+InfiniteList<Integer> altEvens = odds.map(x -> x * 2);
+\end{lstlisting}
+\includegraphics[width = \linewidth]{altEvens}
+
+\vfill\null
+\columnbreak
+
+\section{10. Streams}
+\subsection{Streams Pipelines}
+\begin{itemize}
+\item \textbf{Source, Intermediate, Terminal}
+\centerline{\includegraphics[width = \linewidth]{streamsPipeline}}
+\item \textbf{consumed only once}: Limitation, \code{IllegalStateException} if consumed again.
+\item Makes code more declarative compared to how to do it, more succinct, less bug-prone.
+\end{itemize}
+
+\section{Parallel Streams}
+\begin{itemize}
+\item
+
+\end{itemize}
+
+
+
+
+
+
+
+
 
 
 
