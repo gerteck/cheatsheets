@@ -10,7 +10,4 @@ MA1521
 
 GEA1000
 
-
-
-Credits 
-With Reference to Lecture Notes, and Seniors' Cheatsheets
+With Reference to Lecture Notes, Seniors' Cheatsheets
