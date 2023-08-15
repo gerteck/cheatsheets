@@ -1,13 +1,15 @@
-# Cheatsheets
+# NUS Cheatsheets
 
-Module Cheatsheets made using LaTex
----
+A repository of cheatsheets for Modules/Courses taken in previous AYs.
 
-CS2030S
-CS2040S
+## Contents
 
-MA1521
+- AY22/23 S2
+    - CS2030S
+    - CS2040S
+    - MA1521
+    - IS2238
+    - GEA1000
 
-GEA1000
-
-With Reference to Lecture Notes, Seniors' Cheatsheets
+- AY23/24 S1
+    - In Progress
