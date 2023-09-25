@@ -41,20 +41,6 @@
 \usepackage{xcolor}
 \usepackage{listings}
 
-\lstdefinestyle{mystyle}{
-	backgroundcolor=\color{gray!25!white},
-	basicstyle=\scriptsize,
-	numbers=none,    %or = none or left
-	showstringspaces=false,
-	breaklines=true,
-	breakatwhitespace=false,                  
-	captionpos=b,                    
-	keepspaces=true,                                 
-	numbersep=3pt,                  
-	showspaces=false,                
-	showtabs=false,                  
-	tabsize=2,
- }
 
 
 %Helpful:
@@ -62,7 +48,29 @@
 %\lstinline{}
 % use \code{} for \lstinline with colorbox.
 \newcommand{\code}[1]{\colorbox{gray!25!}{\lstinline|#1|}}
-\lstset{style=mystyle}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{mygray}{rgb}{0.9,0.9,0.9}
+
+\lstset{frame=tb,
+  language=SQL,
+  aboveskip=1mm,
+  belowskip=1mm,
+  showstringspaces=false, 
+  columns=flexible,
+  backgroundcolor=\color{mygray},
+  basicstyle={\footnotesize\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\footnotesize\color{blue},
+  commentstyle=\footnotesize\color{dkgreen},
+  stringstyle=\footnotesize\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2
+}
 
 % Template: Cheatsheet with code enabled
 
@@ -275,34 +283,394 @@ Condition that restricts the data that can be stored in a database instance. A l
 \centerline{\includegraphics[width=0.8 \linewidth]{integrityconstraints}}
 }
 
+\section{2. SQL: Structured Query Language}
+\begin{itemize}
+\item  Declarative language: focus on what to compute, not on how to compute
+\item Contains two parts: Data Definition Language and Data Manipulation Language
+\end{itemize}
+\subsubsection{Datatypes}
+\centerline{\includegraphics[width=0.6 \linewidth]{datatypes}}
+
+\subsection{Integrity Constraints 2}
+\begin{itemize}
+	\item A \textbf{consistent state} of the database is a state which complies with the with the business
+		rules as defined by the structural constraints and the integrity constraints in the schema.
+	\item If an integrity constraint is violated by an operation or a transaction, the operation or the transaction is aborted and rolled back and its changes are undone, otherwise, it is
+		committed and its changes are effective for all users.
+	\item Five main kinds of integrity constraints in SQL: \textbf{ NOT NULL, PRIMARY KEY, UNIQUE, FOREIGN KEY, CHECK.}
+\end{itemize}
+\subsubsection{Primary Key}
+A primary key is a set of columns that uniquely identifies a record in the table. Each table has at most one primary key. The primary key can be one column or a combination of columns.
+
+\begin{lstlisting}
+-- Declare primary key as column constraint
+CREATE TABLE customers (
+ firstname VARCHAR(64  ,
+ lastname VARCHAR(64) ,
+ email VARCHAR(64) ,
+id VARCHAR(16) PRIMARY KEY);
+\end{lstlisting}
+\subsubsection{Composite Primary Key \& NOT NULL }
+A not null constraint guarantees that no value of the column can be set to null. A not null constraint is always declared as a row constraint. When it is explicit, it is declared with the keyword NOT NULL.
+\begin{lstlisting}
+CREATE TABLE games (
+name VARCHAR(32) ,
+version CHAR(3) ,
+price NUMERIC NOT NULL,
+PRIMARY KEY (name, version) );
+\end{lstlisting}
+
+\subsubsection{Data Insertion \ Populating Tables}
+\begin{lstlisting}
+INSERT INTO customers VALUES(
+'Carole', 'Yoga', 'cyoga@email.org',
+'Carole89');
+\end{lstlisting}
+
+\subsubsection{Deleting Tables}
+\begin{lstlisting}
+DELETE FROM customers
+-- DROP deletes content \& table definition
+DROP TABLE customers 
+DROP TABLE IF EXISTS downloads  
+\end{lstlisting}
+
+\subsubsection{Unique}
+A unique constraint on a column or a combination of columns guarantees the table cannot contain two records with the same value in the corresponding column or combination of columns.
+\begin{lstlisting}
+CREATE TABLE customers (
+firstname VARCHAR(64) NOT NULL ,
+lastname VARCHAR(64) NOT NULL,
+email VARCHAR(64) UNIQUE NOT NULL,
+id VARCHAR(16) PRIMARY KEY,
+UNIQUE (firstname, lastname));
+\end{lstlisting}
+
+\subsubsection{Foreign Key}
+\begin{itemize}
+\item A foreign key constraint enforces \textbf{referential integrity}. The values in the columns for which the constraint is declared must exists in the corresponding columns of the referenced table.
+\item Referenced columns are usually required to be the primary key of the referenced table. Some systems relax this.
+\item A foreign key is declared using the keyword REFERENCES as a row constraint and the keywords FOREIGN KEY and REFERENCES as a table constraint.
+\end{itemize}
+\begin{lstlisting}
+CREATE TABLE downloads (
+customerid VARCHAR (16) REFERENCES customers (id),
+name VARCHAR (32)
+version CHAR (3),
+FOREIGN KEY ( name, version) REFERENCES games (name, version) );
+\end{lstlisting}
+
+\subsubsection{Check}
+\begin{itemize}
+\item Check constraint enforces any other condition that can be expressed in SQL. Declared as row or table constraint. 
+\end{itemize}
+\begin{lstlisting}
+CREATE TABLE games (
+name VARCHAR(32),
+version CHAR(3),
+PRIMARY KEY (name, version)
+price NUMERIC NOT NULL CHECK (price > 0)
+-- or as table constraint:
+CHECK (price > 0) );
+\end{lstlisting}
+
+\subsubsection{Update and Delete Propagation}
+\begin{itemize}
+\item The annotations ON UPDATE/DELETE with the option CASCADE propagate the update or deletion, when there are chains of foreign key dependencies.
+\end{itemize}
+\begin{lstlisting}
+CREATE TABLE downloads(
+id VARCHAR (16) REFERENCES customers (id)
+	ON UPDATE CASCADE
+	ON DELETE CASCADE,
+name VARCHAR(32),
+version CHAR(3),
+PRIMARY KEY (id, name, version),
+FOREIGN KEY (name, version) REFERENCES games(name, version)
+	ON UPDATE CASCADE
+	ON DELETE CASCADE);
+\end{lstlisting}
+
+\begin{itemize}
+\item Generally a good idea to constraint all columns not to be null unless there is a good design or tuning reason for not doing so.
+\item Think carefully about which foreign keys should be subject to cascade.
+\item  Good idea to defer all the constraints that can be deferred. These are checked at the end of a transaction and not immediately after each.
+operation.
+\end{itemize}
+
+\subsection{Querying Tables}
+\subsubsection{Print Table}
+• Wildcard '*' to include all attributes
+\begin{lstlisting}
+SELECT *
+FROM customers;
+\end{lstlisting}
+\subsubsection{View}
+	\begin{itemize}
+		\item We can give a name to a query, called a view. Once created, a view can be queried like a table.
+		\item Creating a view is generally a better option than creating and populating a table,
+		temporary or not.
+	\end{itemize}
+\begin{lstlisting}
+CREATE VIEW sg\_customers AS
+SELECT  c.firstname, c.lastname, c.email, c.id
+FROM customers c
+WHERE country = 'Singapore';
+\end{lstlisting}
+\begin{lstlisting}
+SELECT * FROM sg\_customers;
+\end{lstlisting}
 
 
 
+\section{3. SQL Queries}
+\subsubsection{Printing one Table}
+\begin{lstlisting}
+SELECT firstname, lastname
+FROM customers
+WHERE country = 'Singapore';
+\end{lstlisting}
+\subsubsection{DISTINCT and ORDER BY}
+• Selecting a subset of columns may result in duplicate row even if original table has a primary key. \\
+• DISTINCT keyword eliminates eventual duplicates, requests results contain distinct rows. \\
+• Both DISTINCT and ORDER BY involve sorting and conceptually ORDER BY is applied before SELECT DISTINCT.
+\begin{lstlisting}
+SELECT DISTINCT name, version 
+FROM downloads
+ORDER BY name ASC, version DESC;
+\end{lstlisting}
 
+\subsubsection{WHERE}
+• Returns rows that evaluate to true, filter rows on a Boolean condition \\
+• Uses Boolean operators such as AND, OR and NOT, and various comparison operators such as \code{>, <, >=, <=, <>, IN, LIKE} and \code{BETWEEN AND} \\
+• Does not return rows that evaluate to unknown/null! \\
+• '-' matches single char \\
+• '\%' matches any sequence of zero or more chars
+\begin{lstlisting}
+SELECT firstname, lastname
+FROM customers
+WHERE country IN ('Singapore', 'Indonesia')
+AND (dob BETWEEN '2001-01-01' AND '2000-12-01' OR since >= '2016-12-01 )
+AND lastname LIKE 'B%'
+\end{lstlisting}
+• PostgreSQL use "||" for concatenation 
+\begin{lstlisting}
+-- Not to collect GST below 30 cents:
+SELECT name || ' ' || version AS game, price * 1.07
+FROM games
+WHERE price * 0.07 < 0.3
+\end{lstlisting}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\subsubsection{De Morgan's Laws}
+\begin{lstlisting}
+SELECT name 
+FROM games
+-- all 3 are the same:
+WHERE (version = '1.0' or version = '1.1')
+WHERE version IN ('1.0', '1.1')
+WHERE NOT (version <> '1.0' AND version <> '1.1');
+\end{lstlisting}
   
-  
-  
-  
+\subsubsection{NULL value}
+• Every domain has additional value, null. Ambiguous, could be ”unknown”, ”does not exists”, or both. In SQL it is generally (but not always) ”unknown”. \\
+• With null values, the logic of SQL is a three valued logic with unknown. \\
+• Use \code{IS (NOT) NULL} for comparison with null
+• \code{COALESCE()} returns the first non-null of its argument.
+• \code{COUNT(*)} counts NULL values. \code{COUNT(att) AVG(att) MAX(att) MIN(att)} eliminate null values
+
+\subsubsection{Cross Join}
+• Cross join \& Cartesian Product \& cross product, represented by comma \code{CROSS JOIN} \code{,} \\
+• Cross join with \code{WHERE} clause: add condition that FK columns equal to the corresponding PK columns. \\
+• Systematically define table variables (e.g. \code{games AS g})
+\begin{lstlisting}
+SELECT *
+FROM customers c, downloads d, games g
+WHERE d.id = c.id
+AND d.name = g.name
+AND d.version = g.version
+\end{lstlisting}
+
+\section{4. Algebraic SQL Queries}
+\subsubsection{Inner Join}
+• \code{JOIN} interpreted as \code{INNER JOIN} 
+• Inner joins combine records from two tables whenever there are matching values in a field common to both tables.
+\begin{lstlisting}
+SELECT *
+FROM customers c JOIN downloads d ON d.id = c.id
+JOIN games g ON d.name = g.name AND d.version = g.version;
+\end{lstlisting}
+
+\subsubsection{Natural Join}
+•  If we give the same name to columns that are the same, can use natural join. Joins the rows that have the same values for their columns that have the same names. It also prints one of the two equated columns
+\begin{lstlisting}
+SELECT *
+FROM customers c NATURAL JOIN downloads d NATURAL JOIN games g;
+\end{lstlisting}
+
+\subsubsection{Outer Join}
+• outer join keeps the columns of the rows in the left (left outer join), right (right outer join) or in both (full outer join) tables that do not match anything in the other
+table according to the join condition and pad the remaining columns with null values. \\
+• Better to avoid outer joins whenever possible as they introduce null values. \\
+• \code{RIGHT (OUTER) JOIN, LEFT (OUTER) JOIN} \\
+• \code{ FULL (OUTER) JOIN} 
+\begin{lstlisting}
+-- finds customers, never downloaded a game
+SELECT c.id FROM customers c 
+LEFT JOIN downloads d ON c.id = d.id
+WHERE d.id IS NULL;
+\end{lstlisting}
+
+\subsubsection{Set Operations}
+• Union, intersect and non-symmetric difference. \\
+• Eliminate duplicates: \code{UNION, INTERSECT, EXCEPT} \\
+• Keep duplicates: \code{UNION ALL, INTERSECT ALL} \\
+\code{EXCEPT ALL}
+
+\section{4. Aggregate SQL Queries}
+\subsubsection{Aggregate Functions}
+• The values of a column can be aggregated aggregation functions such as \code{COUNT(), SUM(), MAX(), MIN()} \\
+\code{AVG(), STDDEV()} etc.
+\begin{lstlisting}
+SELECT COUNT(*) 
+FROM customers c;
+\end{lstlisting}
+
+\begin{lstlisting}
+-- ALL is default and omitted
+-- DISTINCT needed 
+SELECT COUNT(ALL DISTINCT c.country) 
+FROM customers c;
+\end{lstlisting}
+
+\begin{lstlisting}
+-- Finds min, max, avg and stddev, TRUNC() displays 2 d p
+SELECT MAX(g.price),
+MIN(g.price),
+TRUNC(AVG(g.price), 2) AS ave,
+TRUNC(STDDEV(g.price), 2) AS std
+FROM games g;
+\end{lstlisting}
+
+\subsubsection{Group By}
+• The GROUP BY clause creates groups of records that have the same values for the
+specified fields before computing the aggregate functions. \\
+• Groups are formed after the rows have been filtered by the WHERE clause \\
+• Recommended (and required by SQL standard) to include attributes projected in the SELECT clause in the GROUP BY clause. \\
+• The order of columns in the GROUP BY clause does not change the meaning of the query.
+\begin{lstlisting}
+SELECT c.country, COUNT(*)
+FROM customers c
+WHERE c.dob >= '2000-01-01'
+GROUP BY c.country
+\end{lstlisting}
+
+\begin{lstlisting}
+SELECT c.country, EXTRACT( YEAR FROM c.since) AS regyear, COUNT(*) AS total
+FROM customers c, downloads d
+WHERE c.id = d.id
+GROUP BY c.country, regyear,
+ORDERBY regyear, c.country;
+\end{lstlisting}
+
+\subsubsection{Having}
+• Aggregate functions can be used in conditions. However, agg. functions not allowed in WHERE. \\
+• \code{HAVING} clause to add conditions to be checked after the evaluation of the GROUP BY. \\
+• \code{HAVING} can only involve aggregate functions, columns listed in the GROUP BY clause and subqueries.
+
+\begin{lstlisting}
+SELECT c.country, 
+FROM customers c
+GROUP BY c.country
+HAVING COUNT(*) >= 100;
+\end{lstlisting}
+
+\section{5. Nested SQL Queries}
+\subsubsection{Subqueries}
+• In FROM clause: Must be enclosed in parenthesis, Table alias mandatory, Column aliases optional \\
+• Not recommended, can be written as simple query
+\begin{lstlisting}
+SELECT cs.lastname, d.name
+FROM (SELECT * 
+	 FROM customers c
+	WHERE c.country = 'Singapore') AS cs, downloads d
+WHERE cs.id = d.id;
+\end{lstlisting}
+• In WHERE clause, also can be written as simple query. \\
+• Never use a comparison to a subquery without specifiying the quantifier ALL or ANY
+\begin{lstlisting}
+SELECT g1.name, g1.version, g1.price
+FROM games g1
+WHERE g1.price >= ALL (
+	SELECT g2.price
+	FROM games g2);
+-- or do:
+WHERE g1.price = ALL (
+	SELECT MAX(g2.price)
+	FROM games g2);
+-- Note HAVING g.price=MAX(g.price) will not work
+\end{lstlisting}
+
+\subsubsection{Exists}
+• \code{EXISTS} evaluates to true if the subquery has some results. \\
+•  Generally correlated. If uncorrelated, then likely either wrong or unnecessary
+\begin{lstlisting}
+SELECT c.id
+FROM customers c
+WHERE NOT EXISTS (
+	SELECT d.id
+	FROM downloads d
+	WHERE c.id = d.id);
+-- same as
+WHERE c.id NOT IN (
+	SELECT d.id 
+	FROM downloads d);
+-- same as
+WHERE c.id <> ALL (
+	SELECT d.id 
+	FROM downloads d);
+\end{lstlisting}
+\begin{lstlisting}
+-- Find countries with most customers
+SELECT c1.country
+FROM customers c1
+GROUP BY c1.country
+HAVING COUNT(*) >= ALL (
+	SELECT COUNT(*)
+	FROM customers c2
+	GROUP BY c2.country);
+\end{lstlisting}
+
+\subsubsection{SQL Conditionals}
+\textbf{CASE expression}
+• Generic conditional, like if/else statement, Used in SELECT, ORDER BY, etc
+\begin{lstlisting}
+-- Regular if else
+CASE	
+	WHEN cond1 then res1
+	WHEN cond2 then res2
+	...
+	WHEN condN then resN
+	ELSE res0
+END
+\end{lstlisting}
+\begin{lstlisting}
+-- Switch like statement
+CASE expression
+	WHEN val1 then res1
+	WHEN val2 then res2
+	...
+	WHEN valN then resN
+	ELSE res0
+END
+\end{lstlisting}
+
+\subsubsection{Conceptual evaluation of queries} 
+FROM → WHERE → GROUP BY → HAVING → SELECT →
+ORDER BY → LIMIT/OFFSET
+
+
+
+
+
 \end{multicols*}
 \end{document}
