@@ -668,6 +668,154 @@ END
 FROM → WHERE → GROUP BY → HAVING → SELECT →
 ORDER BY → LIMIT/OFFSET
 
+\section{6. ER Model}
+Data Modeling Using the Entity-Relationship (ER) Model
+\centerline{\includegraphics[width=0.7 \linewidth]{ernotation}}
+
+\subsubsection{Entity}
+• Objects that are distinguishable from other objects \\
+• \textbf{Entity set:} Collection of entities of the same type \\
+• In ER diagrams, an entity type is displayed in a rectangular box
+
+\subsubsection{Attributes}
+• \textbf{Attributes} are properties used to describe an entity \\
+• Each attribute has a value set (or data type) associated with it – e.g. integer \\
+• \textbf{Key attribute(s)} uniquely identifies each entity \\
+• \textbf{Composite attribute} composed of multiple other attributes \\
+•  \textbf{Multivalued attribute} may consist of more than one value for a given entity \\
+• \textbf{Derived attribute} derived from other attributes
+\centerline{\includegraphics[width=0.8 \linewidth]{attributes}}
+• Attributes are displayed in ovals, multivalued attributes double ovals
+
+\subsubsection{Relationship}
+• \textbf{A relationship} relates two or more distinct entities with a specific meaning. \\
+• \textbf{Degree} of a relationship type is the number of participating entity types. A n-ary relationship set involves n entity roles. Typically binary or ternary. \\ 
+\centerline{\includegraphics[width=0.7 \linewidth]{n-ary}}
+• \textbf{Relationship Set}: Collection of relationships of the same type, can have their own attributes that further decribe the relationship \\
+• Most \textbf{relationship attributes} are used with M:N relationships: (In 1:N relationships, they can be transferred to the entity type on the N-side of the relationship) \\
+• We represent the relationship type as \textbf{Diamond-shaped box}, connected to the participating entity types. \\
+• Relationship type typically readable from left to right and top to bottom.
+
+\subsubsection{N-ary relationships}
+• \textbf{Implicit Constraint} In ternary relationship, every instance of relationship must have one instance of each entity. \\
+• Rule extends to n-ary relationships \\
+\centerline{\includegraphics[width=0.5 \linewidth]{ternary}}
+• \textbf{Avoid Ternaries for Easy Modeling}: e.g.  “objectifying” the relationship type “Interview” into an entity type ‘Interview”. \\
+
+
+\subsubsection{Cardinality (Ratio) constraints}
+• \textbf{Upper bound} for entity’s participation \\
+\centerline{\includegraphics[width=0.6 \linewidth]{cardinality}}
+
+\subsubsection{Participation / Existence Dependency constraints}
+• \textbf{Lower bound} for entity’s participation \\
+• Partial (default): participation not mandatory \\
+• Total: mandatory (at least 1) \\
+\centerline{\includegraphics[width=0.6 \linewidth]{participation}}
+
+\subsubsection{Recursive Relationship Type}
+• A relationship type between the same participating entity type in \textbf{distinct roles}. \\
+• In ER diagram, need to display role names to distinguish participations.
+
+\subsubsection{Dependency constraints}
+\textbf{Weak Entity Types}: No key attribute and is identification dependent on another entity. \\
+• Participate in an identifying relationship type with an owner or identifying entity type \\
+• Two kinds of dependencies: \\
+ \textbf{Existence (no weak entity)} dependency\\
+ \textbf{Identification (weak entity)} dependency \\
+\textbf{Partial Key} \\
+•  Set of attributes of weak entity set that uniquely identifies a weak entity, for a given owner entity. \\
+\centerline{\includegraphics[width=0.7 \linewidth]{partialkey}}
+
+\subsubsection{(min,max) notation for relationship constraints}
+• Read the min,max numbers next to the entity type and looking away from the entity type \\
+\centerline{\includegraphics[width=0.6 \linewidth]{minmax}}
+
+\vfill\null
+\columnbreak
+
+\section{7. EER Model}
+\textbf{Enhanced ER or Extended ER}
+
+\subsubsection{IS-A Hierarchies}
+• \textbf{“Is a” relationship} - used to model generalization/specialization of entity sets. \\
+• \textbf{Hierarchy}: constraint that every subclass has only one superclass (single inheritance); basically a tree structure. \\
+• \textbf{Lattice}: a subclass can be subclass of more than one superclass (multiple inheritance). \\
+\centerline{\includegraphics[width=0.8 \linewidth]{lattice}}
+• \textbf{Subclass:} subclass member is entity in a \textbf{distinct specific role}. Entity inherits all attributes and relationships of superclass. \\
+• \textbf{Specialization:} process of defining a set of subclasses of a superclass, based on \textbf{distinguishing characteristics} \\
+• \textbf{Type of Specialization:} Can be Predicated defined, Attribute defined (Written beside joining line) or User defined. \\
+• \textbf{Generalization:} reverse of specialization, based upon some \textbf{distinguishing characteristics}. \\
+
+\subsubsection{Constraints on Specialization / Gen}
+• \textbf{Disjointness Constraint:} Subclasses must be disjoint, entity can be member of at most one. (specified by \textbf{d} in EER) \\ 
+• If not disjoint, specialization is \textbf{overlapping}, (specified by \textbf{o} in EER) \\
+• \textbf{Completeness Constraint:} Total specifies every entity must be a member of some subclass. (specified by \textbf{double line} in EER) \\ 
+• \textbf{Partial} allows entity not to belong to any subclass. (specified by \textbf{single line} in EER) \\ 
+• Hence, we have four types: Disjoint/Overlapping x Total/Partial. Note generalization usually is total.
+
+\vfill\null
+\columnbreak
+
+\section{8. Relational Mapping}
+• Preserve info, maintain constraints, minimize null.
+
+\subsubsection{1. Map Regular Entity Types}
+• Create new table (relation R), include all simple attributes.
+\subsubsection{2. Map Weak Entity Types}
+• Weak entity type, create table with corresponding FK.
+\subsubsection{3. Map Binary 1:1 Relationship Type}
+• Option 1: 2 Foreign Key (2 relations \ tables) option. \\
+• 2: Merged relation option: Combine relationship set and either entity set into \textbf{one} table \\
+• 3: Cross-reference (3 relations, one lookup table). 
+\subsubsection{4. Map Binary 1:N Relationship Type}
+• For 1:N create table of participating entity (N-side). \\
+• Include FK in table \& attributes of the 1:N relation type. \\
+\centerline{\includegraphics[width=0.5 \linewidth]{onetomany}}
+\subsubsection{5. Map Binary N:M Relationship Type}
+• Represent relationship set with a new table. Include as FK the PK of relations, combination will form PK of table.
+\subsubsection{6. Map Multi-valued Attributes}
+• Create new table / relation for each multivalued attribute.
+\subsubsection{7. Map N-ary relationship type}
+• For each n-ary relationship type R, where n $>$2, create new table. Include FK of relations, and attributes. \\
+\textbf{Summary:} \\
+\centerline{\includegraphics[width=0.9 \linewidth]{mapsummary}}
+\subsubsection{8. Map Specialization or Generalization}
+• Option 1: Multiple tables (relations) - Superclass and subclasses \\
+• 2: Table each for each subclass relations, inherit superclass attributes\\
+• 3: Single table with one type attribute \\
+• 4: Single table with multiple type attributes \\
+• For specialisation hierarchies with one superclass and n subclasses, possibility of mapping from 1 relation 
+to (n+1) relations. Design highly subjective, try to maintain appropriate attributes to determine subclass identity.
+
+\vfill\null
+\columnbreak
+
+\section{9. Relational Calculus \& Algebra}
+• A formal language for asking queries on relations. \\
+• A query is composed of a collection of operators called relational operators. 
+
+\subsubsection{Predicate Logic}
+• \textbf{Predicate or first order logic}, consists of formulae built from predicates (lowercase) , operators ($=$, etc.) constants (lower case), variables (upper case, quantifiedor free), connectives ($\rightarrow $), and quantifiers ($\forall$ and $\exists$).
+• Existential quantifier, $\exists$, is a generalisation of disjunction. \\
+• The universal quantifier, $forall$, is a generalisation of conjunction. \\
+•  De Morgan laws can be generalised to quantifiers. 
+\centerline{\includegraphics[width=0.5 \linewidth]{predicatelogic}}
+
+\subsubsection{Tuple Relational Calculus}
+• In \textbf{Tuple Relation Calculus (TRC)} variables values of rows of tables (t-uples.), is the theoretical basis of SQL. \\
+• \textbf{Material Implication:} $P \rightarrow Q \equiv \neg P \vee Q$
+
+\subsubsection{Relational Algebra}
+• Relations are sets of tuples, main algebraic operators are union, intersect, non-symmetric difference, renaming, selection, projection, cross, and, join etc. \\
+• \textbf{Renaming $\rho$} can change name of relation, of attributes or both. \code{xx AS yy} \\
+• \textbf{Projection $\pi$} projects attributes given by a list of attributes from relation. \code{(SELECT xx, yy FROM games)} \\
+• \textbf{Cross Product $\times$} combines rows and keeps columns. \code{(SELECT* FROM R1, R2;)} \\
+• \textbf{Join $\Join$}: R1 $\Join$ R2 = $\sigma$ (R1 $\times$ R2) \\
+• Relational algebra is the basis of the implementation of relational DBMS: SQL queries translated into execution plans that orchestrate physical implementations of relational algebra operators.
+
+
+
 
 
 
