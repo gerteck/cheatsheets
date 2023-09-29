@@ -35,33 +35,68 @@
 \usepackage{xcolor}
 \usepackage{listings}
 
-\lstdefinestyle{mystyle}{
-	backgroundcolor=\color{gray!25!white},
-	basicstyle=\scriptsize,
-	numbers=none,    %or = none or left
-	showstringspaces=false,
-	breaklines=true,
-	breakatwhitespace=false,                  
-	captionpos=b,                    
-	keepspaces=true,                                 
-	numbersep=5pt,                  
-	showspaces=false,                
-	showtabs=false,                  
-	tabsize=2,
- }
+% C++ Code Blocks:
+\definecolor{listinggray}{gray}{0.9}
+\definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
+\definecolor{Darkgreen}{rgb}{0,0.4,0}
+\lstset{
+    backgroundcolor=\color{lbcolor},
+    tabsize=4,    
+%   rulecolor=,
+    language=[GNU]C++,
+        basicstyle=\tiny,
+        upquote=true,
+        aboveskip={\baselineskip},
+        columns=fixed,
+        showstringspaces=false,
+        extendedchars=false,
+        breaklines=true,
+        prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+        frame=single,
+        numbers=left,
+        showtabs=false,
+        showspaces=false,
+        showstringspaces=false,
+        identifierstyle=\ttfamily,
+        keywordstyle=\color[rgb]{0,0,1},
+        commentstyle=\color[rgb]{0.026,0.112,0.095},
+        stringstyle=\color[rgb]{0.627,0.126,0.941},
+        numberstyle=\color[rgb]{0.205, 0.142, 0.73},
+%        \lstdefinestyle{C++}{language=C++,style=numbers}’.
+}
+\lstset{
+    backgroundcolor=\color{lbcolor},
+    tabsize=4,
+  language=C++,
+  captionpos=b,
+  tabsize=3,
+  frame=lines,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=3 pt,
+  breaklines=true,
+  showstringspaces=false,
+  basicstyle=\tiny,
+%  identifierstyle=\color{magenta},
+  keywordstyle=\color[rgb]{0,0,1},
+  commentstyle=\color{Darkgreen},
+  stringstyle=\color{red}
+}
+% \lstset{language=C++}
+%% Different languages: SQL, C++, Python
+
+
 %Helpful:
 %[linewidth = 1.0 \linewidth]
 %\lstinline{}
 % use \code{} for \lstinline with colorbox.
-\newcommand{\code}[1]{\colorbox{gray!25!}{\lstinline|#1|}}
-\lstset{style=mystyle}
 
 % Template: Cheatsheet with code enabled
 
 %--------------------------- PACKAGES ABOVE --------------------------------------------------------------
 
 \pdfinfo{
-  /Title (Documentname.pdf)
+  /Title (CS2100 Summary.pdf)
   /Creator (Ger Teck)
   /Author (Ger Teck)
   /Subject ()
@@ -159,20 +194,18 @@
 
 %% DOCUMENT NAME HERE
 \begin{center}
-     \Large{\textbf{CSModule Summary and Notes}} \\
+     \Large{\textbf{CS2100 Comp Org Notes}} \\
 \end{center}
-
-% TABLE PACKAGE 
- \begin{center}
-    \fbox{%
-        \parbox{0.8\linewidth}{\centering \textcolor{black}{
-            \\ \normalsize{AYXX/XX Sem X}}
-            \\ {\footnotesize github.com/gerteck}
-        }%
-    }
-  \end{center}
+AY23/24 Sem 1, github.com/gerteck
   
-  
+\begin{lstlisting}
+// Your First C++ Program
+#include <iostream>
+int main() {
+    std::cout << "Hello World!";
+    return 0;
+}
+\end{lstlisting}
   
   
   
