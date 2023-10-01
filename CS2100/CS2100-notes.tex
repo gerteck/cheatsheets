@@ -722,6 +722,7 @@ are word-aligned: larger range!
 \columnbreak
 
 \subsubsection{Addressing Modes}
+Addressing mode: ways to specify an operand in an assembly
 \begin{itemize}
 \item \textbf{Register Addressing}: operands are registers. (R format Instructions) \\
 \centerline{\includegraphics[width=0.9\linewidth]{registeraddressing}}
@@ -750,31 +751,355 @@ branch address is relative to PC+4 \\
 
 
 \section{8. Instruction Set Architecture}
+\subsubsection{1. Data Storage}
+Concerned with where we store the operands so computation can be performed, store result afterwards, how to specify operands. \\
+\textbf{Storage Architectures} \\
+\centerline{\includegraphics[width=1\linewidth]{storagearchitectures}}
+\centerline{\includegraphics[width=1\linewidth]{ISAinstructions}}
+
+\subsubsection{2. Memory Addressing Mode}
+Concerned with memory locations and addresses, the addressing modes as well as the memory content.
+\begin{itemize}
+\item \textbf{endianness}: the relative ordering of bytes in a multiple-byte word stored in memory \\
+◦ big endian: MSB stored in lowest address \\
+◦ small endian → LSB stored in lowest address
+\item \textbf{3 addressing modes in MIPS:} \\
+1. register: operand is in a register (e.g. \code{add $t1, $t2, $t3}) \\
+2. immediate: operand is specified directly in the instruction(e.g. \code{addi $t1, $t2, 98}) \\
+3. displacement: operand is in memory with address calculated as base + offset (e.g. \code{lw $t1, 20($t2)}),
+a form of immediate mode instruction
+\end{itemize}
 
 
+\subsubsection{3. Operations in the Instruction Set}
+Every instruction set should have a set of standard operations \\
+\centerline{\includegraphics[width=1\linewidth]{ISoperations}}
+
+\subsubsection{4. Instruction Formats}
+Concerned with instruction length as well as instruction fields. In particular, for instruction fields, we are interested in the type and size of operands. \\ \\
+\textbf{Instruction Length}:
+\begin{itemize}
+\item fixed-length instructions: \\
+◦ easy fetch and decode \\
+◦ simplified pipelining and parallelism \\
+◦ instruction bits are scarce
+\item variable-length instructions \\
+◦ require multiple steps to fetch and decode instructions \\
+◦ more flexible
+\end{itemize}
+
+\textbf{Instruction Fields}:
+\begin{itemize}
+\item type and size of operands (i.e. how to divide up the instructions)
+\item instruction costs of: \\
+◦ \textbf{opcode}: unique code to specify the desired operation:  \\
+◦ designates the \textbf{type} and \textbf{size} of operands \\
+◦ operands: zero or more additional information needed for the instruction
+\item 32-bit architecture should support \\
+◦ 8-, 16-, 32-bit integer operations \\
+◦ 32- and 64-bit floating point operations
+\end{itemize}
+
+\subsubsection{5. Instruction Encoding}
+\begin{itemize}
+\item choice of variable/fixed/hybrid encoding
+\item \textbf{expanding opcode scheme}: opcode variable lengths for different
+instructions, maximise instruction bits\\
+◦ use unused bits to define opcode, larger instruction set
+\end{itemize}
+
+\section{8.5 MIPS Processor}
+• programmer writes program in high-level language (e.g. C) \\
+•  \underline{compiler} translates to assembly language (MIPS) \\
+•  \underline{assembler} translates to machine code (binaries) \\
+•  \underline{processor} executes machine code (binaries) \\
+
+\subsubsection{Building a Processor}
+There are two major components of a processor:
+\begin{itemize}
+\item \textbf{Datapath}: \\
+• Collection of components that process data. \\
+• Performs the arithmetic, logical and memory operations. \\
+• takes in data from operands, processes it, writes the data back.
+\item \textbf{Control}: \\
+• Tells the datapath, memory and I/O devices what to do according to program instructions. \\
+• generates control signals.
+\end{itemize}
+
+\textbf{Goal}: Implement simplest possible implementation of a subset of the core MIPS ISA. \\
+ In particular, we are interested only at the following operations:
+\begin{itemize}
+\item Arithmetic and Logical: \code{add}, \code{sub}, \code{and}, \code{or}, \code{slt}, \code{andi1}*, \code{ori1}* \\
+(* Not fully implementable in simplest implementation, as we do "sign extension" on immd value).
+\item Data Transfer: \code{lw} and \code{sw}
+\item Branches: \code{beq} and \code{bne}
+\end{itemize}
+
+\vfill\null
+\columnbreak
+
+\section{9. Datapath}
+\subsubsection{Instruction Execution Cycle}
+\centerline{\includegraphics[width=0.8\linewidth]{IEC}}
+
+\subsubsection{in MIPS}
+\centerline{\includegraphics[width=0.8\linewidth]{IECMIPS}}
+
+\subsubsection{1. Fetch Stage}
+Fetch instruction and prepares the processor to get the next instruction.
+\begin{itemize}
+\item use PC to fetch instruction from memory
+\item increment PC by 4 to get the next instruction (using an Adder)
+\item output (to Decode): instruction to be executed
+\end{itemize}
+
+\subsubsection{2. Decode Stage}
+Decode stage is combined with the operand fetch stage due to the simplicity of the pure decode stage.
+\begin{itemize}
+\item gathers data from the instruction fields \\
+1. read opcode and determine the instruction type and field lengths \\
+2. read data from all necessary registers
+\item output (to ALU): operation and the necessary operands
+\end{itemize}
+
+\subsubsection{3. ALU (execution) Stage}
+\begin{itemize}
+\item output (to memory stage): calculation result
+\end{itemize}
+
+\subsubsection{4. Memory Stage}
+\begin{itemize}
+\item only \code{load}, \code{store} instructions needed to perform operations in this stage \\
+◦ uses memory address calculated by ALU stage (input)
+\item all other instructions are idle in this stage \\
+◦ result from ALU stage will pass through this stage to be used in Register Write stage
+\item inputs: \\
+◦ computation result to be used as memory address \\
+◦ register value to be written to memory (only \code{sw})
+\item outputs (to Register Write stage): result to be stored (only \code{lw})
+\end{itemize}
+
+\subsubsection{5. Register Write Stage}
+\begin{itemize}
+\item write the result of some computation into a register \\
+◦ do nothing: stores / branches / jumps
+\item input: \\
+◦ destination register number \\
+◦ computation result (from either memory or ALU)
+\end{itemize}
+
+\section{9.5 Datapath Elements}
+\subsubsection{Instruction Memory [1, Fetch]}
+\begin{itemize}
+\item Storage element for the instructions (Sequential circuit).
+\item supplies instructions given an address \\
+◦ input: instruction address M \\
+◦ outputs: contents of address M (binary pattern of instructions)
+\end{itemize}
+
+\subsubsection{Adder [1]}
+\begin{itemize}
+\item combinational logic to add two numbers. \\
+\centerline{\includegraphics[width=0.6\linewidth]{adder}}
+\end{itemize}
+
+\subsubsection{Clock [1]}
+\begin{itemize}
+\item a square wave used by the processor \\
+◦ times operations inside the processor (e.g. reading \& updating PC)
+\item allows read and update of PC at the same time \\
+◦ PC is read during the first half of the clock period \\
+◦ PC is updated only at the rising edge \\ \\
+\centerline{\includegraphics[width=0.9\linewidth]{clock}}
+\end{itemize}
+
+\subsubsection{Register File [2]}
+\begin{itemize}
+\item collection of 32 registers (each 32 bits wide) \\
+◦ can be read by specifying register number
+\item read at most 2 registers per instruction 
+\item write at most one register per instruction
+\item \code{RegWrite}: control signal to indicate writing of register \\
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{regfilemulti}}
+
+\subsubsection{Multiplexer}
+\begin{itemize}
+\item  selects one input from multiple input lines \\
+◦ inputs: $n$ lines of same width \\
+◦ outputs: select input $i^{th}$ line if control = $i$ \\
+◦ control: $m$ bits where $n$ = $2^m$
+\end{itemize}
+
+\vfill \null
+\columnbreak
+
+\subsubsection{ALU [3]}
+\begin{itemize}
+\item combinational logic to implement arithmetic and logical operations
+\item inputs: two 32-bit numbers
+\item outputs: \\
+◦ result of arithmetic/logical operation \\
+◦ 1-bit signal to indicate whether result is zero
+\item control (\code{ALUcontrol}): 4-bit to decide the operation \\
+◦ set using opcode + funct field
+\item 2 calculations needed for branch instructions (branch outcome +
+branch target address)
+\end{itemize}
+
+\centerline{\includegraphics[width=0.9\linewidth]{alumem}}
+
+\subsubsection{Data Memory [4]}
+\begin{itemize}
+\item storage element for the data of a program
+\item inputs: memory address \\
+◦ data to be written (for store instructions)
+\item outputs: data read from memory (for load instructions)
+\item control: \code{MemRead} and \code{MemWrite} controls \\
+◦ only one can be asserted at any point in time
+\end{itemize}
 
 
+\section{10. Control}
+\subsubsection{Control Signals}
+These can be generated using opcode directly.
+\begin{itemize} 
+
+\item \code{RegDst} @ Decode/Operand Fetch \\
+◦ 0/1: write register = \code{Inst[20:16]} / \code{Inst[15:11]}
+\item \code{RegWrite} @ Decode/Operand Fetch \\
+◦ 0/1: No register write / WD written to WR
+\item \code{ALUSrc} @ ALU (determines first input) \\
+◦ 0: \code{Operand2 = Register Read Data 2} \\
+◦ 1: \code{Operand2 = SignExt(Inst[15:0])} (sign ext immediate)
+\item \code{MemRead} @ Memory \\
+◦ 0/1: no read / reads memory using Address (returned in RD)
+\item \code{MemWrite} @ Memory \\
+◦ 0/1: no write / writes Register RD 2 into mem[Address]
+\item \code{MemToReg} @ RegWrite \\
+◦ 0/1 → register write data = ALU result / memory read data
+\item \code{PCSrc @ Memory/RegWrite} \\
+◦ 0/1 → next PC = PC + 4 / PC = SignExt(Inst[15:0]) << 2 + (PC + 4) \\
+◦ PCSrc = set to 1 if Branch AND is0 are both 1 \\
+◦ aka (isBranchInstruction AND branchIsTaken)
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{signals1}}
+
+\subsubsection{ALU}
+\centerline{\includegraphics[width=0.7\linewidth]{ALU}}
+
+\subsubsection{Controller Design}
+Determines Control Signals from Opcode \\
+\centerline{\includegraphics[width=0.8\linewidth]{controllerdesign}}
+
+\subsubsection{Multilevel Decoding}
+\begin{itemize}
+\item to determine ALUControl signal \\
+◦ depends on 12 variables (6-bit opcode + 6-bit funct)
+\item reduce the number of cases, then generate the full output \\
+◦ reduce the size of the main controller - simplify design process
+\item how it works \\
+1. use opcode to generate 2-bit \code{ALUop} signal \\
+2. use \code{ALUop} signal and funct (for R-type) to generate 4-bit \code{ALUcontrol} sign
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{multilevel1}} 
+\centerline{\includegraphics[width=0.8\linewidth]{multilevel2}}
+
+% Diagrams: AND CONTROL FLOW DETERMINATION
+\end{multicols*}
+\begin{multicols*}{2}
+\subsubsection{Complete Datapath}
+\centerline{\includegraphics[width=1\linewidth]{completedatapath}}
+\bigskip
+\subsubsection{ALUcontrol on ALU}
+\centerline{\includegraphics[width=1\linewidth]{ALUcontrolonALU}}
 
 
+\vfill \null
+\columnbreak
+\subsubsection{Complete Datapath and Control}
+\centerline{\includegraphics[width=1\linewidth]{datapathandcontrol}}
+\bigskip
+\subsubsection{Control Design: Outputs}
+\centerline{\includegraphics[width=1\linewidth]{controldesignoutputs}}
+\end{multicols*}
+\begin{multicols*}{2}
+\section{Control Flow Determination}
+\subsubsection{Control Signals}
+\begin{itemize} 
+\item \code{RegDst} @ Decode/Operand Fetch \\
+◦ 0/1: write register = \code{Inst[20:16]} / \code{Inst[15:11]}
+\item \code{RegWrite} @ Decode/Operand Fetch \\
+◦ 0/1: No register write / WD written to WR
+\item \code{ALUSrc} @ ALU (determines first input) \\
+◦ 0: \code{Operand2 = Register Read Data 2} \\
+◦ 1: \code{Operand2 = SignExt(Inst[15:0])} (sign ext immediate)
+\item \code{MemRead} @ Memory \\
+◦ 0/1: no read / reads memory using Address (returned in RD)
+\item \code{MemWrite} @ Memory \\
+◦ 0/1: no write / writes Register RD 2 into mem[Address]
+\item \code{MemToReg} @ RegWrite \\
+◦ 0/1 → register write data = ALU result / memory read data
+\item \code{PCSrc @ Memory/RegWrite} \\
+◦ 0/1 → next PC = PC + 4 / PC = SignExt(Inst[15:0]) $<<$ 2 + (PC + 4) \\
+◦ PCSrc = set to 1 if Branch AND is0 are both 1 \\
+◦ aka (isBranchInstruction AND branchIsTaken)
+\end{itemize}
 
+\subsubsection{Control Design: Outputs}
+\centerline{\includegraphics[width=0.8\linewidth]{controldesignoutputs}}
+\centerline{\includegraphics[width=0.8\linewidth]{multilevel1}} 
+\subsubsection{Complete Datapath}
+\centerline{\includegraphics[width=0.9\linewidth]{completedatapath}}
+\subsubsection{Complete Datapath and Control}
+\centerline{\includegraphics[width=0.9\linewidth]{datapathandcontrol}}
 
+\end{multicols*}
+\begin{multicols*}{3}
 
+\section{11. Instruction Execution}
+\subsubsection{Instruction Execution}
+\begin{itemize}
+\item coordinating the stages together: fetch, decode, memory, write etc
+\end{itemize}
 
+\subsubsection{Single Cycle Implementation}
+\begin{itemize}
+\item  how it works \\
+1. read contents of one or more storage elements \\
+2. perform computation through some combinational logic \\
+3. write results to one or more storage elements (register/memory)
+\item All performed \textbf{within a clock period} \\
+◦ avoids reading a storage element when it's being written
+\centerline{\includegraphics[width=0.8\linewidth]{singlecycle}}
+\item time taken depends on slowest instruction
+\item \textbf{disadvantage}: \\
+◦ clock cycle must be long enough to accommodate the slowest instruction: all instructions will take the same time as the slowest
+instruction.
+\end{itemize}
 
+\subsubsection{Multicycle Implementation}
+\begin{itemize}
+\item how it works: break up the instruction into execution steps \\
+1. instruction fetch \\
+2. instruction decode and register read \\
+3. ALU operation\\
+4. memory read/write\\
+5. register write\\
+◦ each execution step takes one clock cycle
+\item time taken depends on number of steps \\
+◦ cycle time is determined by the slowest step
+\item disadvantage \\
+◦ may not necessarily be faster - depends on mix of instructions
+\end{itemize}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+\subsubsection{Pipelining}
+\begin{itemize}
+\item Break up the instructions into execution steps 
+one per clock cycle
+\item Allow different instructions to be in different 
+execution steps simultaneously
+\end{itemize}
 
 
 
