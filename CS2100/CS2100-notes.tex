@@ -595,44 +595,161 @@ normalise it to  the rightmost bit is always 1, no need to store it.
 
 
 \section{6. MIPS + ISA}
+\subsubsection{Instruction Set Architecture}
+\begin{itemize}
+\item \textbf{ISA:} abstraction of the interface between the hardware and low-level
+software \\
+Software is translated into the instruction set. \\
+Hardware implements the instruction set.
+\item \textbf{Complier} turns high level language into assembly code. \\
+\textbf{Assembler} translates assembly language to machine code.
+\item \textbf{stored-memory concept (von Neumann architecture)}: both instructions and data are stored in
+memory.
+\item \textbf{The load-store model:} *Limit memory operations and relies on registers for storage during execution.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{isa1}}
+\begin{itemize}
+\item major types of assembly instruction: \\
+◦ \textbf{memory}: move values between memory and registers
+◦ \textbf{calculation}: arithmetic and other operations \\
+◦ \textbf{control flow}: change the sequential execution (sequence in which
+instructions are executed)
+\end{itemize}
+
+\subsubsection{Registers}
+\begin{itemize}
+\item Registers close to processors, fast speed of access. Values in registers are simply binaries, no data types associated.
+\item Typical architecture has 16 to 32 registers
+\item MIPS register can hold any 32-bit number
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{registers}}
+
+\section{6. MIPS Assembly Language}
+\subsubsection{Instructions}
+\centerline{\includegraphics[width=0.8\linewidth]{mipsinstructions}}
+\begin{itemize}
+\item \code{add $s0, $s1, $zero} synonymous with \code{move $s0, $s1}
+\item to get a \textbf{"NOT" operation}: \code{nor $t0, $t0, $zero}
+ \item \code{lui} → load upper immediate (sets upper 16 bits of reg)
+\end{itemize}
+
+\textbf{Loading Large Constants}
+\begin{itemize}
+\item use \code{lui} to set the upper 16 bits (\code{lui $t0, 0xAAAA} ), lower bits filled with zeroes
+\item use \code{ori} to set the lower-order bits (\code{ori $t0, $t0, 0xF0F0})
+\end{itemize}
+
+\textbf{Memory Instructions}
+\begin{itemize}
+\item \code{lw target, dis(src)}: load Mem[src+dis] content to target
+\item \code{sw src, disp(target)}: store src content to Mem[targ+disp]
+\item \code{lb / sb}: Load/Store byte (doesn't need word-align)
+\end{itemize}
+
+\textbf{Control Flow}
+\begin{itemize}
+\item \code{bne}: branch if Not Equal (\code{bne $t0, $t1, label})
+\item \code{beq}: branch if Equal (\code{beq $t0, $t1, label} )
+\item \code{j}: jump unconditionally (\code{beq $t0, $t1, label} )
+\item \code{slt}: set to 1 on less than, else 0 (\code{slt dest, src1, src2} )
+\end{itemize}
+
+\subsubsection{MIPS Instructions Format}
+\centerline{\includegraphics[width=0.9\linewidth]{instructionclass}}
+
+\subsubsection{Memory Organisation}
+\begin{itemize}
+\item each location has an address: an index into the array \\
+◦ for a k-bit address, the address space is of size $2^k$ \\
+◦ largest address possible: $2^k - 1$, bc start from 0
+\item byte addressing: one byte (8 bits) in every location/address \\
+◦ more than one byte: word addressing
+\item load-store architectures can only load data at \textbf{word boundaries} (divisible by n bytes) \\
+e.g. If word consists of 4 bytes:
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{wordalign}}
+
+\subsubsection{MIPS:}
+\begin{itemize}
+\item Microprocessor without Interlocked Pipelined Stages
+\item load-store register architecture \\
+◦ 32 registers, each 32-bit (4 bytes) long \\
+◦ each word contains 4 bytes \\
+◦ memory addresses are 32-bit long
+\item $2^{30}$ memory words ($2^{32}/4$) \\
+◦ accessed only by data transfer instructions (aka \textbf{memory instructions})
+\item MIPS uses byte addresses: consecutive words (word boundaries) differ by 4 \\
+◦ e.g. Mem[0], Mem[4], ...
+\end{itemize}
+
+
+\vfill\null
+\columnbreak
 
 
 
+\section{7. MIPS Instruction Encoding}
+Refer to \textbf{MIPS Reference Data} (midterms handout last slide)
+
+\subsubsection{R Format:}
+\centerline{\includegraphics[width=0.9\linewidth]{Rformat}}
+
+\subsubsection{I Format:}
+\centerline{\includegraphics[width=0.9\linewidth]{Iformat}}
+
+\subsubsection{J Format:}
+\centerline{\includegraphics[width=0.9\linewidth]{Jformat}}
+\begin{itemize}
+\item  MIPS will take the 4 MSBs from PC+4 (next instruction after the jump
+instruction)
+\item omit 2 LSB (rightmost) since instruction addresses are word-aligned
+\item maximum jump range = $2^{26+2+4} = 2^{32}$
+\end{itemize}
+
+\subsubsection{PC-Relative Addressing}
+\begin{itemize}
+\item Program Counter (PC): special register that keeps address of the
+instruction being executed in the processor
+\item target address = PC + 16-bit \code{immediate} field \\
+◦ can branch $+- 2^{15}$ words = $2^{17}$ bytes from the PC \\
+◦ interpret \code{immediate} as the number of words since instructions
+are word-aligned: larger range!
+\item next branch calculation: \\
+◦ if branch is not taken: \textbf{PC+4} \\
+◦ if branch is taken: \textbf{(PC+4) + (immediate x 4)}
+\end{itemize}
+
+\columnbreak
+
+\subsubsection{Addressing Modes}
+\begin{itemize}
+\item \textbf{Register Addressing}: operands are registers. (R format Instructions) \\
+\centerline{\includegraphics[width=0.9\linewidth]{registeraddressing}}
+
+\item \textbf{Immediate Addressing}: operand is a constant within the instruction itself. e.g.\code{andi}, \code{addi}, \code{ori} \code{slti} etc. \\ \\
+\centerline{\includegraphics[width=0.9\linewidth]{immediateaddressing}}
+
+\item \textbf{Base/Displacement Addressing}: operand is at the memory location whose address is the sum of a register and a constant in the instruction. 
+\code{lw}, \code{sw}: (base address) + immediate (displacement) \\
+\centerline{\includegraphics[width=0.9\linewidth]{baseaddressing}}
+
+\item \textbf{PC-relative Addressing}: address is the sum of PC and constant in the instruction (e.g.\code{beq}, \code{bne}). \\ 
+branch address is relative to PC+4 \\
+\centerline{\includegraphics[width=0.9\linewidth]{pcrelativeaddressing}}
+
+\item \textbf{Pseudo-direct Addressing}: 26-bit of instruction concatenated with the 4 MSBs of PC (e.g. \code{j} )
+\centerline{\includegraphics[width=0.9\linewidth]{pseudodirectaddressing}} \\
+\centerline{\includegraphics[width=0.7\linewidth]{pseudodirectaddressing2}}
+\end{itemize}
+
+\subsubsection{Summary}
+\centerline{\includegraphics[width=1\linewidth]{MIPSsummary}}
+
+\vfill\null
+\columnbreak
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\section{8. Instruction Set Architecture}
 
 
 
