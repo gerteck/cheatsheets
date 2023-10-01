@@ -382,7 +382,7 @@ Receiver extracts sender IP + port number from packet.
 \vfill \null
 \columnbreak
 
-\section{2. Transport}
+\section{3. Transport}
 \subsubsection{Transport Layer Services}
 \begin{itemize}
 \item Transport layer protocols run in hosts.
@@ -558,18 +558,63 @@ Reliable Data Transfer: \textbf{Service Model}
 % \vfill \null
 % \columnbreak
 
-\section{3. Network}
-
-asdf
-
-
-
-
-
-
+\section{4. Network}
+\subsubsection{Network Layer Services}
+\begin{itemize}
+\item Network layer delivers packets to receiving hosts.
+\item Routers examine header fields of IP datagrams passing it.
+\item \textbf{Forwarding}: Moving of incoming packet to appropriate output link.
+\item \textbf{Routing}: Calculation of path taken by packets from sender to receiver.
 
 
+\end{itemize}
 
+\subsubsection{IP Address}
+\begin{itemize}
+\item \textbf{IP address} used to identify host / (router), 32-bit integer expressed in binary/decimal.
+\item Host gets an IP address either through manual configuration by sys admin, or auto assigned by a \textbf{DHCP} server.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{dhcp}}
+
+\subsubsection{DHCP: Dynamic Host Configuration Protocol}
+\begin{itemize}
+\item \textbf{DHCP} allows a host to dynamically obtain its IP address from DHCP server when it joins network.
+\item IP address is \underline{renewable}, allow \underline{reuse} of addresses (only hold address while connected), support mobile users to join network.
+\item DHCP: 4-step process: Host broadcasts “DHCP discover” message, server responds with “DHCP offer” message, Host requests IP address: “DHCP request” message, DHCP server sends address: “DHCP ACK” message
+\item  DHCP may provide host additional network information, e.g. IP of first-hop router, local DNS server, network mask.
+\item DHCP runs over \textbf{UDP}. DHCP server port 67, client port 68.
+\end{itemize}
+
+\subsubsection{IP Address \& Network Interface}
+\begin{itemize}
+\item IP address is associated with a network interface.
+\item Host usually has one or two network interfaces (e.g. wired Ethernet and WiFi), A router typically has  multiple interfaces.
+\item \textbf{IP Addr} comprises network/subnet prefix and host ID.
+\end{itemize}
+
+\subsubsection{Subnet}
+\begin{itemize}
+\item \textbf{Subnet} is a network formed by a group of “directly” interconnected hosts.
+\item Hosts in same subnet have same network prefix of IP addr, can physically reach each other without intervening router. They connect to the outside world through a router
+\item \textbf{Classless Inter-domain Routing} (CIDR): Internet’s IP address assignment strategy.
+\item Subnet prefix of IP addr of arbitrary length, Address format: $a.b.c.d/x$, where $x$ is the no. of bits in subnet prefix of IP addr.
+\item \textbf{Subnet mask} is used to determine which subnet an IP address belongs to.
+\item made by setting all subnet prefix bits to "1"s and host ID bits to "0"s.
+\end{itemize}
+
+\medskip
+\centerline{\includegraphics[width=1\linewidth]{ipsubnet}}
+
+\vfill \null
+
+\subsubsection{IP Address Allocation}
+\begin{itemize}
+\item Organization can buy from registry / rent from ISP’s addr space to obtain block of IP addr.
+\item \textbf{Hierarchical Addressing}: Allows efficient way of routing.
+\item \textbf{Longest Prefix Match}: Choose one with longer match. If IP addrr matches all 23 bits for org, packet forwarded, else forwarded to latter.
+\centerline{\includegraphics[width=1\linewidth]{IPaddressHA}}
+\end{itemize}
 
 
 
