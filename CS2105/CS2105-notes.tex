@@ -612,19 +612,92 @@ Reliable Data Transfer: \textbf{Service Model}
 \begin{itemize}
 \item Organization can buy from registry / rent from ISP’s addr space to obtain block of IP addr.
 \item \textbf{Hierarchical Addressing}: Allows efficient way of routing.
-\item \textbf{Longest Prefix Match}: Choose one with longer match. If IP addrr matches all 23 bits for org, packet forwarded, else forwarded to latter.
 \centerline{\includegraphics[width=1\linewidth]{IPaddressHA}}
+\item \textbf{Longest Prefix Match}: Choose one with longer match. If IP addrr matches all 23 bits for org, packet forwarded, else forwarded to latter.
+\end{itemize}
+
+\subsubsection{Network Address Translation (NAT)}
+\begin{itemize}
+\item Map IP addr space by modifying network addr info in packets IP header through traffic routing device. NAT Routers must:
+\item \textbf{Replace} \underline{(source IP address, port \#)} of every outgoing datagram to \underline{(NAT IP address, new port \#)}, \textbf{Remember} (in NAT translation table) the mapping and \textbf{Replace} destination fields of every incoming datagram with that stored in NAT translation table.
+\item \textbf{Benefits}: Single public IP for NAT router allows multiple private IP address. Change (private IP) addr of hosts in local network without notifying outside world.
+\item ISP change w/o changing local host addresses in local network.
+\item Hosts inside local network not explicitly addressable or visible by outside world (security plus).
+\medskip
+\centerline{\includegraphics[width=0.85\linewidth]{nat}}
+\end{itemize}
+
+\subsubsection{Routing Algorithms}
+\begin{itemize}
+\item The Internet as \textbf{“network-of-networks”}, hierarchy of \textbf{Autonomous Systems} (AS), e.g., ISPs, each owns routers and links.
+\item Due to size and decentralized administration of Internet, routing is done hierarchically.
+\item \textbf{Intra-AS routing}: Finds good path btwn two routers within AS. Commonly used protocols: RIP, OSPF
+\item \textbf{Inter-AS routing (not covered)} Handles the interfaces between ASs, standard protocol: BGP.
 \end{itemize}
 
 
+\subsubsection{Intra-AS Routing}
+\begin{itemize}
+\item Abstractly view a network of routers as a graph, vertices are routers, edges are physical links between routers.
+\item Associate cost to each link. (cost = 1, or inversely related to bandwidth, or related to congestion)
+\item \textbf{Routing}: find least cost path btwn two vertices in graph.
+\item \textbf{Link state Algorithmns}: Centralised routing algo, all routers have complete knowledge of network topology and link costs. Routers periodically broadcast link costs to each other.
+\item Use Dijkstra algorithm compute least cost path locally! (using global map).
+\item \textbf{Distance vector Algorithms}: Decentralised routing algo, Routers know physically-connected neighbors and link costs to neighbors.
+\item Routers exchange “local views” with neighbors, update own “local views”. Iterative computation: Swap local view with direct neighbours, Update own view, Repeat till no further change. 
+\end{itemize}
+
+\subsubsection{Distance Vector Algo (Bellman Ford)}
+\begin{itemize}
+\centerline{\includegraphics[width=1\linewidth]{bmf}}
+\bigskip
+\item \textbf{$d_x(y) = min_v \{c(x,v) + d_v(y)\}$}
+\item To find \textbf{least cost path}, x needs to know cost from each of its direct neighbour to y. Each neighbour v sends its distance vector (y, k) to x, telling x that the cost from v to y is k.
+\item Every router, x, y, z, sends its distance vectors to directly connected neighbors. When x finds y is advertising cheaper path to z than known, x update distance vector to z accordingly and note down all packets for z should be sent to y. Info used to create forwarding table of x.
+\item After every router exchanged several rounds of updates with direct neighbors, all routers will know least-cost paths to all other routers.
+\end{itemize}
+
+\subsubsection{RIP (Routing Information Protocol)}
+\begin{itemize}
+\item \textbf{RIP} implements the DV algorithm. Uses hop count as the cost metric (insensitive to network congestion).
+\item Exchange routing table every 30 seconds over UDP port 520.
+\item “Self-repair”: if no update from a neighbour router for 3 minutes, assume neighbour failed.
+\end{itemize}
 
 
+\subsubsection{Internet Protocol (IP): IPv4}
+\begin{itemize}
+\medskip
+\centerline{\includegraphics[width=0.9\linewidth]{ipv4datagram}}
+\item Length: of IP datagram + 20b header. Identifier, flags, fragment offset: support fragmentation \& reassembly
+\item TTL: Prevent infinite circulation. Upper layer protocol: Only used at final dest, determine if UDP/TCP (for Internet). Checksum also uses 1s complement.
+\item \textbf{IPv6}: 40b header with 128b IP addr.
+\end{itemize}
 
+\subsubsection{IP Fragmentation \& Reassembly}
+\begin{itemize}
+\item Different links, different MTU (Max Transfer Unit, max amt of data link-level frame can carry).
+\item “Too large” IP datagrams may be fragmented by routers. \\
+\centerline{\includegraphics[width=0.9\linewidth]{ipfragmentation}}
+\medskip
+\item \textbf{Flag}(frag flag) is set to 1 if next fragment from same segment, 0 if this is the last fragment.
+\item \textbf{Offset} is in expressed in unit of 8-bytes
+\end{itemize}
 
+\subsubsection{Internet Control Message Protocol}
+\begin{itemize}
+\item \textbf{ICMP}: used by hosts \& routers to communicate network-level information.
+\item \textbf{Error reporting}: unreachable host / network / port / protocol.
+\item Echo request/reply (used by ping).
+\item ICMP messages carried in IP datagrams, ICMP header starts after IP header.
+\medskip
+\centerline{\includegraphics[width=0.7\linewidth]{icmp}}
+\end{itemize}
 
+\vfill \null
+\columnbreak
 
-
-
+\section{5. Link}
 
 
 
