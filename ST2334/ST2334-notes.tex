@@ -140,8 +140,6 @@
 \end{center}
 
 AY23/24 Sem 1, github.com/gerteck
-\\
-Coverage: C1 all, C2 all, C3 (Sec1, 2)\\
 
 \section{1. Basic Probability Concepts }
 \begin{itemize}
@@ -317,18 +315,74 @@ Describes distribution of a RV $X$: cumulative distribution function (cdf), appl
 \end{itemize}
     
     
-    
-    
-\section{Next Section}
+\section{3. Joint Distributions}
+\begin{itemize}
+    \item Consider more than 1 RV simultaneously, 
+    \item Given sample space $S$. Let $X$ and $Y$ be functions mapping $s \in S \to \mathbb{R}$: $(X, Y)$ is 2D random vector.
+    \[\text{\textbf{Range spc:}} R_{X, Y} = \{(x,y) | x = X(s), y=Y(s), s \in S\}\]
+    \item \textbf{Discrete 2D RV:} \\
+    {\# of possible values of $(X(s), Y(s))$ finite / countable}
+    \item \textbf{Continuous 2D RV}:  \\
+    	{\# of possible values of $(X(s), Y(s))$ assume any value in some region of the Euclidean space $\mathbb{R}^2$}
+    \item If both $X$ and $Y$ are discrete/continuous, then $(X, Y)$ is discrete/continuous respectively.
+\end{itemize}
 
-
+\subsection{Joint Probability Function}
 
 \begin{itemize}
-\item 
+     \item \textbf{Joint Probability (mass) function, 2D discrete RV}:
+    \[f_{X,Y} (x,y) = P(X = x, Y = y)\]
+    \begin{itemize}
+        \item $f_{X,Y} (x,y) \geq 0$ for any $(x,y) \in R_{X,Y}$
+        \item $f_{X,Y} (x,y) = 0$ for any $(x,y) \notin R_{X,Y}$
+        \item $\sum _{i=1} ^{\infty} \sum _{j=1} ^{\infty} P(X = x_i, Y = y_i) = 1$
+        \item Let $A \subseteq R_{X, Y}$. $P((X,Y) \in A) = \sum \sum _{(x,y) \in A} f_{X, Y}(x,y)$
+    \end{itemize}
+     \item \textbf{Joint Probability (density) function, 2D cont. RV}:
+    \[P(a \leq X \leq b, c \leq Y \leq d) = \int _a ^b \int _c ^d f_{X, Y} (x, y)dydx\]
+    \begin{itemize}
+        \item $f_{X,Y} (x,y) \geq 0$ for any $(x,y) \in R_{X,Y}$
+        \item $f_{X,Y} (x,y) = 0$ for any $(x,y) \notin R_{X,Y}$
+        \item $\int _{-\infty} ^{\infty} \int _{-\infty} ^{\infty} f_{X,Y} (x,y)dxdy = 1$ \\
+        or equivalently:
+        \item $\int _{} ^{} \int _{(x,y) \in R_{X,Y}} ^{} f_{X,Y} (x,y)dxdy = 1$
+    \end{itemize}
+\end{itemize}
 
-\end{itemize}•
+\subsection{Marginal Probability Function}
+Marginal distribution of $X$ is individual distribution of $X$, ignoring the value of $Y$. “Projection” of 2D function
+$f_{X,Y}(x, y)$ to 1D function. \\
+\medskip
+Let $(X,Y)$ be 2D RV with joint probability function $f_{X,Y} (x,y)$:
+\[\text{If $Y$ is \textbf{discrete}, } f_X(x) = \sum _y f_{X,Y} (x,y)\]
+\[\text{If $Y$ is \textbf{continuous}, } f_X(x) = \int _{-\infty} ^\infty f_{X,Y} (x,y)dy\]
 
-  
+\begin{itemize}
+    \item $f_Y (y)$ defined similarly
+    \item $f_X(x)$ is a $p.f.$, satisfies all properties of prob. fn.
+\end{itemize}
+
+\subsection{Conditional Distribution}
+
+Let $(X,Y)$ be 2D RV with joint probability function $f_{X,Y} (x,y)$. 
+Then $\forall x$ s.t. $f_X(x) > 0$: ($X$ marg prob fn.) \\
+\textbf{Conditional probability function of $Y$ given $X$ = $x$:}
+
+\[f_{Y|X} (y|x) = \frac{f_{X,Y}(x,y)}{f_X (x)}\]
+
+\begin{itemize}
+    \item Intuition: Distribution of $Y$ given $X = x$
+    \item Only defined for $x$ s.t. $f_X(x) > 0$
+    \item $f_{Y|X} (y|x)$ is a $p.f.$ if we fix $x$, satisfies prop. of prob.fn.
+    
+    \medskip
+    \item But, $f_{Y|X} (y|x)$ is not a $p.f.$ for $x$: No need for sum / integral over x = 1. Hence, \\
+    	If $f_X (x) > 0$: $f_{X,Y} (x,y) = f_X (x)f_{Y|X} (y|x)$ \\
+    	If $f_Y (y) > 0$: $f_{X,Y} (x,y) = f_Y (y)f_{X|Y} (x|y)$
+    \item \textbf{Probability Y $\leq y$, Average $Y$ given $X = x$}
+    \item $P(Y \leq y | X = x) = \int _{-\infty} ^y f_{Y|X} (y|x)dy$
+    \item $E(Y|X=x) = \int _{-\infty} ^{\infty} y f_{Y|X} (y|x)dy$
+\end{itemize} 
   
   
   
