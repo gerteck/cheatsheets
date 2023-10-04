@@ -30,38 +30,15 @@
 %\usepackage{wrapfig}
 %\usepackage{makecell}
 
-
-% For Code Blocks
-\usepackage{xcolor}
-\usepackage{listings}
-
-\lstdefinestyle{mystyle}{
-	backgroundcolor=\color{gray!25!white},
-	basicstyle=\scriptsize,
-	numbers=none,    %or = none or left
-	showstringspaces=false,
-	breaklines=true,
-	breakatwhitespace=false,                  
-	captionpos=b,                    
-	keepspaces=true,                                 
-	numbersep=5pt,                  
-	showspaces=false,                
-	showtabs=false,                  
-	tabsize=2,
- }
-%Helpful:
-%[linewidth = 1.0 \linewidth]
-%\lstinline{}
-% use \code{} for \lstinline with colorbox.
-\newcommand{\code}[1]{\colorbox{gray!25!}{\lstinline|#1|}}
-\lstset{style=mystyle}
+% Create cases
+\usepackage{mathtools}
 
 % Template: Cheatsheet with code enabled
 
 %--------------------------- PACKAGES ABOVE --------------------------------------------------------------
 
 \pdfinfo{
-  /Title (Documentname.pdf)
+  /Title (ST2334.pdf)
   /Creator (Ger Teck)
   /Author (Ger Teck)
   /Subject ()
@@ -127,8 +104,8 @@
 \setlength{\leftmarginii}{0.5cm}
 \setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm}
 \setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm}
-%itemsep = 0mm
-%\setlist{nosep}
+\itemsep = 0mm
+\setlist{nosep}
 
 % Need Logo Picture
 %Watermark Top Right
@@ -159,18 +136,198 @@
 
 %% DOCUMENT NAME HERE
 \begin{center}
-     \Large{\textbf{CSModule Summary and Notes}} \\
+     \Large{\textbf{ST2334 Summary Notes}} \\
 \end{center}
 
-% TABLE PACKAGE 
- \begin{center}
-    \fbox{%
-        \parbox{0.8\linewidth}{\centering \textcolor{black}{
-            \\ \normalsize{AYXX/XX Sem X}}
-            \\ {\footnotesize github.com/gerteck}
-        }%
-    }
-  \end{center}
+AY23/24 Sem 1, github.com/gerteck
+\\
+Coverage: C1 all, C2 all, C3 (Sec1, 2)\\
+
+\section{1. Basic Probability Concepts }
+\begin{itemize}
+\item \textbf{Sample Space: $S$} All possible outcomes of stat. expt.
+\item \textbf{Null Event}: Event that contains no element, empty set, $\varnothing$
+\item \textbf{Axioms of Probability}:  \\ 
+For any event X, $0 \leq P(X) \leq 1$.  $P(S) = 1$. \\
+If $A \cap B = \emptyset$ (Mut Excl), $P(A \cup B) = P(A) + P(B)$. 
+\item Finite sample space with equally likely outcomes: $P(A)$ = ($\frac{\# sample points A}{\#total sample points S}$). (e.g. birthday problem)
+\end{itemize}
+
+\subsubsection{Event Operation \& Relationships}
+\begin{itemize}
+\item \textbf{Event Operations:} Union, Intersection, Complement.
+\item \textbf{Event Relationships:} Contained: {$A \subset B$} \\
+Equivalence: {$A \subset B$ with $A \supset B \rightarrow A = B$} \\
+Mutually Exclusive: {$A \cap B = \emptyset$}.
+\item \textbf{De Morgan's Law:} {$(A \cup B)' = A' \cap B'$} and  {$(A \cap B)' = A' \cup B'$}
+\end{itemize}
+
+\subsubsection{Counting Methods}
+\begin{itemize}
+\item Multiplication Principle: (Sequential Events)
+\item Addition Principle: (Pairwise Disjoin sets)
+\item \textbf{Permutation}: {$_{n}P_{r} = \frac{n!}{(n-r)!}$}
+\item \textbf{Combination}: {$\binom{n}{r} = \frac{n!}{(n-r)!r!}$}
+\end{itemize}
+
+\subsubsection{Conditional Probability}
+• Understand conditional as reduced sample space. \\
+\[P(B|A) = \frac{P(B \cap A)}{P(A)} = \frac{P(A|B)P(B)}{P(A)}\]
+
+\subsubsection{Independence}
+$A \perp B \leftrightarrow P(A \cap B) = P(A)P(B)$ \\
+$A \perp B \leftrightarrow P(A|B) = P(A)$
+
+% \vfill \null
+\columnbreak
+
+
+\subsubsection{Law of Total Probability}
+\begin{itemize}
+\item \textbf{Partition: }{If $A_1, \cdots, A_n$ mutually exclusive, $\bigcup _{i=1} ^{n} A_i = S$, then $A_1, \cdots, A_n$ are partitions.}
+ \item If $A_1, \cdots, A_n$ are partitions of S, then for any event B:
+    \[P(B) = \sum _{i=1} ^{n} P(B \cap A_i) = \sum _{i=1} ^{n} P(B|A_i)P(A_i)\]
+\end{itemize}
+
+\subsubsection{Bayes' Theorem}
+Let $A_1, \cdots, A_n$ be partitions of S. For any event B:
+\[P(A_k|B) = \frac{P(B|A_k)P(A_k)}{\sum _{i=1} ^{n} P(B|A_k)P(A_i)}\] 
+For when $n = 2$, $\{A, A' \}$ becomes a partition of $S$.
+\[P(A|B) = \frac{P(A)P(B|A))}{P(A)P(B|A) + P(A')P(B|A')}\] 
+
+\section{2. Random Variables}
+A function X, which assigns a real number to every s $\in$ S is
+called a random variable. \\
+• \textbf{Range space}: $Rx = \{x|x = X(s), s \in S\}$ \\
+• Likewise, the set X $\in$ A, for A being a subset of R, is also a subset of $S: {s \in S : X(s) \in A}$.
+
+
+\subsubsection{Probability Distribution}
+Two main types of RV used in practice: discrete and continuous.
+\begin{itemize}
+    \item Probability assigned to each possible $X$
+    \item Given RV $X$ with range of $R_x$:
+        \subitem \textbf{Discrete: }{Numbers in $R_x$ are finite or countable}
+        \subitem \textbf{Continuous: }{$R_x$ is interval}
+\end{itemize}
+
+\subsubsection{(Discrete) Probability Mass Function $f(x)$:}
+\[
+f(x)
+    \begin{cases*}
+        P(X=x), & for $x\in R_X$ \\
+        0, & for $x\notin R_X$\\
+    \end{cases*}
+\]
+\begin{enumerate}
+	\item $f(x_i) = P(X = x_i) \geq 0$ for $x_i \in R_x$
+      \item $f(x_i) = 0$ for $x_i \notin R_x$
+      \item $\sum _{i=1} ^{\infty} f(x_i) = 1$ (PSum = 1)
+      \item $\forall B \subseteq \mathbb{R}, P(X \in B) = \sum _{x_i \in B \cap R_x} f(x_i)$
+\end{enumerate}
+
+\subsubsection{(Continuous) Probability Density Function $f(x)$:}
+\begin{itemize}
+    \item {Given $R_x$ is interval. Quantifies probability that $X$ is in some range.}
+    \item $p.f.$ must satisfy:
+        \begin{enumerate}
+            \item $f(x) \geq 0$, $f(x) = 0$ for $x \notin R_x$
+            \item No need $f(x) \leq 1$ (Concerned with area)
+            \item $\int _{R_x} f(x) dx = 1$ (Integration over $R_X$ = 1)
+            \item $\forall a,b \text{ s.t. } a \leq b, P(a \leq X \leq b) = \int _{a} ^{b} f(x) dx$
+        \end{enumerate}
+    \item \textbf{Note:} $P(X = x_0) = \int _{x_0} ^{x_0} f(x) dx = 0$
+    \item Hence, to check if a function is a pdf, \\
+    	 1. $f(x) \geq 0$  for $x \in R_x$,  $f(x) = 0$ for $x \notin R_x$ \\
+    	 2. $\int _{R_x} f(x) dx = 1$.
+\end{itemize}
+
+\subsection{Cumulative Distribution Function}
+Describes distribution of a RV $X$: cumulative distribution function (cdf), applicable for discrete or continuous RV.
+\[F(x) = P(X \leq x)\]
+ $F(x)$ is non-decreasing and $0 \leq F(x) \leq 1$ \\
+• Probability fn \& cumulative distribution fn have one-to-one correspondence. For any probability fn given, the cdf is uniquely determined, vice versa.
+
+\subsubsection{CDF Discrete RV: Step Function $F(x)$}
+
+    \[F(x) = \sum _{t \in R_x; t \leq x} f(t)\]
+	\centerline{\includegraphics[width=0.5\linewidth]{cdfstep}}
+    \begin{itemize}
+       \item $P(a \leq X \leq b)=P(X \leq b)-P(X < a)$
+       \item $P(a \leq X \leq b)=F(b)-F(a-)$
+	\item $P(a \leq X \leq b) =  F(b) - \lim _{x \to a^-} F(x)$
+       \item $0 \leq f(x) \leq 1$
+       \item  c.d.f has to be \textbf{right continuous} (• ---)
+    \end{itemize}
+
+%\vfill \null
+\columnbreak
+
+\subsubsection{CDF Continuous RV: $F(x)$}
+    \[F(x) = \int _{-\infty} ^{x} f(t) dt\]
+    \[impt: f(x) = \frac{d(F(x))}{dx}\]
+    \centerline{\includegraphics[width=0.5\linewidth]{cdfcontinuous}}
+    \begin{itemize}
+        \item $P(a \leq X \leq b) = P(a < X < b) = F(b) - F(a)$
+        \item $0 \leq f(x)$. \\
+         e.g. $f(x) = 3x^2$ is a valid $p.f.$ since $\int _{R_x} f(x) dx = 1$
+    \end{itemize}
+    
+   
+\subsection{Expectation $\mu$ \& Variance $\sigma$}
+\subsubsection{Expectation of Random Variable: $\mu$ }
+\begin{itemize}
+    \item \textbf{Mean of discrete RV}: 
+    \[\mu = E(X) = \sum _{x \in R_x} x_i f(x_i) = \sum _{i=1} ^{\infty} P(X \geq i)\]
+    \item \textbf{E.g.}: X discrete RV with p.m.f. $f(x)$ and range $R_X$ \\ 
+     $\mu =$ $E(g(x)) = \sum _{x \in R_x} g(x)f(x)$
+    
+    \medskip
+    \item \textbf{Mean of continuous RV}: 
+    \[\mu = E(X) = \int _{x \in R_x} x f(x) dx\]
+    \item \textbf{E.g.}: X continuous RV with p.d.f. $f(x)$ and range $R_X$ \\
+    $\mu =$ $E(g(x)) = \int _{x \in R_x} g(x)f(x)dx$
+    
+    \smallskip
+    \item \textbf{Properties of Expectation:}
+    \item $E(aX + b) = aE(X) + b$
+    \item Linearity of expectation: $E(X + Y) = E(X) + E(Y)$
+\end{itemize}
+
+\columnbreak
+
+\subsubsection{Variance of Random Variable: $\sigma$}
+
+\[\sigma_X^2 = V(X) = E[(X - \mu_X)^2]\]
+
+\begin{itemize}
+    \smallskip
+    \item \textbf{Variance of discrete RV}: 
+    \[V(X) = \sum _{x \in R_x} (x - \mu_X)^2 f(x)\]
+    
+    \medskip
+    \item \textbf{Variance of continuous RV}: 
+    \[V(X) = \int _{x \in R_x} (x - \mu_X)^2 f(x) dx\]
+    
+    \medskip
+    \item $V(X) \geq 0$ and $V(X) = 0$ when $X$ is a constant
+    \item $V(aX+b) = a^2V(X)$
+    \item \textbf{alt. form:} $V(X) = E(X^2) - (E(X))^2$
+    \item \textbf{Standard Deviation: }{$\sigma_X = \sqrt{V(X)}$}
+\end{itemize}
+    
+    
+    
+    
+\section{Next Section}
+
+
+
+\begin{itemize}
+\item 
+
+\end{itemize}•
+
   
   
   
