@@ -1093,6 +1093,25 @@ instruction.
 ◦ may not necessarily be faster - depends on mix of instructions
 \end{itemize}
 
+\subsubsection{Critical Path}
+\begin{itemize}
+\item \textbf{Critical Path}: The Critical Path is longest path from start to finish, indicating minimum time necessary to complete the entire operation.
+\item Path critical as any delay along path delays completion of operation. Critical path is bottleneck route.
+\item Applications in project management, resource allocation, scheduling, etc.
+\end{itemize}
+
+
+\subsubsection{Cycle Time (Propagation Delay)}
+\begin{itemize}
+\item For a \textbf{single cycle implementation}, (given component resource latencies), consider propagation delay of  instruction processing as critical (longest) path. 
+\item Sum up latencies of critical path and disregard faster parallel paths.
+\item \textbf{SUB (R-type) Critical path}: I-Mem $>$ Reg.File $>$ MUX(ALUSrc)  $>$ ALU  $>$ MUX(MemToReg)  $>$ Reg.File
+\item \textbf{LW Critical Path}: I-Mem  $>$ Reg.File  $>$ ALU  $>$ DataMem  $>$ MUX(MemToReg)  $>$ Reg.File
+\end{itemize}
+\subsubsection{E.g. Critical Path for LW load word Instruction}
+\centerline{\includegraphics[width=1\linewidth]{LWcriticalpath}}
+
+
 \subsubsection{Pipelining}
 \begin{itemize}
 \item Break up the instructions into execution steps 
