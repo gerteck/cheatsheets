@@ -408,6 +408,51 @@ simpler product term.
 
 
 
+\section{14. Combinational Circuits, MSI Components}
+\subsubsection{Combinational Circuits}
+\begin{itemize}
+\item Two classes of logic circuits, combinational and sequential.
+\centerline{\includegraphics[width=0.8\linewidth]{logiccircuits}}
+\item \textbf{Function analysis of combinational circuit (CC)}: Label inputs and outputs, obtain functions of intermediate points and draw the truth table. Deduce functionality.
+\item \textbf{CC design methods}: gate-level (with logic gates) and block-level (with functional blocks, e.g. IC chip).
+\item Goals: reduce cost, increase speed, design simplicity.
+\end{itemize}
+
+\subsubsection{Gate-Level (SSI) Design}
+\begin{itemize}
+\item Design procedure: \\
+1. State problem, label input output of circuit.\\
+2. Draw truth table, obtain simplified boolean function. \\
+3. Draw logic diagram.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{buildha}}
+\bigskip
+\centerline{\includegraphics[width=1\linewidth]{buildfa}}
+
+\subsubsection{Circuit Delays}
+\begin{itemize}
+\item Given a \textbf{logic gate} with delay $t$. If inputs stable at times $t1, t2, …, tn,$ then earliest time in which 
+output will be stable is: $max( t1, t2, …, tn ) + t$ 
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{circuitdelay}}
+
+\begin{itemize}
+\item delay of a combinational circuit: repeat for all gates
+\item E.g. n-bit parallel adder will have delay of:
+	\begin{itemize}
+	\item $S_n = ( (n – 1) * 2 + 2 ) t $
+	\item $C_{n+1} = ( (n – 1) * 2 + 3 ) t $
+	\item max delay = $( (n – 1)* 2 + 3 ) t$
+	\end{itemize}
+\end{itemize}
+
+
+
+\vfill \null
+\columnbreak
+
+\section{15. MSI Components}
+
 
 
 
