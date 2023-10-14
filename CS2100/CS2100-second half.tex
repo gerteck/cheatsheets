@@ -418,7 +418,7 @@ simpler product term.
 \item Goals: reduce cost, increase speed, design simplicity.
 \end{itemize}
 
-\subsubsection{Gate-Level (SSI) Design}
+\subsubsection{Gate-Level (SSI: Small Scale Integration) Design}
 \begin{itemize}
 \item Design procedure: \\
 1. State problem, label input output of circuit.\\
@@ -429,31 +429,132 @@ simpler product term.
 \bigskip
 \centerline{\includegraphics[width=1\linewidth]{buildfa}}
 
+\subsubsection{Arithmetic Circuits Summary}
+\begin{itemize}
+\item \textbf{Block-Level Design} More complex circuits built using block-level method, rely on algorithm or formulae of circuit, 
+decompose problem into solvable subproblems.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{ha}}
+\bigskip
+\centerline{\includegraphics[width=1\linewidth]{fa}}
+\bigskip
+\centerline{\includegraphics[width=1\linewidth]{4badder}}
+
 \subsubsection{Circuit Delays}
 \begin{itemize}
 \item Given a \textbf{logic gate} with delay $t$. If inputs stable at times $t1, t2, …, tn,$ then earliest time in which 
-output will be stable is: $max( t1, t2, …, tn ) + t$ 
-\end{itemize}
+output will be stable is: $max( t1, t2, …, tn ) + t$  \\ \medskip
 \centerline{\includegraphics[width=0.8\linewidth]{circuitdelay}}
-
-\begin{itemize}
 \item delay of a combinational circuit: repeat for all gates
-\item E.g. n-bit parallel adder will have delay of:
-	\begin{itemize}
-	\item $S_n = ( (n – 1) * 2 + 2 ) t $
-	\item $C_{n+1} = ( (n – 1) * 2 + 3 ) t $
-	\item max delay = $( (n – 1)* 2 + 3 ) t$
-	\end{itemize}
+\item E.g. n-bit parallel adder will have delay of: \\
+$S_n = ( (n – 1) * 2 + 2 ) t $ \\
+$C_{n+1} = ( (n – 1) * 2 + 3 ) t $ \\
+\textbf{max delay} = $( (n – 1)* 2 + 3 ) t$
 \end{itemize}
 
 
+\columnbreak
 
-\vfill \null
+\subsubsection{Block Diagrams}
+\centerline{\includegraphics[width=0.8\linewidth]{block1}}
+
+\subsubsection{MSI circuits Block Diagrams}
+\centerline{\includegraphics[width=0.8\linewidth]{msiblock}}
+
+
 \columnbreak
 
 \section{15. MSI Components}
+\subsubsection{Integrated Circuit}
+\begin{itemize}
+\item \textbf{IC} aka chip or microchip is a set of electronic circuits on small flat piece of semiconductor.
+\item \textbf{Scale of Integration}: No. of components on standard size IC. (SSI: Small-scale Integration, MSI: Medium, LSI: Large, VLSI: Very large, ULSI: Ultra-large).
+\end{itemize}
 
+\subsubsection{Decoders}
+\begin{itemize}
+\item convert binary information from $n$ input lines, to up to $2^n$ output lines
+\item selects only one output line, aka $n$-to-$m$-line decoder, $n:m$ or $n x m$ decoder where $m \leq 2^n$.
+\centerline{\includegraphics[width=1\linewidth]{decoder}}
+\end{itemize}
 
+\subsubsection{Encoders}
+\begin{itemize}
+\item given a set of input lines, of which exactly one is high and the rest are low, provide code that corresponds to the high input line.
+\item opposite of decoder. $\leq 2^n$ input lines and n output lines
+\item implemented with OR gates
+\centerline{\includegraphics[width=0.8\linewidth]{encoder}}
+\end{itemize}
+
+\subsubsection{Priority Encoders}
+\begin{itemize}
+\item If multiple inputs are equal to 1, the highest \textbf{priority} takes precedence
+\item all inputs 0: invalid input
+\centerline{\includegraphics[width=0.7\linewidth]{pencoder}}
+\end{itemize}
+
+\subsubsection{Enable}
+\begin{itemize}
+\item \textbf{one-enable}: device is only activated when $E = 1$
+\item \textbf{zero-enable:} device is only activated when $E = 0$, denoted or $E'$ or $\bar{E}$
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{enable}}
+
+\subsubsection{Zero-Enable/Negated Outputs}
+\begin{itemize}
+\item \textbf{active-high outputs}: normal outputs (selected line is 1)
+\item \textbf{active-low outputs}: negated outputs (selected line is 0)
+\end{itemize}
+
+\subsubsection{Implementing Functions with Decoders}
+\begin{itemize}
+\item any combinational circuit with inputs and outputs can be implemented with an $n:2^n$ decoder with $m$ OR gates.
+\item \textbf{input}: bool function, in sum-of-minterms form
+\item \textbf{output}: decoder for minterms, OR gate to form sum.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{decoderfunction}}
+
+\subsubsection{Multiplexers \& Demultiplexers}
+\centerline{\includegraphics[width=0.5\linewidth]{mudemu}}
+\begin{itemize}
+\item Helps share \textbf{single comm line} among devices.
+\item One source, one dest at a time. (Circuit switching)
+\end{itemize}
+
+\subsubsection{Demultiplexer}
+\begin{itemize}
+\item directs data from the input line to \textbf{one} selected output line
+\item input: an input line and set of selection lines
+\item "output": directs data to one selected line
+\item \textbf{Identical} to a \textbf{decoder with enable}
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{demux}}
+
+\subsubsection{Multiplexer}
+\begin{itemize}
+\item steers one of $2^n$ input lines to single output line, using selection lines.
+\item \textbf{input}: multiple input lines, multiple selection lines
+\item \textbf{output}: one output line $=$ sum of the (product of \underline{data lines} and \underline{selection lines})
+\item  Larger multiplexers can be constructed from smaller ones.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{mux}}
+
+\subsubsection{Implementing Functions with Multiplexers}
+\begin{itemize}
+\item A $2^n$-to-$1$ multiplexer can implement bool function of $n$ input variables:
+\item Express in sum-of-minterms form.
+\item Connect $n$ variables to $n$ selection lines, put ‘1’ on data line if minterm of function, ‘0’ otherwise
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{muxfun}}
+
+\subsubsection{Using smaller multiplexers for Functions}
+\begin{itemize}
+\item We can use single smaller $2^{(n-1)}-to-1$ multiplexer to implement bool function of $n$ (input) variables.
+\item \textbf{Procedure:} Express function in sum-of-minterms form, reserve one variable (here take least significant one) for input lines of multiplexer, and 
+use rest for selection lines. (C for input, A \& B for selection)
+\item Draw truth table for function, group inputs by selection line values, determine multiplexer inputs by comparing input line (C) and function (F).
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{smallermux}}
 
 
 
