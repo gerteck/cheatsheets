@@ -791,11 +791,16 @@ to (n+1) relations. Design highly subjective, try to maintain appropriate attrib
 \vfill\null
 \columnbreak
 
+\vfill\null
+\columnbreak
+
 \section{9. Relational Calculus \& Algebra}
 \begin{itemize}
 \item Both are formal query languages. A query is composed of a collection of operators called relational operators.
 \item \textbf{Relational Calculus} (declarative language: what is to be done rather than how to do it). Order not specified, concerned with result we have to obtain. 
 \item \textbf{Relational Algebra}: (procedural language) Order specified in which operations have to be performed.
+\item Relational algebra basis of implementation of relational DBMS.
+\item SQL queries translated into execution plans, orchestrate physical implementation of relational algebra operators.
 \end{itemize}
 
 \subsubsection{Predicate Logic}
@@ -831,7 +836,7 @@ T1.department)$\}$
 
 \section{Relational Algebra}
 \begin{itemize}
-\item Relations are sets of tuples. Order is specified in which operations have to be performed.
+\item Order is specified in which operations have to be performed.
 \end{itemize}
 
 \subsubsection{Unary Operators}
@@ -950,13 +955,17 @@ criteria (i.e. selection)
 \centerline{$ \rho(customers, c) \Join_{d.id = c.id} \rho(downloads, d) $}
 \end{itemize}
 
-\subsubsection{Relational Algebra}
+\subsubsection{Relational Calculus \& Algebra}
 \begin{itemize}
-\item Relational algebra is the basis of the implementation of relational DBMS.
-\item SQL queries translated into execution plans that orchestrate physical implementations of 
- relational algebra operators.
+\item \textbf{4 Steps to construct calculus and algebra queries:} \\
+1) Construct SQL query you are familiar with (difficult) \\
+2) From query, map the tables that you need (yellow) \\
+3) From query, map the conditional statements (blue) \\ 
+4) From query, map the columns you need to print (green) \\
+\centerline{\includegraphics[width=1 \linewidth]{RAexample}}
 \end{itemize}
 
+\section{10. Programming with SQL}
 
 
 
