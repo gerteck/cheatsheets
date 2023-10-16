@@ -143,7 +143,7 @@
 \setlength{\leftmarginii}{0.5cm}
 \setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm}
 \setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm}
-%itemsep = 0mm
+\itemsep = 0mm
 \setlist{nosep}
 
 % Need Logo Picture
@@ -792,27 +792,175 @@ to (n+1) relations. Design highly subjective, try to maintain appropriate attrib
 \columnbreak
 
 \section{9. Relational Calculus \& Algebra}
-• A formal language for asking queries on relations. \\
-• A query is composed of a collection of operators called relational operators. 
+\begin{itemize}
+\item Both are formal query languages. A query is composed of a collection of operators called relational operators.
+\item \textbf{Relational Calculus} (declarative language: what is to be done rather than how to do it). Order not specified, concerned with result we have to obtain. 
+\item \textbf{Relational Algebra}: (procedural language) Order specified in which operations have to be performed.
+\end{itemize}
 
 \subsubsection{Predicate Logic}
-• \textbf{Predicate or first order logic}, consists of formulae built from predicates (lowercase) , operators ($=$, etc.) constants (lower case), variables (upper case, quantifiedor free), connectives ($\rightarrow $), and quantifiers ($\forall$ and $\exists$).
-• Existential quantifier, $\exists$, is a generalisation of disjunction. \\
-• The universal quantifier, $forall$, is a generalisation of conjunction. \\
-•  De Morgan laws can be generalised to quantifiers. 
-\centerline{\includegraphics[width=0.5 \linewidth]{predicatelogic}}
+\begin{itemize}
+\item \textbf{Predicate / first order logic}: formulae built from:
+\item \textbf{predicates} (lowercase) , \textbf{operators} ($=$, etc.) \textbf{constants} (lower case), \textbf{variables} (upper case, quantified or free), \textbf{connectives} ($\rightarrow $), and \textbf{quantifiers} ($\forall$ and $\exists$).
+\item \textbf{Existential quantifier}, $\exists$: disjunction: \smallskip \\
+\centerline{ $ \exists X, F[X] \equiv F[a] \vee F[b] \vee ... $  }
+\item \textbf{The universal quantifier}, $forall$: conjunction. \smallskip \\ 
+\centerline{ $ \forall X, F[X] \equiv F[a] \wedge F[b] \wedge ... $  }
+\item \textbf{De Morgan laws} applies to quantifiers. \medskip \\ 
+\centerline{ $ \neg(\exists X, F[X]) \equiv \forall X, \neg F[X]  $  } \\
+\centerline{ $ \neg(\forall X, F[X]) \equiv \exists X, \neg F[X]  $  }
+\end{itemize}
 
-\subsubsection{Tuple Relational Calculus}
-• In \textbf{Tuple Relation Calculus (TRC)} variables values of rows of tables (t-uples.), is the theoretical basis of SQL. \\
-• \textbf{Material Implication:} $P \rightarrow Q \equiv \neg P \vee Q$
+
+\section{Relational Calculus (Tuple)}
+\begin{itemize}
+\item Concerned with \textbf{result we have to obtain}.
+\item In \textbf{Tuple Relation Calculus (TRC)} variables values of rows of tables (t-uples.), is the theoretical basis of SQL. 
+\item \textbf{Material Implication:} $P \rightarrow Q \equiv \neg P \vee Q$
+\item \textbf{Relational Calculus denoted as:} \medskip \\
+\centerline{$\{ t  |  P(t)  \}$}
+\item \textbf{t}: set of tuples, \textbf{P}: condition which is true for the given set of tuples. 
+\item E.g. $\{T | \exists T1 (T1 \in$ department $\wedge$ T1.faculty $=$ 'School of Computing' $\wedge T$.department =
+T1.department)$\}$
+\end{itemize}
+
+% \vfill \null
+\columnbreak
+
+
+
+\section{Relational Algebra}
+\begin{itemize}
+\item Relations are sets of tuples. Order is specified in which operations have to be performed.
+\end{itemize}
+
+\subsubsection{Unary Operators}
+
+\subsubsection{\underline{Selection}, $\sigma _c$}
+\begin{itemize}
+\item For each tuple $T \in R, T \in \sigma_c(R)$, means selection condition \textbf{c} evaluates to true for tuple t.
+\item E.g. Find the customers from Singapore. \smallskip \\
+\centerline{$ \sigma_{c.country = `Singapore'}(\rho(customers, c)) $}
+\item Equivalent to:
+\begin{lstlisting}
+SELECT * FROM customers c
+WHERE c.country = `Singapore'
+\end{lstlisting}
+
+\item \textbf{Condition} is boolean expression of form:
+
+        \vspace{-0.5cm}
+        \begin{center}
+          \resizebox{\hsize}{!}{%
+            \begin{tabular}{ |c|c| }
+              \hline
+              expression & example \\ \hline
+              attribute \textbf{op} constant & $\sigma_{\text{start}=2020}(\text{Projects})$ \\ \hline
+              $attr_1$ \textbf{op} $attr_2$ & $\sigma_{\text{start}=\text{end}}(\text{Projects})$ \\ \hline
+              $expr_1 \land expr_2$ & $\sigma_{\text{start}=2020 \,\land\, \text{end}=2021}(\text{Projects})$ \\ \hline
+              $expr_1 \lor expr_2$ & $\sigma_{\text{start}=2020 \,\lor\, \text{end}=2021}(\text{Projects})$ \\ \hline
+              $\neg \, expr$ & $\sigma_{\neg(\text{start}=2020)}(\text{Projects})$ \\ \hline
+              $(expr)$ & - \\ \hline
+            \end{tabular}
+          }
+        \end{center}
+        \vspace{-0.4cm}
+
+\bigskip
+
+\item \textbf{op} $\in \{ =, <>, <, \leq, \geq, > \}$
+\item Precedence: $(), \textbf{op}, \neg, \land, \lor$
+\item \textbf{null} comparison is \textbf{unknown}, arithmetic with \textbf{null} is \textbf{null}
+
+\end{itemize}
+
+
+\subsubsection{\underline{Projection} $\pi_l$}
+\begin{itemize}
+\item Projects columns of a table specified in \textbf{list $l$}. 
+\item \code{(SELECT xx, yy FROM games)} 
+\item \textbf{Order of attribute in $l$} matters.
+\item Duplicates removed. 
+\item \textbf{Examples:}  \smallskip \\
+\centerline{$ \pi_{g.name, g.version, g.price}(\rho(games, g)) $}
+
+ \mbox{} \\
+        \begin{minipage}{0.575 \columnwidth}
+          \begin{center}
+            Teams \\
+            \begin{tabular}{ |c|c|c| }
+              \hline
+              \textbf{en} & \textbf{pn} & \textbf{hours} \\ \hline
+              Sarah & BigAI & 10 \\ \hline
+              Sam & BigAI & 5 \\ \hline
+              Sam & BigAI & 3 \\ \hline
+            \end{tabular}
+          \end{center}
+        \end{minipage}
+        \hfill
+        \begin{minipage}{0.4 \columnwidth}
+          \begin{center}
+            $\pi_{\text{pn}, \text{en}}(\text{Teams})$ \\
+            \begin{tabular}{ |c|c|c| }
+              \hline
+              \textbf{pn} & \textbf{en} \\ \hline
+              BigAI & Sarah \\ \hline
+              BigAI & Sam \\ \hline
+            \end{tabular}
+          \end{center}
+        \end{minipage}
+
+\end{itemize}
+
+
+\subsubsection{\underline{Renaming}, $\rho_l$}
+\begin{itemize}
+\item Can change name of relation, of attributes, or both.
+\item {Change name of relation: $ \rho(R_1, R_2) $}  
+\item {Change attribute names:  {$ \rho(R_1, R_1(a_1 \rightarrow b_1, a_2 \rightarrow b_2)) $}}
+\end{itemize}
+
+\subsubsection{Set Operations}
+\begin{itemize}
+\item Set operations include $\cup, \cap, \times $, set difference ($\setminus$)
+\item Intersection able to express with union and set difference:  \\
+\centerline{$  R \cap S = (R \cup S) - ((R-S) \cup (S-R)) $}
+\item \textbf{Union Compatability}: two relations must be union compatible. Have same number of attributes, 
+corresponding attributes have same or compatible domains. 
+\item (i.e. relations must have same columns).
+
+\item \textbf{Cross Product}: (Cartesian Product) Forms all possible pairs of tuples from two relations. \\
+\centerline{ $  R_1 \times R_2  $}
+
+\end{itemize}
+
+\subsubsection{Join Operations}
+\begin{itemize}
+\item  Combines $ \times, \sigma_c, \pi_l$ into a single op.
+\item Simple relational algebra expressions
+\end{itemize}
+
+\subsubsection{\underline{Inner Joins}}
+\begin{itemize}
+\item  Eliminates tuples that do not satisfy matching
+criteria (i.e. selection)
+\item Is a selection from cross product \\
+\centerline{  R $\Join_C$ S = $\sigma_C$ (R $\times$ S) }
+\item Example: \\
+\centerline{$ \rho(customers, c) \Join_{d.id = c.id} \rho(downloads, d) $}
+\end{itemize}
 
 \subsubsection{Relational Algebra}
-• Relations are sets of tuples, main algebraic operators are union, intersect, non-symmetric difference, renaming, selection, projection, cross, and, join etc. \\
-• \textbf{Renaming $\rho$} can change name of relation, of attributes or both. \code{xx AS yy} \\
-• \textbf{Projection $\pi$} projects attributes given by a list of attributes from relation. \code{(SELECT xx, yy FROM games)} \\
-• \textbf{Cross Product $\times$} combines rows and keeps columns. \code{(SELECT* FROM R1, R2;)} \\
-• \textbf{Join $\Join$}: R1 $\Join$ R2 = $\sigma$ (R1 $\times$ R2) \\
-• Relational algebra is the basis of the implementation of relational DBMS: SQL queries translated into execution plans that orchestrate physical implementations of relational algebra operators.
+\begin{itemize}
+\item Relational algebra is the basis of the implementation of relational DBMS.
+\item SQL queries translated into execution plans that orchestrate physical implementations of 
+ relational algebra operators.
+\end{itemize}
+
+
+
+
+
 
 
 
