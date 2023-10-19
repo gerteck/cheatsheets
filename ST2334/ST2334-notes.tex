@@ -313,8 +313,10 @@ Describes distribution of a RV $X$: cumulative distribution function (cdf), appl
     \item \textbf{alt. form:} $V(X) = E(X^2) - (E(X))^2$
     \item \textbf{Standard Deviation: }{$\sigma_X = \sqrt{V(X)}$}
 \end{itemize}
-    
-    
+
+% 3. JOINT DISTRIBUTIONS =================== 
+
+
 \section{3. Joint Distributions}
 \begin{itemize}
     \item Consider more than 1 RV simultaneously, 
@@ -384,7 +386,295 @@ Then $\forall x$ s.t. $f_X(x) > 0$: ($X$ marg prob fn.) \\
     \item $E(Y|X=x) = \int _{-\infty} ^{\infty} y f_{Y|X} (y|x)dy$
 \end{itemize} 
   
-  
+\columnbreak
+
+% INDEPENDENT RANDOM VARIABLES ===========================
+\subsection{Independent Random Variables}
+
+\[X \perp Y: \forall x,y, f_{X,Y} (x,y) = f_X (x) f_Y (y)\]
+
+\begin{itemize}
+    \item Necessary condition: $R_{X,Y}$ must be a product space. \\ 
+    i.e. $R_{X,Y} = \{(x, y)|x \in R_X ; y \in R_y\} = R_X  \times R_Y$ \\
+    Else, dependent.
+\end{itemize}
+
+\subsubsection{Properties of Independent RV}
+\textbf{For $X,Y$ independent RV:}
+\begin{itemize}
+    \item If $A,B \subseteq \mathbb{R}$, then events $X \in A$ and $Y \in B$ are independent:
+    \[P(X \in A; Y \in B) = P(X \in A) P(Y \in B)\]
+    \[P(X \leq x; Y \leq y) = P(X \leq x) P(Y \leq y)\]
+    \item Then, $g_1(X)$ and $g_2(Y)$ are \textbf{independent}, for arbitrary $g$.
+    \item \textbf{Conditional distribution} given Independence:
+    \[f_X(x) > 0 \to f_{Y|X} (y|x) = f_Y(y)\]
+    \[f_Y(y) > 0 \to f_{X|Y} (x|y) = f_X(x)\]
+\end{itemize}
+
+\subsubsection{To check independence}
+\begin{enumerate}
+    \item $R_{X,Y}$ is a product space. i.e. $R_X$ does not depend on $Y$, vice versa. (e.g. $ 0 < y < x $ is NOT a product space) 
+    \item Additionally, \textbf{ $f_{X,Y} (x,y)$ = some $C * g_1(x)g_2(y)$ where $g_1$ depends on $x$ only and $g_2$ depends on $y$ only. }
+\end{enumerate}    
+
+\subsubsection{Marginal Distribution under Independence} 
+\begin{itemize}
+	\item Since, $f_{X,Y} (x,y) = f_X (x) f_Y (y)$ for independent RV, we derive marginal distribution by standardising $g_1(x)$ and $g_2(y)$.
+	\item For discrete: $f_X (x) = \frac{g_1(x)}{\sum _{t \in R_X} g_1 (t)}$
+    	\item For continuous: $f_X (x) = \frac{g_1(x)}{\int _{t \in R_X} g_1 (t)dt}$
+\end{itemize}
+
+\columnbreak
+
+% EXPECTATION & COVARIANCE ==============
+
+\subsection{Expectation of a Random Vector}
+
+Given \textbf{2 variable function $g(x,y)$:}
+\begin{itemize}
+\item If $(X,Y)$ is discrete:
+\[E(g(X,Y)) = \sum _x \sum _y g(x,y) f_{X,Y} (x,y)\]
+\item If $(X,Y)$ is continuous:
+\[ E(g(X,Y)) = \int _{-\infty} ^\infty \int _{-\infty} ^\infty g(x,y) f_{X,Y} (x,y) dydx\]
+\item If $X \perp Y$: 
+\[ E(XY) = E(X)E(Y) \]
+\item (If $X \perp Y$, follows that $cov(X,Y) = 0$). However, converse not always true.
+\end{itemize}
+
+\subsection{Covariance}
+\begin{itemize}
+\item For random variables $X, Y$:
+\[cov(X,Y) = E((X - E(X))(Y - E(Y)))\]
+\item If $(X,Y)$ both \textbf{discrete}:
+\[ cov(X,Y) = \sum _x \sum _y (x - \mu_X)(y - \mu_Y) f_{X,Y} (x,y)\]
+\item If $(X,Y)$ both \textbf{continuous}: 
+\[cov(X,Y) = \int _{-\infty} ^\infty \int _{-\infty} ^\infty (x - \mu_X)(y - \mu_Y) f_{X,Y} (x,y)dxdy\]
+
+    \item \textbf{Alt:} $cov(X,Y) = E(XY) - E(X)E(Y)$
+    \item \textbf{Hence, for}$X \perp Y \to cov(X,Y) = 0$. \\ (However, converse not always true).
+    \item \textbf{Properties of covariance:}
+    \item $cov(aX+b, cY+d) = (ac) cov(X,Y)$
+    \item $V(aX+bY) = a^2V(X) + b^2V(Y) + 2ab*cov(X,Y)$
+    \item $X \perp Y \to V(X \pm Y) = V(X) + V(Y)$ 
+\end{itemize}
+
+\columnbreak
+ \vfill \null
+ \columnbreak
+
+% CHAPTER 4: Probability Distributions ==================================
+% DISCRETE ==============
+\section{4. Special Probability Distributions}
+\begin{itemize}
+\item \textbf{Discrete Distributions}: Study whole classes of discrete RVs that arise frequently in applications.
+\end{itemize}
+
+\subsection{Discrete Uniform Distribution}
+\begin{itemize}
+    \item If $X$ has values $x_1, x_2, \cdots, x_k$ with \textbf{equal probability}
+    
+    \[
+f(x)
+    \begin{cases*}
+        \frac{1}{k}, & for $x = x_1, x_2, ..., x_k$ \\
+        0, & otherwise\\
+    \end{cases*}
+\]
+ 
+    \item \textbf{Expectation}: $\mu_X = E(X) = \sum_{i = 1} ^{k} x_i f_X (x_i) = \frac{1}{k} \sum x_i$
+    \item \textbf{Variance}: $\sigma_X^2 = V(X) = E(X^2) - (E(X))^2 = \frac{1}{k} \sum x_i^2 - \mu_X^2$
+\end{itemize}
+
+\subsection{Bernoulli}
+
+\begin{itemize}
+    \item \textbf{Bernoulli Trial}: Random experiment has 2 possible outcomes (success and failure).
+    \item \textbf{Bernoulli Random Variable}: $X$ represents number of success in a single Bernoulli Trial. X has only two possible values: 1, or 0.
+    \item \textbf{Probability mass function:} Let $0 \leq p \leq 1$ be the probability of success in Bernoulli trial
+    \[ f_X (x) = P(X = x) = 
+    \begin{cases}
+        p & x = 1\\
+        1 - p & x = 0\\
+        0 & otherwise
+    \end{cases}
+    \]
+    \item $f_X (x) = p^x (1-p)^{1-x}$ for $x=0$ or $1$
+    \item Bernoulli distr. is case of binomial distr. where $n = 1$.
+    \item \textbf{Notation:} $X \sim Ber(p)$ and $q = 1 - p$ \\
+    \[ f_x(1) = p, f_x(0) = q \]
+    \item \textbf{Expectation:} $\mu_X = E(X) = p$ 
+    \item \textbf{Variance:} $\sigma_X^2 = V(X) = p(1-p)$
+    
+    \item \textbf{Bernoulli Process}: Sequence of repeatedly performed \underline{independent and identical} Ber. trials.
+    \item Generates sequence of \textbf{independent and identically distributed (i.i.d.)} Ber. RVs: $X_1, X_2, \cdots$
+\end{itemize}
+
+\columnbreak
+
+\subsection{Binomial Distribution}
+\begin{itemize}
+    \item \textbf{Binomial RV:} counts \textbf{number of successes} in $n$ trials in a Ber. process.
+    \item Given n independent trials with each trial having same probability $p$ of success: 
+    \[P(X = x) = \binom{n}{x} p^x (1-p)^{n-x}\]
+    \item \textbf{Notation}: $X \sim B(n, p)$
+    \item $E(X) = np$, $V(X) = np(1-p)$
+\end{itemize}
+\medskip
+\centerline{\includegraphics[width=1\linewidth]{binomial}}
+
+\subsection{Negative Binomial Distribution ($k^{th}$ success)}
+\begin{itemize}
+    \item Let X = no. of independent identical distributed Bernoulli(p) trials until \textbf{$k^{th}$ success} occurs.
+    \item \textbf{Probability mass function of X}:
+    \[P(X = x) = \binom{x-1}{k-1} p^k (1-p)^{x-k}\]
+    \item \textbf{Notation}: $X \sim NB(k, p)$
+    \item $E(X) = \frac{k}{p}$ and $V(X) = \frac{(1-p)k}{p^2}$
+\end{itemize}
+
+\subsection{Geometric Distribution (till $1^{st}$ success)}
+\begin{itemize}
+    \item Let X = no. of i.i.d. Bernoulli(p) trials until 1st success occurs.
+    \[P(X = x) = p (1-p)^{x-1}\]
+    \item \textbf{Notation}: $X \sim G(p)$
+    \item $E(X) = \frac{1}{p}$ and $V(X) = \frac{1-p}{p^2}$
+\end{itemize}
+
+\columnbreak
+
+\subsection{Poisson Distribution}
+\begin{itemize}
+    \item \textbf{Poisson RV}: Denotes number of events occuring in \textbf{fixed period of time or fixed region}, $k$ = no. of occurences.
+    \[P(X = k) = \frac{e^{-\lambda}\lambda^k}{k!}\]
+    \item \textbf{Notation}: $X \sim Poisson(\lambda)$ where $\lambda > 0$ is expected number of occurrences during given period/region
+    \item $E(X) = \lambda$ and $V(X) = \lambda$
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{poisson}}
+\centerline{\includegraphics[width=0.8\linewidth]{poissonex}}
+\subsubsection{Poisson Process}
+\begin{itemize}
+    \item Continuous time process, count number of occurrences within some interval of time. (given \textbf{rate} $\alpha$)
+    \item Properties of \textbf{Poisson process with rate parameter} $\alpha$:
+    \begin{itemize}
+        \item Expected no. of occurrences in interval length $T$: $\alpha T$
+        \item No simultaneous occurrences, and no. of occurrences in disjoint intervals independent.
+    \end{itemize}
+    \item \textbf{Number of occurrences in any interval} $T$ of Poisson process follows $Poisson(\alpha T)$ distribution. \\ (\textbf{Apply $X ~ Poisson(\alpha T)$ directly)}
+\end{itemize}
+
+\subsubsection{Poisson Approximation of Binomial Distribution}
+\begin{itemize}
+\item Let $X \sim B(n, p)$. Suppose $n \to \infty$ and $p \to 0$ s.t. $\lambda = np$ remains constant. \\
+\item Then, approximately, $X \sim Poisson(\lambda)$.
+\[\lim _{p \to 0; n \to \infty} P(X = x) = \frac{e^{-np} (np)^x}{x!}\]
+\item Approximation is good when ($n \geq 20$ and $p \leq 0.05$), or ($n \geq 100$ and $np \leq 10$)
+\end{itemize}
+
+
+
+% CONTINUOUS==============
+\section{Special Probability Distributions}
+\begin{itemize}
+\item \textbf{Continuous Distributions}: Many ``natural'' RVs whose set of possible values \textbf{uncountable}. Model with classes of continuous random variables.
+\end{itemize}
+
+
+\subsection{Continuous Uniform Distribution}
+RV X follows uniform distribution over interval $(a,b)$ if $p.d.f.$ given by:
+\[f_X (x) = 
+\begin{cases}
+    \frac{1}{b-a} & a \leq x \leq b\\
+    0 & otherwise
+\end{cases}
+\]
+\begin{itemize}
+    \item \textbf{Notation}: $X \sim U(a, b)$
+    \item $E(X) = \frac{a+b}{2}$ and $V(X) = \frac{(b-a)^2}{12}$ \\ (derive by integration).
+    \item \textbf{Cumulative distr. func.} $c.d.f.$ is given by:
+    \[F_X (x) = 
+    \begin{cases}
+        0 & x < a\\
+        \frac{x-a}{b-a} & a \leq x \leq b\\
+        1 & x > b
+    \end{cases}
+    \]
+\centerline{\includegraphics[width=1\linewidth]{uniformcd}}
+\end{itemize}
+
+\subsection{Exponential Distribution}
+
+X follows exponential distribution with parameter $\lambda > 0$ if $p.f.$ is given by:
+\[f_x (x) = 
+\begin{cases}
+    \lambda e^{-\lambda x} & x \geq 0\\
+    0 & x < 0
+\end{cases}\]
+
+\begin{itemize}
+    \item Notation: $X \sim Exp(\lambda)$
+    \item $E(X) = \frac{1}{\lambda}$ and $V(X) = \frac{1}{\lambda^2}$
+    \item $c.d.f.$ is given by:
+    \[F_X (x) = 
+    \begin{cases}
+        1 - e^{-\lambda x} & x > 0\\
+        0 & x \leq 0\\
+    \end{cases}
+    \]
+    \item Suppose $X$ has exponential distribution with parameter $\lambda > 0$. Then for any positive numbers $s$ and $t$, we have:
+    \[P(X > s+t | X > s) = P(X > t)\]
+\end{itemize}
+
+\subsection{Normal Distribution}
+
+X follows normal distribution with mean $\mu$ and variance $\sigma^2$ if $p.f.$ is given by:
+\[f_X (x) = \frac{1}{\sqrt{2 \pi} \sigma}e^{-(x-\mu)^2 / (2 \sigma ^2)}\]
+
+\begin{itemize}
+    \item Notation: $X \sim N(\mu, \sigma^2)$
+    \item $E(X) = \mu$ and $V(X) = \sigma^2$
+    \item $p.f.$ is bell-shaped curve and symmetric about $x = \mu$
+    \item Total area under curve is 1
+    \item 2 normal curves are identical in shape if they have same $\sigma ^2$. They differ in location by $\mu_1 - \mu_2$.
+    \item As $\sigma$ increases, curve becomes more spread out
+    \item If $X \sigma N(\mu, \sigma^2)$ and let $Z = \frac{X - \mu}{\sigma}$
+\end{itemize}
+
+\subsubsection{Standardized Normal Distribution}
+If $X \sim N(\mu, \sigma ^2)$ and let 
+\[Z = \frac{X - \mu}{\sigma}\]
+then $Z \sim N(0, 1)$
+
+\begin{itemize}
+    \item $E(Z) = 0$ and $V(Z) = 1$
+    \item $p.f.$ is given by:
+    \[f_Z (z) = \frac{1}{\sqrt{2 \pi}} e^{-z^2 / 2}\]
+    \item Importance of standardizing normal distribution is that it allows us to use tables to find probabilities
+    \item Let $X \sim N(\mu, \sigma^2)$. We can compute $P(x_1 < X < x_2)$ by standardization:
+    \[x_1 < X < x_2 \leftrightarrow \frac{x_1 - \mu}{\sigma} < \frac{X - \mu}{\sigma} < \frac{x_2 - \mu}{\sigma}\]
+    \item $c.d.f.$ is given by:
+    \[\phi(z) = F_Z (z) = \int _{-\infty} ^{z} f_Z (z) = \frac{1}{\sqrt{2 \pi}}\int _{-\infty} ^{z} e^{-t^2 / 2} dt\]
+    \item $P(Z \geq 0) = P(Z \leq 0) = \phi(0) = 0.5$
+    \item For any $z$, $\phi(z) = P(Z \leq z) = P(Z \geq -z) = 1-\phi(-z)$
+    \item $-Z \sim N(0, 1)$
+    \item If $Z \sim N(0, 1)$, then $\sigma Z + \mu \sim N(\mu, \sigma^2)$
+    \item \textbf{Upper Quantile}{Given $\alpha$ is upper-tail percentage. The $\alpha$th upper quantile is $x_\alpha$ that satisfies:}
+    \[P(X \geq x_\alpha) = \alpha\]
+    e.g. The 0.05th (upper) quantile of $Z \sim N(0,1)$ is 1.645, i.e. $z_{0.05} = 1.645$.
+    \item $P(Z \geq z_\alpha) = P(Z \leq -z_\alpha) = \alpha$
+    \item $\text{Upper } z_\alpha = \text{Lower } z_{1-\alpha}$
+\end{itemize}
+
+\subsubsection{Normal Approximation to Binomial Distribution}
+Let $X \sim B(n, p)$, then as $n \to \infty$:
+\[Z = \frac{X - E(X)}{\sqrt{V(X)}} = \frac{X - np}{\sqrt{np(1-p)}} \sim N(0, 1)\]
+
+\begin{itemize}
+    \item Approximation is good when $np > 5$ and $n(1-p) > 5$
+\end{itemize}
+
+
+
+
+
   
   
   
