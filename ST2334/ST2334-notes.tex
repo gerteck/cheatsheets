@@ -464,7 +464,7 @@ Given \textbf{2 variable function $g(x,y)$:}
 
 % CHAPTER 4: Probability Distributions ==================================
 % DISCRETE ==============
-\section{4. Special Probability Distributions}
+\section{4.1 Special Probability Distributions}
 \begin{itemize}
 \item \textbf{Discrete Distributions}: Study whole classes of discrete RVs that arise frequently in applications.
 \end{itemize}
@@ -485,7 +485,7 @@ f(x)
     \item \textbf{Variance}: $\sigma_X^2 = V(X) = E(X^2) - (E(X))^2 = \frac{1}{k} \sum x_i^2 - \mu_X^2$
 \end{itemize}
 
-\subsection{Bernoulli}
+\subsection{Bernoulli, $Ber(p)$}
 
 \begin{itemize}
     \item \textbf{Bernoulli Trial}: Random experiment has 2 possible outcomes (success and failure).
@@ -511,7 +511,7 @@ f(x)
 
 \columnbreak
 
-\subsection{Binomial Distribution}
+\subsection{Binomial Distribution, $B(n, p)$}
 \begin{itemize}
     \item \textbf{Binomial RV:} counts \textbf{number of successes} in $n$ trials in a Ber. process.
     \item Given n independent trials with each trial having same probability $p$ of success: 
@@ -522,7 +522,7 @@ f(x)
 \medskip
 \centerline{\includegraphics[width=1\linewidth]{binomial}}
 
-\subsection{Negative Binomial Distribution ($k^{th}$ success)}
+\subsection{Negative Binomial Distribution, $NB(k, p)$ ($k^{th}$ success)}
 \begin{itemize}
     \item Let X = no. of independent identical distributed Bernoulli(p) trials until \textbf{$k^{th}$ success} occurs.
     \item \textbf{Probability mass function of X}:
@@ -531,7 +531,7 @@ f(x)
     \item $E(X) = \frac{k}{p}$ and $V(X) = \frac{(1-p)k}{p^2}$
 \end{itemize}
 
-\subsection{Geometric Distribution (till $1^{st}$ success)}
+\subsection{Geometric Distribution, $G(p)$ (till $1^{st}$ success)}
 \begin{itemize}
     \item Let X = no. of i.i.d. Bernoulli(p) trials until 1st success occurs.
     \[P(X = x) = p (1-p)^{x-1}\]
@@ -572,13 +572,13 @@ f(x)
 
 
 % CONTINUOUS==============
-\section{Special Probability Distributions}
+\section{4.2 Special Probability Distributions}
 \begin{itemize}
 \item \textbf{Continuous Distributions}: Many ``natural'' RVs whose set of possible values \textbf{uncountable}. Model with classes of continuous random variables.
 \end{itemize}
 
 
-\subsection{Continuous Uniform Distribution}
+\subsection{Continuous Uniform Distribution, $U(a,b)$}
 RV X follows uniform distribution over interval $(a,b)$ if $p.d.f.$ given by:
 \[f_X (x) = 
 \begin{cases}
@@ -600,64 +600,83 @@ RV X follows uniform distribution over interval $(a,b)$ if $p.d.f.$ given by:
 \centerline{\includegraphics[width=1\linewidth]{uniformcd}}
 \end{itemize}
 
-\subsection{Exponential Distribution}
 
-X follows exponential distribution with parameter $\lambda > 0$ if $p.f.$ is given by:
+\subsection{Exponential Distribution, $Exp(\lambda)$}
+\begin{itemize}
+\item Continuous counterpart to \textbf{geometric distribution}. 
+\end{itemize}
+X follows exponential distribution, with parameter $\lambda > 0$ if $p.f.$ is given by:
 \[f_x (x) = 
 \begin{cases}
     \lambda e^{-\lambda x} & x \geq 0\\
     0 & x < 0
 \end{cases}\]
-
 \begin{itemize}
-    \item Notation: $X \sim Exp(\lambda)$
+    \item \textbf{Notation}: $X \sim Exp(\lambda)$
     \item $E(X) = \frac{1}{\lambda}$ and $V(X) = \frac{1}{\lambda^2}$
+\centerline{\includegraphics[width=0.8\linewidth]{exponential}}
+	\item We can \textbf{derive $\lambda$ from mean / expectation of X}, since $E(X) = \frac{1}{\lambda}$.
     \item $c.d.f.$ is given by:
-    \[F_X (x) = 
+    \[F_X (x) = P(X \leq x) = 
     \begin{cases}
         1 - e^{-\lambda x} & x > 0\\
         0 & x \leq 0\\
     \end{cases}
     \]
-    \item Suppose $X$ has exponential distribution with parameter $\lambda > 0$. Then for any positive numbers $s$ and $t$, we have:
+    \item Additionally, $P(X > x) = e^{- \lambda x}$, for $x > 0$.
+    \item \textbf{Exponential distribution ``Memoryless''}: Suppose $X$ has exponential distribution with $\lambda > 0$. Then for any positive numbers $s$ and $t$, we have:
     \[P(X > s+t | X > s) = P(X > t)\]
 \end{itemize}
 
-\subsection{Normal Distribution}
+\subsection{Normal Distribution,  $N(\mu, \sigma^2)$}
 
-X follows normal distribution with mean $\mu$ and variance $\sigma^2$ if $p.f.$ is given by:
+X said to follow normal distribution with mean $\mu$ and variance $\sigma^2$ if $p.f.$ given by:
 \[f_X (x) = \frac{1}{\sqrt{2 \pi} \sigma}e^{-(x-\mu)^2 / (2 \sigma ^2)}\]
 
 \begin{itemize}
-    \item Notation: $X \sim N(\mu, \sigma^2)$
+    \item \textbf{Notation}: $X \sim N(\mu, \sigma^2)$
     \item $E(X) = \mu$ and $V(X) = \sigma^2$
-    \item $p.f.$ is bell-shaped curve and symmetric about $x = \mu$
+    \item $p.f.$ is \textbf{bell-shaped curve and symmetric} about $x = \mu$
     \item Total area under curve is 1
     \item 2 normal curves are identical in shape if they have same $\sigma ^2$. They differ in location by $\mu_1 - \mu_2$.
     \item As $\sigma$ increases, curve becomes more spread out
     \item If $X \sigma N(\mu, \sigma^2)$ and let $Z = \frac{X - \mu}{\sigma}$
 \end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{normal}}
 
-\subsubsection{Standardized Normal Distribution}
-If $X \sim N(\mu, \sigma ^2)$ and let 
+% \columnbreak
+
+
+\subsubsection{Standardized Normal Distribution, $Z = N(0, 1)$}
+If $X \sim N(\mu, \sigma ^2)$, then  $Z \sim N(0, 1)$:
 \[Z = \frac{X - \mu}{\sigma}\]
-then $Z \sim N(0, 1)$
 
 \begin{itemize}
     \item $E(Z) = 0$ and $V(Z) = 1$
-    \item $p.f.$ is given by:
-    \[f_Z (z) = \frac{1}{\sqrt{2 \pi}} e^{-z^2 / 2}\]
-    \item Importance of standardizing normal distribution is that it allows us to use tables to find probabilities
-    \item Let $X \sim N(\mu, \sigma^2)$. We can compute $P(x_1 < X < x_2)$ by standardization:
+    \item \textbf{$p.f$ of $Z$ is given by}:
+	\[\phi(z) = f_Z (z) = \frac{1}{\sqrt{2 \pi}} e^{-z^2 / 2}\]
+\end{itemize}
+\begin{itemize}
+    \item \textbf{Standardizing normal distribution} allows us to use tables to find probabilities:
+    \item For $X \sim N(\mu, \sigma^2)$, compute $P(x_1 < X < x_2)$ by standardization:
     \[x_1 < X < x_2 \leftrightarrow \frac{x_1 - \mu}{\sigma} < \frac{X - \mu}{\sigma} < \frac{x_2 - \mu}{\sigma}\]
-    \item $c.d.f.$ is given by:
-    \[\phi(z) = F_Z (z) = \int _{-\infty} ^{z} f_Z (z) = \frac{1}{\sqrt{2 \pi}}\int _{-\infty} ^{z} e^{-t^2 / 2} dt\]
+    \item Then, $P(z_1 < Z < z_2)$, \textbf{use $f_Z (z)$ table to calculate}.   
+ \end{itemize}
+ 
+\begin{itemize}   
+    \item \textbf{Cumulative d.f. of standard Normal}:
+    \[\Phi(z) = F_Z (z) = \int _{-\infty} ^{z} f_Z (z) = \frac{1}{\sqrt{2 \pi}}\int _{-\infty} ^{z} e^{-t^2 / 2} dt\]
     \item $P(Z \geq 0) = P(Z \leq 0) = \phi(0) = 0.5$
-    \item For any $z$, $\phi(z) = P(Z \leq z) = P(Z \geq -z) = 1-\phi(-z)$
+    \item For any $z$, $\Phi(z) = P(Z \leq z) = P(Z \geq -z) = 1-\phi(-z)$
     \item $-Z \sim N(0, 1)$
     \item If $Z \sim N(0, 1)$, then $\sigma Z + \mu \sim N(\mu, \sigma^2)$
-    \item \textbf{Upper Quantile}{Given $\alpha$ is upper-tail percentage. The $\alpha$th upper quantile is $x_\alpha$ that satisfies:}
+\end{itemize}
+\subsubsection{Quantile}
+\begin{itemize} 
+    \item \textbf{Upper Quantile:} $x_\alpha$ that satisfies:
     \[P(X \geq x_\alpha) = \alpha\]
+    \item where  $ 0 \leq \alpha \leq 1$. \\
+\centerline{\includegraphics[width=0.6\linewidth]{upperquantile}}
     e.g. The 0.05th (upper) quantile of $Z \sim N(0,1)$ is 1.645, i.e. $z_{0.05} = 1.645$.
     \item $P(Z \geq z_\alpha) = P(Z \leq -z_\alpha) = \alpha$
     \item $\text{Upper } z_\alpha = \text{Lower } z_{1-\alpha}$
@@ -671,8 +690,10 @@ Let $X \sim B(n, p)$, then as $n \to \infty$:
     \item Approximation is good when $np > 5$ and $n(1-p) > 5$
 \end{itemize}
 
+\columnbreak
 
-
+% Chapter 5==============
+\section{5. Sampling, Sampling Distributions}
 
 
   
