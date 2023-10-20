@@ -695,6 +695,115 @@ Let $X \sim B(n, p)$, then as $n \to \infty$:
 % Chapter 5==============
 \section{5. Sampling, Sampling Distributions}
 
+\subsection{Population and Sample}
+
+\begin{itemize}
+    \item Motivation: Infer something about population using sample
+    \item \textbf{Population}{All possible observations of survey}
+    \item \textbf{Sample}{Subset of population}
+    \item Every observation can be numerical or categorical
+    \item Finite population vs. Infinite population
+\end{itemize}
+
+\subsection{Random Sampling}
+
+\begin{itemize}
+    \item Motivation: We usually know what distribution the population belongs to, but we don't know the parameters of the distribution. We can use sample to estimate the parameters.
+    \item \textbf{Simple Random Sample}{Given sample of size $n$, each sample has equal chance of being selected}
+\end{itemize}
+
+\subsubsection{SRS for Infinite Population}
+Let $X$ be RV with $p.f.$ $f_X (x)$. Let $X_1, X_2, \cdots, X_n$ be independent random variables with same distribution as $X$. Then $X_1, X_2, \cdots, X_n$ is a simple random sample of size $n$. Joint probability function of $X_1, \cdots, X_n$:
+\[f_{X_1, \cdots, X_n} (x_1, \cdots, x_n) = f_X (x_1) f_X (x_2) \cdots f_X (x_n)\]
+
+\subsubsection{Sampling with Replacement}
+\begin{itemize}
+    \item Sampling with replacement from finite population is considered as sampling from infinite population
+    \item Sample is random if:
+    \begin{itemize}
+        \item Every element in population has same probability
+        \item Successive draws are independent
+    \end{itemize}
+\end{itemize}
+
+\subsection{Sample Distribution of Sample Mean}
+
+\begin{itemize}
+    \item \textbf{Statistic}{Suppose random sample of $n$ observations is $X_1, X_2, \cdots, X_n$. A statistic is a function of $X_1, \cdots, X_n$}
+    \item \textbf{Sample Mean}{}
+    \[\bar{X} = \frac{1}{n} \sum _{i=1} ^n X_i\]
+    \item \textbf{Sample Variance}{}
+    \[S^2 = \frac{1}{n-1} \sum _{i=1} ^n (X_i - \bar{X})^2\]
+    \item \textbf{Statistics are random variables}. We can look at distribution of statistics.
+    \item \textbf{Sample Distribution}{Distribution of a statistic}
+    \item Mean and variance of $\bar{X}:$
+    \[E(\bar{X}) = \mu \text{ and } V(\bar{X}) = \frac{\sigma_X ^2}{n}\]
+    Intuition: $\mu_X$ is some unknown constant. $\bar{X}$ guesses that. As $n$ increases, accuracy of $\bar{X}$ increases.
+    \item \textbf{Standard Error}{Standard deviation of sampling distribution (e.g. $\sigma_{\bar{X}}$)}
+    \item \textbf{Law of Large Numbers}{As $n$ increases, $\bar{X}$ converges to $\mu_X$. i.e. For any $\epsilon \in \mathbb{R}$:}
+    \[P(|\bar{X} - \mu| > \epsilon) \to 0 \text{ as } n \to \infty\]
+\end{itemize}
+
+\subsection{Central Limit Theorem}
+
+If $\bar{X}$ is mean of random sample of size $n$ from population with mean $\mu$ and variance $\sigma^2$, then as $n \to \infty$:
+\[\bar{X} \sim N(\mu, \frac{\sigma^2}{n}) \text{ approximately}\]
+
+\begin{itemize}
+    \item Intuition: For a large $n$, $\bar{X}$ is approximately normally distributed.
+    \item If random sample is from normal population, $\bar{X}$ is normally distributed no matter value of $n$
+    \item If very skewed, CLT may not hold even with large $n$
+\end{itemize}
+
+\subsection{Other Sampling Distributions}
+
+\subsubsection{$\chi^2$ Distribution}
+\begin{itemize}
+    \item Let $Z_1, \cdots, Z_n$ be $n$ independent and identically distributed standard normal RVs. A $\chi^2$ RV with $n$ degrees of freedom is defined as a RV with same distribution as $Z_1^2 + \cdots + Z_n^2$
+    \item Notation: $\chi^2 (n)$ with $n$ degrees of freedom
+    \item If $Y \sim \chi^2 (n)$, then $E(Y) = n$ and $V(Y) = 2n$
+    \item For large $n$, $\chi^2 (n)$ is approximately $N(n,2n)$
+    \item If $Y_1$ and $Y_2$ are independent $\chi^2$ RVs with $m$ and $n$ degrees of freedom respectively, then $Y_1 + Y_2$ is $\chi^2 (m+n)$
+    \item $\chi^2$ is family of curves. All density functions have long right tail.
+\end{itemize}
+
+\subsubsection{Sampling Distribution of $S^2$}
+\begin{itemize}
+    \item $E(S^2) = \sigma^2$
+\end{itemize}
+
+\subsubsection{Sampling Distribution of $\frac{(n-1)S^2}{\sigma^2}$}
+If $S^2$ is variance of random sample of size $n$ from normal population of variance $\sigma^2$, then:
+\[\frac{(n-1)S^2}{\sigma^2} = \frac{\sum _{i=1} ^{n} (X_i - \bar{X})^2}{\sigma^2}\]
+has $\chi^2 (n-1)$ distribution
+
+\subsubsection{t-Distribution}
+Suppose $Z \sim N(0, 1)$ and $U \sim \chi^2 (n)$. If $Z$ and $U$ are independent, then:
+\[T = \frac{Z}{\sqrt{U/n}} \sim t(n)\]
+where $t(n)$ is called t-distribution with $n$ degrees of freedom
+
+\begin{itemize}
+    \item t-Distribution approaches $N(0,1)$ as $n \to \infty$
+    \item When $n \geq 30$, t-distribution is approximately normal
+    \item If $T \sim t(n)$, then $E(T) = 0$ and $V(T) = \frac{n}{n-2}$ for $n > 2$
+    \item Symmetric about vertical axis and resembles standard normal distribution
+    \item If $X_1, \cdots, X_n$ are independent and identically distributed normal RVs with mean $\mu$ and variance $\sigma^2$, then:
+    \[\frac{X - \mu}{S / \sqrt{n}} \sim t(n-1)\]
+\end{itemize}
+
+\subsubsection{F-Distribution}
+Suppose $U \sim \chi^2 (m)$ and $V \sim \chi^2 (n)$. If $U_1$ and $U_2$ are independent, then:
+\[F = \frac{U / m}{V / m} \sim F(m,n)\]
+is called F-distribution with $(m,n)$ degrees of freedom
+
+\begin{itemize}
+    \item If $X \sim F(m,n)$, then 
+    \[E(X) = \frac{n}{n-2} \text{ for } n > 2\] 
+    and 
+    \[V(X) = \frac{2n^2(m+n-2)}{m(n-2)^2(n-4)} \text{ for } n>4\]
+    \item If $F \sim F(m,n)$, then $1/F \sim F(n,m)$
+\end{itemize}
+
 
   
   
