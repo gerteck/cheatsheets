@@ -548,7 +548,7 @@ f(x)
     \item \textbf{Notation}: $X \sim Poisson(\lambda)$ where $\lambda > 0$ is expected number of occurrences during given period/region
     \item $E(X) = \lambda$ and $V(X) = \lambda$
 \end{itemize}
-\centerline{\includegraphics[width=1\linewidth]{poisson}}
+\centerline{\includegraphics[width=0.9\linewidth]{poisson}}
 \centerline{\includegraphics[width=0.8\linewidth]{poissonex}}
 \subsubsection{Poisson Process}
 \begin{itemize}
@@ -558,7 +558,7 @@ f(x)
         \item Expected no. of occurrences in interval length $T$: $\alpha T$
         \item No simultaneous occurrences, and no. of occurrences in disjoint intervals independent.
     \end{itemize}
-    \item \textbf{Number of occurrences in any interval} $T$ of Poisson process follows $Poisson(\alpha T)$ distribution. \\ (\textbf{Apply $X ~ Poisson(\alpha T)$ directly)}
+    \item \textbf{No. of occurrences in any interval} $T$ of Poisson process follows $Poisson(\alpha T)$ distribution. \\ (\textbf{Apply $X \sim Poisson(\alpha T)$ directly)}
 \end{itemize}
 
 \subsubsection{Poisson Approximation of Binomial Distribution}
@@ -567,6 +567,7 @@ f(x)
 \item Then, approximately, $X \sim Poisson(\lambda)$.
 \[\lim _{p \to 0; n \to \infty} P(X = x) = \frac{e^{-np} (np)^x}{x!}\]
 \item Approximation is good when ($n \geq 20$ and $p \leq 0.05$), or ($n \geq 100$ and $np \leq 10$)
+\item Use $B(n, p)$: $E(X) = np$, $V(X) = np(1-p) = npq$
 \end{itemize}
 
 
@@ -1145,7 +1146,10 @@ Assumptions:
     \end{itemize}
 \end{itemize}
 
-\section{08. Miscellaneous}
+\vfill \null
+\columnbreak
+
+\section{08. Additional Formulae \& Misc}
 
 \subsubsection{Integration by Parts}
 \[\int udv = uv - \int vdu\]
@@ -1153,6 +1157,10 @@ Assumptions:
 \begin{itemize}
     \item How to choose u? LIPET
 \end{itemize}
+
+\subsubsection{Geometric Series}
+\centerline{\includegraphics[width=0.8\linewidth]{geometricseries}}
+
 
 
 
