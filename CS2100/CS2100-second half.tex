@@ -3,6 +3,7 @@
 \usepackage{multicol}
 \usepackage{calc}
 \usepackage{ifthen}
+% \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage[landscape]{geometry}
 %\usepackage{hyperref}
 
@@ -112,10 +113,10 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+		{\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm} }
+		{\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm} }
 	}
 
 % Turn off header and footer
@@ -408,7 +409,7 @@ simpler product term.
 
 
 
-\section{14. Combinational Circuits, MSI Components}
+\section{14. Combinational Circuits}
 \subsubsection{Combinational Circuits}
 \begin{itemize}
 \item Two classes of logic circuits, combinational and sequential.
@@ -556,25 +557,222 @@ use rest for selection lines. (C for input, A \& B for selection)
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{smallermux}}
 
+\vfill \null
+\columnbreak
+
+\section{16. Sequential Logic}
+\begin{itemize}
+\item \textbf{Sequential Circuit}: output depends on both \underline{present inputs} and  \underline{state}
+\item 2 Types of sequential circuits: \\ 
+\textbf{synchronous}: outputs change only at a specific time \\
+\textbf{asynchronous}: outputs change at any time
+\item Classes of sequential circuits: \\
+\textbf{bistable}: 2 stable states (e.g. latches / flip-flops)
+\textbf{monostable}: 1 stable state; astable, no stable state
+\end{itemize}
+
+\subsubsection{Latches}
+\begin{itemize}
+\item pulse-triggered (vs flipflops: edge-triggered)
+\end{itemize}
+
+\subsubsection{Flip-Flops}
+\begin{itemize}
+\item \textbf{synchronous bistable devices}: data on inputs is transferred to the flipflop's output only on the triggered edge of the clock pulse.
+\item output changes state at a \underline{specific point on the clock}: \\
+change state at either rising or falling edge of the clock signal
+\end{itemize}
+
+\subsection{Memory Elements}
+\begin{itemize}
+\item \textbf{Memory Elements}: Device which can remember value indefinitely, or change value on command from its inputs.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{memoryelement}}
+\subsection{Memory Elements with Clock}
+\begin{itemize}
+\item\textbf{pulse-triggered}: ON = 1, OFF = 0
+\item \textbf{edge-triggered}:
+\begin{enumerate}
+\item \textbf{positive edge-trig}: ON: from 0 to 1, OFF: other t.
+\item \textbf{negative edge-trig}: ON: from 1 to 0, OFF: other t.
+\end{enumerate}
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{memoryelementclock}}
+
+\subsection{Latches}
+A Latch is a \textbf{sequential circuit} that watches all inputs continuously and changes output at any time \textbf{independently of a clocking signal}.
+
+\subsubsection{S-R Latch}
+\begin{itemize}
+\item Two \textbf{Inputs}: $S$ (Set) and $R$ (Reset).
+\item 2 complementary \textbf{outputs}: $Q$ and $Q'$
+\item When $Q =$ high, latch is in SET state.
+\item When $Q =$ low, latch is in RESET state.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{SRlatch}}
+
+\subsubsection{Gated S-R Latch}
+\begin{itemize}
+\item \textbf{S-R Latch + enable input (EN) + 2 NAND gates}
+\item outputs change only when EN is high
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{gatedSRlatch}}
+
+\subsubsection{Gated D Latch}
+\begin{itemize}
+\item \textbf{Gated D latch} make $R$ input equal to $S'$
+\item eliminates undesirable condition of invalid state in the S-R latch.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{gatedDlatch}}
+
+\columnbreak
+
+\subsection{Flip-flops}
+Flip-flops changes its outputs only at times determined by a clocking signal. AKA basic digital memory circuit.
+
+\subsubsection{S-R flip flop}
+\begin{itemize}
+\item $>$ symbol at clock input. Negative edge-trigger: $\circ>$. Outputs change at triggering edge of clock pulse. 
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{SRflipflop}}
+
+\subsubsection{D flip flop}
+\centerline{\includegraphics[width=1\linewidth]{dflipflop}}
+
+\subsubsection{J-K flip flop}
+\begin{itemize}
+\item No valid state, Includes \textbf{toggle} state: $Q$ changes on each active clock edge.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{jkflipflop}}
+
+\subsubsection{T flip flop}
+\begin{itemize}
+\item \textbf{T flip-flop}: Single input version of the J-K flip-flop, formed 
+by tying both inputs together.
+\item $Q(t + 1) = T \oplus Q$
+\end{itemize}
+
+\centerline{\includegraphics[width=0.9\linewidth]{tflipflop}}
+
+\section{Asynchronous Inputs}
+\begin{itemize}
+\item \textbf{asynchronous} inputs affect the state of the flip-flop independent of the clock.
+\item e.g. J-K flip-flop with active-low PRESET and CLEAR asynchronous input
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{jkflipflopasync}} 
+For \textbf{active-high}:
+\begin{itemize}
+\item PRE = 1 (HIGH): Q immediately set to HIGH
+\item CLR = 1 (HIGH): Q immediately cleared to LOW
+\item normal operation mode: both PRE and CLR are LOW
+\end{itemize}
+
+\section{Synchronous Sequential Circuits}
+\begin{itemize}
+\item Building blocks: \textbf{logic gates \& flip flops}. 
+\item Flip-flops make up the memory, while gates form combinational sub-circuits.
+\end{itemize}
+
+ \null \null \null \null \null \null
+
+\columnbreak
+
+\subsection{Flip Flop Characteristic Tables}
+\textbf{Characteristic tables} are used in analysis.
+\centerline{\includegraphics[width=1\linewidth]{flipflopctable}} 
+
+\subsection{Flip Flop Excitation Tables}
+\textbf{Excitation tables} are used in design.
+\centerline{\includegraphics[width=1\linewidth]{excitationtables}} 
+
+ \null \null \null \null \null \null
+ \null \null \null \null \null \null
+
+\columnbreak
+
+\section{17. Sequential Circuits Design}
+
+\textbf{Sequential Circuits Design}: \textit{(from state equations/table/diagram to logic circuit).}
+\begin{itemize}
+\item For unused states, use \textbf{don't care X} for input.
+\item \textbf{Self-correcting}: any unused state can transition to a used state after a finite number of cycles
+\end{itemize}
+\begin{enumerate}
+\item Convert state diagram to state table.
+\item fill in flip-flop inputs based on excitation table
+\item use K-maps to get simplified logic expressions for flip-flop inputs (e.g.
+JA, KA, JB, KB)
+\item draw circuit implementing
+\end{enumerate}
+
+\subsubsection{Example}
+\textbf{State diagram, design seq circuit with JK flip-flops}
+\centerline{\includegraphics[width=1\linewidth]{sequentialcircuitsdesign}}
+
+\columnbreak
+
+\subsubsection{Unused States}
+\begin{itemize}
+\item use don't-care for input/next state/flip-flop inputs/output.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{unusedstates}}
 
 
+\subsection{Sequential Circuits Analysis}
+\textit{(from logic circuit to state equations/table/diagram).}
+\begin{enumerate}
+\item obtain flip-flop input functions from the circuit
+\item fill in the state table (using characteristic table)
+\item draw state diagram
+\end{enumerate}
+\centerline{\includegraphics[width=0.8\linewidth]{analysis}}
+
+\section{18. Memory}
+\textbf{Memory}: stores programs and data.
+\begin{itemize}
+\item 1 byte: 8 bits; 1 word: multiple of bytes, usually size of register
+\item memory unit stores binary info in words (groups of bits)
+\item data consists of \underline{n lines} for n-bit words
+\begin{itemize}
+\item \textbf{data input lines}: provide info to write into memory
+\item \textbf{data output lines}: carries info to be read from memory
+\end{itemize}
+\item \textbf{address} consists of \underline{k lines}
+\begin{itemize}
+\item specifies which word (of the words available) to be selected for
+reading/writing
+\end{itemize}
+\item \textbf{control lines} R/W → specifies dierction of transfer of data
+\end{itemize}
+
+\subsubsection{Data Transfer}
+\centerline{\includegraphics[width=0.8\linewidth]{Datatransfer}}
+
+\subsubsection{Memory Unit, Read/Write Operations}
+\centerline{\includegraphics[width=0.8\linewidth]{memoryunit}}
+\textbf{Write}
+\begin{itemize}
+\item transfers address of the desired word to the address lines
+\item transfers the word (data bits) to be stored in memory to the data input lines
+\item activates the Write control (set R/W to 0)
+\end{itemize}
+\textbf{Read}
+\begin{itemize}
+\item transfers address of the desired word to the address lines
+\item activates the Read control (set R/W to 1)
+\end{itemize}
+
+\subsubsection{Memory Cell, Memory Array}
+\begin{itemize}
+\item  \textbf{2 types of RAM}:
+\item static RAMs: use flip-flops as the memory cells
+\item dynamic RAMs: use capacitor charges to represent data
+\item \textbf{Memory Arrays}: array of RAM chips, memory chips combined to form larger memory.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{memorycell}}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\section{19. MIPS Pipelining}
 
 
 
