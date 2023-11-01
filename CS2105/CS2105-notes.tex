@@ -73,7 +73,7 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -698,6 +698,338 @@ Reliable Data Transfer: \textbf{Service Model}
 \columnbreak
 
 \section{5. Link}
+\begin{itemize}
+\item \textbf{Link Layer}: Concerned about electronics of sending and receiving binary data over a communication channel.
+\item \textbf{Communication Channel}: transmission medium of data signals (e.g. copper wire, satellite, optical fiber)
+\item \textbf{Node}: Devices exchanging data. (E.g. hosts, routers).
+\item \textbf{Link:} Comm. channels that connect adjacent nodes.
+\end{itemize}
+
+\subsubsection{Connecting N nodes via cable}
+\begin{itemize}
+\item \textbf{Aim}: Send data between N nodes via cable.
+\item Interconnect N nodes directly: Each link needs to be addressed, N-1 Links needed, does not scale.
+\item Interconnect via broadcast link: Each link needs to be addressed, need to define protocol, need to handle errors.
+\item Protocol: Framing, Link Access Control. Errors: Detection, Reliability.
+\end{itemize}
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{interconnectNodes}}
+
+\subsection{Link Layer}
+\begin{itemize}
+\item  \textbf{Link layer} sends datagram between adjacent nodes (hosts or routers) over a single link. Responsible for transfer of datagram from one node to \underline{physically} \underline{adjacent} node over link. 
+\item \textbf{Frames (layer 2 packet)}: IP datagrams are encapsulated in link-layer \textbf{frames} for transmission.
+\item \textbf{Protocols}: Different link-layer protocols may be used on different links, each protocol may provide a different set of services.
+\end{itemize}
+
+\subsection{Link Layer Services}
+\begin{itemize}
+\item \textbf{Framing}: Encapsulate datagram into frame, adding header and trailer.
+\item \textbf{Link access control}: When multiple nodes share a single link, need to coordinate
+ which nodes can send frames at a certain point of time.
+\item \textbf{Error detection}: Errors are usually caused by signal attenuation or noise. Receiver detects presence of errors, and  may signal sender for retransmission or simply drops frame.
+\item \textbf{Error correction}: Receiver identifies and corrects bit error(s) without resorting to retransmission.
+\item \textbf{Reliable delivery}: Seldom used on low bit-error link (e.g., fiber) but often used on error-prone links (e.g., wireless link).
+\end{itemize}
+
+\subsection{Network Adapter}
+\begin{itemize}
+\item \textbf{network adapter}, aka network interface card (NIC), is a single, special-purpose chip that implements the link-layer services above. (e.g. Ethernet card, Wifi Adapter). 
+\item Semi-autonomous, implementing both link \& physical layers. Many services implemented in hardware.
+\end{itemize}
+
+\subsection{Error Detection and Correction Techniques}
+\begin{itemize}
+\item \textbf{EDC}: Error Detection and Correction Bits.
+\item \textbf{D}: Data protected by error checking, may include header.
+\item Larger EDC fields added to link layer frame yields better detection (and correction), but larger overhead.
+\item \textbf{Common error detection schemes}: Checksum (used in TCP/UDP/IP), Parity checking, CRC (link layer). 
+\item \textbf{Checksum review}: treate segment contents as 16 bit int sequences, get 1s complement of sum of segment contents.
+\end{itemize}
+
+\subsubsection{Parity Checking}
+\begin{itemize}
+\item \textbf{Single Bit Parity}: 1 parity bit for the data. \\
+– \textbf{Even Parity Scheme}:  Choose the bit to make the total number of 1s even. \\
+– \textbf{Odd Parity Scheme}: Same but we make the number odd.
+\item Single bit parity can detect odd number of single bit errors, but cannot detect even single bit errors. 
+\item Errors often clustered together in ``bursts'', probability of undetected errors in a  frame can approach 50\%.
+
+\item \textbf{Two-Dimensional Parity}: Divide the datainto rows and columns, and repeat the above but
+have parity bits for each column and each row. \\
+– Can detect and correct single bit errors in data. \\
+– Can detect two-bit errors.
+\end{itemize}
+\medskip
+\centerline{\includegraphics[width=1\linewidth]{paritybit}}
+
+\columnbreak
+
+\subsubsection{Cyclic Redundancy Check}
+\begin{itemize}
+\item ``Long division'' but with division being replaced by a bitwise XOR operation. 
+\item Generally done by hardware, so very fast.
+\item \textbf{D: d-bit data}, which is also the dividend.
+\item \textbf{G: Generator of r + 1 bits}, which is also the divisor.
+\item \textbf{R: r-bit CRC}, which is also the remainder.
+\item The resultant $d + r$ bits is “divisible” by G, so the receiver can check for a zero remainder.
+\item Can detect all odd number of single bit errors.
+\item CRC of r bits can detect all burst errors of less than $r + 1$ bits, burst errors greater than $r$ bits with probability $1 - 0.5^r$. Aka polynomial code.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{crc}}
+
+\subsection{Multiple Access Links and Protocols}
+\begin{itemize}
+\item \textbf{Multiple Access Protcols:} Categorisable into three broad classes: Random Access, ``Taking Turns'', Channel Partitioning.
+\item \textbf{Ideal MAP}: Collision free, Efficient, Fairness, Fully Decentralized.
+\item Additionally, coordination about channel sharing must use channel itself (no out-of-channel signalling).
+\end{itemize}
+
+\subsubsection{Types of Network Links (2)}
+\begin{itemize}
+\item \textbf{Point-to-point link}: Sender and receiver connected by a dedicated link. No need for multiple access control.
+\item \textbf{Broadcast link:} Multiple nodes connected to same shared broadcast channel. When any one node transmits a frame, all other nodes in the channel receives a copy. We need a Multiple Access Protocol to prevent frame collisions.
+\end{itemize}
+
+\columnbreak
+
+\subsubsection{Multiple Access Protocols}
+\subsubsection{Channel Partitioning Protocols}
+\begin{itemize}
+\item \textbf{TDMA: Time Division Multiple Access}
+\item Each node gets fixed length time slot (time frame), where {length $=$ frame transmission time}. This repeats in rounds. Unused slots go idle.
+\item \textbf{FDMA: Frequency Division Multiple Access}
+\item Channel spectrum is divided into frequency bands, and each node is assigned one band. Bandwidth has thus decreased, thus transmission is slower. Unused transmission time in frequency bands go idle.
+\item Both TDMA and FDMA: Collision Free, Inefficient, Perfectly Fair and fully Decentralized.
+\end{itemize}
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{tdmafdma}}
+
+\subsubsection{Taking Turns Protocols}
+\begin{itemize}
+\item \textbf{Polling} 
+\item A master node invites each of the other nodes (slaves) to transmit in turns. Minor polling overhead. A single point
+of failure, which is the master node.
+\item \textbf{Token Passing (Token Ring) / Round Robin}
+\item Control token is passed from one node to the next sequentially. There is overhead for the token and single point of failure as well, which is the token.
+\item Even if only a few of the nodes have data to send, it can still be quite efficient.
+\end{itemize}
+
+\subsubsection{Random Access Protocols}
+Generally these protocols specify how to detect and recover from collisions (When two or more transmitting nodes). \\
+Thus, no need for centralised coordination, thus no single point of failure.
+
+\subsubsection{Slotted ALOHA}
+\begin{itemize}
+\item  Assume all frames are of the same size, and split the time into slots of equal length, where length $=$ time to transmit 1 frame $= L (bits)/ R (rate)$.
+\item A node will only transmit at the start of a slot.
+\item Each node listens to the channel while transmitting. If a collision occurs, it retransmits in each subsequent slot with probability $p$ until success.
+\item $p$ depends on network congestion
+\item \textbf{Effectiveness}: Not collision free, Efficiency high when only one node is active, but maximum efficiency falls to 37\% when  many active nodes (collision \& empty slots). Perfectly fair and decentralized.
+\end{itemize}
+
+\subsubsection{Pure (Unslotted) ALOHA}
+\begin{itemize}
+\item  Like ALOHA but no slots nor synchronisation, just transmit when there’s a fresh frame.
+\item Chance of collision increases, as now it can collide with frames both in front and behind $(t_0 -1, t_0 + 1)$.
+\item \textbf{Effectiveness}: Not collision free, Efficiency high when only one node is active, but maximum efficiency falls to 18\% when many active nodes (collision \& empty slots). Perfectly fair and decentralized.
+\end{itemize}
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{aloha}}
+
+\subsubsection{Carrier Sense Multiple Access (CSMA)}
+\begin{itemize}
+\item Sense if the channel is idle, if so, transmit frame.
+\item Still collides when two nodes sense that a channel is idle.
+\item Collision: propagation delay, nodes far apart, two nodes may not hear each other's transmission immediately.
+\item CSMA transm. does not stop despite collision detection. 
+\end{itemize}
+
+\subsubsection{Carrier Sense MA/ Collision Detection (CSMA/CD)}
+\begin{itemize}
+\item \textbf{Backoff Algorithm}: Same as CSMA except the moment a collision is detected, the node stops transmission.
+\item The node then retransmits after some random amount of time. (probability $p$ for each sub. frame until success).
+\item \textbf{Binary Exponential Backoff}: More collisions implies heavier load, adapt retransmission attempt to estimated current load. Longer back-off interval with more collisions.
+\item After the $m^{th}$ collision, we choose K at random from $0, 1, ... , 2m - 1$, then wait $K * 512$ bit transmission
+times before retransmitting.
+\item \textbf{Effective:} Both Efficent, Fair, Decentralized, but both CSMA/[CD] not collision free.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{csma}}
+
+\subsubsection{Minimum Frame Size}
+\begin{itemize}
+\item For CSMA and CSMA/CD above, need minimum frame size so that collisions can always be detected. 
+\item Ethernet has a minimum size of 64 bytes.
+\end{itemize}
+
+\subsubsection{CSMA / Collision Avoidance (CSMA/CA)}
+\begin{itemize}
+\item Collision detection can be hard for wireless LANs, as energy levels drop too quickly.
+\item Hidden Node Problem: When two nodes cannot detect each other but a node in-between encounters a collision.
+\item As such, an ACK is required from the receiver as well.
+\end{itemize}
+
+\subsubsection{Bit Times}
+\begin{itemize}
+\item Common unit used in multiple access protocols is bit times. 
+\item Bit transmision time, is time taken to transmit 1 bit. 
+\item Often, used as such: propagation delay is equals to 800 bit times. This means the propagation delay is equals to the time
+it takes to transmit 800 bits onto the link.
+\end{itemize}
+
+\null \null \null \null \null \null
+\null \null \null \null \null \null
+
+\columnbreak
+
+\subsection{Switched Local Area Networks}
+\subsubsection{MAC Address}
+\begin{itemize}
+\item Every adapter (NIC) has a unique MAC address (aka physical or LAN address).
+\item \textbf{MAC}: Media Access Control.
+\item Used to send and receive link layer frames, when adapter receives a frame, it checks if the destination MAC address of the frame matches its own MAC address.
+\item If yes, adapter extracts enclosed datagram and passes it to the protocol stack.
+\item If no, adapter simply discards the frame without interrupting host.
+	\begin{itemize}
+	\item  \textbf{48 bits:} Burned in NIC ROM (read-only memory), e.g. 5C-F9-DD-E8-E3-D2
+	\item \textbf{IEEE}: Administers the MAC address allocation. The first three bytes of the MAC identifies the vendor of the adapter.
+	\item If somehow MAC is manually configured to be not unique, and the NICs are on the same subnet, transmission will be severely affected.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Local Area Network (LAN)}
+\begin{itemize}
+\item  \textbf{LAN} is a computer network that interconnects computers within a geographical area such as 
+office building or university campus.
+\item Example LAN technologies: IBM Token Ring: IEEE 802.5 standard, Ethernet: IEEE 802.3 standard, Wi-Fi: IEEE 802.11 standard
+\end{itemize}
+\smallskip
+
+\centerline{\includegraphics[width=0.8\linewidth]{lanEthernet}}
+\subsubsection{Ethernet}
+\begin{itemize}
+\item \textbf{Ethernet}: “Dominant” wired LAN technology, developed in mid 1970s, Standardized by Xerox, DEC, and Intel in 1978.
+\item Simpler and cheaper than token ring and ATM (asynch transf mode).
+\item MAC protocol, frame format remain unchanged over years.
+\end{itemize}
+
+
+\subsubsection{Ethernet Frame Structure}
+\begin{itemize}
+\item Sending NIC (adapter) encapsulates IP datagram in Ethernet frame.
+\centerline{\includegraphics[width=1\linewidth]{ethernetframe}}
+\item \textbf{Preamble}:  7 bytes with pattern $10101010$ ($AA_{Hex}$), Followed by 1 byte with pattern $10101011$ ($AB_{Hex}$). Also called “start of frame”. Allows sender and receiver to synchronise clock rates, as alternating bits form a square wave. Lets receiver know how long 1 bit is.
+\item \textbf{Source and dest MAC address}: If NIC receives frame with matching \underline{destination address} or with \underline{broadcast address}, passes data in frame to network layer protocol, otherwise, NIC discards frame.
+\item \textbf{Data / Payload}: The maximum size is 1500 bytes, which is link MTU mentioned in IP fragmentation. Minimum size is 46 bytes, to ensure that collision will always be detected. 
+\item \textbf{CRC}: For corruption detection.
+\item \textbf{Type}: Higher level protocol used, usually IP. (others e.g. ARP, AppleTalk), permits Ethernet to multiplex network-layer protocols.
+\end{itemize}
+
+\subsubsection{Ethernet Topology}
+\begin{itemize}
+\item \textbf{Bus Topology}: (broadcast LAN) All nodes are connected and can collide with each other.
+\item \textbf{Star Topology}: Switch / Hub in the centre and nodes are connected to that switch. Do not collide with each other.
+\end{itemize}
+
+\smallskip
+\centerline{\includegraphics[width=0.8\linewidth]{topo}}
+
+\subsubsection{Ethernet Delivery}
+\begin{itemize}
+\item \textbf{Connectionless}: No handshaking btwn. sender \& receiver.
+\item \textbf{Unreliable}: NIC does not send ACK/NAK. Data in dropped frames recovered only if initial sender uses higher layer rdt (e.g. TCP).
+\item \textbf{Ethernet’s multiple access protocol}: CSMA/CD with binary (exponential) backoff.
+\end{itemize}
+
+\subsubsection{Ethernet CSMA/CD Algorithm}
+\begin{enumerate}
+\item NIC receives datagram from network layer, creates frame.
+\item If NIC senses that the channel is idle, start frame transmission. Else, wait until idle.
+\item If NIC transmits the entire frame without detecting another transmission, NIC is done.
+\item If another transmission is detected, NIC aborts and sends a \textbf{jam signal}, tells all other nodes that
+a collision has been detected and NIC will be retransmitting.
+\item After aborting, NIC enters exponential (binary) backoff, and repeat from step 2
+\end{enumerate}
+
+
+
+\subsubsection{Ethernet Hub}
+\begin{itemize}
+\item \textbf{Hub}: Physical-layer, acting on indiv. bits. (not frames)
+\item When bit arrives from one interface, hub re-creates the bit, boosts energy strength, and transmits the bit onto all the other interfaces.
+\item \textbf{Adv:} Cheap, easy to maintain (modular design of network). 
+\item \textbf{Disadv:} Slow, not ideal for larger networks (collisions).
+\end{itemize}
+
+\subsubsection{Ethernet Switch}
+\begin{itemize}
+\item \textbf{Switch} is link-layer device used in LAN that also stores and forwards Ethernet frames.
+\item \textbf{Layer 2 device:} Unlike routers, which is a layer 3 device (i.e. it goes up to the network layer), switches only have 2 layers, i.e. up to link layer. \textbf{Switches act on frames.}
+\item \textbf{No IP address}: For the reason above, it has no IP address.
+\item \textbf{Transparent to hosts}: Hosts unaware of switch presence. 
+\item \textbf{Collision-free}: Each host has dedicated connection to the switch, (separate collision domains). Connection has two channels, i.e. fully duplex and frames sent two-way simultaneously. 
+\item \textbf{Store and Forward packet switch}: Switch buffers frames, e.g. if currently forwarding another frame to the outgoing link.
+\end{itemize}
+
+\subsubsection{Switch Forwarding Tables}
+\begin{itemize}
+\item A switch has multiple interfaces, needs to know which nodes are reachable via which interface.
+\item Done via \textbf{switch forwarding tables}, which have entry format: \\
+\centerline{$<$MAC address of host, interface to reach host, TTL$>$}
+\item \textbf{Self-Learning:} Whenever the switch receives a frame from host A, it will record that interface for A for future frames.
+\item \textbf{Broadcast}: If destination host not found in the switch forwarding table, the switch will broadcast the frame to all outgoing links.
+\end{itemize}
+
+\subsubsection{Routers vs. Switches}
+\begin{itemize}
+\item \textbf{Routers}: Check IP address, Store-and-forward, Compute routes to 
+destination.
+\item \textbf{Switches}: Check MAC address, Store-and-forward, Forward frame to outgoing link or broadcast
+\end{itemize}
+
+\subsubsection{Address Resolution Protocol (ARP)}
+How to know MAC address of receiving host, knowing its IP address? Use ARP [RFC 826].
+\begin{itemize}
+\item \textbf{ARP} provides query mechanism to learn MAC address.
+\item All nodes have an ARP table containing mappings of IP addresses and MAC addresses of other neighbouring
+nodes in the same subnet. 
+\item \textbf{Plug \& Play}: nodes create ARP tables without intervention from network admin.
+\item \textbf{Entry format}: (TTL typically a few minutes)\\
+\centerline{$<$IP address; MAC address; TTL$>$}
+\end{itemize}
+\textbf{Sending Frame in Same / Another Subnet:}
+\begin{enumerate}
+\item If A and B in same subnet, A knows B’s MAC address from its ARP table:
+	\begin{enumerate}
+	\item A just creates frame with B’s MAC address and send.
+	\item Only B will process frame, all other hosts ignore.
+	\end{enumerate}
+\item If A and B in same subnet, A does not know B’s address:
+	\begin{enumerate}
+	\item A broadcasts an ARP query packet, containing B’s IP address. The destination MAC address is set to FF-FF-FF-FF-FF-FF.
+	\item All other nodes in the same subnet will receive this ARP query packet, but only B will reply it.
+	\item A caches B’s IP-to-MAC address mapping in its ARP table (until TTL expires).
+	\end{enumerate}
+\item If A and B in different subnets (assume router R directly connecting the two subnets, and A and B):
+	\begin{enumerate}
+	\item A will need to send a frame with R’s MAC address but B’s IP address as destination.
+	\item R will realise it needs to forward this frame as the IP doesn’t match when MAC matches.
+	\item R will forward the datagram to an outgoing link and construct a new frame with B’s MAC address.
+	\end{enumerate}
+\end{enumerate}
+
+\subsubsection{IP Addresses vs. MAC Addresses}
+\begin{itemize}
+\item \textbf{IP address}: 32 bits in length, network-layer address used to move datagrams from source to dest.
+\item Dynamically assigned, hierarchical (to facilitate routing), Analogy: postal address.
+\item \textbf{MAC address}: 48 bits in length, link-layer address used to move frames over every single link.
+\item Permanent, to identify the hardware (adapter), Analogy: NRIC number.
+\item \textbf{ARP} resolves mapping from network layer (IP) address to link layer (MAC) address.
+\end{itemize}
+
+
+
+
 
 
 
