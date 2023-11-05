@@ -1003,8 +1003,6 @@ criteria (i.e. selection)
 \vfill \null
 \columnbreak
 
-\vfill \null
-\columnbreak
 
 \section{11. SQL Functions and Procedures}
 \begin{itemize}
@@ -1018,7 +1016,7 @@ criteria (i.e. selection)
 \bigskip
 
 
-\subsubsection{Stored Functions and Procedures}
+\subsubsection{11. Stored Functions and Procedures}
 \begin{itemize}
 \item \textbf{Collection of SQL statements and procedural logic}, precompiled and reusable code, allows execute multiple database operations as a single unit.
 \item \textbf{Procedural Logic:} Relevant for application logic that requires assignments, conditionals or loops, and queries that cannot be expressed using basic SQL.
@@ -1029,152 +1027,232 @@ criteria (i.e. selection)
  
  \vfill \null
  \columnbreak
-\section{Stored Functions}
-\subsubsection{Stored Functions: Basic Syntax}
-\centerline{\includegraphics[width=0.8 \linewidth]{functionbasicsyntax}}
-\bigskip
+\section{Stored Functions, Procedures}
+\centerline{\includegraphics[width=1\linewidth]{functionbasicsyntax}}
+\begin{itemize}
+        \item \code{CREATE OR REPLACE} helps to re-declare function/procedure if already previously defined
+        \item Code is enclosed within \code{\$\$ <> \$\$}
+        \item Calling a function: (USE SELECT, e.g.) \\
+        \code{SELECT * FROM swap(2, 3);}
+        \item Call a procedure: (USE CALL, e.g.) \\
+        \code{CALL transfer( 'Alice', 'Bob', 100);}
+\end{itemize}
 
-  \begin{minipage}{0.57\columnwidth}
-      \begin{lstlisting}
--- Function
-CREATE OR REPLACE FUNCTION <name>
-(<param> <type>, ...)
-RETURNS <type> AS $$
-  <code>
-$$ LANGUAGE <sql | plpgsql>;
-
--- Procedure
-CREATE OR REPLACE PROCEDURE <name>
-(<param> <type>, ...) AS $$
-  <code>
-$$ LANGUAGE <sql | plpgsql>;
-      \end{lstlisting}
-    \end{minipage}
-    \begin{minipage}{0.40\columnwidth}
-      \begin{itemize}[leftmargin=*]
-        \item \code{CREATE}  \code{OR REPLACE} helps to re-declare function/procedure if already previously defined
-        \item Code is enclosed within \code{\$\$}
-        \item Call a function: \\
-        \textbf{SELECT * FROM swap(2, 3);}
-        \item Call a procedure: \\
-        \textbf{CALL transfer( 'Alice', 'Bob', 100);}
-      \end{itemize}
-    \end{minipage}
-    
-\subsubsection{Return and Type}
-    \begin{center}
-      \begin{tabular}{ |c|c| }
-        \hline
-        \textbf{Return} & \textbf{Type} \\ \hline
-        \makecell{Single tuple \\ from table} & \code{<table_name>} \\ \hline
-        \makecell{Set of tuples \\ from table} & \code{SET OF <table_name>} \\ \hline
-        Single new tuple & \code{RECORD} \\ \hline
-        Set of new tuples & \makecell{ \code{SET OF RECORD} or \\ \code{TABLE(c VARCHAR, x INT)} } \\ \hline
-        No return value & \makecell{ \code{VOID}, or use \code{PROCEDURE} \\ instead of \code{FUNCTION} } \\ \hline
-        Trigger & \code{TRIGGER} \\ \hline
-      \end{tabular}
-    \end{center}
-
-\subsubsection{Control Structures}
-\centerline{\includegraphics[width=1 \linewidth]{controlstructures}}
-\medskip
-
-   \begin{multicols*}{2}
-      \paragraph{Variables}
-        \begin{itemize}[leftmargin=*]
-          \item \code{DECLARE} [$var, type$] (1 or more when \code{DECLARE} keyword is present)
-          \item \code{<var> := <expr>}
-        \end{itemize}
-    \columnbreak
-      \paragraph{Block}
-        \begin{itemize}[leftmargin=*]
-          \item \code{BEGIN ... END}
-          \item For plpgsql, code in the BEGIN-END block is in a transaction
-        \end{itemize}
-    \end{multicols*}
-    
-\subsubsection*{Examples} \noindent
-      Note: \code{INOUT} specifies that the param is both an input and output param
-      \begin{multicols*}{2} \noindent
-        \textbf{Function}
-        \begin{lstlisting}
-CREATE OR REPLACE FUNCTION swap(INOUT val1 INT, INOUT val2 INT)
-RETURNS RECORD AS $$
-DECLARE
-  temp INT;
-BEGIN
-  temp := val1;
-  val1 := val2;
-  val2 := temp;
-END;
-$$ LANGUAGE plpgsql;
-        \end{lstlisting}
-      \columnbreak
-        \textbf{Procedure}
-        \begin{lstlisting}
-CREATE OR REPLACE PROCEDURE transfer(
- src TEXT, dst TEXT,
- amt NUMERIC
-) AS $$
-  UPDATE Accounts
-  SET balance = balance - amt
-  WHERE name = src;
-  UPDATE Accounts
-  SET balance = balance + amt
-  WHERE name = dst;
-$$ LANGUAGE sql;
-        \end{lstlisting}
-      \end{multicols*}
-
-\subsubsection{Stored Procedures}
 \centerline{\includegraphics[width=1 \linewidth]{storedprocedures}}
 \begin{itemize}
+\item Syntax essentially same for procedures and functions, but procedures invoked using CALL command.
+\item \textbf{Obvious Difference}: Procedures no RETURNS clauses.
 \item \textbf{Functions} must return something (but can be VOID).
 \item \textbf{Procedures} do not have to return anything, but can (using INOUT and OUT params).
 \end{itemize}
 
+\subsubsection{Function Arguments for Functions}
+\begin{itemize}
+\item \textbf{Each argument described by 3 values}
+\item \textbf{Mode}: of argument (mainly IN, OUT, INOUT)
+\item \textbf{Name}: of argument (optional)
+\item \textbf{Type}: datatype of argument. (e.g. INT, VARCHAR) 
+\end{itemize}
+\centerline{\includegraphics[width=1 \linewidth]{functionargument}}
+
+\subsubsection{sql VS plpsql}
+\begin{itemize}
+\item \textbf{sql:} Use where body consists of only SQL statements, often a wrapper of single / few SQL statments. Simpler syntax, no \{BEGIN ... END\}
+\item \textbf{PL/pgSQL:} Procedural Lang/ PostgreSQL, allows writing of procedural code providing control flows, variables, error handling. Statements generated at runtime, used for trigger functions.
+\end{itemize}
+
+\textbf{Function}
+\begin{lstlisting}
+CREATE OR REPLACE FUNCTION swap 
+    (INOUT val1 INT, INOUT val2 INT)
+RETURNS RECORD AS $$
+DECLARE
+  temp INT;
+BEGIN
+  temp := val1;  val1 := val2; val2 := temp;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting} 
+
+\textbf{Procedure}
+\begin{lstlisting}
+CREATE OR REPLACE PROCEDURE transfer 
+    (src TEXT, dst TEXT, amt NUMERIC) 
+AS $$
+  UPDATE Accounts
+  SET bal = bal - amt WHERE name = src;
+  UPDATE Accounts
+  SET bal = bal + amt WHERE name = dst;
+$$ LANGUAGE sql;
+\end{lstlisting}
+
+
+
+\subsubsection{Return and Type}
+\centerline{\includegraphics[width=0.8 \linewidth]{tuple}}
+    \begin{center}
+      \begin{tabular}{ |c|c| }
+        \hline
+        \textbf{Return} & \textbf{Type} \\ \hline
+        \makecell{One existing tuple \\ from table} & \code{<table_name>} \\ \hline
+        \makecell{Set of tuples \\ from table} & \code{SETOF <table_name>} \\ \hline
+        Single new tuple & \code{RECORD} \\ \hline
+        Set of new tuples & \makecell{ \code{SETOF RECORD} or \\ \code{TABLE(attributes...)} } \\ \hline
+        No return value & \makecell{ \code{VOID}, or use \code{PROCEDURE} \\ instead of \code{FUNCTION} } \\ \hline
+        Trigger & \code{TRIGGER} \\ \hline
+      \end{tabular}
+    \end{center}
+Important: If we use RECORD, we must have at least two OUT parameters. But if we use TABLE construct, we can just have one attribute.
+
 \subsubsection{Stored Functions vs. Procedures}
 \begin{itemize}
-\item Procedures can \textbf{commit or roll back transactions} during execution, functions can not.
-\item Unlike functions, \textbf{procedures cannot be involved in DML} commands (select, insert, update, delete)
-\item Procedures are invoked in isolation using \code{CALL} (functions always invoked in \code{SELECT} statements.
+\item Procedures can \textbf{commit or roll back transactions} during execution, cannot be involved in DML commands (select, insert, update, delete).
+\item Procedures invoked in isolation using \code{CALL}, functions invoked in \code{SELECT} statements.
 \item \textbf{Best practice}: return value(s): create function, no return value: create procedure.
 \end{itemize}
 
-\subsubsection{Assignments}
+\subsubsection{Assignments (of values of variables)}
 \begin{itemize}
 \item \textbf{Basic Assignment} with \code{:=}, e.g. \code{age := 29;}
-\item \textbf{Assignment of query result} to declared variable(s): \code{SELECT} ... \code{INTO} ...
+\item \textbf{Assignment of query result} to declared variable(s): \code{SELECT ... INTO ...}
 \end{itemize}
+\begin{lstlisting}
+SELECT points INTO mark 
+FROM students WHERE id = sid;
+\end{lstlisting}
+
+\centerline{\includegraphics[width=1 \linewidth]{controlstructures}}
+\smallskip
+\begin{itemize}
+\item No curly braces or colons, hence additionaly keywords to indicate where loop begins and ends.
+\item \code{END IF} for conditionals, \code{END LOOP} for loops.
+\item \textbf{Simple example}: Compute sum of first n integers, if n is negative, return 0.
+\end{itemize}
+
+\begin{lstlisting}
+CREATE FUNCTION sum_n(IN n INT)
+RETURNS INT AS $$
+DECLARE  sum INT;
+BEGIN
+    sum := 0;
+    IF n <= 0 THEN 
+        RETURN sum; 
+    END IF;
+    FOR val IN 1..n LOOP
+        sum := sum + val;
+    END LOOP;
+    RETURN sum;
+END; $$
+LANGUAGE plpgsql;
+
+SELECT sum_n(5);
+\end{lstlisting}
+
+We can also raise an exception if n is negative:
+\begin{lstlisting}
+    IF n <= 0 THEN 
+        RAISE EXCEPTION 'n<0 error' ; 
+    END IF;
+\end{lstlisting}
 
 \subsubsection{Errors \& Messages}
 \begin{itemize}
-\item \code{RAISE}
-\item 6 different raise levels in PostgreSQL.
+\item \code{RAISE} keyword. 6 raise levels in PostgreSQL.
 \end{itemize}
 \centerline{\includegraphics[width=0.9 \linewidth]{raise}}
 
+\subsubsection{Loop Use Case: Loop through Query Results}
+\begin{itemize}
+\item Special FOR loop to iterate through results and manipulate data. (Common use case).
+\item $<target>$: Record or row variable that is successively assigned each row from query.
+\item $<statements>$: List of stmts using current target row.
+\end{itemize}
+\centerline{\includegraphics[width=0.6 \linewidth]{queryForLoop}}
+
+\begin{lstlisting}
+CREATE FUNCTION compute_points_gaps()
+RETURNS TABLE(
+    name TEXT, points INT, gap INT) AS $$
+DECLARE  
+    s RECORD; prev INT:= -1;
+BEGIN
+    FOR s IN SELECT * 
+        FROM students ORDER BY points DESC
+    LOOP
+        name := s.name;
+        points := s.points;
+        IF prev >= 0 THEN
+             gap := prev - s.points;
+        ELSE
+            gap := 0;
+        END IF;
+        RETURN NEXT;
+            prev := s.points;
+    END LOOP;
+END; $$
+LANGUAGE plpgsql;
+\end{lstlisting}
+
+
 \subsubsection{Cursors}
 \begin{itemize}
-\item  \textbf{Purpose}: Encapsulates query, allows access to each individual row return by a SELECT. (instead of executing whole query to get complete result at once)
-\item \textbf{Avoids memory overrun} when the query result is very large. 
-\item \textbf{Advantage}: Flexible `navigation' through query results in \textbf{different directions'}. \code{FETCH} to move row and read data, \code{MOVE} only to move to row (no read)
-\end{itemize}
+\item  \textbf{Purpose}: Declare on a query, access each indiv row. 
+\item Helps avoids memory overrun when the query result is large (don't access whole query at once). \\
 \centerline{\includegraphics[width=1 \linewidth]{cursorworkflow}}
+\end{itemize}
+\begin{lstlisting}
+CREATE FUNCTION compute_points_gaps()
+RETURNS TABLE(
+    name TEXT, points INT, gap INT) AS $$
+DECLARE
+    c CURSOR FOR (SELECT * FROM students ORDER BY points DESC);
+    s RECORD; prev INT;
+BEGIN
+    prev := -1;
+    OPEN c;
+    LOOP
+        FETCH c INTO s;
+        EXIT WHEN NOT FOUND;
+        name := s.name;
+        points := s.points;
+        IF prev >= 0 THEN
+            gap := prev - s.points;
+        ELSE
+            gap := 0;
+        END IF;
+        RETURN NEXT;
+        prev := s.points;
+    END LOOP;
+    CLOSE c;
+END; $$
+LANGUAGE plpgsql;
+\end{lstlisting}
+
+\textbf{Advantage of Cursor (over for loops etc.)}:
+
+\begin{itemize}
+	\item Flexible `navigation' through query results in \textbf{different directions}.
+	\item \code{FETCH} to move row and read data.
+	\item \code{MOVE} only to move to row (no read).
+\end{itemize}
 
 \subsubsection{Cursor Directions}
 \centerline{\includegraphics[width=1 \linewidth]{cursordirections}}
 \subsubsection{Examples}
+\begin{itemize}
+\item Using FETCH ABSOLUTE, FETCH NEXT, FETCH RELATIVE to calculate median points().
+\item \textbf{Dynamic cursors}: Cursors can also have inputs, which are taken from function inputs, that affect the query results. 
+\item SELECT median\_points(TRUE); \\
+vs SELECT median\_points(FALSE);
+\end{itemize}
+\medskip
 \centerline{\includegraphics[width=1 \linewidth]{cursorex}}
 \bigskip
 \centerline{\includegraphics[width=1 \linewidth]{cursorex2}}
 
-    \begin{center}
-      \includegraphics[width=1\columnwidth]{cursor_question}
-      \includegraphics[width=1\columnwidth]{cursor_example}
-    \end{center}
 
-\subsubsection{}
+
+
 
 
 
