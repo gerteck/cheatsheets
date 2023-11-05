@@ -773,7 +773,255 @@ reading/writing
 
 
 \section{19. MIPS Pipelining}
+\medskip
+\begin{itemize}
+\item \textbf{Pipelining} improves throughput of entire workload, but does not help latency of a single task.
+\item Multiple tasks operating simultaneously using different resources.
+\item Pipeline rate limited by slowest pipeline stage, stall for dependencies.
+\item \textbf{Pipeline Implementation of MIPS:}
+\begin{itemize}
+	\item one cycle per pipeline stage.
+	\item data required for each stage stored separately, as we need to carry data from one stage to next separately.
+\end{itemize}
+\end{itemize}
 
+\subsection{MIPS Pipeline}
+\begin{enumerate}
+\item \code{IF} - instruction fetch
+\item \code{ID} - instruction decode and register read
+\item \code{EX} - execute an operation or calculate an address
+\item \code{MEM} - access an operand in data mem
+\item \code{WB} - write result back to a register
+\end{enumerate}
+\begin{itemize}
+\item each stage is 1 clock cycle.
+\item exceptions: updating PC and writing back to register file
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{pipelineStages}}
+
+\columnbreak
+
+\subsection{Pipeline Registers}
+\begin{itemize}
+\item Data used by same instruction in later pipeline stages are stored in pipeline registers.
+\item Each pipeline register is a \underline{collection of registers}.
+\item \textbf{Pipeline Registers}:
+\item  \code{IF/ID} : register between IF and ID
+\item  \code{ID/EX }: register between ID and EX
+\item  \code{EX/MEM}: register between EX and MEM
+\item  \code{MEM/WB}: register between MEM and WB
+\item no register needed for the end of the WB stage
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{pipelineRegisters}}
+
+\subsection{Pipeline Control}
+\begin{itemize}
+\item Same control signals as single-cycle datapath.
+\item Each control signal belongs to a particular pipeline stage, avoid mixing up control from different pipelines.
+\end{itemize}
+\subsubsection{Control Grouping}
+\begin{itemize}
+\item Group control signals according to pipeline stage.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{controlgrouping}}
+\centerline{\includegraphics[width=0.9\linewidth]{controlgrouping2}}
+
+
+\subsection{Pipeline Datapath}
+\subsubsection{1. \code{IF} Stage}
+\begin{itemize}
+\item at end of a cycle, \code{IF/ID} \textbf{pipeline reg receives \& stores}:
+\item ($PC + 4$) \& instruction from InstructionMemory[PC]
+\end{itemize}
+
+\subsection{2. \code{ID} Stage}
+	\begin{multicols*}{2}
+	\textbf{\code{IF/ID} register supplies:}
+	\begin{itemize}
+	\item 2 Register numbers for reading registers
+	\item 16-bit offset to be sign-extended to 32-bit.
+	\item $PC + 4$
+	\end{itemize}
+	\columnbreak
+	    
+	\textbf{\code{ID/EX} register receives:}
+	\begin{itemize}
+	\item Data values read \\ from reg file
+	\item 32-bit immediate value
+	\item $PC + 4$
+	\end{itemize}
+	\end{multicols*}
+
+\subsection{3. \code{EX} Stage}
+	\begin{multicols*}{2}
+	\textbf{\code{ID/EX} register supplies:}
+	\begin{itemize}
+	\item Data values read from reg file
+	\item 32-bit immediate value
+	\item $PC + 4$
+	\item + write register number
+	\end{itemize}
+	\columnbreak
+	    
+	\textbf{\code{EX/MEM} register receives:}
+	\begin{itemize}
+	\item $(PC + 4) + (Immd \times 4)$
+	\item ALU result
+	\item isZero? signal
+	\item RD2 from register file
+	\item + write register number
+	\end{itemize}
+	\end{multicols*}
+
+\subsection{4. \code{MEM} Stage}
+	\begin{multicols*}{2}
+		\textbf{\code{EX/MEM} register supplies:}
+		\begin{itemize}
+		\item $(PC + 4) +  (Immd \times 4)$
+		\item ALU result
+		\item isZero? signal
+		\item RD2 from register file
+		\item + write register number
+		\end{itemize}
+	\columnbreak
+	    
+		\textbf{\code{MEM/WB} register receives:}
+		\begin{itemize}
+		\item ALU result
+		\item mem read data
+		\item + write register number
+		\end{itemize}
+				\vfill \null
+	\end{multicols*}
+
+
+\subsection{5. \code{WB} Stage}
+	\begin{multicols*}{2}
+		\textbf{\code{MEM/WB} register supplies:}
+		\begin{itemize}
+		\item ALU result
+		\item mem read data
+		\item write register number
+		\end{itemize}
+	\columnbreak
+		\textbf{End of Cycle}: result is written back to register file if applicable.
+		\vfill \null
+	\end{multicols*}
+
+
+\section{Pipeline Implementations}
+\medskip
+\centerline{\includegraphics[width=1\linewidth]{pipelineimplementations}}
+
+\subsection{Performance Comparison of Implementations}
+\begin{itemize}
+\item $CT =$ cycle time
+\item $T_K =$ time for operation in stage 
+\item $N =$ number of stages
+\end{itemize}
+
+\subsection{single-cycle processor}
+\begin{itemize}
+\item cycle time: $CT_{seq}= max(\sum_{N}^{k=1} T_K)$
+\item execution time for $I$ instructions $I \times CT_{seq}$
+\end{itemize}
+
+\subsection{multi-cycle processor}
+\begin{itemize}
+\item cycle time: $CT_{multi}= max(T_K)$
+\item execution time for $I \times Average CPI \times CT_{multi}$ \\
+\item (average CPI needed as each instr. takes diff no. of cycles.)
+\end{itemize}
+
+\subsection{pipelined processor}
+\begin{itemize}
+\item cycle time: $CT_{pipeline}= max(T_K) + T_d$
+\item $T_d = $ overhead for pipelining (e.g. pipeline register)
+\item cycles needed for $I$ instructions $= (I + N - 1)$
+\item execution time for $I$ instructions $(I + N - 1) \times CT_{pipeline}$
+\end{itemize}
+
+\subsection{Pipelined Ideal Speedup}
+\textbf{assumptions}:
+\begin{itemize} 
+\item Every stage takes same amount of time: $ \sum_{N}^{k=1} = N \times T_1$
+\item No pipeline overhead $T_d = 0$
+\item $I >> N$ (num. of instructions much larger num. of stages)
+\end{itemize}
+
+\centerline{$Speedup_{pipeline} = \frac{Time_{seq}}{Time_{pipeline}} = N$}
+
+\columnbreak
+
+\section{20. Pipeling Hazards}
+\begin{itemize}
+\item \textbf{Pipeline hazards} prevent next instruction from immediately following previous instruction.
+\item \textbf{Structural Hazards}: simultaneous use of hardware resource.
+\item \textbf{Data Hazards}: data dependencies between instructions.
+\item \textbf{Control Hazards}: change in program flow.
+\end{itemize}
+
+\subsection{Structural Hazards}
+\begin{itemize}
+\item solves read/write conflict in MEM module.
+\item split cycle into half.
+\item first half: write into register
+\item second half: read from register.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{structuralhazard}}
+
+\subsection{Data Hazards}
+\begin{itemize}
+\item instruction dependency: read-after-write (RAW)
+\item WAR, WAW data dep. do not cause pipline hazards.
+\end{itemize}
+\subsubsection{Forwarding}
+\begin{itemize}
+\item forward data right after EX stage completed, bypass (replace) data read from register file.
+\item usually no delay incurred
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{forwarding1}}
+
+\begin{itemize}
+\item for \code{lw}, data is only ready after MEM stage.
+\item No choice, may incur extra 1 cycle delay.
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{stall1}}
+
+\subsection{Control Hazards}
+\begin{itemize}
+\item branch decision made in MEM stage: \textbf{stall pipeline}
+\item 3 cycles delay (next IM starts after curr. MEM)
+\end{itemize}
+
+\subsubsection{Early Branch Resolution}
+\begin{itemize}
+\item Make decision in ID stage instead of MEM.
+\item Move branch target address calc \& reg comparison.
+\centerline{\includegraphics[width=0.8\linewidth]{earlybranch1}}
+\item 1 cycle delay
+\centerline{\includegraphics[width=0.8\linewidth]{earlybranch2}}
+\item 2 cycle delay if there is data dependency as well.
+\item 2 cycle delay if \code{lw} occurs before branch (wait stage 4)
+\end{itemize}
+
+\subsubsection{Branch Prediction (assume branch not taken)}
+\begin{itemize}
+\item \textbf{if branch taken (prediction wrong):} \\
+ stall 1 or 3 cycles depending on early branching.
+\end{itemize}
+
+\subsubsection{Delayed Branch}
+\begin{itemize}
+\item if branch outcome takes $X$ no. of cycles to be known, \textbf{move non-control
+dependent} instr into the X slots following a branch.
+\item aka branch delay slot ('no-op' nop slots), else fill w. nop.
+\item instructions executed regardless of branch outcome
+\end{itemize}
+
+
+\section{21. Cache}
 
 
 
