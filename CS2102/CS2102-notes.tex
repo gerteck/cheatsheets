@@ -1147,14 +1147,14 @@ BEGIN
     IF n <= 0 THEN 
         RETURN sum; 
     END IF;
-    FOR val IN 1..n LOOP
+    FOR val IN 1..n 
+    LOOP
         sum := sum + val;
     END LOOP;
     RETURN sum;
 END; $$
 LANGUAGE plpgsql;
-
-SELECT sum_n(5);
+SELECT * FROM sum_n(5);
 \end{lstlisting}
 
 We can also raise an exception if n is negative:
@@ -1195,8 +1195,8 @@ BEGIN
         ELSE
             gap := 0;
         END IF;
-        RETURN NEXT;
-            prev := s.points;
+        RETURN NEXT; -- (OUTPUT) TABLE TUPLE
+        prev := s.points;
     END LOOP;
 END; $$
 LANGUAGE plpgsql;
@@ -1229,12 +1229,13 @@ BEGIN
         ELSE
             gap := 0;
         END IF;
-        RETURN NEXT;
+        RETURN NEXT; -- (OUTPUT) TABLE TUPLE
         prev := s.points;
     END LOOP;
     CLOSE c;
 END; $$
 LANGUAGE plpgsql;
+-- ** To check NULL: IF high IS NULL THEN, not IF high = NULL THEN
 \end{lstlisting}
 
 \textbf{Advantage of Cursor (over for loops etc.)}:
