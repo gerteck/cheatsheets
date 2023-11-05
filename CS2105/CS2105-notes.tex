@@ -850,8 +850,8 @@ Thus, no need for centralised coordination, thus no single point of failure.
 \item \textbf{Backoff Algorithm}: Same as CSMA except the moment a collision is detected, the node stops transmission.
 \item The node then retransmits after some random amount of time. (probability $p$ for each sub. frame until success).
 \item \textbf{Binary Exponential Backoff}: More collisions implies heavier load, adapt retransmission attempt to estimated current load. Longer back-off interval with more collisions.
-\item After the $m^{th}$ collision, we choose K at random from $0, 1, ... , 2m - 1$, then wait $K * 512$ bit transmission
-times before retransmitting.
+\item After the $m^{th}$ collision, we choose K at random from $\{0, 1, ... , 2^m - 1\}$, then wait K time units before retransmitting. (Each K has $p = 1/2^m$)\\
+(Ethernet, 1 time unit $=$ 512 bit transmission. times).
 \item \textbf{Effective:} Both Efficent, Fair, Decentralized, but both CSMA/[CD] not collision free.
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{csma}}
@@ -1010,7 +1010,7 @@ nodes in the same subnet.
 	\item All other nodes in the same subnet will receive this ARP query packet, but only B will reply it.
 	\item A caches B’s IP-to-MAC address mapping in its ARP table (until TTL expires).
 	\end{enumerate}
-\item If A and B in different subnets (assume router R directly connecting the two subnets, and A and B):
+\item If A and B in \textbf{different subnets} (assume router R directly connecting the two subnets, and A and B):
 	\begin{enumerate}
 	\item A will need to send a frame with R’s MAC address but B’s IP address as destination.
 	\item R will realise it needs to forward this frame as the IP doesn’t match when MAC matches.
@@ -1024,6 +1024,7 @@ nodes in the same subnet.
 \item Dynamically assigned, hierarchical (to facilitate routing), Analogy: postal address.
 \item \textbf{MAC address}: 48 bits in length, link-layer address used to move frames over every single link.
 \item Permanent, to identify the hardware (adapter), Analogy: NRIC number.
+\item MAC address commonly aka Ethernet Address.
 \item \textbf{ARP} resolves mapping from network layer (IP) address to link layer (MAC) address.
 \end{itemize}
 
