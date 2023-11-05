@@ -90,7 +90,7 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -226,7 +226,7 @@ AY23/24 Sem 1, github.com/gerteck
 \end{itemize}
 
 \subsubsection{Concurrent Execution}
-\centerline{\includegraphics[width=0.7 \linewidth]{concurrentproblems}}
+\centerline{\includegraphics[width= 1 \linewidth]{concurrentproblems}}
 Require Serializable transaction execution:
 \begin{itemize}
 	\item A concurrent execution of a set of transactions is serializable if this execution 
@@ -237,9 +237,9 @@ Require Serializable transaction execution:
 }
 
 \subsubsection{Data Abstraction}
-\centerline{\includegraphics[width=0.9 \linewidth]{dataabstraction}}
+\centerline{\includegraphics[width= 1\linewidth]{dataabstraction}}
 \subsubsection{Data Independence}
-\centerline{\includegraphics[width=0.9 \linewidth]{dataindependence}}
+\centerline{\includegraphics[width= 1\linewidth]{dataindependence}}
 
 \justify{
 \subsection{Terminology / Definitions}
@@ -281,7 +281,7 @@ Condition that restricts the data that can be stored in a database instance. A l
 		\item  Also known as referential integrity constraints.
 	\end{itemize}
 \end{itemize}
-\centerline{\includegraphics[width=0.8 \linewidth]{integrityconstraints}}
+\centerline{\includegraphics[width=1 \linewidth]{integrityconstraints}}
 }
 
 \section{2. SQL: Structured Query Language}
@@ -290,7 +290,7 @@ Condition that restricts the data that can be stored in a database instance. A l
 \item Contains two parts: Data Definition Language and Data Manipulation Language
 \end{itemize}
 \subsubsection{Datatypes}
-\centerline{\includegraphics[width=0.6 \linewidth]{datatypes}}
+\centerline{\includegraphics[width=0.9 \linewidth]{datatypes}}
 
 \subsection{Integrity Constraints 2}
 \begin{itemize}
@@ -475,9 +475,10 @@ WHERE NOT (version <> '1.0' AND version <> '1.1');
 \subsubsection{NULL value}
 • Every domain has additional value, null. Ambiguous, could be ”unknown”, ”does not exists”, or both. In SQL it is generally (but not always) ”unknown”. \\
 • With null values, the logic of SQL is a three valued logic with unknown. \\
-• Use \code{IS (NOT) NULL} for comparison with null
-• \code{COALESCE()} returns the first non-null of its argument.
-• \code{COUNT(*)} counts NULL values. \code{COUNT(att) AVG(att) MAX(att) MIN(att)} eliminate null values
+• Use \code{IS (NOT) NULL} for comparison with null \\
+• \code{COALESCE()} returns the first non-null of its argument. \\
+• \code{COUNT(*)} counts NULL values. \\
+• \code{COUNT(att) AVG(att) MAX(att) MIN(att)} eliminate null values
 
 \subsubsection{Cross Join}
 • Cross join \& Cartesian Product \& cross product, represented by comma \code{CROSS JOIN} \code{,} \\
@@ -507,6 +508,9 @@ JOIN games g ON d.name = g.name AND d.version = g.version;
 SELECT *
 FROM customers c NATURAL JOIN downloads d NATURAL JOIN games g;
 \end{lstlisting}
+
+\vfill \null
+\columnbreak
 
 \subsubsection{Outer Join}
 • outer join keeps the columns of the rows in the left (left outer join), right (right outer join) or in both (full outer join) tables that do not match anything in the other
@@ -585,6 +589,9 @@ GROUP BY c.country
 HAVING COUNT(*) >= 100;
 \end{lstlisting}
 
+\vfill \null
+\columnbreak
+
 \section{5. Nested SQL Queries}
 \subsubsection{Subqueries}
 • In FROM clause: Must be enclosed in parenthesis, Table alias mandatory, Column aliases optional \\
@@ -611,12 +618,12 @@ WHERE g1.price = ALL (
 -- Note HAVING g.price=MAX(g.price) will not work
 \end{lstlisting}
 
+
 \subsubsection{Exists}
 • \code{EXISTS} evaluates to true if the subquery has some results. \\
-•  Generally correlated. If uncorrelated, then likely either wrong or unnecessary
+•  Generally correlated. If uncorrelated, likely unnecessary.
 \begin{lstlisting}
-SELECT c.id
-FROM customers c
+SELECT c.id FROM customers c
 WHERE NOT EXISTS (
 	SELECT d.id
 	FROM downloads d
@@ -630,6 +637,7 @@ WHERE c.id <> ALL (
 	SELECT d.id 
 	FROM downloads d);
 \end{lstlisting}
+
 \begin{lstlisting}
 -- Find countries with most customers
 SELECT c1.country
@@ -669,9 +677,12 @@ END
 FROM → WHERE → GROUP BY → HAVING → SELECT →
 ORDER BY → LIMIT/OFFSET
 
+\vfill \null
+\columnbreak
+
 \section{6. ER Model}
 Data Modeling Using the Entity-Relationship (ER) Model
-\centerline{\includegraphics[width=0.7 \linewidth]{ernotation}}
+\centerline{\includegraphics[width=0.9 \linewidth]{ernotation}}
 
 \subsubsection{Entity}
 • Objects that are distinguishable from other objects \\
@@ -691,7 +702,7 @@ Data Modeling Using the Entity-Relationship (ER) Model
 \subsubsection{Relationship}
 • \textbf{A relationship} relates two or more distinct entities with a specific meaning. \\
 • \textbf{Degree} of a relationship type is the number of participating entity types. A n-ary relationship set involves n entity roles. Typically binary or ternary. \\ 
-\centerline{\includegraphics[width=0.7 \linewidth]{n-ary}}
+\centerline{\includegraphics[width=0.8 \linewidth]{n-ary}}
 • \textbf{Relationship Set}: Collection of relationships of the same type, can have their own attributes that further decribe the relationship \\
 • Most \textbf{relationship attributes} are used with M:N relationships: (In 1:N relationships, they can be transferred to the entity type on the N-side of the relationship) \\
 • We represent the relationship type as \textbf{Diamond-shaped box}, connected to the participating entity types. \\
@@ -700,19 +711,19 @@ Data Modeling Using the Entity-Relationship (ER) Model
 \subsubsection{N-ary relationships}
 • \textbf{Implicit Constraint} In ternary relationship, every instance of relationship must have one instance of each entity. \\
 • Rule extends to n-ary relationships \\
-\centerline{\includegraphics[width=0.5 \linewidth]{ternary}}
-• \textbf{Avoid Ternaries for Easy Modeling}: e.g.  “objectifying” the relationship type “Interview” into an entity type ‘Interview”. \\
+\centerline{\includegraphics[width=0.7 \linewidth]{ternary}}
+• \textbf{Avoid Ternaries for Easy Modeling}: e.g.  “objectifying” the relationship type “Interview” into an entity type ‘Interview”. 
 
 
 \subsubsection{Cardinality (Ratio) constraints}
 • \textbf{Upper bound} for entity’s participation \\
-\centerline{\includegraphics[width=0.6 \linewidth]{cardinality}}
+\centerline{\includegraphics[width=0.7 \linewidth]{cardinality}}
 
 \subsubsection{Participation / Existence Dependency constraints}
 • \textbf{Lower bound} for entity’s participation \\
 • Partial (default): participation not mandatory \\
 • Total: mandatory (at least 1) \\
-\centerline{\includegraphics[width=0.6 \linewidth]{participation}}
+\centerline{\includegraphics[width=0.8 \linewidth]{participation}}
 
 \subsubsection{Recursive Relationship Type}
 • A relationship type between the same participating entity type in \textbf{distinct roles}. \\
@@ -726,14 +737,11 @@ Data Modeling Using the Entity-Relationship (ER) Model
  \textbf{Identification (weak entity)} dependency \\
 \textbf{Partial Key} \\
 •  Set of attributes of weak entity set that uniquely identifies a weak entity, for a given owner entity. \\
-\centerline{\includegraphics[width=0.7 \linewidth]{partialkey}}
+\centerline{\includegraphics[width=0.8 \linewidth]{partialkey}}
 
 \subsubsection{(min,max) notation for relationship constraints}
 • Read the min,max numbers next to the entity type and looking away from the entity type \\
-\centerline{\includegraphics[width=0.6 \linewidth]{minmax}}
-
-\vfill\null
-\columnbreak
+\centerline{\includegraphics[width=0.8 \linewidth]{minmax}}
 
 \section{7. EER Model}
 \textbf{Enhanced ER or Extended ER}
@@ -742,7 +750,7 @@ Data Modeling Using the Entity-Relationship (ER) Model
 • \textbf{“Is a” relationship} - used to model generalization/specialization of entity sets. \\
 • \textbf{Hierarchy}: constraint that every subclass has only one superclass (single inheritance); basically a tree structure. \\
 • \textbf{Lattice}: a subclass can be subclass of more than one superclass (multiple inheritance). \\
-\centerline{\includegraphics[width=0.8 \linewidth]{lattice}}
+\centerline{\includegraphics[width= 1\linewidth]{lattice}}
 • \textbf{Subclass:} subclass member is entity in a \textbf{distinct specific role}. Entity inherits all attributes and relationships of superclass. \\
 • \textbf{Specialization:} process of defining a set of subclasses of a superclass, based on \textbf{distinguishing characteristics} \\
 • \textbf{Type of Specialization:} Can be Predicated defined, Attribute defined (Written beside joining line) or User defined. \\
@@ -772,7 +780,7 @@ Data Modeling Using the Entity-Relationship (ER) Model
 \subsubsection{4. Map Binary 1:N Relationship Type}
 • For 1:N create table of participating entity (N-side). \\
 • Include FK in table \& attributes of the 1:N relation type. \\
-\centerline{\includegraphics[width=0.5 \linewidth]{onetomany}}
+\centerline{\includegraphics[width=0.6 \linewidth]{onetomany}}
 \subsubsection{5. Map Binary N:M Relationship Type}
 • Represent relationship set with a new table. Include as FK the PK of relations, combination will form PK of table.
 \subsubsection{6. Map Multi-valued Attributes}
@@ -918,6 +926,7 @@ WHERE c.country = `Singapore'
 
 \end{itemize}
 
+\columnbreak
 
 \subsubsection{\underline{Renaming}, $\rho_l$}
 \begin{itemize}
@@ -989,7 +998,7 @@ criteria (i.e. selection)
 \item E.g. ODBC (Open DataBase Connectivity), JDBC (Java DB Connectivity), psycopg library for Python - PostgreSQL.
 \end{itemize}
 \bigskip
-\centerline{\includegraphics[width=0.7 \linewidth]{cli}}
+\centerline{\includegraphics[width=0.9 \linewidth]{cli}}
 \bigskip
 
 \subsubsection{SQL Injection Attack}
@@ -1251,8 +1260,157 @@ vs SELECT median\_points(FALSE);
 \centerline{\includegraphics[width=1 \linewidth]{cursorex2}}
 
 
+\section{12. Triggers}
+\subsubsection{Motivation}
+\begin{itemize}
+	\item \textbf{Model constraints}, where user is not forced to call stored procedure or funtion.
+	\item Example constraints: restricted change in data, derived values, set cardinality constraints.
+	\item \textbf{Application Requirement}: E.g. automatic logging of changes.
+	\item We could create a stored procedure that combines insertion and logging, but users can circumvent this by directly running \code{INSERT INTO} instead of calling procedure.
+\end{itemize}
+
+\subsubsection{Trigger Concept (Trigger fires Trigger Function)}
+\begin{itemize}
+	\item Triggers has \textbf{Event-Condition-Action} rule.
+	\item When event occurs, test condition, and if satisifed, perform action.
+	\item \textbf{ECA rule} is split into 2 parts: \\ 
+	Event and Condition under \textbf{Trigger}, and \\
+	Action under \textbf{Trigger Function}.
+\end{itemize}
+\smallskip
+\centerline{\includegraphics[width=1 \linewidth]{triggerfunction}}
+
+\columnbreak 
+
+\subsection{Triggers}
+\begin{itemize}
+\item Triggers can listen on multiple event types.
+\end{itemize}
+
+\begin{lstlisting}
+CREATE TRIGGER 
+    on_student_modified_advanced
+AFTER INSERT OR DELETE OR UPDATE ON students
+FOR EACH ROW
+EXECUTE FUNCTION log_student_advanced();
+\end{lstlisting}
+
+\begin{itemize}
+\item Triggers options: \textbf{Event, Timing, Granularity.}
+\item \textbf{Event}: Situation that fires trigger.
+\item \textbf{Timing}: When trigger is fired (BEFORE or AFTER) for tables, (INSTEAD OF) for views.
+\item \textbf{Granularity}: Specifies if triggered for each affect row or only once. (FOR EACH ROW / F.E. STATEMENT)
+\end{itemize}
+
+\centerline{\includegraphics[width=0.9 \linewidth]{triggerevents}}
+\centerline{\includegraphics[width=1 \linewidth]{triggertiming}}
+
+\subsubsection{Views (Recap) and Triggers}
+\begin{itemize}
+\item \textbf{Views}: virtual table, a permanently named query.
+\item Query results not permanently stored, executed each time query used, hides complexity, heavily used.
+\end{itemize}
+\begin{lstlisting}
+CREATE VIEW <name> AS
+    SELECT ... FROM ... ...;
+\end{lstlisting}
+\begin{itemize}
+\item \textbf{Updateable Views}: Must have only one entry in FROM clause, no GROUP BY / LIMIT  etc, no UNION, INTERSECT, no aggregate functions. Otherwise direct modification not possible.
+\item Triggers useful for (non-updateable) views. \\
+ \textbf{(Trigger Timing: (INSTEAD OF) for views.)}
+\end{itemize}
+
+\centerline{\includegraphics[width=1 \linewidth]{triggergranularity}}
+
+\subsection{Trigger Conditions }
+\begin{itemize}
+\item Execute trigger function only if condition is true.
+\item Instead of having condition in trigger function, we move to trigger, and only execute if condition is true.
+\item \textbf{Condition}: generally can formulate any boolean expression, but no SELECT, OLD for INSERT, NEW for DELETE, in the WHEN() clause.
+\end{itemize}
+\smallskip
+\begin{lstlisting}
+CREATE TRIGGER on_student_updated_advanced
+AFTER UPDATE ON students
+FOR EACH ROW WHEN (NEW.points <> OLD.points)
+EXECUTE FUNCTION log_student_advanced();
+\end{lstlisting}
+
+\subsection{Deferrable Triggers}
+\begin{itemize}
+\item Triggers run immediately for every statement that fire them.
+\item Operations of multiple statements yielding intermediate inconsistent states
+\item \textbf{Deferred triggers}: Run trigger only at end of transactions.
+\end{itemize}
+
+\begin{lstlisting}
+CREATE CONSTRAINT TRIGGER on_account_modified
+AFTER INSERT OR DELETE OR UPDATE ON accounts
+DEFERRABLE INITIALLY IMMEDIATE
+FOR EACH ROW
+EXECUTE FUNCTION check_balance();
+\end{lstlisting}
+
+\begin{itemize}
+\item Only work for AFTER and FOR EACH ROW triggers.
+\item Both CONSTRAINT and DEFERRABLE must be specified.
+\item INITIALLY DEFERRED: trigger deferred by default.
+\item INITIALLY IMMEDIATE: trigger not deferred by default (but can be deferred on demand).
+\end{itemize}
+
+\columnbreak 
+
+\begin{lstlisting}
+BEGIN TRANSACTION;
+SET CONSTRAINTS on_account_modified DEFERRED;
+UPDATE accounts SET balance = balance - 50 WHERE id = 10;
+UPDATE accounts SET balance = balance + 50 WHERE id = 11;
+END TRANSACTION;
+\end{lstlisting}
+
+\subsection{Other Trigger Notes}
+\begin{itemize}
+\item \textbf{Trigger Order}: Triggers for same event on same table:
+\item Order of activation: BEFORE statement-level, BEFORE row-level, AFTER row-level, AFTER statement-level.
+\item Within each, fired in alphabetic order. If BEFORE row-level trigger returns NULL, subsequent triggers on same row omitted.
+\end{itemize}
 
 
+\subsection{Trigger Functions}
+\begin{itemize}
+	\item Trigger functions do not take in (ordinary) arguments.
+	\item Must have return type TRIGGER
+	\item Must be defined before trigger itself.
+	\item \textbf{``Input''}: Special internal data structure from trigger.
+\end{itemize}
+
+\subsubsection{Useful Data available in trigger function}
+\begin{itemize}
+\item When function is called as a trigger, several special variables created automatically in top level block.
+\end{itemize}
+\centerline{\includegraphics[width=0.9 \linewidth]{tgdata}}
+
+\subsubsection{Trigger Function Example}
+\begin{itemize}
+\item Schema:  advanced\_logs(student: INT, operation: TEXT, p\_old: INT, p\_new: INT, created\_at: TIMESTAMP)
+\item Log all events that might modify students' points (INSERT, UPDATE, DELETE)
+\end{itemize}
+
+\begin{lstlisting}
+CREATE OR REPLACE FUNCTION log_student_advanced()
+RETURNS TRIGGER AS $$ BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO points_log_advanced VALUES (NEW.id, TG_OP, NULL, NEW.points, DEFAULT);
+        RETURN NEW;
+    ELSIF (TG_OP = 'DELETE') THEN
+        INSERT INTO points_log_advanced VALUES (OLD.id, TG_OP, OLD.points, NULL, DEFAULT);
+        RETURN OLD;
+    ELSIF (TG_OP = 'UPDATE') THEN
+        INSERT INTO points_log_advanced VALUES (OLD.id, TG_OP, OLD.points, NEW.points, DEFAULT);
+        RETURN NEW;
+    END IF;
+END; $$ LANGUAGE plpgsql;
+\end{lstlisting}
 
 
 
