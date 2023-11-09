@@ -195,6 +195,8 @@ from that end system to any distant end system.
 \item \textbf{Packet switching:} data sent through net in discrete “chunks"
 \end{itemize}
   
+ \columnbreak
+  
 \subsubsection{Circuit Switching}
 \begin{itemize}
 \item End-end resources are allocated to and reserved for “call”  between source \& dest:
@@ -1494,35 +1496,60 @@ Recovering from Packet Loss given small tolerable delay between transmission and
 \item If packet lost, still have most of every chunk, concealable by packet repetition or interpolation. 
 \item No redundancy overhead, but increases playout delay as reordering needed on both sides.
 \end{itemize}
+\medskip
 \centerline{\includegraphics[width=1\linewidth]{FEC}}
 
-\vfill \null
-\columnbreak
-
-\subsubsection{Content Distribution Networks}
+\subsubsection{Content Distribution Networks (CDN)}
 \begin{itemize}
 \item \textbf{Challenge}: Stream content (selected from millions of videos) to multitude of simultaneous users.
-\item Using single, large mega server: single point of failure, point of network congestion, long path to distant clients,  multiple copies of video sent over outgoing link, solution does not scale.
+\item \textbf{Unoptimal}: Using single, large mega server: single point of failure, point of network congestion, long path to distant clients,  multiple copies of video sent over outgoing link, solution does not scale.
+\end{itemize}
+
+\columnbreak
+
+\subsubsection{Content Distribution Networks cont.}
+\begin{itemize}
 \item \textbf{Multiple Sites}: store/serve multiple copies of videos at multiple geographically distributed sites (CDN).
 \item \textbf{enter deep}: push CDN servers deep into many access networks, Usually at ISP, close to users. (e.g. Akamai, 1700+ locations)
 \item \textbf{bring home}: smaller number (10’s) of larger clusters in IXPs (I. exchange point) near (but not within) access networks. (e.g. used by Limelight)
 \item Hence, CDN stores copies of content at \textbf{CDN nodes}, client requests content, service provide returns manifest, and using manifest client retrieves content at highest supportable rate.
 \item Client may choose different rate or copy (from different CDN node) automatically if network path congested.
 \end{itemize}
-\centerline{\includegraphics[width=0.9\linewidth]{CDN}}
+\centerline{\includegraphics[width=1\linewidth]{CDN}}
 
+\subsection{Internet Protocols: Real-Time Multimedia Communication}
+With growth of multimedia traffic, developed family of protocols, \textbf{Real-Time Transport Protocol (RTP)}, its control part \textbf{Real-Time Control Protocol (RTCP)}, and \textbf{Real-Time Streaming Protocol (RTSP)}. \\
+\smallskip
+As TCP resolves losses by retransmitting with no delay or variation guarantee, time sensitive multimedia traffic does not work well with TCP. To avoid such problems, UDP used for its multiplexing and checksum services.
 
+\subsubsection{Real-Time Transport Protocol (RTP)}
+\begin{itemize}
+\item \textbf{RTP Standard} defines a pair of protocols: RTP and RTCP. RTP is used for the exchange of multimedia data, while RTCP is the control part and is used to periodically obtain feedback control information regarding quality of transmission associated with data flows.
+\item \textbf{RTP} defines standards for a packet structure that includes fields for audio/video data, seq. number,
+timestamps, etc.
+\item RTP runs on top of UDP, has no guarantee on delivery or prevention of out-of-order.
+\item \textbf{RTP header}: Includes payload type that indicates type of media encoding used, sequence number, timestamp and SSRC that identifies source of RTP stream.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{RTPHeader}}
+
+\subsubsection{Real-Time Transport Control Protocol (RTCP)}
+RTCP is \textbf{control protocol} designed to work in conjunction with RTP. Lightweight connection where one packet is sent every few seconds over UDP in both directions, with statistics such as no. of packets sent, lost, and inter-arrival jitter. Feedback information can be used for diagnostic purposes to localize eventual problems.
+
+\subsubsection{Real-Time Streaming Protocol (RTSP)}
+RTSP (RFC 2326) is application level $r$ protocol that enables control over delivery of data with real-time properties over IP.
+\begin{itemize}
+\item Control sequences include pausing, fast forward repositioning, etc.
+\item RTSP does not typically deliver continuous media itself, although interleaving of media stream with control stream possible. (Actual delivery done separately, most likely by RTP).``network remote control for multimedia servers.''
+\item Like HTTP, RTSP uses TCP to maintain an end-to-end connection and, while most RTSP control messages are
+sent by the client to the server, some commands travel in the other direction (i.e. from server to client).
+\end{itemize}
 
 \vfill \null
 \columnbreak
 
-
-\vfill \null
-\columnbreak
-
-\centerline{\includegraphics[width=0.85\linewidth]{command1}}
+\centerline{\includegraphics[width=0.90\linewidth]{command1}}
 \centerline{\includegraphics[width=0.90\linewidth]{command2}}
-
+\centerline{\includegraphics[width=0.90\linewidth]{command3}}
 
 
 
