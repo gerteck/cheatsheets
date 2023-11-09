@@ -1321,10 +1321,207 @@ Stateful firewalls filter packets based on full context of connection, tracks st
 \vfill \null
 \columnbreak
 
-\section{7.}
+\section{7. Multimedia Networking}
+\textbf{Multimedia network application} defined as any network application that employs \textbf{audio or video}. 
+\begin{itemize}
+\item Videos are often delivered Over-the-Top (OTT), i.e. streaming media services offered directly to viewers via the Internet, bypassing cable, broadcast etc.
+\end{itemize}
+ \textbf{Few main application types}
+\begin{itemize}
+\item \textbf{Streaming} stored audio, video: can begin playout before downloading entire fire, storing / buffering at client.
+\item \textbf{Conversational (two-way live)} voice/video over IP: interactive nature limits delay tolerance, delay more than 400 milliseconds intolerable.
+\item \textbf{Streaming live (one-way live)} audio, video: done with CDNs (Content distrib. network) e.g. live sporting events, higher delay allowable. 
+\end{itemize}
+
+
+\subsection{Video Multimedia}
+\begin{itemize}
+\item \textbf{Video} is a sequence of images displayed at constant rate, where a digital image is some array of pixel (luminance, color), each represented by bits.
+\item \textbf{High Bit Rate}: Video streaming consumes a high bandwidth, having a bit rate of more than ten times
+greater than that of photo or music applications.
+\item \textbf{Video Compression}: Use redundancy within and between images to decrease num. of bits used to encode image.
+\item Spatial Redundancy (within image): Instead of sending same value N times, send value number of repeats, N.
+\item Temporal Redundancy: Only send differences between two consecutive images.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{vidcompress}}
+
+\begin{itemize}
+\item \textbf{Constant Bit Rate (CBR)}: video encoding rate fixed. Not responsive to complexity of video, need to set bitrate high to handle complex segments of video. Consistency well suits real-time encoding.
+\item \textbf{Variable Bit Rate (VBR)}: best suited for on-demand video due to longer time allowed to process the data.
+\end{itemize}
+
+\subsection{Audio Multimedia}
+\begin{itemize}
+\item \textbf{Sampling}: Sample audio analog signal at fixed rate to real number value to obtain digital signal. Telephone: 8,000 samples/sec, CD: 44,100 samples/sec.
+\item \textbf{Quantisation}: Each sample rounded to one of finite number of values. The number of quantisation
+values is typically a power of two, e.g. 256.
+\item \textbf{Concatenation \& Decoding}: All values represented as bits, and samples are concatenated. To decode, we convert it back to analog signal, which is an approximate of original (quality reduction), as certain sounds lost in sample and encode.
+\end{itemize}
+
+\textbf{Compression Ratio} of media codec: bitrate of uncompressed media stream divided by bitrate of same compressed media stream.
+
+\subsection{Streaming Stored Video}
+\begin{itemize}
+\item \textbf{Streaming nature}: Begin playout w/o entire file download.
+\item \textbf{Stored (at server/CDNs}: Can transmit faster than audio / video render rate (imply store / buffer at client)
+\item \textbf{Continuous Playout}: Once client playout begins, playback must match original 
+timing, despite network delays (jitter).
+\item \textbf{Interactivity}: Video pause, fast-forward, jump etc.
+\end{itemize}
+
+\subsection{Client-side Buffering}
+Compensates for network-added delay, delay jitter.
+\begin{itemize}
+\item average fill rate: $\bar{x}$, playout rate $r$.
+\item \textbf{Initial fill of buffer} until client playout at time $t_p$. Buffer level varies over time as fill rate $x(t)$ varies, but $r$ constant.
+\item If $\bar{x} < r$, buffer eventually empties, video playout freezes until buffer fills again. If $\bar{x} > r$, buffer will not empty if initial playout delay enough to absorb variability in $x(t)$.
+\item \underline{If buffer filled, fill rate will be capped at playout rate.}
+\item \textbf{Client side buffer absorbs variation in delay \& bandwidth}, for long as buffer is not drained.
+\item \textbf{Initial playout delay tradeoff} between likelihood of buffer starvation and initial delay.
+\end{itemize}
+\centerline{\includegraphics[width=0.75\linewidth]{clientbuffer}}
+
+\subsection{UDP Streaming}
+\begin{itemize}
+\item \textbf	{Push-based Streaming}: Server sends at rate matching client’s consumption rate. As UDP has no congestion control mechanism, server transmits w/o rate-control restrictions of TCP.
+\item E.g. video consumption rate $=$ 2Mbps, each UDP packet carries 8,000 bits of video. Server needs to transmit one UDP packet into socket every $\frac{(8000 bits)}{(2 Mbps)} = 4 msec.$
+\item \textbf{Short playout delay}: (2-5 seconds) to remove network jitter. Small buffer, susceptible to bandwidth changes, video may freeze or skip frames.
+\item \textbf{Error recovery}: Application level, if time permits.
+\item \textbf{RTP}: Video chunks encapsulated using Real-Time Transport Protocol, control connection maintained separatedly using RTSP (RT stream protocol), used for establishing and controlling media sessions, and allowing issuing of commands e.g. play, record, pause.
+\item \textbf{Drawback}: UDP may not go through firewalls, users behind firewall cannot receive. Need for separate media control server (RTSP), increases cost, complexity.
+\end{itemize}
+
+\subsection{HTTP Streaming}
+\begin{itemize}
+\item \textbf	{Pull-based Streaming}: multimedia file retrieved via HTTP GET, sent at max possible rate under TCP.
+\item \textbf{Prefetching:} Cccurs naturally as TCP’s congestion avoidance tries to use all available bandwidth. If bandwidth is greater than consumption rate, prefertching occurs.
+\item \textbf{Sending Flow}:Video file chunks $\rightarrow$ server send buffer  $\rightarrow$ client TCP receive buffer  $\rightarrow$ client TCP application buffer (application decompresses and displays).
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{httpstream}}
+\begin{itemize}
+\item If application buffer is full, send rate reduced to consumption rate. If video paused, sending and buffering continues till buffer full. Then sending will block until video resumed. 
+\item Repositioning: If user skips forward in video, all buffered frames wasted. Medium sized client application buffer reduce wastage.
+\end{itemize}
+
+\columnbreak
+
+\subsection{HTTP Streaming cont.}
+\begin{itemize}
+\item \textbf{Advantage}: HTTP/TCP passes more easily through firewalls, network infrastructure (CDNs, routers) more fine tuned for HTTP/TCP.
+\item \textbf{Drawback}: Fill rate fluctuates due to TCP congestion control and retransmissions (in-order delivery). Also, larger playout delay than push-based UDP.
+\end{itemize}
+\medskip
+\centerline{\includegraphics[width=0.9\linewidth]{TCPcongestion}}
+
+\subsection{DASH (Dynamic, Adaptive Streaming, HTTP)}
+\begin{itemize}
+\item Video-on-Demand (VoD) video streaming increasingly uses HTTP streaming, but simple HTTP streaming GETs (whole) video file from HTTP server. $\rightarrow$ wasteful, needs large client buffer.
+\item \textbf{Issue}: All clients receive same encoding (resolution) of video, despite variation in device/network bandwidth.
+\item \textbf{DASH: Dynamic, Adaptive} Streaming over HTTP.
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{DASH}}
+
+\subsubsection{DASH Server, Client}
+\begin{itemize}
+\item \textbf{Various Encodings}: Video encoded into diffferent versions w. differing bit rates and quality levels.
+\item \textbf{Manifest and Byte Range}: HTTP server stores a .m3u8/.mpd manifest file, providing URL for each version, along with bit rate. Client first requests for the manifest file to know the various versions.
+\item \textbf{Pull-based Streaming}: client periodically measures bandwidth, dynamically request sustainable versions of chunks of video segments of 2-10 seconds in length, that current bandwidth can support.
+\item \textbf{Adaptive Bitrate Algorithm: (ABR)} Client runs algorithm to decide which quality next chunk should be.
+\end{itemize}
+\columnbreak
+
+\begin{itemize}
+\item \textbf{Streamlets or Byte Range}: Thereafter, client either GET request for specific streamlet, if 
+server had split the video into streamlets during pre-processing, or use GET requests with specified byte range in header to get the right chunk.
+\item \textbf{Advantage}: Works with Web Caching: DASH works well with existing web caching infrastructure of ISPs and Content Delivery Networks (CDN). Server is simple, no firewall problems.
+\item \textbf{Disadvantage}:  DASH based on media segment transmissions, (2-10 sec in length typically). By buffering a few segments at client side, DASH does not provide low latency for interactive, two-way applications (e.g., video conferencing).
+\end{itemize}
 
 
 
+\subsection{Voice-over-IP}
+\begin{itemize}
+\item \textbf{VoIP end-end-delay requirement}: needed to maintain `conversational' aspect. $<$ 150 msecs not perceived by human listener, delays $>$ 400 msecs impair interactivity, in between acceptable but not ideal.
+\item \textbf{Talk Spurts}: Periods of silence during conversation, nothing is sent. When speaking: $8,000$ samples/sec, of 8 bits each, 256 quantization levels. Data $= 64kbps$. $20 msec$ chunks, hence 160 bytes per chunk.
+\item \textbf{App-layer header}: Header added to each chunk, then encapsulated into (generally) UDP segment. Send segment into socket every 20 msec during talk spurt.
+
+\item \textbf{Challenge:} Internet (IP layer) best effort service, no upper bound on delay or packet loss.
+\item \textbf{Packet Loss}: UDP segments containing a chunk and special header may be lost in transit. TCP unusable as retransmission mechanisms delay unacceptable. 
+\item \textbf{Loss tolerance}: depending on voice encoding, loss concealment, loss rates between 1\% - 10\% tolerable. Receivers generally disregard packets beyond certain delay threshold (delay loss).
+\item \textbf{Delay Jitter}: Varying network delay (end-to-end time delay over network). 
+\end{itemize}
+
+\subsection{Removing Jitter for Audio}
+\begin{itemize}
+\item \textbf{Timestamp}: Chunk has timestamp t, at which chunk is generated.
+\item \textbf{Playout Delay}: Delay needs to be long enough so most packets received before scheduled playout times.
+\end{itemize}
+
+\subsubsection{VoIP: Fixed Playout Delay}
+\begin{itemize}
+\item Receiver attempts to play out each chunk at exactly $q$ msecs after chunk generated. (chunk timestamped
+with time $t$ will be played at time $t + q$.)
+\item Packets arriving after $t + q$ discarded. 
+\item \textbf{Tradeoff}: large $q$, less packet loss, big $q$, more interactive experience
+\item No value of $q$ can guarantee optimal performance, eventually will have packet loss or waste playout time.
+\end{itemize}
+\medskip
+\centerline{\includegraphics[width=0.9\linewidth]{fixedDelay}}
+
+\subsubsection{VoIP: Variable Playout Delay}
+\begin{itemize}
+\item \textbf{Goal}: low playout delay, low late loss rate, through \textbf{adaptive playout delay adjustment}.
+\item Estimate network delay, adjust playout delay at beginning of each talk spurt. (adjusting silent periods). 
+\item Silent periods compressed and elongated, chunks still played out every 20msec during talk spurt.
+\item Use \textbf{Exponentially weighted moving average (EWMA)}:
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{EWMA}}
+
+\columnbreak
+\subsection{VoIP: Packet Loss Recovery}
+Recovering from Packet Loss given small tolerable delay between transmission and playout.
+
+\subsubsection{Forward Error Correction (FEC)}
+\begin{itemize}
+\item \textbf{Redundancy}: send enough bits to allow recovery without retransmission.
+\item \textbf{Simple FEC}: Every group of $n$ chunks, create redundant chunk by XOR-ing n chunks. Send these n + 1 chunks. Increase bandwidth by a factor of $1/n$, allows reconstruction of up to 1 lost chunk from $n+1$ chunks. \
+\item Increases playout delay, wait for entire group of packets before playout.
+\item \textbf{Lower-Resolution Audio Stream}: ``piggyback lower quality stream''. For $n^{th}$ chunk, append lower quality ver. of it to $n+1^{th}$ chunk. 
+\item E.g., nominal stream PCM encoding at 64kbps, redundant stream is GSM at 13kbps. 
+\item Non-consecutive loss of packets, receiver can conceal loss.
+\item \textbf{generalization}: extend further, append more low bit-rate chunks, ($n-1 \& n-2$ low bit rate chunk to $n^{th}$ chunk).
+\item \textbf{Interleaving}: Divide audio chunks into smaller units, each packet contains small units from different chunks.
+\item If packet lost, still have most of every chunk, concealable by packet repetition or interpolation. 
+\item No redundancy overhead, but increases playout delay as reordering needed on both sides.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{FEC}}
+
+\vfill \null
+\columnbreak
+
+\subsubsection{Content Distribution Networks}
+\begin{itemize}
+\item \textbf{Challenge}: Stream content (selected from millions of videos) to multitude of simultaneous users.
+\item Using single, large mega server: single point of failure, point of network congestion, long path to distant clients,  multiple copies of video sent over outgoing link, solution does not scale.
+\item \textbf{Multiple Sites}: store/serve multiple copies of videos at multiple geographically distributed sites (CDN).
+\item \textbf{enter deep}: push CDN servers deep into many access networks, Usually at ISP, close to users. (e.g. Akamai, 1700+ locations)
+\item \textbf{bring home}: smaller number (10’s) of larger clusters in IXPs (I. exchange point) near (but not within) access networks. (e.g. used by Limelight)
+\item Hence, CDN stores copies of content at \textbf{CDN nodes}, client requests content, service provide returns manifest, and using manifest client retrieves content at highest supportable rate.
+\item Client may choose different rate or copy (from different CDN node) automatically if network path congested.
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{CDN}}
+
+
+
+\vfill \null
+\columnbreak
+
+
+\vfill \null
+\columnbreak
+
+\centerline{\includegraphics[width=0.85\linewidth]{command1}}
+\centerline{\includegraphics[width=0.90\linewidth]{command2}}
 
 
 
