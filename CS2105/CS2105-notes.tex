@@ -1070,6 +1070,261 @@ nodes in the same subnet.
 \end{itemize}
 
 \null \null
+\columnbreak
+
+% ========================= Network Security =========================
+
+\section{6. Network Security}
+
+\subsection{Properties of Security}
+\begin{itemize}
+\item \textbf{Confidentiality}: Only sender \& receiver should be able to understand message contents.
+\item \textbf{Authentication}: Ability of sender and receiver to confirm the identity of each other.
+\item \textbf{Message Integrity}: Ensuring messages are not altered without detection.
+\item \textbf{Access and Availability}: Services must be accessible and available to users.
+\end{itemize}
+
+\subsubsection{Potential Issues}
+\begin{itemize}
+\item Alice, Bob and Trudy (Intruder).
+\item Eavesdrop, Insert or delete messages.
+\item Impersonation or spoofing (fake) source address
+\item Hijacking connection
+\item Denial of service
+\end{itemize}
+
+\subsection{Principles of Cryptography}
+\subsubsection{Terminology}
+\begin{itemize}
+\item \textbf{Plaintext}: The original message
+\item \textbf{Ciphertext}: The encrypted message
+\item \textbf{Encryption Key}: Used to encrypt messages
+\item \textbf{Ciphertext Only Attack}: Crack the encryption using only the encrypted text. Generally through
+brute force or frequency analysis.
+\item \textbf{Known Plaintext Attack}: When you have the ciphertext and the corresponding plaintext.
+\item \textbf{Chosen Plaintext Attack}: Presumes that the attacker can obtain ciphertexts for arbitrary plain texts
+\end{itemize}
+
+
+\subsection{Symmetric Key Cryptograpy}
+Both sender and receiver share the same key $K_a = K_b = K_s$ Issue lies in initial secure communication of shared key.
+\centerline{\includegraphics[width=0.8\linewidth]{symmetric}}
+
+\columnbreak
+
+\subsection{Symmetric Key Cryptograpy}
+\begin{itemize}
+\item \textbf{Substitution Cipher}: Replace one character for another. Encryption key is the 1-1 mapping of characters used.
+\item \textbf{Caesar's cipher}: Fixed shift of the alphabets. Encryption key is the shift number, 25 possible values, easy to break.
+\item \textbf{Monoalphabetic ciper}: Substitute one letter for another. Mapping from set of 26 letters to itself, $26!$ possible mappings. Easily broken with statistical analysis of frequent letters.
+\item \textbf{Polyalphabetic encryption}: Use multiple mappings (substitutions ciphers). Define a cyclic pattern and for each new plaintext symbol, use subsequent subtitution pattern in cyclic pattern. Encrption key is the $n$ sub. ciphers and cycling pattern.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{cipher}}
+\begin{itemize}
+\item \textbf{Block Ciper}: Message encrypted is processed in blocks of $K$ bits, to encode one block, ciper uses a one-to-one mapping.
+\item DES: Data Encryption Standard and AES: Advanced Encryption Standard are two symmetric key ciphers.
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{blockcipher}}
+
+
+\subsection{Asymmetric Key Cryptography}
+Aka \textbf{Public Key Cryptography}. Sender and receiver use different keys $K_a \neq K_b$, and do not share a secret key. 
+\begin{itemize}
+\item Sender uses a \textbf{public encryption key} known to all, receiver uses a private decryption key known 
+only to receiver. Diffie and Hellman (1978). 
+\item Public-key cryptography has enabled effective encryption in the SSL
+(Secure Socket Layer) of the HTTPS protocol.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{asymmetric}}
+
+
+\subsection{Asymmetric Key Cryptography}
+\begin{itemize}
+	\item \textbf{Requirements} for public key encryption algorithms:
+	\item Need $K_B^+(.)$ and $K_B^-(.)$ such that
+\end{itemize}
+\smallskip
+	\centerline{$m = K_B^-(K_B^+(m)) = K_B^+(K_B^-(m))$} 
+\smallskip
+\begin{itemize}
+	\item With pub. key $K_B^+$, private key $K_B^-$ impossible to compute.
+\end{itemize}
+
+\subsection{RSA (Rivest, Shamir, Adleman) Algorithm}
+
+\subsubsection{Basis of Algorithm: Modular Arithmetic}
+\begin{itemize}
+\item \textbf{$x$ mod $n$} = remainder of $x$ when divided by $n$.
+\item $[(a $ mod $ n) + (b $ mod $ n)] $ mod $ n = (a + b) $ mod $ n$
+\item $[(a $ mod $ n) - (b $ mod $ n)] $ mod $ n = (a - b) $ mod $ n$
+\item $[(a $ mod $ n) \times (b $ mod $ n)] $ mod $ n = (a \times b) $ mod $ n$
+\item Thus, 
+\centerline{$(a$ mod $n)^d $ mod $ n = a^d$ mod $n$}
+\item E.g. $a = 14$, $n = 10$, $d=2$.\\
+ $(14$ mod $10)^2$ mod $10$ $= 16$ mod $10 = 6$. \\
+ $14^2$ mod $10 = 6$. 
+\end{itemize}
+\smallskip
+\begin{itemize}
+\item \textbf{message}: bit pattern uniquely represented by an integer number. Ecrypting a message eqv. to encrypting a number. Plaintext $\rightarrow$ ciphertext.
+\end{itemize}
+
+\subsubsection{RSA: Creating public/private key pair}
+\begin{enumerate}
+\item Choose two large prime numbers $p, q$.
+\item Compute $n = pq$, $\phi(n) = z = (p-1)(q-1)$.
+\item Choose $e$ (with $e < n$) that has no common factors with $z$ ($e$ and $z$ are relatively prime.)
+\item Choose $d$ such that $ed -1$ is exactly divisible by $z$. \\ 
+($ed$ mod $z = 1$).
+\item \textbf{public key} is ($n, e$) $= K_B^+$.  \textbf{private key} is ($n, d$) $ = K_B^-$.
+\end{enumerate}
+
+\subsubsection{RSA: Encryption, decryption}
+\begin{enumerate}
+\item Given ($n, e$) and ($n, d$) as computed.
+\item To encrypt message $m$, (note: $m < n$), compute 
+\centerline{$c = m^e $ mod $n$}
+\item To decrypt received bit pattern $c$, computer
+\centerline{$c^d$ mod $n$}
+\item \textbf{key principle:}
+\centerline{$(m^e$ mod $n)^d$ mod $n = m$}
+\end{enumerate}
+\textbf	{RSA property}: 
+\centerline{$m = K_B^-(K_B^+(m)) = K_B^+(K_B^-(m))$} 
+• Follows from modular arithmetic:
+ \centerline{$(m^e$ mod $n)^d$ mod $n = m^{ed}$ mod $n$}
+ \centerline{$= m^{de}$ mod $n = (m^d$ mod $n)^e$ mod $n$}	
+
+
+\subsubsection{RSA security, in practice}
+\begin{itemize}
+\item With public key $K_B^+ = (n,e)$, determine $d$. We would need to find the two prime factors of $n$. without knowing two factors $p$ and $q$. Hard to factor integer $>$ 512-bit.
+\item \textbf{In practice}: Exponentiation in RSA computationally intensive, DES $>$ 100 times faster than RSA, but needs prior knowledge of symmetric session key $K_S$.
+\item Hence, exchange $K_S$, using public key cryptography, then use $K_S$ to communicate from then.
+\end{itemize}
+
+\centerline{\includegraphics[width=0.9\linewidth]{RSAexample}}
+
+\subsection{Message Integrity}
+Sender, receiver ensure message \textbf{not altered without detection}.
+
+\subsubsection{Unoptimal error detection as Integrity check}
+\begin{itemize}
+\item \textbf{Parity, Checksum}: Many-to-one, easy to find another message with same checksum value, designed to detect accidental errors and not attacks.
+\item \textbf{CRC}: Better than checksum, but poor as output is biased to input, minor changes in input produce minor changes in output. Easy to find messages of same CRC.
+\end{itemize}
+
+\null \null
+
+\subsubsection{Password Hashing}
+Passwords are not stored in plaintext but hashed and stored. To make it hard to find similar plaintexts by simply checking the hashes, a salt i.e. random string of characters is added to the front of the password before being hashed.
+
+
+\vfill \null
+\columnbreak
+
+\subsection{Cryptographic Hash Function}
+\begin{itemize}
+\item \textbf{Hash Function}: Function $H(.)$ that takes input $m$, produce \textbf{short, fixed-length} message digests (e.g. 128 bits \textbf{fingerprint}). Useful for longer inputs. 
+\item \textbf{Cryptographic Hash function}: Hash function, computationally infeasible to find any two different messages $x$ and $y$ where $H(x) = H(y)$. 
+\item Computationally infeasible for intruder to substitue one message for another message. 
+\item Small change in input $\rightarrow$ large change in hash output.
+\item \textbf{Common hash functions}:
+\item  MD5: Computes 128-bit message digest in 4-step process. Obsolete now as collisions can
+be found within a minute.
+\item SHA-1: US standard. Computes 160-bit message digest, replaced by SHA-2, SHA-3.
+\end{itemize}
+
+\subsubsection{Message Authentication Code (MAC)}
+\begin{itemize}
+\item \textbf{Message Integrity}: Require \textbf{Authentication Key $s$}.
+\item We cannot just send $(m, H(m))$, as attacker can simply replace both the message and hash.
+\item Sender, receiver share \textbf{authentication key $s$, send $(m, H(m + s))$.} $s$ used to generate authentication code from $m$ and compare with received code.
+\end{itemize}
+
+\subsubsection{Digital Signatures}
+\begin{itemize}
+\item Needs to be \textbf{verifiable \& unforgeable}.
+\item \textbf{Digital signature}: signed message digest.
+\item Fixed-length, easy-to-compute digital fingerprint. First hash message, then
+encrypt hash with private key. Receiver can verify with sender's public key.
+\end{itemize}
+\medskip
+\centerline{\includegraphics[width=0.9\linewidth]{signvsMac}}
+
+\subsection{Public-key Certification}
+\begin{itemize}
+\item Need trustworthy source to store and get list of public keys. Provided by a \textbf{Certificate Authority} (CA).
+\item CAs bind public keys to entities.
+\item An entity, e.g. a host or a router, registers public key with a CA, with some proof of identity.
+\item CA creates certificate binding that entity to its key (along with a lot of other information) and 
+certificate is digitally signed by the CA.
+\item A sender gets receiver’s certificate from CA, applies CA’s public key to certificate to get receiver’s public key.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{CA}}
+
+\subsection{Network Access \& Availability}
+Ensure services \textbf{accessible \& available} to users.
+
+\subsubsection{Firewalls}
+\begin{itemize}
+\item \textbf	{Firewalls}: combination of hardware and software, isolates organisation’s internal network from larger Internet, allowing some packets to pass, blocking others.
+\item \textbf{Prevents denial of service (DoS) attacks:} e.g. SYN flooding, attacker establishes many bogus TCP connections, no resources left for legit. connections
+\item \textbf{Prevents illegal modification/access of internal data.}
+\item \textbf{Allow only authorized access to inside network:} set of authenticated users/hosts.
+\item UDP: generally firewall either filters all or no UDP.
+\item \textbf{Tradeoff}: between security and degree of communcation with outside outer Internet.
+\item \textbf{Limitation}: IP spoofing, router cannot really know if data comes from claimed source.
+\item \textbf{Three types of Firewalls}: stateless packet filters, stateful packet filters, application gateways.
+\end{itemize}
+
+\columnbreak	
+
+\subsubsection{Stateless (Traditional) Packet Filtering}
+\begin{itemize}
+\item Internal network connected to Internet via router firewall. Router \textbf{filters packet by packet}, based on policy and firewall settings. Decision to forward/drop packet typically based on:
+\item source IP address, destination IP address'
+\item  TCP/UDP source and destination port numbers
+\item ICMP message type
+\item TCP SYN and ACK bits
+\end{itemize}
+\smallskip
+\textbf{Examples:}
+\begin{itemize}
+\item Block in/outcoming datagrams with IP protocol field $=$ $17$. Result: all in/outgoing UDP flows blocked.
+\item Block inbound TCP segments with ACK = 0. Result: prevents external clients from making TCP connections with internal clients, but allows internal clients to connect to outside.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{statelesspacketfilter}}
+
+\subsubsection{Stateful Packet Filtering}
+Stateful firewalls filter packets based on full context of connection, tracks status of every TCP connection, such asconnection setup, teardown, etc. Uses concept of state table that stores state of legitimate connections.
+\\ If inactive connections timeout at firewall, incoming packets will be rejected. 
+\\
+\textbf{Access Control List (ACL)}:
+\centerline{\includegraphics[width=0.8\linewidth]{ACL}}
+
+\subsubsection{Application Gateways}
+\begin{itemize}
+\item \textbf{Application gateways} are more intelligent firewall systems that know details of applications that generate the packets. Also work as proxy servers between client computer and real server.
+\item Different gateway is needed for each application.
+\item Slows down network performance due to detailed checking of packets, more expensive than packet filters.
+\end{itemize}
+
+\subsubsection{Secure e-mail}
+\null \null
+\centerline{\includegraphics[width=1\linewidth]{secureemail1}}
+\null \null
+\centerline{\includegraphics[width=0.95\linewidth]{secureemail2}}
+\null \null \null \null
+\columnbreak
+
+\vfill \null
+\columnbreak
+
+\section{7.}
+
+
+
 
 
 
