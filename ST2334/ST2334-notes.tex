@@ -993,7 +993,7 @@ Thus, the $100(1-\alpha)\%$ \textbf{confidence interval} for $\mu_1 - \mu_2$ is:
 
 
 \subsubsection{Indpt. Samples (Small $n$, Equal Unknown Variance)}
-\textbf{For:} Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$.
+\textbf{For:} Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$. \\ \smallskip
 \textbf{where:}
 \begin{enumerate}
     \item 2 samples are independent, $n_1 < 30$ and $n_2 < 30$.
@@ -1044,7 +1044,10 @@ In cases where it makes sense to take matched data instead of independent sample
 All techniques derived for single population can be used:
 \medskip
 \\ \textbf{Consider the statistic:}
-\[T = \frac{\bar{D} - \mu_D}{S_D / \sqrt{n}} \text{, where } \bar{D} = \frac{\sum _{i=1} ^n D_i}{n} \text{ and } S_D^2 = \frac{\sum _{i=1} ^n (D_i - \bar{D})^2}{n-1}\]
+\[T = \frac{\bar{D} - \mu_D}{S_D / \sqrt{n}} \text{, where } \bar{D} = \frac{\sum _{i=1} ^n D_i}{n} \text{ and }\]
+\smallskip
+\[S_D^2 = \frac{\sum _{i=1} ^n (D_i - \bar{D})^2}{n-1}\]
+\smallskip
 
 \textbf{If $n < 30$ and population is normally distributed:}
 \[T \sim t_{n-1}\]
@@ -1066,88 +1069,87 @@ Thus, if $n \geq 30$, the $100(1-\alpha)\%$ \textbf{confidence interval} for $\m
 
 
 % HYPOTHESIS TESTING ======================================
-
-
-
-
-
-
-
 \section{07. Hypothesis Testing}
+Both null and alternative hypothesis are statements about a population. Outcome of hypo. testing is to either \textbf{reject or fail to reject} the null hypothesis.
 
 \subsection{Steps for Hypothesis Testing}
-
 \subsubsection{Step 1: Null Hypothesis and Alternative Hypothesis}
 \begin{itemize}
-    \item \textbf{Null Hypothesis}{$H_0$ Statement that parameter takes some value}
-    \item \textbf{Alternative Hypothesis}{$H_1$ Statement that parameter falls in alt. range}
-    \item \textbf{2-Sided Test}{If $H_1$ is "Parameter is $\neq$ to value under $H_0$"}
-    \item \textbf{Right-Sided Test}{If $H_1$ is "Parameter is $>$ to value under $H_0$"}
-    \item \textbf{Left-Sided Test}{If $H_1$ is "Parameter is $<$ to value under $H_0$"}
+    \item \textbf{Null Hypothesis} {$H_0$: Parameter takes some value}
+    \item \textbf{Alternative Hypothesis} {$H_1$: Parameter falls in alt. range}
+    \item Often, let hypothesis we want to prove be alt. hypothesis, as it states null hypothesis is false, often in a particular way.
+    \item \textbf{2-Sided Test: }{If $H_1$ is "Parameter $\neq$ $H_0$ value"}
+    \item \textbf{Right-Sided Test: }{If $H_1$ is "Parameter is $>$  $H_0$ value''}
+    \item \textbf{Left-Sided Test: }{If $H_1$ is "Parameter is $<$  $H_0$ value"}
 \end{itemize}
 
 \subsubsection{Step 2: Level of Significance}
 \includegraphics[scale=0.5]{hypothesis-testing-errors}
 
 \begin{itemize}
-    \item \textbf{Level of Significance}{$\alpha$ Probability of rejecting $H_0$ when it is true. i.e.}
-    \[\alpha = P(\text{Type I error})\]
-    \item \textbf{Power of the Test}{$1 - \beta = P(\text{Reject $H_0$} | \text{$H_0$ is false})$ where}
-    \[\beta = P(\text{Type II error})\]
+    \item \textbf{Level of Significance: }{$\alpha$, Probability of making type I error, rejecting $H_0$ when it is true. i.e.}
+    \[\alpha = P(\text{Type I error}) = P(\text{Reject $H_0$} | \text{$H_0$ is true})\]
+As type I is serious error, set small $\alpha$, e.g. $\alpha = 0.05, 0.01$ \\
+\smallskip
+\textbf{Let}
+    \[\beta = P(\text{Type II error} = P(\text{Do Not Reject $H_0$} | \text{$H_0$ is false}))\]
+    
+    \item \textbf{Power of the Test: }{$(1 - \beta) = P(\text{Reject $H_0$} | \text{$H_0$ is false})$ }
 \end{itemize}
 
-\subsubsection{Step 3: Test Statistic, Distribution, and Rejection Region}
+\subsubsection{Step 3: Identify Test Statistic, its Distribution, and the Rejection Region / criteria}
 \begin{itemize}
-    \item \textbf{Test Statistic}{Statistic used to see how far away from $H_0$ the data is}
+    \item \textbf{Test Statistic:} quantify how unlikely to observe sample, assuming null hypothesis  $H_0$ is true.
+    \item At significance level $\alpha$, decision rule can found, divides set of possible values of test statistic into rejection (critical) region and acceptance region.
 \end{itemize}
 
-\subsubsection{Step 4: Conclusion}
-Given test statistic, determine if it is in the rejection region:
+\subsubsection{Step 4: Calculation \& Conclusion}
+Given test statistic, determine if it is \textbf{in the rejection region}:
 \begin{itemize}
-    \item If it is, reject $H_0$ and fail to reject $H_1$
-    \item Otherwise, fail to reject $H_0$
+    \item If yes, sample too improbable, \textbf{reject $H_0$}, fail to reject $H_1$
+    \item Otherwise, \textbf{do not reject $H_0$}, fall back to og. assumption.
 \end{itemize}
 
-\subsection{Hypotheses for Mean}
+\subsection{Hypotheses for testing Popln. Mean}
 
 \subsubsection{Case 1: Known Variance}
-Assumptions:
-\begin{enumerate}
-    \item Population variance is known
-    \item Underlying distribution is normal OR $n \geq 30$
-\end{enumerate} 
-Steps:
+Given that \textbf{population variance $\sigma^2$ is known} and \textbf{underlying distribution is normal OR $n \geq 30$}. \\ \smallskip
+
+\underline{Steps:}
 \begin{enumerate}
     \item Set null and alternative hypotheses. e.g.
     \[H_0: \mu = \mu_0 \text{ vs } H_1: \mu \neq \mu_0\]
-    \item Set level of significance
-    \item With $\sigma^2$ known and population normal (or $n \geq 30$), the test statistic is:
+    
+    \item Set level of significance (e.g. $\alpha = 0.05$)
+    
+    \item With $\sigma^2$ known and population normal (or $n \geq 30$), the test statistic is (assume $H_0$ true):
     \[Z = \frac{\bar{X} - \mu_0}{\sigma / \sqrt{n}} \sim N(0,1)\]
-    Rejection region, where we let observed value of $Z$ be $z$:
+    
+    \textbf{Rejection region}, where we let observed value of $Z$ be $z$:
     \begin{itemize}
         \item $H_1: \mu \neq \mu_0$: $z < -z_{\alpha/2}$ or $z > z_{\alpha/2}$
         \item $H_1: \mu < \mu_0$: $z < -z_{\alpha}$
         \item $H_1: \mu > \mu_0$: $z > z_{\alpha}$
     \end{itemize}
 
-    \includegraphics[scale=0.45]{rejection-region}
+    \centerline{\includegraphics[scale=0.4]{rejection-region}}
     \begin{itemize}
-        \item \textbf{p-Value}{Conditional probability that test statistic is as extreme as observed value, given $H_0$ is true}
+        \item \textbf{p-Value:} Conditional probability that test statistic as extreme as observed value, given $H_0$ true.
         \item $H_1: \mu \neq \mu_0$: $p = 2P(Z < -|z|)$
         \item $H_1: \mu < \mu_0$: $p = P(Z < -|z|)$
         \item $H_1: \mu > \mu_0$: $p = P(Z > |z|)$
     \end{itemize}
-
-    \includegraphics[scale=0.4]{p-value}
+	\medskip
+    \centerline{\includegraphics[scale=0.38]{p-value}}
     \item 
     \begin{itemize}
-        \item Rejection region: If $z$ is inside rejection region, reject $H_0$. Otherwise do not reject.
-        \item p-Value: If $p$ is less than $\alpha$, reject $H_0$. Otherwise do not reject.
+        \item \textbf{Rejection region:} If $z$ is inside rejection region, reject $H_0$. Otherwise do not reject.
+        \item \textbf{p-Value}: If $p$ is less than $\alpha$, reject $H_0$. Otherwise do not reject.
     \end{itemize}
 \end{enumerate}
 
 \subsubsection{Case 2: Unknown Variance}
-Assumptions:
+Given that:
 \begin{enumerate}
     \item Population variance is unknown
     \item Underlying distribution is normal
@@ -1164,17 +1166,31 @@ Assumptions:
     \item When $n \geq 30$, we can replace $t_{n-1}$ by $Z$
 \end{itemize}
 
+\subsection{Two-sided Tests \& Confidence Intervals}
+The \textbf{two-sided hypothesis test} procedure is equivalent to finding a \textbf{$100(1 - \alpha) \%$ confidence interval} for $\mu$. 
+\begin{itemize}
+\item When confidence interval contains $\mu_0$, $H_0$ will not be rejected at level $\alpha$.
+\item Similarly, when confidence interval does not contain $\mu$, then $t$ falls within rejcetion region and so $H_0$ will be rejected.
+\end{itemize}
+
+
+
 \subsection{Comparing Means: Independent Samples}
 
 \begin{itemize}
-    \item Motivation: Given 2 independent samples from 2 populations, interested in testing $H_0: \mu_1 - \mu_2 = \delta_0$
+    \item Given 2 independent samples from 2 populations, interested in testing
+        \smallskip
+    \centerline{$H_0: \mu_1 - \mu_2 = \delta_0$} 
+    against a suitable alternative hypothesis.
 \end{itemize}
 
 \subsubsection{Rejection Regions and p-Values}
 \includegraphics[scale=0.4]{comparing-means}
 
+\columnbreak
+
 \subsubsection{Case 1: Known Variance}
-Assumptions:
+Consider case where:
 \begin{enumerate}
     \item Population variances are known
     \item Underlying distributions are normal OR $n_1 \geq 30$ and $n_2 \geq 30$
@@ -1185,7 +1201,7 @@ Assumptions:
 \end{itemize}
 
 \subsubsection{Case 2: Unknown Variance}
-Assumptions:
+Consider case where:
 \begin{enumerate}
     \item Population variances are unknown
     \item $n_1 \geq 30$ and $n_2 \geq 30$
@@ -1195,8 +1211,8 @@ Assumptions:
     \[Z = \frac{(\bar{X} - \bar{Y}) - \delta_0}{\sqrt{\frac{S_1^2}{n_1} + \frac{S_2^2}{n_2}}} \sim N(0,1)\]
 \end{itemize}
 
-\subsubsection{Case 3: Unknown, Equal Variance}
-Assumptions:
+\subsubsection{Case 3: Unknown but Equal Variance}
+Consider case where:
 \begin{enumerate}
     \item Population variances are unknown but equal
     \item Underlying distributions are normal
@@ -1207,14 +1223,20 @@ Assumptions:
     \[Z = \frac{(\bar{X} - \bar{Y}) - \delta_0}{S_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \sim t_{n_1 + n_2 - 2}\]
 \end{itemize}
 
+\medskip
+
 \subsection{Comparing Means: Paired Data}
 
 \begin{itemize}
-    \item Intuition: Get difference, then use methods from single samples
-    \item Define $D_i = X_i - Y_i$. For $H_0: \mu_D = \mu_{D_0}$, test statistic:
+    \item Obtain difference, then use methods from single samples.
+    \item Define 
+    
+    \centerline{$D_i = X_i - Y_i$.}
+    \item For $H_0: \mu_D = \mu_{D_0}$, test statistic: 
     \[T = \frac{\bar{D} - \mu_{D_0}}{S_D / \sqrt{n}}\]
     \begin{itemize}
-        \item If $n<30$ and population is normally distributed, $T \sim t_{n-1}$
+        \item If $n<30$ and population is normally distributed, 
+        	\centerline{$T \sim t_{n-1}$}
         \item If $n \geq 30$, $T \sim N(0,1)$
     \end{itemize}
 \end{itemize}
