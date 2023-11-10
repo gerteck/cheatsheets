@@ -50,7 +50,7 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -795,7 +795,9 @@ If $S^2$ is variance of random sample of size $n$ from normal population of vari
 \textbf{has $\chi^2 (n-1)$ distribution} \\
 \bigskip
 \centerline{\includegraphics[width=1\linewidth]{s2}}
+\null \null
 
+\columnbreak
 \subsubsection{t-Distribution $t(n)$}
 Suppose $Z \sim N(0, 1)$, $U \sim \chi^2 (n)$. If $Z$, $U$ independent:
 \[T = \frac{Z}{\sqrt{U/n}} \sim t(n)\]
@@ -840,165 +842,236 @@ i.e. \textbf{F-distribution with $(m,n)$ degrees of freedom}
 
 % ============== ESTIMATION
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%% COPIED OVER
-
 \section{06. Estimation}
-
-\subsection{Point Estimation for Mean}
-
+Two types of estimation (of population parameters):
 \begin{itemize}
-    \item Single number to estimate population parameter
-    \item \textbf{Point Estimator}{Formula that describes this calculation}
-    \item \textbf{Point Estimate}{Result of point estimator}
-    \item Notation: $\theta$ represents parameter of interest. $\theta$ can be $p$, $\mu$, $\sigma$, etc.
+\item  \textbf{Point estimation}: single number calculated to estimate, called point estimator)
+\item \textbf{Interval Estimation}: two numbers calculated to form an interval which the parameter is expected to lie.
+\end{itemize}
+\centerline{\includegraphics[width=0.5\linewidth]{pointintervalestimate}}
+
+\subsubsection{Notation}
+\begin{itemize}
+\item \textbf{Estimator}: An estimator is a rule (usually expressed as a formula) that tells us how to calculate an estimate based on info in sample.
+\item \textbf{Estimate}: Result of Estimator.
+\item \textbf{Concern}: How good is estimator? Criteria for good estimator?
+\item \textbf{Notation}: $\theta$ represents parameter of interest. $\theta$ can be $p$, $\mu$, $\sigma$, etc.
 \end{itemize}
 
+\subsection{Point Estimation}
 \subsubsection{Unbiased Estimator}
 Let $\hat{\theta}$ be an estimator of $\theta$. Then $\hat{\theta}$ is unbiased if:
 \[E(\hat{\theta}) = \theta\]
-
-\subsubsection{Maximum Error of Estimate}
 \begin{itemize}
-    \item Motivation: Usually $\bar{X} \neq \mu$. So $\bar{X} - \mu$ measures difference between estimator and parameter
-    \item Let $z_\alpha$ be $\alpha$th upper quantile of standard normal distribution $Z$. i.e. $P(Z > z_\alpha) = \alpha$
-    \[P(-z_{\alpha/2} \leq \frac{\bar{X} - \mu}{\sigma / \sqrt{n}} \leq z_{\alpha/2}) = P(|\bar{X} - \mu| \leq z_{\alpha/2} \frac{\sigma}{\sqrt{n}}) = 1 - \alpha\]
-    \item \textbf{Maximum Error of Estimate}{Given probability $1-\alpha$:}
-    \[E = z_{\alpha / 2} \frac{\sigma}{\sqrt{n}}\]
+\item This means, unbiased estimator has mean value equals to the true value of the parameter.
+\end{itemize}
+\smallskip
+\centerline{\includegraphics[width=0.5\linewidth]{unbiasedestimator}}
+\textbf{Example}
+\begin{itemize}
+\item Let $X_1, ..., X_n$ be random sample from same population with mean $\mu$ and variance $\sigma^2$. Then, $S^2$ (sample variance, see formula in sampling), is an \textbf{unbiased estimator} of $\sigma^2$ as $E(S^2) = \sigma^2$. 
+\item Sample mean $\bar{X}$ also U.E. for mean $\mu$.
 \end{itemize}
 
-\subsubsection{Determination of Sample Size}
-Given probability $1-\alpha$ and maximum error $E$, what is the minimum sample size $n$?
+\subsubsection{Error of Estimate}
+As typically $\bar{X} \neq \mu$ (estimator $\neq$ true value). We make use of $\bar{X} - \mu$ to measure difference between estimator and true value of parameter.
+\\
+Recall if population normal or sufficiently large, $\frac{\bar{X} - \mu}{\sigma / \sqrt{n}}$ follows (approx) standard normal distribution. \\ \medskip
+
+\textbf{Let $\bar{X}$ follow Std. Normal Distribution:}
+\begin{itemize}
+    \item Let $z_\alpha$ be $\alpha$th upper quantile of standard normal distribution 
+    $Z$. i.e. $P(Z > z_\alpha) = \alpha$.
+\end{itemize}  
+\smallskip
+\centerline{\includegraphics[width=0.8\linewidth]{Za}}
+\textbf{Then, we have}
+\centerline{$P(-z_{\alpha/2} \leq \frac{\bar{X} - \mu}{\sigma / \sqrt{n}} \leq z_{\alpha/2})$}
+\centerline{$= P(|\bar{X} - \mu| \leq z_{\alpha/2} \times \frac{\sigma}{\sqrt{n}}) $}
+\centerline{$= 1 - \alpha$}
+\smallskip
+\centerline{\includegraphics[width=0.8\linewidth]{Za2}}
+\textbf{Hence}: \\
+Error $|\bar{X} - \mu|$ is less than $z_{\alpha / 2} \frac{\sigma}{\sqrt{n}}$ with probability 1 - $\alpha$.
+
+\subsubsection{Maximum Error of Estimate}
+\begin{itemize}  
+    \item {Given probability $1-\alpha$:} (vary $\alpha$ as desired)
+    \[E_{max} = z_{\alpha / 2} \frac{\sigma}{\sqrt{n}}\]
+\end{itemize}
+
+\subsubsection{Determination of Sample Size (so Error $\leq E_0$)}
+Minimum sample size $n$ we can have, given probability $1-\alpha$, so that maximum error is $E$:
 \[n \geq (\frac{z_{\alpha/2} \sigma}{E})^2\]
 
-\subsubsection{Different Cases}
+\subsubsection{Different Cases for Max Error \& Min Sample Size}
 \includegraphics[scale=0.4]{point-estimation}
 
-\subsection{Confidence Interval for Mean}
-
+\subsection{Interval Estimation}
 \begin{itemize}
-    \item \textbf{Interval Estimator}{Rule for calculating an interval $(a,b)$ in which we are fairly certain the parameter lies}
-    \item \textbf{Confidence Level}{Probability that interval contains parameter. i.e. $1 - \alpha$}
+    \item \textbf{Interval Estimator:} rule for calculating from a sample an interval $(a,b)$ in which parameter lies.
+    \item \textbf{Confidence Level:} Degree of confidence. Confidence level $(1 - \alpha)$, or the probability that interval contains parameter. i.e. $P = (1 - \alpha)$
     \[P(a < \mu < b) = 1 - \alpha\]
-    \item \textbf{Confidence Interval}{Interval calculated by interval estimator. i.e. $(a,b)$}
+    \item \textbf{Confidence Interval:} Interval calculated by interval estimator. i.e. $(a,b)$ is called the $(1 - \alpha)$ confidence interval.
 \end{itemize}
 
 \subsubsection{Case 1: $\sigma$ known, data normal}
 Previously:
 \[P(-z_{\alpha/2} \leq \frac{\bar{X} - \mu}{\sigma / \sqrt{n}} \leq z_{a/2}) = 1 - \alpha\]
-By rearranging, the $1 - \alpha$ confidence interval is:
+By rearranging, the $(1 - \alpha)$ confidence interval $(a, b)$ is:
 \[(\bar{X} - z_{\alpha/2} \frac{\sigma}{\sqrt{n}}, \bar{X} + z_{\alpha/2} \frac{\sigma}{\sqrt{n}})\]
 
-\subsubsection{Other Cases}
+\subsubsection{Other Cases of Confidence Interval for Pop. Mean}
 \includegraphics[scale=0.45]{confidence-interval}
-
 \begin{itemize}
     \item $n$ is considered large when $n \geq 30$
 \end{itemize}
 
-\subsection{Comparing 2 Populations}
-
+\subsection{Interpreting Confidence Intervals}
 \begin{itemize}
-    \item Goal: Make inference on $\mu_1 - \mu_2$
+\item We calculate that $X \pm E$ has probability $(1 - \alpha)$ of containing $\mu$.
+\item The probability is a \textbf{statement about the procedure} by which we compute the interval — the interval estimator.
+\item Each time we take a sample, and go through this construction, we get a \textbf{different confidence interval}. Sometimes we get a confidence interval that contains $\mu$, and sometimes we
+get one not containing $\mu$.
+\item Once an interval is computed, \textbf{$mu$ is either in it or not. There is no more randomness.}
+\medskip
+\item Since $\mu$ is typically not known, no way to determine if true parameter in interval. \textbf{Confidence is in the method used}. If we repeat procedure of taking sample and computing confidence interval, about $(1 - \alpha)$ of confidence intervals will contain the true parameter.
 \end{itemize}
+
+
+\section{Comparing 2 Populations}
+We may want to compare the means of two populations, i.e. make statistical inference on $\mu_1 - \mu_2$.
+
 
 \subsubsection{Experimental Design}
-
+To compare, we need to take a number of observations from each population. Exp. design is manner in which samples collected from populations.
 \begin{itemize}
-    \item \textbf{Independent Samples}{Completely randomized}
-    \item \textbf{Matched Pairs Samples}{Randomization between matches pairs}
+    \item \textbf{Independent Samples:} {Completely randomized}
+    \item \textbf{Matched Pairs Samples:} {Randomization btwn. matched pairs}
 \end{itemize}
 
-\subsubsection{Independent Samples: Known and Unequal Variance}
-Assumptions:
+\null \null \null \null \null \null \null \null
+\columnbreak
+
+\subsubsection{Independent Samples (Known, Unequal Variance)}
+\textbf{For}: Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$. We define 
+$\delta = \mu_1 - \mu_2$. \\
+
+\textbf{Conditions:}
 \begin{enumerate}
-    \item Given: Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$
-    \item 2 samples are independent
-    \item Population variances are known and $\sigma_1 ^2 \neq \sigma_2 ^2$
+    \item 2 Samples are independent
+    \item Population variances are \textbf{known and not same}: $\sigma_1 ^2 \neq \sigma_2 ^2$
     \item Both populations are normal OR $n_1 \geq 30$ and $n_2 \geq 30$
 \end{enumerate}
-Let $X_1, \cdots, X_{n_1}$ and $Y_1, \cdots, Y_{n_2}$ be random samples:
+Let $X_1, \cdots, X_{n_1}$ and $Y_1, \cdots, Y_{n_2}$ be random samples,
+\\ \textbf{then}:
+
+
 \[E(\bar{X}) = \mu_1 \text{ , } V(\bar{X}) = \frac{\sigma_1 ^ 2}{n_1} \text{ , } E(\bar{Y}) = \mu_2 \text{ , } V(\bar{Y}) = \frac{\sigma_2 ^ 2}{n_2}\]
 \[E(\bar{X} - \bar{Y}) = \mu_1 - \mu_2 \text{ , } V(\bar{X} - \bar{Y}) = \frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}\]
-Thus, by normalizing RV $\bar{X} - \bar{Y}$ and using assumption 4:
+Thus, by normalizing RV ($\bar{X} - \bar{Y}$) and using assumption 3:
 \[Z = \frac{(\bar{X} - \bar{Y}) - (\mu_1 - \mu_2)}{\sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}} \sim N(0,1)\]
-Thus, the $100(1-\alpha)\%$ confidence interval for $\mu_1 - \mu_2$ is:
+Thus, the \textbf{$100(1-\alpha)\%$ confidence interval} for $\mu_1 - \mu_2$ is:
 \[(\bar{X} - \bar{Y}) \pm z_{\alpha/2} \sqrt{\frac{\sigma_1^2}{n_1} + \frac{\sigma_2^2}{n_2}}\]
 
-\subsubsection{Independent Samples: Unknown and Unequal Variance}
-Assumptions:
+\subsubsection{Independent Samples (Unknown, Unequal Variance)}
+\textbf{For}: Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$, \textbf{where:}
 \begin{enumerate}
-    \item Given: Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$
-    \item 2 samples are independent
-    \item Population variances are unknown and $\sigma_1 ^2 \neq \sigma_2 ^2$
-    \item $n_1 \geq 30$ and $n_2 \geq 30$
+    \item 2 samples are independent, $n_1 \geq 30$ and $n_2 \geq 30$
+    \item Population variances are unknown and unequal $\sigma_1 ^2 \neq \sigma_2 ^2$.
 \end{enumerate}
-Since $\sigma_1$ and $\sigma_2$ are unknown, we use the standard error instead:
+\smallskip
+Since $\sigma_1$ and $\sigma_2$ unknown, we use standard error:
 \[S_1^2 = \frac{1}{n_1 - 1} \sum _{i=1} ^{n_1} (X_i - \bar{X})^2 \text{ , } S_2^2 = \frac{1}{n_2 - 1} \sum _{i=1} ^{n_2} (Y_i - \bar{Y})^2 \]
-Thus, by normalizing RV $\bar{X} - \bar{Y}$ and using assumption 4:
+Thus, by normalizing RV $\bar{X} - \bar{Y}$ and using assumption 1:
 \[Z = \frac{(\bar{X} - \bar{Y}) - (\mu_1 - \mu_2)}{\sqrt{\frac{S_1^2}{n_1} + \frac{S_2^2}{n_2}}} \sim N(0,1)\]
-Thus, the $100(1-\alpha)\%$ confidence interval for $\mu_1 - \mu_2$ is:
+Thus, the $100(1-\alpha)\%$ \textbf{confidence interval} for $\mu_1 - \mu_2$ is:
 \[(\bar{X} - \bar{Y}) \pm z_{\alpha/2} \sqrt{\frac{S_1^2}{n_1} + \frac{S_2^2}{n_2}}\]
 
-\subsubsection{Independent Samples: Small $n$, Unknown and Equal Variance}
-Assumptions:
+
+
+
+
+\subsubsection{Indpt. Samples (Small $n$, Equal Unknown Variance)}
+\textbf{For:} Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$.
+\textbf{where:}
 \begin{enumerate}
-    \item Given: Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$
-    \item 2 samples are independent
-    \item Population variances are unknown and $\sigma_1 ^2 = \sigma_2 ^2$
-    \item $n_1 < 30$ and $n_2 < 30$
-    \item Both populations are normally distributed
+    \item 2 samples are independent, $n_1 < 30$ and $n_2 < 30$.
+    \item Population variances are unknown but equal: ($\sigma_1 ^2 = \sigma_2 ^2$)
+    \item Both populations are \textbf{normally distributed}
 \end{enumerate}
-Thus, by normalizing RV $\bar{X} - \bar{Y}$ and using assumptions 3 and 4:
-\[Z = \frac{(\bar{X} - \bar{Y}) - (\mu_1 - \mu_2)}{S_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \sim t_{n_1 + n_2 - 2}\]
-where $S_p$ is the pooled sample variance, which estimates $\sigma^2$
+Thus, by normalizing RV $\bar{X} - \bar{Y}$ and using cond. 1 and 3, and using pooled estimator to estimate  $\sigma^2$ better:
+\[T = \frac{(\bar{X} - \bar{Y}) - (\mu_1 - \mu_2)}{S_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \sim t_{n_1 + n_2 - 2}\]
+
+where $S_p$ is the pooled sample variance and $S_1^2$ \& $S_2^2$  are sample variances of samples:
+
 \[S_p^2 = \frac{(n_1 - 1)S_1^2 + (n_2 - 1)S_2^2}{n_1 + n_2 - 2}\]
 Thus, the $100(1-\alpha)\%$ confidence interval for $\mu_1 - \mu_2$ is:
 \[(\bar{X} - \bar{Y}) \pm t_{n_1 + n_2 - 2; \alpha/2} S_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}\]
 
-\subsubsection{Independent Samples: Large $n$, Unknown and Equal Variance}
-Assumptions:
+
+\subsubsection{Indpt. Samples (Large $n$, Equal Unknown Variance)}
+Since $n$ is large, we can replace $ t_{n_1 + n_2 - 2; \alpha/2}$ with $z_{
+\alpha/2}$ in the previous formula. \\ \smallskip
+\textbf{For:} Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$, \textbf{where}:
 \begin{enumerate}
-    \item Given: Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$
-    \item 2 samples are independent
-    \item Population variances are unknown and $\sigma_1 ^2 = \sigma_2 ^2$
-    \item $n_1 \geq 30$ and $n_2 \geq 30$
+    \item 2 samples are independent, $n_1 \geq 30$ and $n_2 \geq 30$
+    \item Population variances unknown but equal: $\sigma_1 ^2 = \sigma_2 ^2$
 \end{enumerate}
-By applying CLT on assumption 4, we can replace $t_{n_1 + n_2 - 2; \alpha/2}$ with $z_{\alpha/2}$.
-Thus, the $100(1-\alpha)\%$ confidence interval for $\mu_1 - \mu_2$ is:
+By applying CLT on large $n$, replace $t_{n_1 + n_2 - 2; \alpha/2}$ with $z_{\alpha/2}$. \\
+Thus, the $100(1-\alpha)\%$ \textbf{confidence interval} for ($\mu_1 - \mu_2$) is:
 \[(\bar{X} - \bar{Y}) \pm z_{\alpha/2} S_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}\]
 
+
+\null \null
+\columnbreak
+
+
 \subsection{Paired Data}
-Assumptions:
+In cases where it makes sense to take matched data instead of independent samples (e.g. couple income, each couple independent of other couples).
+\\ \smallskip
+\textbf{For}: $(X_1, Y_1), \cdots, (X_n, Y_n)$ are matched pairs, where $X_1, \cdots, X_n$ is random sample from population 1 and $Y_1, \cdots, Y_n$ is random sample from population 2.
+\\ \smallskip
+ \textbf{where}:
+\smallskip
 \begin{enumerate}
-    \item Given: $(X_1, Y_1), \cdots, (X_n, Y_n)$ are matched pairs, where $X_1, \cdots, X_n$ is random sample from population 1 and $Y_1, \cdots, Y_n$ is random sample from population 2
-    \item $X_i$ and $Y_i$ are dependent
-    \item $(X_i, Y_i)$ and $(X_j, Y_j)$ are independent for any $i \neq j$
+    \item $X_i$ and $Y_i$ are dependent (within pair),
+    \item $(X_i, Y_i)$ and $(X_j, Y_j)$ are independent for any $i \neq j$.
+    \item For matched pairs, we define $D_i = X_i - Y_i$, and  $\mu_D = \mu_1 - \mu_2$.
+    \item We can now treat $D_1, \cdots, D_n$ as random sample from a single population with $\mu_D$ and $\sigma_D^2$. 
 \end{enumerate}
-Define $D_i = X_i - Y_i \text{ , } \mu_D = \mu_1 - \mu_2$. We can treat $D_1, \cdots, D_n$ as random sample from single population with $\mu_D$ and $\sigma_D^2$. Consider the statistic:
+\smallskip
+All techniques derived for single population can be used:
+\medskip
+\\ \textbf{Consider the statistic:}
 \[T = \frac{\bar{D} - \mu_D}{S_D / \sqrt{n}} \text{, where } \bar{D} = \frac{\sum _{i=1} ^n D_i}{n} \text{ and } S_D^2 = \frac{\sum _{i=1} ^n (D_i - \bar{D})^2}{n-1}\]
-If $n < 30$ and population is normally distributed:
+
+\textbf{If $n < 30$ and population is normally distributed:}
 \[T \sim t_{n-1}\]
-Thus, if $n < 30$ and the population is normally distributed, the $100(1-\alpha)\%$ confidence interval for $\mu_D$ is:
+
+\smallskip
+Thus, if $n < 30$ and the population is normally distributed, the \textbf{$100(1-\alpha)\%$ confidence interval} for $\mu_D$ is:
 \[\bar{d} \pm t_{n-1; \alpha/2} \frac{S_D}{\sqrt{n}}\]
-If $n \geq 30$:
+
+
+\medskip
+\textbf{Else, if $n \geq 30$:}
 \[T \sim N(0,1)\]
-Thus, if $n \geq 30$, the $100(1-\alpha)\%$ confidence interval for $\mu_D$ is:
+Thus, if $n \geq 30$, the $100(1-\alpha)\%$ \textbf{confidence interval} for $\mu_D$ is:
 \[\bar{d} \pm z_{\alpha/2} \frac{S_D}{\sqrt{n}}\]
+
+
+\vfill \null
+\columnbreak
+
+
+% HYPOTHESIS TESTING ======================================
+
+
+
+
+
+
 
 \section{07. Hypothesis Testing}
 
