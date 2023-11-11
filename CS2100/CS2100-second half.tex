@@ -1020,18 +1020,291 @@ dependent} instr into the X slots following a branch.
 \item instructions executed regardless of branch outcome
 \end{itemize}
 
+\columnbreak
 
 \section{21. Cache}
+\subsection{Memory Technology}
+\begin{itemize}
+\item \textbf{DDR SDRAM}: Double Data Rate - Synchronous Dynamic RAM, (E.g. DDR5), delivers memory on positive \& negative edge of clock (double rate), slower access latency.
+\item DRAM capacity quadrupled almost every 3 years, DRAM access latency not keeping up. (50ns access DRAM, 1GHZ processor: 50 processor clock cycles per memory access).
+\item \textbf{SRAM}: Static RAM, low density, fast access latency.
+\item \textbf{Magnetic Disk}: Slow latency, large capacity.
+\end{itemize}
+
+\begin{itemize}
+\item \textbf{Hierarchy of memory technologies}: put small but fast memory near CPU, large but slow memory farther away from CPU, to obtain illusion of big and fast memory.
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{memoryhierarchy}}
+
+\subsubsection{Locality}
+\begin{itemize}
+\item \textbf{principle of locality}: program acccesses only a small portion of the memory address sapce within a small time interval.
+\item \textbf{temporal locality}: If an item is referenced, it will tend to be referenced again soon (e.g. loop)
+\item \textbf{spatial locality}: If an item is referenced, nearby items will tend to be referenced soon. (e.g. array)
+\end{itemize}
+
+\subsubsection{Working Set}
+\begin{itemize}
+\item \textbf{Set of locations} accessed during $\Delta$t.
+\item \textbf{Aim}: capture the working set and keep it in the memory closest to CPU.
+\end{itemize}
+\centerline{\includegraphics[width=0.65\linewidth]{workingset}}
 
 
+\subsection{Cache}
+\textbf{Cache}: small but fast SRAM near CPU.
+\centerline{\includegraphics[width=0.65\linewidth]{cache}}
+
+\subsection{Memory Access Time}
+\centerline{\includegraphics[width=0.55\linewidth]{MemoryAccessTime}}
+\begin{itemize}
+\item \textbf{Hit}: Data is in cache.
+	\begin{itemize}
+	\item \textbf{Hit rate}: Fraction of memory accesses that hit.
+	\item \textbf{Hit time}: Time to access cache.
+	\end{itemize}
+\item \textbf{Miss}: Data is not in cache.
+	\begin{itemize}
+	\item \textbf{Miss rate}: $= 1 -$ Hit rate
+	\item \textbf{Miss penalty}: Time to replace cache block $+$ hit time.
+	\end{itemize}
+\item Naturally, Hit time $<$ Miss penalty.
+\item \textbf{Average Access Time}: 
+\end{itemize}
+
+\centerline{\textbf{average access time}}
+\centerline{$=$ (hit rate $\times$ hit time) $+$ (miss rate $\times$ miss penalty)}
+
+\subsection{Memory to Cache Mapping}
+\begin{itemize}
+\item \textbf{Cache Block/Line}: Unit of transfer btwn. mem \& cache.
+\item Block size typically one or more words. (E.g. 16-byte block $\approx$ 4-word block, 32-byte block $\approx$ 8-word block)
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{memtoCache}}
+
+\subsection{Block Size Trade-off}
+Larger block size:
+\begin{itemize}
+\item $+$ takes advantage of spatial locality.
+\item $-$ Larger miss penalty: takes longer time to fill up the block.
+\item $-$ fewer cache blocks, miss rate goes up. (block size too big relative to cache size)
+\end{itemize}
+\centerline{\includegraphics[width=0.90\linewidth]{blocksize}}
+
+\subsection{Multilevel Cache}
+\begin{itemize}
+\item Separate data and instruction caches (vs. unifed cache).
+\end{itemize}
+\centerline{\includegraphics[width=0.90\linewidth]{multiLevelCache}}
+\medskip
+
+Let $h$ be hit rate required to sustain average access time $t$, where SRAM cache has access time $s$ ns and DRAM cache has access time $d$ ns. \\ \smallskip
+
+\centerline{$ t = (h * s) + (1 - h) \times (d + s)$}
+
+\bigskip
+\centerline{\includegraphics[width=0.8\linewidth]{cacheSummary1}}
+
+\null \null
+\columnbreak
+
+\section{21.1 Direct Mapped Cache}
+\begin{itemize}
+\item \textbf{Cache Block}: Unit of transfer btwm mem \& cache.
+\end{itemize}
+
+\subsubsection{Direct Mapped Cache contains:}
+\begin{itemize}
+\item \textbf{valid bit} indicating if cache line contains valid data
+\item \textbf{tag} of the memory block, and the data block.
+\end{itemize}
+	
+\centerline{\includegraphics[width=0.9\linewidth]{cacheMemory}}
+\begin{itemize}
+\item If number of cache blocks $= 2^M$, last $M$ bits of block number is the \textbf{cache index} (which index it maps to).
+\item Then, multiple memory blocks can map to same cache block. However, they have a unique \textbf{tag number}. (Preceding bits.) \\ \smallskip
+\centerline{\textbf{Tag Num} $=$ BlockNum. $/$ Num.ofCacheBlocks}
+\end{itemize}
+
+\textbf{DM Mapping Function}
+\begin{itemize}
+\item Cache index $=$
+\centerline{(BlockNumber) modulo (NumberofCacheBlocks)}
+\end{itemize}
+\centerline{\includegraphics[width=0.5\linewidth]{mapfun2}}
+\smallskip
+\centerline{\includegraphics[width=0.9\linewidth]{mapfun}}
+
+\subsubsection{Memory Address Split}
+\begin{itemize}
+\item offset: which \underline{byte} within the block
+\item index: which \underline{line} in the cache
+\item tag: which \underline{block} is mapped to that line
+\end{itemize}
 
 
+\subsection{Cache Circuitry}
+\centerline{\includegraphics[width=0.95\linewidth]{cacheCircuitry}}
+\medskip
+\centerline{\includegraphics[width=0.95\linewidth]{cacheMapping}}
+\medskip
+\centerline{\includegraphics[width=1\linewidth]{readWriteSummary}}
+
+\null \null \null \null \null \null \null \null
+\columnbreak
+ 
+ 
+\subsection{Types of Cache Misses}
+\begin{itemize}
+\item \textbf{Compulsory miss}: on first access to block, block must be brought into cache. \\Aka \textbf{cold start misses / first reference misses}.
+\medskip
+
+\item \textbf{Conflict miss}: when several blocks mapped to same block/set, if same address is accessed. 
+\\Aka \textbf{collision misses / interference misses}
+\medskip
+
+\item \textbf{Capacity miss}: when blocks are discarded from cache as cache cannot contain all blocks needed.
+\end{itemize}
+
+\subsection{Writing Data}
+\begin{itemize}
+	\item \textbf{Solution 1: Write-through cache} (write to both cache and main memory). 
+		\begin{itemize}
+		\item put write buffer between cache and main memory.
+		\end{itemize}
+	\item \textbf{Solution 2: Write-back cache} (only write to mem on block replace)
+		\begin{itemize}
+		\item add an additional \textbf{dirty bit} to each cache block, write op changes dirty bit to 1, only write back to memory if dirty bit is 1.
+		\end{itemize}
+\end{itemize}
 
 
+\subsection{Handling Cache Misses}
+\begin{itemize}
+	\item On \textbf{Read Miss}:
+		\begin{itemize}
+		\item load data into cache, load from cache to register.
+		\end{itemize}
+	
+	\item On \textbf{Write Miss}: (data to write no in cache)
+		\begin{itemize}
+		\item \textbf{option 1: write allocate}
+			\begin{itemize}
+			\item load the complete block into cache
+			\item change only the required word in cache
+			\item write policy decide write to main memory 
+			\end{itemize}
+		
+		\item \textbf{option 2: write around}
+			\begin{itemize}
+			\item Do not load block to cache
+			\item write directly to main memory, bypass cache
+			\end{itemize}
+		\end{itemize}
+\end{itemize}
+
+\null \null
+\columnbreak
+ 
+\section{21.2 Set Associative Cache}
+\begin{itemize}
+\item Tackles conflict misses.
+\end{itemize}
+
+\subsection{Set Associative Cache}
+\begin{itemize}
+	\item \textbf{N-way Set Associative Cache}: A memory block can be placed in a fixed number ($N$) of locations in the cache, where $N > 1$.
+	\item Cache consists of a number of sets, each set contains $N$ cache blocks. Each memory block maps to a unique \textbf{cache set}, and can be placed in any of the $N$ cache blocks in the set.
+	\item Need to search all blocks in set to look for memory block.
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{SACache1}}
+ 
+\subsection{SA Mapping}
+\begin{itemize}
+\item Unchanged from direct-mapping formula.
+\item Cache Set Index \\
+\centerline{$=$ (BlockNumber) modulo (NumberOfCacheSets)}
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{SACacheMap}}
+ 
+\subsubsection{Performance}
+\begin{itemize}
+\item A direct-mapped cache of size $N$ has about the same miss rate 
+as a 2-way set associative cache of size $N/2$.
+\end{itemize}
+
+\columnbreak
+
+\subsection{Circuitry}
+\begin{enumerate}
+\item Use address \textbf{Set Index} to identify set
+\item for each block in set, check if valid bit $=$ 1 and check if tag matches tag in address.
+\end{enumerate}
+\centerline{\includegraphics[width=0.99\linewidth]{SACache2}}
+ 
+\subsection{Block Replacement Policy}
+\begin{itemize}
+\item For SA/FA cache, choose where to place memory block.
+\item \textbf{Least Recently Used (LRU)}: temporal locality.
+\begin{itemize}
+\item replace block that has not been accessed for longest time
+\item hard to keep track if many choices.
+\end{itemize}
+\item \textbf{Other replacement policies}: First in first out (FIFO), Random replacement (RR), Least frequently used (LFU).
+\end{itemize}
 
 
+\section{21.3 Fully Associative Cache}
+\subsection{Fully Associative Cache}
+\begin{itemize}
+\item \textbf{FA Cache}: a memory block can be placed in any location in the cache, not restricted.
+\item No mapping function: (tag $=$ block number).
+	\begin{itemize}
+	\item $+$ memory block can be placed in any location
+	\item $-$ need to search all cache blocks for memory access
+	\item used for small cache 
+	\end{itemize}
+\item \textbf{No conflict miss}
+\end{itemize}
+
+\subsection{FA Mapping}
+\centerline{\includegraphics[width=0.99\linewidth]{FAmap}}
+
+\subsection{Circuitry}
+\centerline{\includegraphics[width=0.90\linewidth]{FAcache}}
+\medskip
+
+\subsection{Performance of FA}
+\begin{enumerate}
+\item Cold/compulsory miss remains the same 
+irrespective of cache size/associativity.
+\item For same cache size, conflict miss goes 
+down with increasing associativity.
+\item Conflict miss $=$ 0 for FA caches.
+\item For same cache size, capacity miss remains same irrespective of associativity.
+\item Capacity miss decreases with increasing cache size 
+\end{enumerate}
+
+\centerline{total miss = cold miss $+$ conflict miss $+$ capacity miss}
+
+\begin{itemize}
+\item For FA, since conflict miss $=$ 0, \\ \smallskip
+\centerline{capacity miss (FA) = total miss (FA) - cold miss (FA)}
+\end{itemize}
+\centerline{\includegraphics[width=0.6\linewidth]{cacheSummary2}}
 
 
-  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 \end{multicols*}
 \end{document}
