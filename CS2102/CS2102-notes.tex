@@ -1669,6 +1669,8 @@ F} is the set X$^+$ of all attributes ( called Closure of X) that are \textbf{fu
 \item  X$^+$ can be calculated by repeatedly applying IR1, 
 IR2, IR3 using the FDs in F.
 \end{itemize}
+
+\subsection{Set of Attributes in closure of X w.r.t F algo[15.1]}
 \centerline{\includegraphics[width = 1\linewidth]{closure}}
 
 \subsection{Equivalence of Sets of FDs}
@@ -1733,7 +1735,7 @@ no further reduction is possible.
 \null 
 \columnbreak
 
-\subsection{Computing Minimal Sets of FDs}
+\subsection{Computing Minimal Sets of FDs Algo [15.2]}
 \centerline{\includegraphics[width = 1\linewidth]{minFD-1}}
 \medskip
 \centerline{\includegraphics[width = 1\linewidth]{minFD-2}} 
@@ -1745,7 +1747,7 @@ no further reduction is possible.
 \null \null
 \columnbreak
 
-\subsection{Normalization of Relations (summary}
+\subsection{Normalization of Relations (summary)}
 \begin{itemize}
 \item \textbf{Normalization}: The process of decomposing unsatisfactory "bad" relations by breaking up their attributes into smaller relations by the process of decomposition.
 \item \textbf{Normal form}: Condition using keys and FDs of a relation to 
@@ -1956,6 +1958,176 @@ when a relation fails BCNF}
 		repeat the process.
 	\end{itemize}
 \end{itemize}
+
+\section{15. Relational DB. Design Algorithms}
+Focus: Relational Database Design from bottom up, relational synthesis of relations instead of top down decomposition.
+
+\subsection{Design by Analysis (``Top-down'')}
+\begin{itemize}
+\item \textbf{Normalization} process, decomposing unsatisfactory
+relations by breaking up their attributes into smaller relations.
+\item ``Improvement” of given design to make it better to eliminate anomalies, redundancy.
+\item \textbf{Normal form}: Metric for condition of relation, using keys and FDs of a relation. 
+\end{itemize}
+
+\subsection{Design by Synthesis (``Bottom-Up'')}
+\textbf{Relational Synthesis Approach}: Synthesizing 3NF relations from functional dependencies (bernstein, 1976).
+\begin{itemize}
+\item Assumes that all possible functional dependencies 
+are known:
+\item Imagine all attributes thrown into a single relation: called \textbf{Universal relation}.
+\item Construct a \textbf{minimal set of FDs}, then apply algorithms that construct a target \textbf{set of 3NF or BCNF relations}.
+\item Additional criteria may be needed to ensure set of relations in relational database are satisfactory (Algorithms 15.3, 15.4). 
+\end{itemize}
+
+\medskip
+\centerline{\includegraphics[width = 1\linewidth]{DesignProcess}}
+
+
+\subsection{Designing a set of Relations}
+\textbf{Goals}:
+\begin{itemize}
+\item \textbf{Lossless (non-additive) join property (must)}: Algo 15.3 tests for general losslessness of n-ary decompositions.
+\item \textbf{Dependency preservation property}: Observe as much as possible, algo 15.5 decomposes a relation into BCNF components by sacrificing the dependency preservation but guarantees losslessness.
+\end{itemize}
+
+
+\columnbreak
+
+\subsection{Algorithm to determine key of Relation [15.2a]}
+\textbf{Algo 15.2a}: Finding a key $K$ for $R$, given a set $F$ of functional dependencies. \\
+\textbf{Input}: Universal relation R and a set of functional dependencies F on  attributes of R.
+\begin{enumerate}
+\item Set $K$ $:=$ $R$
+\item For each attribute $A$ in $K$:
+	\begin{itemize}
+	\item Compute $(K - A)^+$ with respect to F
+	\item If closure $(K - A)^+$ contains all attributes in R, then set $K$ $:=$ $K - \{A\}$, aka remove from key. 
+	\end{itemize}
+\end{enumerate}
+\smallskip
+\begin{itemize}
+\item \textbf{Idea:} Assume default key is entire table, remove an attribute at a time, compute cover and see if still equal original functional dependencies. We end up with the minimal set of attributes, and there may be multiple minimal sets (candidate keys).
+\end{itemize}
+\medskip
+\centerline{\includegraphics[width = 0.65\linewidth]{determineKey}}
+
+
+\subsection{Properties of Relational Decompositions}
+\textbf{Relation Decomposition \& Insufficiency of Normal Forms}: 
+\begin{itemize}
+\item \textbf{Universal Relation Schema}: A relation schema U = \{A1, A2, …, An\} that includes all the attributes of the database.
+\item \textbf{Universal relation assume}: All attribute names unique.
+\item \textbf{Decomposition}: Process of decomposing universal relation 
+schema $R$ into a set of relation schemas $D$ = \{R1,R2, …, Rm\} that will become the relational database schema by using the functional dependencies.
+\item \textbf{Goal}: Each individual relation $R_i$ in decomposition D be in BCNF/3NF, prevent generating spurious tuples.
+\item \textbf{Attribute preservation condition:} Each attribute in $R$ will appear in at least one relation schema $R_i$ in the decomposition so that no attributes are “lost”.
+\item \textbf{Dependency preservation property}: \\
+A decomposition $D$ = \{R1, R2, ..., Rm\} of R is dependency-preserving w.r.t. F if union of projections of F on each $R_i$ in $D$ is equivalent to $F$: \\
+\centerline{
+$ ([\pi_{R1}(F)] \cup ... \cup  [\pi_{Rm}(F)])^+ = F^+$
+}
+
+
+\item \textbf{Dependency preservation property}: Given $F$ on $R$, projection of $F$ on $R_i$, $\pi_{R1}(F)$, where $R_i$ is subset of $R$, is the set of dependencies X $\rightarrow$ Y in $F^+$ such that the attributes 
+in X $\cup$ Y are all contained in $R_i$.
+\item Hence, the projection of F on each relation schema $R_i$ in decomposition D is set of FDs in $F^+$ (closure of F), where all left- and right-hand-side attributes are in $R_i$.
+\medskip
+
+\item \textbf{Non-additive (Lossless) Join Property of Decomposition}: \\
+Decomposition D = \{R1, R2, ..., Rm\} of R has property
+w.r.t. set of dependencies $F$ on $R$ if, for every relation state r of R that satisfies F, the following holds, where * is natural join of all the relations in D: 
+\centerline{$*(\pi_{R1}(r), ..., (\pi_{Rm}(r)) = r $}
+\item Word loss in lossless refers to loss of information, not tuples. In fact, for “loss of information” a better term is “addition of spurious information''.
+\end{itemize}
+
+\subsection{Test Non-Additive Join Property for Binary D.}
+\begin{itemize}
+\item See NJB test on previous page. Basically: \\
+\centerline{(R1 INTERSECT R2) → (R1 - R2) or (R2 - R1)}.
+\end{itemize}
+
+\subsection{Algorithm[15.3] Test Non-Additive Join Property for N-ary Decomposition}
+\centerline{\includegraphics[width = 1\linewidth]{algo15.3}}
+
+\columnbreak
+
+\subsubsection{N-ary Non-Additive Test Example}
+\centerline{\includegraphics[width = 1\linewidth]{nonadditiveexample}}
+
+
+\subsection{Relational Decomposition}
+\textbf{See textbooks for proof.}
+\begin{itemize}
+\item \textbf{Claim 1 (Dependency Preserving)}: Always possible to find a dependency preserving decomposition $D$ with respect to $F$ such that each relation $R_i$ in $D$ is in 3NF.
+\item \textbf{Claim 2 (Preservation of non-additivity in successive decompositions)}: If $D$ = \{R1, R2, ..., Rm\} of $R$ has lossless join property w.r.t. set of FDs $F$ on $R$, and if decomposition $D_i$ = \{Q1, Q2, ..., Qk\} of $R_i$ has lossless join property w.r.t. projection of F on $R_i$, then decomposition $D2$ = \{R1, R2, ..., Ri-1, Q1, Q2, ..., Qk, Ri+1, ..., Rm\} of $R$ has the non-additive join property w.r.t. $F$.
+\end{itemize}
+
+\vfill \null
+
+\columnbreak
+
+\subsection{Relational Synthesis Algorithm[15.4] (to 3NF)}
+\centerline{\includegraphics[width = 0.95\linewidth]{relationalsynthesis}}
+\subsubsection{Algo[15.4] Relational Synthesis Example}
+\centerline{\includegraphics[width = 0.95\linewidth]{algo15.4ex}}
+
+
+\subsubsection{Algo[15.4] Relational Synthesis Example 2}
+\centerline{\includegraphics[width = 1\linewidth]{algo15.4ex2}}
+
+\subsection{Relational Synthesis Algorithm[15.5] (to BCNF)}
+\textbf{Cannot guarantee functional dependency preservation.} \\
+\centerline{\includegraphics[width = 0.95\linewidth]{algo15.5}}
+
+\subsubsection{Algo[15.5] Relational Synthesis Example}
+\centerline{\includegraphics[width = 1\linewidth]{algo15.5ex}}
+
+\subsection{Notes on Normalization Algorithms}
+\textbf{Problems}:
+\begin{itemize}
+\item Database designer must first specify all relevant functional dependencies among the database attributes. 
+\item Algorithms are not deterministic in general. 
+\item Not always possible to find a decomposition into relation schemas that preserves dependencies and allows each relation schema in 
+the decomposition to be in BCNF (instead of 3NF as in Algorithm 15.5). 
+\end{itemize}
+
+\subsection{Summary: Relational DB Schema Design Algos}
+\centerline{\includegraphics[width = 1\linewidth]{algosummary}}
+
+\columnbreak
+
+\subsection{Problems with Null Values and 
+Dangling Tuples}
+\begin{itemize}
+\item \textbf{Problems with NULL values}: When some tuples have NULL values for attributes that will be used to join individual relations in the decomposition that may lead to incomplete results. 
+\item E.g. Joining on an attribute with NULL values may leave those tuples out in the joint result.
+\item In some cases, LEFT /RIGHT OUTER JOIN may be used to include these values.
+\item \textbf{Problems with Dangling Tuples}: When decomposition does not include NULL values (for attributes which allow NULL values), it may cause certain tuples to not appear in the result of a (natural) JOIN. These tuples are called dangling tuples.
+\end{itemize}
+
+
+\subsection{Some Other Dependencies in R. DBs}
+\begin{itemize}
+\item Besides FDs, MVDs (multivalued dependencies) and JDs 
+(join dependencies) used for defining normal forms 1NF 
+upto 5NF, some other dependencies have been proposed.
+\item \textbf{Inclusion Dependencies}: Formalize two types of interrelational constraints which cannot be expressed using F.D.s or MVDs: \textbf{Referential integrity constraints, Class/subclass relationships}.
+\item Basically, represents dependencies between attributes, express the way foreign keys relates to the primary keys. \\ \smallskip
+\centerline{\includegraphics[width = 0.8\linewidth]{inclusion}}
+
+\item \textbf{Arithmetic Functions}: As long as a unique value of Y is associated with every X, we may consider that FD X $\rightarrow$ Y exists. 
+\item There may be some procedure that takes into account the arithmetic function functional dependency.
+\item The above dependencies are relevant during insertion/loading of data 
+or query processing, but NOT relevant to normalization of the relation.
+\end{itemize}
+
+\smallskip
+\centerline{-end-}
+
+
+
+
 
 
 
