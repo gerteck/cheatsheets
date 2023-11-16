@@ -1773,6 +1773,10 @@ the set of relations in a relational database are
 satisfactory (see Algorithm 15.3).
 \end{itemize}
 
+\subsubsection{Normal Forms Summary}
+\medskip
+\centerline{\includegraphics[width = 1\linewidth]{normalsummary}}
+
 \vfill \null
 \columnbreak
 
@@ -1781,7 +1785,7 @@ satisfactory (see Algorithm 15.3).
 There are two important properties of decompositions: 
 \begin{enumerate}
 \item Non-additive or losslessness of the corresponding join.
-item Preservation of the functional dependencies. 
+\item Preservation of the functional dependencies. 
 	\begin{itemize}
 	\item Property (a) is very important, \textbf{cannot be 
 	sacrificed}.
@@ -1855,6 +1859,7 @@ is called a candidate key.
 \item \textbf{1NF}: Table said to be in 1NF if \textbf{every attribute possesses only atomic values}.
 \item \textbf{Disallows}: composite attributes, multivalued attributes, nested relations (attributes whose values for an individual tuple are non-atomic).
 \item \textbf{Functional Dependency Analysis}: For a relation to be 1NF, every attribute must functionally be dependent on primary key.
+\item As long as relation has a key, it is considered to be in 1NF.
 \end{itemize}
 \medskip
 \centerline{\includegraphics[width = 1\linewidth]{1NF}}
