@@ -1552,11 +1552,89 @@ sent by the client to the server, some commands travel in the other direction (i
 \centerline{\includegraphics[width=0.90\linewidth]{command3}}
 
 
+\columnbreak
+
+\section{Sample Questions}
+
+\subsubsection{Each network interface card has an MAC address. Why not simply use this MAC address for routing of packets on the internet?}
+\begin{itemize}
+\item An IP address logically comprises two parts: network prefix and host ID. This is 
+designed to facilitate routing: routers check prefix and deliver a packet to an 
+aggregated destination network. If MAC address is used instead, hierarchical 
+routing cannot be achieved. For example, MAC address is burnt in ROM and usually 
+cannot be changed. When people carry their laptops around the world, devices in a 
+subnet won’t have common prefix in MAC addresses. This makes routing difficult 
+as routers have to remember routing for every single MAC address
+\end{itemize}
+
+\subsubsection{Local Broadcast Address}
+\begin{itemize}
+\item IP address 255.255.255.255 is known as local broadcast address. Local broadcast address is used to communicate with all the hosts of the same subnet. Technically, the broadcast should be sent to all the IP addresses that exist. However, it actually serves as an address for the broadcast within the local network as a router does not forward such a packet. Local Broadcast IP address is also known as Limited Broadcast IP address.
+\item When the destination IP address is 255.255.255.255 then the destination MAC address is ff.ff.ff.ff.ff.ff which makes this packet both a Layer 2 and a Layer 3 broadcast.
+\end{itemize}
+
+\subsubsection{Switches}
+\begin{itemize}
+\item Switches will forward broadcast traffic to all interfaces, except the one where it originated from. 
+\end{itemize}
 
 
+\subsubsection{Briefly explain why the internet is designed as packet-switching network instead of circuit switching network?}
+\begin{itemize}
+\item Resource Sharing: In a packet-switching network, multiple communication sessions can share the same network infrastructure concurrently. This contrasts with circuit-switching, where a dedicated circuit is reserved for the entire duration of a communication session, leading to potential underutilization of resources.
+\end{itemize}
+
+\subsubsection{Give a reason a stop and wait protocol would have low throughput over a satellite communication link}
+\begin{itemize}
+\item Experience low throughput over a satellite communication link due to inherent characteristics of satellite communication. (high propagation delay).
+\item Signals must travel vast distances. The propagation delay cause the stop-and-wait protocol to be idling, waiting for (ACK) before sending the next packet, making it inefficient as waiting time can be substantial, leading to underutilization of the available bandwidth and low throughput.
+\end{itemize}
+
+\subsubsection{Why are internet checksums used in transport layer and network layer while CRCs are used in the link layer?}
+\begin{itemize}
+\item  Internet checksums, are simple error-checking codes provide a lightweight mechanism for error detection without introducing significant computational overhead. Focus is on detecting errors in the data as it travels from the source to the destination.
+\item  The link layer is closer to the physical transmission medium, where errors, including bit errors, are more likely to occur due to noise and interference. CRCs commonly used at the link layer. More robust than simple checksums and can detect wider range of errors. Better suited for detecting errors in the binary stream of data at the link layer.
+\end{itemize}
+
+\subsubsection{Why CSMA has better performance than pure aloha, similarly, why CSMA-CD outperforms CSMA}
+\begin{itemize}
+\item \textbf{CSMA (Carrier Sense Multiple Access) vs. Pure ALOHA:} In CSMA, station listens to channel before transmitting, avoiding collisions with ongoing transmissions, reducing the chances of collisions, making more efficient use of available bandwidth. In Pure ALOHA, stations transmit w/o checking for ongoing transmissions, leading to a higher collision probability and lower overall efficiency.
+\item \textbf{CSMA-CD (Carrier Sense Multiple Access with Collision Detection) vs. CSMA}: CSMA-CD Advantage: CSMA-CD includes collision detection, continues to listen to the channel while transmitting, if collision detected, stops transmission immediately, reducing the time wasted on unsuccessful transmissions. 
+\end{itemize}
+
+\columnbreak
+
+\centerline{\includegraphics[width=0.9\linewidth]{q4}}
+\begin{itemize}
+\item Encrypted hash of the message: digital signature of Alice used to prove her identity to 
+Bob. Alice’s private key is used.
+\item Encrypted message: message encrypted with the session key to ensure confidentiality 
+of the message. Session key is a symmetric key.
+\item Encrypted session key: session key encrypted with Bob’s public key. The purpose is to 
+share the session key with Bob
+\end{itemize}
 
 
+\subsubsection{2-D Parity Bits}
+\begin{itemize}
+\item 2-D parity bits can detect and correct any one-bit (or odd) error. And can detect (but not correct) any two-bit error.
+\end{itemize}
 
+\subsubsection{VoIP application:}
+\begin{itemize}
+\item Receiver side two types of data losses may occur: delay loss and network loss.
+\end{itemize}
+
+\subsubsection{ Public key cryptography uses both public and private keys. Let Alice’s public 
+key and private key, and let Bob’s public and private key be. Alice sends  message m to Bob. Describe how to ensure message confidentiality and integrity using only these 4 keys}
+\centerline{\includegraphics[width=0.9\linewidth]{q4b}}
+
+
+\subsubsection{Port Numbers}
+\begin{itemize}
+\item Port numbers range from 0 to 65535. ($2^{16}$)
+\item For a NAT router with a single IP address, if each row of NAT translation table is 8B (two IP addresses), then take 524,288 bytes to maximise.
+\end{itemize}
 
 
 
