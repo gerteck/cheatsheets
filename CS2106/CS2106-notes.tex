@@ -126,6 +126,177 @@ AY23/24 Sem 2, github.com/gerteck
 
 \section{1. Introduction}
 
+\textbf{Course objectives:} Introduces basic concepts in operating systems. Focusing on OS structure and architecture, process management, memory management, file management and OS protection mechanism. At the end of the course, identify and understand major functionalities of modern operating systems and extend and apply the knowledge in future related courses.
+
+\textbf{Supplementary Text}: Modern Operating System (5th Edition), by Andrew S. Tanenbaum, Pearson, 2023.
+
+\subsection{Learning Outcomes}
+\begin{itemize}
+	\item Understand how an \textbf{OS manages computational resources for multiple users and applications, and the impact on application performance}
+	\item Appreciate the \textbf{abstractions and interfaces provided by OS}
+	\item Write \textbf{multi-process / thread programs} and avoid common pitfalls such as \textbf{deadlocks, starvation and race conditions.}
+	\item Write system programs that utilizes \textbf{POSIX} syscall for process, memory and I/O management.
+	\item Self-learn and explore advanced OS topics.
+	\item Understand important design principles in complex systems.
+\end{itemize}
+
+Areas to focus on: Try to understand how things are running in parallel, since we naturally think sequentially. Secondly, how we can manage memory and how they combine and interact (in strange ways), synchronization.
+
+\subsection{Operating System OS}
+An OS is a program that acts as an intermediary between a computer user and the computer hardware. Motivation for OS:
+\begin{itemize}
+\item Manage resources and coordination. (Resource Allocator: Process synchronization, resource sharing)
+\item Simplify programming (Abstraction of hardware / hardware virtualization, convenient services)
+\item Enforce usage policies
+\item Security and protection
+\item User Program Portability (across different hardware)
+\item Efficiency (Optimize for particular usage and hardware).
+\end{itemize}
+
+\textbf{Kernel Mode}: Complete access to all hardware resources. \\
+\textbf{User Mode}: Limited / Controlled access to hardware resources.
+
+\hspace{0.5cm}
+
+\centerline{\includegraphics[width=0.5\linewidth]{highlevelOS}}
+
+\subsubsection{Generic OS Components}
+\centerline{\includegraphics[width=0.7\linewidth]{genericOS}}
+\begin{itemize}
+\item OS is known as the \textbf{kernel}. \\
+		Program that deals with hardware issues, provide system call interface and special code for interrupt handlers, device drivers.
+\item Kernel code is different from normal programs: \\
+		No use of system call in kernal code, can't use normal libraries, no normal I/O (must do I/O itself).
+\item \textbf{Implementing OS}: Historically in assembly/machine, now in HLLs (C, C++). Heavily hardware achitecture dependent. Challenges include complexity, debugging, codebase size.
+\end{itemize}
+
+\subsubsection{OS Structures}
+\textbf{Monolithic OS}: One Big program.
+\begin{itemize}
+\item Well understood, good performance, but highly coupled components (everything running in kernel mode) and usually devolved into very complicated internal structure.
+\end{itemize}
+
+\textbf{Microkernel OS}: 
+\begin{itemize}
+\item Kernel is very small and clean, only providing basic and essential facilities.
+\item Inter-Process Communication \textbf{(IPC)}, Address space management, Thread management etc.
+\item Higher level services are built on top of basic facilities, run as server process \textit{outside} of OS, use IPC to communicate.
+\item Kernel is more robust and extendible, better isolation and protection between kernel and high level services. But, lower performance. (Latency)
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{OSstructure}}
+
+\textbf{Other OS Structure}
+\begin{itemize}
+\item \textbf{Layered Systems}: Generalization of monolithic system, organize components into hierarchy of layers. Lowest is hardware, highest is user interface.
+\item \textbf{Client-Server Model}: Variation of microkernel. Two classes of processes: Client p. request service from server process, server process built on top of microkernel. Client \& Server process can be on separate machine.
+\end{itemize}
+
+
+
+
+
+
+
+\vfill \null
+\columnbreak
+
+
+\section{Upcoming Topics}
+
+\begin{itemize}
+	
+	\item 2. Process Abstraction
+	\item 3. Process Scheduling
+	\item 4. Inter-Process Communication
+	\item 5. Threads + Synchronization
+	\item 6. Memory Management
+	\item 7. Disjoint Memory Management
+	\item 8. File System Management
+	\item 9. File System Implementation
+
+\end{itemize}
+
+
+~ End.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
