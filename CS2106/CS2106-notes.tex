@@ -97,6 +97,35 @@
 \setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0mm}
 \setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 0mm}
 
+% For Code Blocks
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{gray!25!white},
+	basicstyle=\scriptsize,
+	numbers=none,    %or = none or left
+	showstringspaces=false,
+	breaklines=true,
+	breakatwhitespace=false,                  
+	captionpos=b,                    
+	keepspaces=true,                                 
+	numbersep=5pt,                  
+	showspaces=false,                
+	showtabs=false,                  
+	tabsize=2,
+ }
+%Helpful:
+%[linewidth = 1.0 \linewidth]
+%\lstinline{}
+% use \code{} for \lstinline with colorbox.
+\newcommand{\code}[1]{\colorbox{gray!25!}{\lstinline|#1|}}
+\lstset{style=mystyle}
+
+%\begin{lstlisting} [linewidth = 1.0 \linewidth],
+% code here
+%\end{lstlisting}
+
 %itemsep = 0mm
 %\setlist{nosep}
 
@@ -191,6 +220,186 @@ An OS is a program that acts as an intermediary between a computer user and the 
 \item \textbf{Client-Server Model}: Variation of microkernel. Two classes of processes: Client p. request service from server process, server process built on top of microkernel. Client \& Server process can be on separate machine.
 \end{itemize}
 
+\subsubsection{Virtual Machines}
+\begin{itemize}
+\item \textbf{Motivation}: OS assumes total control of hardware, making it hard to run several OS on same hardware at same time. OS is also hard to debug / monitor, hard to observe working of OS, test potentially destructive implementation.
+\item \textbf{Virtual Machine}: Software emulation of hardware. 
+\item \textbf{Virtualization of underlying hardware}: Illusion of complete hardware to level above. (Memory, CPU etc.) Normal OS can then run on top of virtual machine. Aka \textbf{Hypervisor}. 
+	\begin{itemize}
+	\item \textbf{Type 1 Hypervisor}: Provides individual virtual machines to guests OSes (e.g. IBM VM/370)
+	\item \textbf{Type 2 Hypervisor}: Runs in host OS, Guest OS runs inside Virtual Machine, (e.g. VMware)
+	\end{itemize}
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{hypervisor}}
+
+\section{- Upcoming Topics -}
+\textbf{OS Process Management}: As OS (to maximise efficiency hardware resources), to be able to switch from running one program to the other (share hardware, e.g. CPU), requires information regarding execution of A stored, and A's information replaced with B's information to run. (E.g. the registers in CPU replaced)
+\begin{itemize}
+	\item \textbf{2. Process Abstraction}: Info describing executing program
+	\item \textbf{3. Process Scheduling}: Deciding which process gets to execute
+	\item \textbf{4. Inter-Process Communication}: Passing information between processes (tough)
+	\item \textbf{5. Threads + Synchronization}: Alternative to Process (Light-weight process aka Thread)
+	\item \textbf{6. Memory Management}
+	\item \textbf{7. Disjoint Memory Management}
+	\item \textbf{8. File System Management}
+	\item \textbf{9. File System Implementation}
+\end{itemize}
+
+
+\null \null \null \null
+\null \null \null \null
+
+\columnbreak
+
+
+\section{2. Process Abstraction}
+To switch programs, requires information of both programs. Hence, we need abstraction to describe running program, aka \textbf{process}.
+\begin{itemize}
+\item \textbf{(Process / Task / Job)} is a dynamic abstraction for executing program. 
+\item It is info required to describe a \textit{running program}: \\
+- Memory Context (Code/Text, Data, Stack, Heap),\\
+- Hardware Context (Register/PC, Stack/Frame Pointer), \\
+- OS Context (Process Properties (PID, State), Resources Used).
+\end{itemize}
+
+\subsubsection{Computer Organization (Recap)}
+\begin{itemize}
+\item \textbf{Components}: Memory, Cache, Fetch Unit (Loads instruction, location indicated by special register \textbf{PC}.)
+\item \textbf{Functional Units} (Carry out instruction execution, dedicated to diff. instr. type) (CS2100 looked at INT func. unit)
+\item Registers (Internal storage, fastest access speed). \\
+- \textbf{GPR}: General Purpose Register, accessible by user program / compiler. \\
+- \textbf{Special Registers}: PC, Stack/Frame Pointer, PSW etc.
+\item \textbf{Binary Executable File}: file in machine language (built by compiler) for specific processor: \\
+- Executable (binary) consists two major components: Instr. (Text) \& Data \\
+- When under execution, more info: Memory, Hardware, OS context.	
+\end{itemize}
+\centerline{\includegraphics[width=0.6\linewidth]{computerOrg}}
+
+\subsection{Memory Context for Function Call (Stack Memory)}
+\textbf{Memory Context Challenges of Functional Calls:}
+\begin{itemize}
+\item Control Flow Issues: Need to jump to function body, resume after, need to store PC of caller.
+\item Data Storage Issues: Need to pass params to function, capture return result, may need declare local variables.
+\item Require region of memory dynamically used by function invocations.
+\end{itemize}
+Hence, portion of memory space used as \textbf{stack memory} that stores executing function using \textbf{stack frame}, which includes usage of \textit{Stack Pointer, Frame Pointer}.
+
+\subsubsection{Stack Memory Region}
+\begin{itemize}
+\item \textbf{Memory region to store information function invocation.}
+\item \textbf{Stack Frame}: Describes information of function invocation.
+\item Stack frame added on top when function is invoked, stack "grows", removed from top when function call ends, stack "shrinks".
+\item Stack Frame contains return PC address of caller, arguments for function, storage for local variables, add on.... (AKSJKFGJHKLJHD)
+\item \textbf{Stack Pointer}: Indicates top of stack region (first unused memory location). Usually indicated in specialized register.
+\end{itemize}
+
+
+\subsubsection{Function Call Convention: Stack Frame Setup / Teardown}
+There are different ways to setup stack frame, known as function call convention, differences about (info stored in frame, which portion of stack fram prepared \& cleared by caller / callee etc). Dependent on hardware \& programming language. \\
+\medskip
+\textbf{Example Scheme:}
+\centerline{\includegraphics[width=1\linewidth]{stackSetupTeardown}}
+\smallskip
+\centerline{\includegraphics[width=0.45\linewidth]{stackSetupTeardown2}}
+
+\subsubsection{Stack Frame: Other Information}
+\textbf{Frame Pointer}
+\begin{itemize}
+\item To facilitate access of various stack frame items. As stack pointer hard to use as it can change, some processors provide dedicated register Frame Pointer.
+\item Frame Pointer points to fixed location in stack frame, other items accessed as displacement from frame pointer, usage of FP is platform dependent.
+\end{itemize}
+
+\textbf{Saved Registers}
+\begin{itemize}
+\item Since number of GPR limited, when GPR exhausted, use memory to temp. hold GPR values for reuse.
+\item \textbf{Known as Register Spilling}. Function can spill registers it intends to use before function starts, then restore registers at end of function.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{stackMemory}}
+
+\subsection{Memory Context for Dynamically Allocated Mem. (Heap)}
+Most programming languages allow dynamically allocated memory, i.e. acquire memory space during execution time.
+\begin{itemize}
+\item In C, \code{malloc()} function call, while C++ / Java: \code{new} keyword.
+\item Cannot place in \textit{Data region}, as allocated at runtime, size not known during compilation.
+\item Cannot place in \textit{Stack region}, as no definite deallocation time, cannot be freed by garbage collector.
+\item Solution: Set up separate \textbf{Heap Memory Region}
+\end{itemize}
+
+\columnbreak
+
+\subsubsection{Heap Memory}
+\begin{itemize}
+\item Managing heap memory trickier due to variable size, variable allocation / deallocation timing.
+\item Common situation where heap memory alloc/dealloc creating "holes" in memory. Free memory block squeezed between occupied memory blocks.
+\item Covered in memory management.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{heapMemory}}
+
+
+\subsection{OS Context: Process ID, Process State}
+\textbf{Process Identification}:
+\begin{itemize}
+\item \textbf{Process ID}: To distinguish processes from each other (Just a number, unique among processes)
+\item PIDs are OS dependent as well, including if PIDs reused, if limits maximum no. of processes or any PIDs reserved.
+\end{itemize}
+\textbf{Process State}:
+\begin{itemize}
+\item Processes require a process state as indication of execution status. (Running / Not Running / Ready to Run etc.)
+\item \textbf{Process Model}: Set of states and transitions, describes behaviours of a process.
+\item \textbf{Global View of Process States}: Given $n$ processes, \\
+- With 1 CPU, $\leq$ 1 process in running state, 1 transition at a time. \\
+- With $m$ CPUs, $\leq$ m processes running state, possibly parallel transitions.
+\item Different processes may be in different states, each process may be in different part of its state diagram.
+\item \textbf{5-State Process Model}: 
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{5StateProcess}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -200,21 +409,6 @@ An OS is a program that acts as an intermediary between a computer user and the 
 \vfill \null
 \columnbreak
 
-
-\section{Upcoming Topics}
-
-\begin{itemize}
-	
-	\item 2. Process Abstraction
-	\item 3. Process Scheduling
-	\item 4. Inter-Process Communication
-	\item 5. Threads + Synchronization
-	\item 6. Memory Management
-	\item 7. Disjoint Memory Management
-	\item 8. File System Management
-	\item 9. File System Implementation
-
-\end{itemize}
 
 
 ~ End.
