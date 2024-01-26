@@ -246,14 +246,98 @@ Encouraged to read ahead based on schedule before the lecture.
 \end{itemize}
 
 \subsubsection{Heap File Implementations}
-\centerline{\includegraphics[width = 1\linewidth]{heapFileImplementations}}
+\centerline{\includegraphics[width = 0.7\linewidth]{heapFileImplementations}}
 \begin{itemize}
 \item \textbf{Linked list implementation}: Two linked lists, one with pages with free space, other of completely full pages.
 \item \textbf{Page Directory Implementation}: Two leveled implementation. Each big block is a disk block with some metadata. Each disk block has a number of data pages.
 \end{itemize}
 
+\textbf{Page Formats}: \\
+Records are organized within a page and referenced with the RID.
+\begin{itemize}
+\item \textbf{RID = (page id, slot number)}
+\item For \textbf{Fixed-Length Records}, Organization can be:
+\begin{itemize}
+\item \textbf{Packed Organization}: Store records in contiguous slots. 
+\item  For packed organization, memory organization is tough and costly when record in slot is deleted, need to move up a record. But as RID serves as a reference, but need to propagate change in RID.
+\item \textbf{Unpacked Organization}: Uses bit array to maintain free slots.
+\item For unpacked organization, more bookkeeping needed (use bitmap, 1 \& 0 to check if occupied) to store records.
+\end{itemize}
+\item For \textbf{Variable-Length Records}: We could assume some maximum size, then use packed organization. But wasteful. Instead, we can use \textbf{Slotted Page Organization}.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{pageFormats}}
+
+\centerline{\includegraphics[width = 0.7\linewidth]{PostgreSQLPageOrg}}
+\textbf{Record Formats}: Organizing fields within a record. \\
+\medskip
+\centerline{\includegraphics[width = 0.8\linewidth]{recordFormats}}
+
+\section{2. Indexing}
+Need some auxiliary data structure to make efficient queries.
+
+\subsection{Index}
+\begin{itemize}
+\item An \textbf{index} is a data structure to speed up retrieval of data records based on some search key.
+\item A \textbf{search key} is a sequence of $k$ data attributes, $k \geq 1$. (A search key is aka \textit{composite search key} if $k > 1$, e.g. (state, city).)
+\item An index is a \textbf{unique index} if search key is a candidate key, otherwise it is \textbf{non-unique index}.
+\item An index is stored as a file, records in index file referred to as \textbf{data entries}.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{simpleIndex}}
+
+\subsection{Index Types}
+Two main types of indexes
+\begin{itemize}
+\item \textbf{Tree-based Index}: Based on sorting of search key values (E.g. ISAM, $B^+$-tree)
+\item \textbf{Hash-based Index}: Data entries accessed using hashing function (E.g. static/ extendible / linear hashing)
+\item Considerations when choosing an index: 
+	\begin{itemize}
+	\item Search Performance \\ 
+	(Equality search: $k=v$, use hash-based.) (Range search, use tree)
+	\item Storage overhead
+	\item Update performance
+	\end{itemize}
+\end{itemize}
+
+\subsection{$B^+$-tree Index}
+\centerline{\includegraphics[width = 0.9\linewidth]{B+TreeIndex}}
+\begin{itemize}
+\item Each node is either a \textbf{leaf node} (bottom-most level) or an internal node. 
+\item Top-most internal node is the \textbf{root node} located at \textbf{level 0}.
+\item \textbf{Height of Tree} = number of level of internal nodes. (Leaf nodes are at level $h$ where $h$ = height of tree.
+\item Nodes at same level are \textbf{sibling nodes} if they have the same parent node.
+\item \textbf{Leaf Nodes}:
+	\begin{itemize}
+	\item Leaf nodes store sorted data entries.
+	\item $k*$ denote data entry of form (k, RID), where k = search key value of corresponding data record, RID = RID of data record.
+	\item Lead nodes are doubly-linked to adjacent nodes.
+	\end{itemize}
+\item \textbf{Internal Nodes}:
+	\begin{itemize}
+	\item Internal nodes store index entries of the form (p: pointer, k: separator)\\
+	 $(p_0, k_1, p_1, k_2, p_2, ..., p_n)$
+	\item $k_1 < k_2 < ... < K_n$
+	\item Each $(k_i, p_i)$ is an \textbf{index entry}, $k_i$ serves as \textbf{separator} between node contents pointed to by $p_{i-1}$ \& $p_i$
+	\item $p_i$ = disk page address (root node of an index subtree $T_i$)
+	\end{itemize}
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{Bproperties}}
+
+\subsubsection{Formats of Data Entries in B-Tree}
+\begin{itemize}
+\item \textbf{Format 1}: k* is actual \textit{data record} (with search key value $k$)
+\item \textbf{Format 2}: k* is of form \textit{(k, rid)}, where rid is record identifier of record with search key value $k$.
+\item \textbf{Format 3}: k* is of form \textit{(k, rid-list)}, where rid-list is list of record identifiers of data records with search key value $k$.
+\item Note, examples assume Format 2.
+\end{itemize}
+\centerline{\includegraphics[width = 0.9\linewidth]{dataFormat}}
+
+\subsection{$B^+$-Tree Insertion}
 
 
+\subsection{$B^+$-Tree Deletion}
+
+
+\subsection{$B^+$-Tree Bulk Loading}
 
 
 
