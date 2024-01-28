@@ -217,26 +217,87 @@ Can choose, feed any plaintext m, obtain corresponding ciphertext c (all encrypt
 \end{itemize}
 
 \subsection{Classicial Ciphers}
+
+\subsubsection{1. Substitution Cipher}
 \begin{itemize}
-\item \textbf{Substitution Cipher} 
-	\begin{itemize}
-	\item \textbf{Plaintext, ciphertext}: String over a set of symbols U.
-	\item \textbf{Key}: Subsitution table S, 1-1 onto function from U to U.
-	\item \textbf{Key space}: Set of all possible keys (e.g. 27). \textbf{Space Size} is total number of possible keys (factorial, 27!). \textbf{Key Size} is number of bits required to represent a key. (log 2 (27!), since 27! unique) 
-	\item \textbf{Exhaustive Search (Brute-force): Can be infeasible in worst case}
-	\item \textbf{Known-plaintext-attack}: Access to pairs of ciphertext and corresponding plaintexts: \textit{Sub. cipher “not secure / totally broken under known plaintext attack”}. (Possible in practice, e.g. certain words in header of email "From, Subject", protocols bytes fixed header information etc.)
-	\item \textbf{Ciphertext only attack}: Vulnerable to frequency analysis attack, when plaintexts English sentences.
-	\end{itemize}
-\item \textbf{Permutation Cipher}, aka transposition cipher
-	\begin{itemize}
-	\item Groups plaintext into blocks of $t$ characters, applies secret permutation (1-1 onto function). Fails miserably on known-plaintext attack.
-	\centerline{\includegraphics[width=0.4\linewidth]{permutationCipher}}
-	\end{itemize}
-\item S \& P cipher not secure, performing substitution multiple times no use. However, by interlacing them (S\&P), attacks become more difficult. Many modern encryption scheme (e.g. AES) designed using rounds of S \& P.
-\item \textbf{One Time Pad}
-
-
+\item \textbf{Plaintext, ciphertext}: String over a set of symbols U.
+\item \textbf{Key}: Subsitution table S, 1-1 onto function from U to U.
+\item \textbf{Key space}: Set of all possible keys (e.g. 27). \textbf{Space Size} is total number of possible keys (factorial, 27!). \textbf{Key Size} is number of bits required to represent a key. (log 2 (27!), since 27! unique) 
+\item \textbf{Exhaustive Search (Brute-force): Can be infeasible in worst case}
+\item \textbf{Known-plaintext-attack}: Access to pairs of ciphertext and corresponding plaintexts: \textit{Sub. cipher “not secure / totally broken under known plaintext attack”}. (Possible in practice, e.g. certain words in header of email "From, Subject", protocols bytes fixed header information etc.)
+\item \textbf{Ciphertext only attack}: Vulnerable to frequency analysis attack, when plaintexts English sentences.
 \end{itemize}
+
+\subsubsection{2. Permutation Cipher (aka transposition cipher)}
+\begin{itemize}
+\item Groups plaintext into blocks of $t$ characters, applies secret permutation (1-1 onto function). Fails miserably on known-plaintext attack.
+\centerline{\includegraphics[width=0.4\linewidth]{permutationCipher}}
+\end{itemize}
+
+\begin{itemize}
+\item S \& P cipher not secure, performing substitution multiple times no use. However, by interlacing them (S\&P), attacks become more difficult. Many modern encryption scheme (e.g. AES) designed using rounds of S \& P.
+\end{itemize}
+
+\textbf{Perfect Secrecy}
+\begin{itemize}
+\item \textbf{Definition}: A cryptosystem has perfect secrecy if for any distribution $X$, for all $x, y$:
+\centerline{$Pr ( X=x | Y=y ) = Pr (X =x) $}.
+\item For any ciphertext $y$ and plaintext $x$, the chances attacker correctly predicts x before knowing y, and after knowing y, are the 
+same.
+\end{itemize}
+
+\null \null \null \null 
+\null \null \null \null \null \null
+
+\columnbreak
+
+\subsubsection{3. One Time Pad}
+One-time pad (OTP) is an encryption technique that requires the use of a single-use pre-shared key that is larger than or equal to the size of the message being sent. 
+\begin{itemize}
+\item Plaintext is paired with a random secret key (known as one-time pad). 
+\item Each bit or character of the plaintext encrypted by combining it with corresponding bit/character from pad using modular addition.[1]
+\end{itemize}
+\centerline{\includegraphics[width=0.4\linewidth]{XOR}}
+\centerline{\includegraphics[width=1\linewidth]{OTP}}
+\begin{itemize}
+\item \textbf{Requirement}: Key cannot be re-used, used only once. Hence, 1GB plaintext would need 1GB key to encrypt.
+\item From pair of ciphertext \& plaintext, key can be derived. However, key useless, as only used once.
+\item \textbf{Security}: OTP leaks no information of plaintext, sometimes called "unbreakable".
+\end{itemize}
+
+\subsection{Modern Ciphers}
+Generally refers to schemes that use computer to encrypt / decrypt. E.g:
+\\ - DES [Data Encryption Standard 1977] 
+\\ - RC4 [Rivest's Cipher 4 1987]
+\\ - A5/1 [used in GSM 1987]
+\\ - AES [Adv. Encrypt. Std.], RSA).
+\begin{itemize}
+\item Designs take into consideration of known-plaintext-attack, freq. analysis and other known attacks.
+\item Supposed to be secure, so any successful attack does not perform noticeably better than exhaustive search.
+\end{itemize}
+
+\subsubsection{Exhaustive Search, Key Length Definitions}
+\begin{itemize}
+\item
+
+\end{itemize}•
+
+
+
+\subsubsection{1. DES / Exhaustive Search}
+
+\subsubsection{2. Block Cipher \& Mode-of-Operations}
+
+\subsubsection{3. Stream Cipher and IVs}
+
+
+\subsection{Types of Attacks}
+
+\subsubsection{Triple DES \& Meet-in-middle Attack}
+
+
+\subsubsection{Padding Oracle Attack}
+
 
 
 
