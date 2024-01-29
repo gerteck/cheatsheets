@@ -119,7 +119,8 @@
 
 %% DOCUMENT NAME HERE
 \begin{center}
-     \Large{\textbf{CS2107 Intro Information Security}} \\
+     \Large{\textbf{CS2107 Introduction to \\
+     				 Information Security}} \\
 \end{center}
 AY23/24 Sem 2, github.com/gerteck
 
@@ -216,9 +217,9 @@ Can choose, feed any plaintext m, obtain corresponding ciphertext c (all encrypt
 \item \textbf{Note}: total break most difficult goal, since achieves all. Distinguishability weakest goal, design cryptosystem preventing weakest goal.
 \end{itemize}
 
-\subsection{Classicial Ciphers}
+\section{Classicial Ciphers (Symmetric)}
 
-\subsubsection{1. Substitution Cipher}
+\subsection{1. Substitution Cipher}
 \begin{itemize}
 \item \textbf{Plaintext, ciphertext}: String over a set of symbols U.
 \item \textbf{Key}: Subsitution table S, 1-1 onto function from U to U.
@@ -228,7 +229,7 @@ Can choose, feed any plaintext m, obtain corresponding ciphertext c (all encrypt
 \item \textbf{Ciphertext only attack}: Vulnerable to frequency analysis attack, when plaintexts English sentences.
 \end{itemize}
 
-\subsubsection{2. Permutation Cipher (aka transposition cipher)}
+\subsection{2. Permutation Cipher (aka transposition cipher)}
 \begin{itemize}
 \item Groups plaintext into blocks of $t$ characters, applies secret permutation (1-1 onto function). Fails miserably on known-plaintext attack.
 \centerline{\includegraphics[width=0.4\linewidth]{permutationCipher}}
@@ -238,20 +239,25 @@ Can choose, feed any plaintext m, obtain corresponding ciphertext c (all encrypt
 \item S \& P cipher not secure, performing substitution multiple times no use. However, by interlacing them (S\&P), attacks become more difficult. Many modern encryption scheme (e.g. AES) designed using rounds of S \& P.
 \end{itemize}
 
-\textbf{Perfect Secrecy}
+\subsection{Terminology}
 \begin{itemize}
-\item \textbf{Definition}: A cryptosystem has perfect secrecy if for any distribution $X$, for all $x, y$:
+\item \textbf{Cryptosystem}: A system for encryption and decryption.
+\item \textbf{Plaintext}: Original form of message.
+\item \textbf{Ciphertext}: Encrypted form of message.
+\item \textbf{Perfect Secrecy}: A cryptosystem has perfect secrecy if for any distribution $X$, for all $x, y$:
 \centerline{$Pr ( X=x | Y=y ) = Pr (X =x) $}.
 \item For any ciphertext $y$ and plaintext $x$, the chances attacker correctly predicts x before knowing y, and after knowing y, are the 
 same.
+\item \textbf{Work Factor}: Difficulty of breaking an encryption (Amount of effort necessary). \\
+- (E.g. determine time it would take to test single password, multiply by total possible passwords).
 \end{itemize}
 
-\null \null \null \null 
-\null \null \null \null \null \null
+\null \null \null \null
+
 
 \columnbreak
 
-\subsubsection{3. One Time Pad}
+\subsection{3. One Time Pad}
 One-time pad (OTP) is an encryption technique that requires the use of a single-use pre-shared key that is larger than or equal to the size of the message being sent. 
 \begin{itemize}
 \item Plaintext is paired with a random secret key (known as one-time pad). 
@@ -262,10 +268,10 @@ One-time pad (OTP) is an encryption technique that requires the use of a single-
 \begin{itemize}
 \item \textbf{Requirement}: Key cannot be re-used, used only once. Hence, 1GB plaintext would need 1GB key to encrypt.
 \item From pair of ciphertext \& plaintext, key can be derived. However, key useless, as only used once.
-\item \textbf{Security}: OTP leaks no information of plaintext, sometimes called "unbreakable".
+\item \textbf{Security}: OTP leaks no information of plaintext, sometimes called "unbreakable". There is a exhaustive key for any English sentence. (Perfect Secrecy)
 \end{itemize}
 
-\subsection{Modern Ciphers}
+\section{Modern Ciphers (Symmetric)}
 Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \\ - DES [Data Encryption Standard 1977] 
 \\ - RC4 [Rivest's Cipher 4 1987]
@@ -276,31 +282,154 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \item Supposed to be secure, so any successful attack does not perform noticeably better than exhaustive search.
 \end{itemize}
 
-\subsubsection{Exhaustive Search, Key Length Definitions}
+\subsection{Key Length, Exhaustive Search DES, AES}
 \begin{itemize}
-\item
+\item \textbf{Security of Encryption Scheme}: Quantified by \textbf{length of key}, w.r.t. exhaustive search.
+\item Given a key length of 32 bits, there are $2^{32}$ possible keys. Hence, exhaustive search needs to ``loop'' $2^{32}$ in worst case. 
+\item \textbf{No. of bits to be considered ``secure''}: 128, 192, 256 bits, \\
+- (NIST reccomendation for AES).
+\end{itemize}
 
-\end{itemize}•
+\subsection{1. DES, AES and Exhaustive Search}
+\begin{itemize}
+\item \textbf{Exhaustive Search on DES}: Key length of DES is 56 bits. Previously, seemed infeasible, but has since become easily broken.
+\item \textbf{AES}: New standard for block cipher in 2000, AES block length is 127, key length can be 128, 192 or 256 bits. 
+\item Currently, no known attacks on AES. NSA classifies AES as ``Suite B Cryptography''.
+\end{itemize}
+
+\subsection{2. Block Cipher \& Mode-of-Operations}
+\begin{itemize}
+\item \textbf{Block Cipher}: DES \& AES known as ``Block Cipher''. Block cipher designed for some fixed size input/output. \\
+- E.g. AES designed for 128 bits input/output.
+\item \textbf{Block Cipher Mode Of Operation}: Describes how to repeatedly apply cipher's single block operation to securely transform amounts of data larger than a block. (Extending encryptino from single block to multiple blocks).
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{AES}}
+
+\subsubsection{Mode-of-Operation: ECB Mode on AES}
+\begin{itemize}
+\item \textbf{Electronic Book Code}: Divide plaintext into blocks, apply block cipher to each block, with the same key.
+\item ECB leaks information! AES encryption determinsitic without randomly chosen IV.
+\item \textbf{Deterministic}: Produces same ciphertext for given plaintext and key over separate executions.
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{ECB}}
+
+\subsubsection{Mode-of-Operation: CBC Mode on AES}
+\begin{itemize}
+\item \textbf{Cipher Block Chaining on AES}: Using an IV, uses chaining process that causes decryption of block of ciphertext to depend on all preceding ciphertext blocks.
+\item \textbf{Initialization Vector (IV)}: Arbitrary number of certain length used with secret key, to provide the initial state, for data encryption.
+\item \textbf{Encryption}: Each plaintext block is XOR-ed with previous ciphertext block, and then encrypted. Process repeats untill all plaintext is ciphertext blocks.
+\item \textbf{Decryption}: Reverse encryption process. Note, process does not need to start with final block, can happen simultaneously as all inputs present.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{CBC}}
+
+\columnbreak
+\subsubsection{Mode-of-Operation: Counter Mode (CTR) on AES}
+\begin{itemize}
+\item \textbf{Counter Mode}: Turns block cipher into stream cipher, generates next keystream block by encrypting successive values of a ``counter''. Counter can be any function producing sequence, incld. simple increment by one counter.
+\end{itemize}
+\centerline{\includegraphics[width=0.5\linewidth]{CTR}}
+
+\subsubsection{Mode-of-Operation: GCM Mode (Galois/Counter)}
+\begin{itemize}
+\item \textbf{GCM}: Combines Counter mode (CTR) with Galois authenication. Construction of mode more complicated, is ``Authenticated-Encryption''.
+\item Ciphertext consists of extra tag for authentication, secure in presence of decryption oracle.
+\end{itemize}
+
+\subsubsection{Python Programming: CBC}
+\centerline{\includegraphics[width=0.95\linewidth]{CBCProgramming}}
+
+\subsection{3. Stream Cipher and IVs}
+\subsubsection{Stream Cipher}
+\begin{itemize}
+\item \textbf{Stream Cipher}: A symmetric key cipher where plaintext combined with \textbf{pseudorandom cipher digit stream (keystream)}.
+\item ``Inspired'' by one-time-pad, generate some cyrptographically secure pseudorandom sequence. 
+\item w/o knowing secret key, computationally diff. to distingush from truly random sequence. Similarly diff. to get short secret key from sequence, or predict part of sequence from another part.
+\item \textbf{IV}: Most ciphers have Initialization Vector, randomly chosen or from counter.
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{streamCipher}}
+
+\subsection{Role of Unique IV}
+\begin{itemize}
+\item Recall, IV appended to front of $c$ to form ciphertext. This IV must be different for every message. IV need not be secret.
+\item Sequence is derived from IV and secret key. IV needs to be unique for every message! Otherwise, leaks information.
+\item \textbf{Unique IV}: If IV different, two pseudorandom sequences will be different. Two ciphertexts of same plaintext will be different. Can just randomly choose the IV for each message.
+\item Hence, xor'ing two ciphertexts will not cancel out pseudomsequences.
+\item \textbf{IV makes encryption ``probabilistic.}
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{uniqueIV}}
+\begin{itemize}
+\item IV also needed in \textbf{CBC mode}, to make encryption non-deterministic. If encyrption deterministic (without IV), it will leak information on whether plaintext of two ciphertext are the same, if $C_1 == C_2$. Could be crucial piece of information.
+\end{itemize}
 
 
+\section{Types of Attacks}
 
-\subsubsection{1. DES / Exhaustive Search}
+\subsection{Meet-In-The-Middle Attack (Double / Triple DES)}
+\subsubsection{Double / Triple DES}
+\begin{itemize}
+\item \textbf{Double / Triple DES}: To improve DES security, (DES weak as key length of 56 bits short), do multiple repeated encryptions using different keys. A reason for this may be to utilize already existing suitable hardware to encrypt.
+\item DES does not form a group ( $E_{k1} ( E_{k2} (x) ) \neq E_{k2} (x) $) for some $k3$, so makes sense to use multiple encryptions.
+\item \textbf{Double DES}: Consider double encryption, we expect key-strength to be 112. ($2^{56 + 56}$). However, attacker, with storage space, can reduce key strength to below 57.
+\end{itemize}
 
-\subsubsection{2. Block Cipher \& Mode-of-Operations}
-
-\subsubsection{3. Stream Cipher and IVs}
-
-
-\subsection{Types of Attacks}
-
-\subsubsection{Triple DES \& Meet-in-middle Attack}
-
-
-\subsubsection{Padding Oracle Attack}
+\subsubsection{Meet-In-The-Middle Attack}
+\begin{itemize}
+\item \textbf{MITM}: Meet-in-the-middle Attack, a well-known plaintext attack, is a generic space-time tradeoff cryptographic attack against encryption schemes that perfrom multiple encryption operations in sequence.
+\item Breaking two-part encryption from both sides simultaneously.
+\item Primary reason why \textbf{Double DES not used}, and why \textbf{Triple DES key} (168-bit) can be brute forced by attacker with $2^{56}$ space and $2^{122}$ operations.
+\item \textbf{Mechanism}: Assume attack has a \textbf{pair ($m, c$)} of plaintext and corresponding ciphertext.
+\item \textbf{Remedy}: Use triple encryption, but with 2 keys. (E.g. 3DES, TDES, 3TDES etc.)
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{MITM}}
 
 
+\subsection{Padding Oracle Attack}
+\subsubsection{Padding Format}
+\begin{itemize}
+\item For fixed size blocks, e.g. block size of AES is 128bits (16 bytes), padding is needed to fit plaintext into last block.
+\item Many ways to fill values, but important piece of information encoded: \textbf{number of padded bits}. If information missing, receiver will not know lenght of plaintext.
+\item E.g. \textbf{PKCS\#7 Padding Standard.}
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{PKCS7}}
 
+\subsubsection{Oracle}
+\begin{itemize}
+\item \textbf{Security Analysis}: Need to know \textbf{1. information attackers have}, 2. attacker's goals.
+\item \textbf{Oracle}: Query-answer system. Attacker can send in multiple queries, \textbf{Oracle} will output the answer. E.g. \\
+-  \textbf{Encryption Oracle}: Output ciphertext for given plaintext, of s. key $k$. \\
+-  \textbf{Decryption Oracle:} Output plaintext given ciphertext, of s. key $k$.
+\item \textbf{Padding Oracle}: Attacker can query a ciphertext (encrypted using some secret key $k$, padding oracle knows $k$). Oracle outputs yes/no if plaintext is in correct ``padding'' format.
+\item Padding Oracle can come in many forms, e.g. query response behaviour, response time, subtle differences.
+\item \textbf{Padding Oracle Attack Model}: \\
+- Attacker has ciphertext including iv: (iv, $c$) \\
+- Attack's goal: plaintext of (iv, $c$).
+\end{itemize}
 
+\subsubsection{Padding Oracle Attack (on AES CBC Mode)}
+\begin{itemize}
+\item AES CBC mode not secure against padding oracle attack. (In particular, when done with PKCS\#7).
+\item Easily extend algorithm to find all plaintext. Attack is practical as there are protocols between client and server which performs this. \textit{Now, if attack obtained ciphertext, attack can interact with server to get plaintext.}
+\item \textbf{Prevention of Padding Oracle Attack}:
+	\begin{itemize}
+	\item Deny access to such Oracle. Might not be feasible all the time.
+	\item Change padding standard to mitigate attack. However, may be smarter way to attack new padding.
+	\item Using CTR mode might avoid padding. In practice, bit strings have to be padded in one way or another.
+	\item Padding Oracle weaker form of Decryption oracle. If scheme secure in presence of decryption oracle, scheme also secure against padding oracle attack. GCM believed to be IND-CCA2 secure.
+	\end{itemize}
+\end{itemize}
+
+\columnbreak
+\subsubsection{Padding Oracle Attack Algorithm}
+\begin{itemize}
+\item \textbf{Algorithm}: \\
+- Force last X bytes to be padding \\
+- Do this by modifying byte of previous ciphertext/IV (Loop till YES) \\
+- Here, by XOR'ing padding and input, we get intermediate byte. \\
+- By XOR'ing this int. byte with original IV / ciphertext, find plaintext!
+\item \textbf{Easily extend algorithm} to find all plaintext, by using increasing length of padding, decrypt from end to start. (Right to Left, repeat process).
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{paddingOracle1}}
+\centerline{\includegraphics[width=0.95\linewidth]{paddingOracle2}}
 
 
 
