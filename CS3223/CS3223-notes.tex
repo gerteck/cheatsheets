@@ -119,7 +119,7 @@
 
 %% DOCUMENT NAME HERE
 \begin{center}
-     \Large{\textbf{CS3223 Database Sys Implementation}} \\
+     \Large{\textbf{CS3223 Database Systems Implementation}} \\
 \end{center}
 AY23/24 Sem 2, github.com/gerteck
 
@@ -134,7 +134,7 @@ Encouraged to read ahead based on schedule before the lecture.
 \item Course covers data structures, algorithms, different components making up database systems.
 \end{itemize}
 
-\centerline{\includegraphics[width = \linewidth]{DBMSArchitecture}}
+\centerline{\includegraphics[width = 0.9\linewidth]{DBMSArchitecture}}
 
 \begin{itemize}
 \item OLTP: Online Transaction Processing is a type of data processing that consists of executing a number of transactions occurring concurrently—online banking, shopping, order entry, or sending text messages, for example.
@@ -298,8 +298,18 @@ Two main types of indexes
 	\end{itemize}
 \end{itemize}
 
+\subsection{$B^+$-Tree }
+$B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully, most widely used index structure as it adjusts well to changes and supports both equality and range queries.
+\begin{itemize}
+\item \textbf{Balanced tree}: Operations (insert, delete) on tree keep it balanced.
+\item \textbf{Internal nodes} direct the search.
+\item \textbf{Leaf nodes} contain the data entries. Leaf pages linked using page pointers for easy traversal of sequence of leaf pages in either direciton.
+\item \textbf{Value $d$} is parameter of $B^+$-tree, called order of the tree, is a measure of capacity of a tree node. Each node contains $m$ entries, where $d \leq m \leq 2d$, except root node, where $1 \leq m \leq 2d$
+\end{itemize}
+
+
 \subsection{$B^+$-tree Index}
-\centerline{\includegraphics[width = 0.9\linewidth]{B+TreeIndex}}
+\centerline{\includegraphics[width = 1\linewidth]{B+TreeIndex}}
 \begin{itemize}
 \item Each node is either a \textbf{leaf node} (bottom-most level) or an internal node. 
 \item Top-most internal node is the \textbf{root node} located at \textbf{level 0}.
@@ -320,6 +330,11 @@ Two main types of indexes
 	\item $p_i$ = disk page address (root node of an index subtree $T_i$)
 	\end{itemize}
 \end{itemize}
+
+\null \null
+\columnbreak
+
+\subsection{$B^+$-tree Index Properties}
 \centerline{\includegraphics[width = 1\linewidth]{Bproperties}}
 
 \subsubsection{Formats of Data Entries in B-Tree}
@@ -331,13 +346,85 @@ Two main types of indexes
 \end{itemize}
 \centerline{\includegraphics[width = 0.9\linewidth]{dataFormat}}
 
-\subsection{$B^+$-Tree Insertion}
+\subsubsection{$B^+$-tree Search Algorithms }
+\begin{itemize}
+\item Search algorithm finds the leaf node a given data entry belongs to.
+\item We assume no duplicates, no data entries same key value. Note in practice, duplicates arise whenever search key does not contain candidate key, must be dealt with.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{Bsearch}}
 
+\columnbreak
+
+\subsection{$B^+$-Tree Insertion}
+\begin{itemize}
+\item \textbf{Algorithm for insertion} takes an entry, finds the leaf node where it belongs, and inserts it there.
+\item Occasionally, a \textbf{node is full and must be split}. (More than $2d$ entries) When node is split, entry pointing to the node created by the split must be inserted into the parent. 
+\item If the (old) root is split, a new root node is created and height of tree increases by 1. 
+\end{itemize}
+
+
+\subsubsection{Splitting of overflowed node}
+\begin{itemize}
+\item Split overflowed leaf node by distributing $d + 1$ entries to new leaf node.
+\item Create a new entry index using smallest key in leaf node.
+\item Insert new index entry into parent node of overflowed node.
+\end{itemize}
+\centerline{\includegraphics[width = 0.7\linewidth]{Binsertion}}
+\begin{itemize}
+\item Sometimes, \textbf{node split is propagated upwards} to ancestor internal nodes.
+\item When splitting an \textbf{internal node}, the middle key is pushed to parent node.
+\end{itemize}
+\centerline{\includegraphics[width = 0.95\linewidth]{Binsertion2}}
+\centerline{\includegraphics[width = 0.8\linewidth]{Binsertion3}}
+
+\subsubsection{Redistributing of data entries in Overflow}
+\begin{itemize}
+\item A node split can sometimes be avoided by distributing entries from overflowed node to a non-full adjacent sibling node.
+\end{itemize}
+\centerline{\includegraphics[width = 0.8\linewidth]{Binsertion4}}
 
 \subsection{$B^+$-Tree Deletion}
+\begin{itemize}
+\item \textbf{Algorithm for deletion} takes an entry, finds leaf node it belongs to, and deletes it.
+\item \textbf	{Underflowed node}: When node is at minimum occupancy before deletion, and goes below threshold, we must either \textbf{redistribute entries from adjacent sibling}, or \textbf{merge node with sibling} to maintain minimum occupancy.
+\item \textbf{Merging}: Underflowed node needs to be merged if each of \textbf{adjacent} sibling nodes has exactly $d$ entries.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{Bdeletion1}}
+\begin{itemize}
+\item  Node mergers may propagate upwards.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{Bdeletion2}}
+\begin{itemize}
+\item Chances are high that redistribution is possible if node has two siblings, and unlike merging, redistribution is guaranteed to propage no further than parent node. Also, pages have more space, reducing likelihood of split on subsequent insertions.
+\end{itemize}
 
+\columnbreak
 
 \subsection{$B^+$-Tree Bulk Loading}
+\begin{itemize}
+\item Entries added to a $B^+$ in two ways.
+	\begin{enumerate}
+	\item Have existing collection of data records with $B^+$ tree index on it. When record added to collection, corresponding entry added to $B^+$ tree. (Insert, Delete individually)
+	\item Have collection of data records we want to create new $B^+$ tree index on some key field(s). Start with an empty tree. Inserting one by one expensive dur to overhead, systems provide \textbf{bulk loading} utility.
+	\end{enumerate}
+\item \textbf{Bulk Loading}: 
+	\begin{enumerate}
+	\item Sort data entries $k*$ to be inserted into $B^+$ tree according to search key $k$.
+	\item Allocate empty page to serve as root. Insert a pointer to first page of (sorted entries into it).
+	\centerline{\includegraphics[width = 0.8\linewidth]{bulkloading1}}
+	\item Add one entry to root page for each page of sorted data entries. Proceed until root page is full. Here, we must split root and create a new root page.
+	\centerline{\includegraphics[width = 0.8\linewidth]{bulkloading2}}
+	\item To continue, entries for leaf pages \textbf{always inserted into right-most index page just above the leaf level}. When right-most page above leaf level fills up, it is split.
+	\centerline{\includegraphics[width = 0.7\linewidth]{bulkloading3}}
+	\end{enumerate}
+\end{itemize}
+
+\section{Clusters vs. Unclustered Index}
+
+
+
+
+
 
 
 
