@@ -355,14 +355,198 @@ Most programming languages allow dynamically allocated memory, i.e. acquire memo
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{5StateProcess}}
 
+\subsection{Process Table \& Process Control Block}
+\begin{itemize}
+\item Since the OS is just a program as well, need to make use of data structures to track these processes.
+\item \textbf{Process Control Block (PCB) or Process Table Entry}: Entire Execution Context for a process.
+\item Kernel maintains \textbf{PCB} for all processes. (Conceptually stored as one table representing all processes.)
+\item \textbf{Factors to consider}: \\
+- Scalability (how many concurrent processes at once). \\
+- Efficiency (should provide efficient access with minimum space wastage).
+\end{itemize}
+\centerline{\includegraphics[width=0.6\linewidth]{processTable}}
+
+\subsection{Process Abstraction in Unix}
+\begin{itemize}
+\item \textbf{Process Identification, Information}
+\end{itemize}
+\centerline{\includegraphics[width=0.6\linewidth]{processAbstraction}}
+\begin{itemize}
+\item \textbf{Process Creation, Termination, Parent-Child Synchronization}
+\end{itemize}
+
+\subsubsection{Note: Command Line Argument in C}
+\begin{itemize}
+\item We can pass arguments to a program in C.
+\item \code{argc}: Number of CL arguments, including program name.
+\item \code{argv}: A char strings array, each element in \code{argv[]} is a C character string.
+\end{itemize}
+\begin{lstlisting} [linewidth = 1.0 \linewidth],
+int main( int argc, char* argv[] )
+{ int i;
+	 for (i = 0; i < argc; i++){
+	 printf("Arg \%i: \%s, ",i, argv[i] );
+	 }
+	 return 0;
+}
+\end{lstlisting}
+\begin{itemize}
+\item Example Run: ``a.out 123 hello world''
+\item Output: ``Arg 0: a.out, Arg 1: 123, Arg 2: hello, Arg 3: world''
+\end{itemize}
+
+\subsubsection{Process Creation: \code{fork()}}
+\centerline{\includegraphics[width=1\linewidth]{processCreation}}
+\begin{itemize}
+\item \code{fork()}: Create exact copy of the parent, including any variables.
+\item \textbf{Output}: Both parent and child resume execution after the point \code{fork()}. 
+\item \textbf{Note \code{clone()}}: \code{fork()} not versatile, for scenarios where partial duplication preferred, \code{clone()}, which supersedes \code{fork()}.
+\item Both parent and child processes continue executing, common usage is to use the parent/child process differently. (Parent spawn off child to carry out some work, parent ready to take another order.) \\
+- Use return value of \code{fork()} to distinguish parent and child.
+\end{itemize}
+\centerline{\includegraphics[width=0.4\linewidth]{forkResult}}
 
 
+\subsubsection{Process Replacement: \code{execl()} System Call}
+\begin{itemize}
+\item Function \textbf{replaces current executing process image} with a new process image specified by path. No return is made because the calling process image is replaced by the new process image.
+\item \textbf{Code Replacement}, but \textbf{PID and other information still intact}.
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{execl}}
+\begin{itemize}
+\item \textbf{By combining \code{fork()} and \code{exec()}}, we can spawn off a child process (let it perform task through \code{exec()}), while parent process around to accept another request.
+\item This combination of mechanisms is main way in Unix to get new process for running new program!
+\end{itemize}
 
+\subsection{The Master Process: \code{init}}
+\begin{itemize}
+\item Every process has parent process, consider special initial process.
+\item \textbf{\code{init} process}: Created in kernel at boot up time, trad. has PID = 1. 
+\item \textbf{Purpose}: Watches and respawns other (critical) processes where needed.
+\item \code{fork()} creates the process tree, where \code{init} is the root process.
+\end{itemize}
 
+\subsubsection{Simplified Process Tree Ex.}
+\centerline{\includegraphics[width=0.6\linewidth]{processTree}}
+\begin{itemize}
+\item \textbf{d}, (e.g. \code{klogd}) at end of process name usually means server process (Daemon, background process.)
+\end{itemize}
 
+\subsubsection{Process Termination in Unix: \code{exit}}
+\centerline{\includegraphics[width=1\linewidth]{processTermination}}
+\medskip
+\begin{itemize}
+\item \textbf{Process finished execution}: \textbf{Most} system resources used by process are released on exit. (e.g. file descriptors).
+\item \textbf{Certain basic process resources not Releasable}: PID, status needed. For parent-children synchronization, for parent to check status of child, For process accounting info (e.g. cpu time).
+\item Process table entry may still be needed after termination.
+\end{itemize}
 
+\subsubsection{Parent/Child Synchronization in Unix}
+\begin{itemize}
+\item Parent process can wait for child process to terminate.
+\item Argument is a pointer to a variable that will store the return value (\code{*status}).
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{PCSynchronization}}
+\begin{itemize}
+\item Kills zombine processes! With enough zombies, process table finite size, run out of space.
+\end{itemize}
+\centerline{\includegraphics[width=0.5\linewidth]{processInteraction}}
 
+\subsubsection{Zombie Processes (2 Cases)}
+\begin{itemize}
+\item \code{wait()} ``creates'' the zombies (and later cleans it up) as on process exit, process becomes zombie.
+\item Since it cannot delete all process info (if parent asks for info in \code{wait()} call, remainder of process data structure can be cleaned up only when \code{wait()} happens.)
+\item We cannot \code{kill PID} zombie process, is already dead. Until restart system or modern OS look through table and remove them.
+\end{itemize}
 
+\begin{enumerate}
+\item \textbf{Parent process terminates before child process}
+	\begin{itemize}
+	\item \code{init} process becomes "pseudo" parent of child processes.
+	\item Child termination sends signal to \code{init}, which utilizes \code{wait()} to cleanup 
+	\end{itemize}
+\item \textbf{Child process terminates before parent but parent did not call wait}
+	\begin{itemize}
+	\item Child process become a zombie process
+	\item Can fill up / hog process table, May need a reboot to clear the table on older Unix implementations
+	\end{itemize}
+\end{enumerate}
+\centerline{\includegraphics[width=1\linewidth]{processSummary}}
+
+\section{Implementation Issues}
+\subsection{Implementing \code{fork()}}
+\centerline{\includegraphics[width=0.95\linewidth]{implementFork}}
+\begin{itemize}
+\item \textbf{Copying entire memory space is wasteful} and not always needed! (E.g. copy entire 200mb program image of Zoom etc). Mostly, only need contents, and PC, register values.
+\item \textbf{Give Rise to COW.} (copy on write)
+\end{itemize}
+
+\subsection{Memory Copy Operation}
+\begin{itemize}
+\item If child just read from location, unchanged, just use a shared version.
+\item \textbf{Only when write is perform on a location, then two independent copies needed.}
+\item \textbf{Copy on Write} is possible optimization, only duplicate ``memory location'' when it is written to, otherwise parent and child share same ``memory location''.
+\item Note: memory organized into memory pages (consec range of mem locations), memory managed on page level instead of individual location.
+\end{itemize}
+
+\section{System Calls (Process Interaction with OS)}
+\subsection{API to OS: Application Program Interface to OS}
+\begin{itemize}
+\item OS API provides way of calling facilities/services in kernel.
+\item \textbf{Not same as normal function call}: Change from \textit{user mode to kernel mode}.
+\item Different OS have different APIs: Unix Variants most follow POSIX standards, small no. of calls ~100. Windows family uses Win API across diff. windows, huge no. of calls ~1000.
+\end{itemize}
+
+\subsection{Unix System Calls in C/C++ program}
+\begin{itemize}
+\item In C/C++ program, \textbf{system call can be invoked almost directly}, as library version very closely reflects these calls.
+\item Majority of system calls have library version with \textbf{same name} and parameters, library version acts as \textbf{function wrapper}. 
+\item A few library functions present more user friendly version, e.g. less no. /more flexible parameters). Library version acts as \textbf{function adapter}.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{systemCallExample}}
+
+\subsection{General System Call Mechanism}
+\centerline{\includegraphics[width=1\linewidth]{generalSystemCallMechanism}}
+
+\section{Exception and Interrupt}
+
+\subsubsection{Exception}
+\begin{itemize}
+\item \textbf{Executing machine level instruction} can cause \textbf{exception}. For example:
+\begin{itemize}
+\item Airthmetic Errors: Overflow, Underflow, Division by Zero
+\item Memory Accessing Errors: (accessing memory not belonging to program), Illegal memory address, mis-aligned memory access.
+\end{itemize}
+\item Exception is \textbf{Synchronous}: Determinate, occurs due to program execution at exact points of time.
+\item \textbf{Effect of Exception}: Have to execute \textbf{exception handler}, which is similar to a \textbf{``forced function call''!}
+\item Exception $\neq$ Interrupt!
+\end{itemize}
+
+\columnbreak
+
+\subsubsection{Interrupt}
+\begin{itemize}
+\item \textbf{External events} can interrupt the execution of a program.
+\item Interrupt request lines connected to CPU, lines are checked during instruction execution cycle.
+\item Usually hardware related, e.g.: Timer, Mouse move, Keyboard press etc
+\item Interrupt is \textbf{asynchronous}: Events occurs independent of program execution.
+\item \textbf{Effect of interrupt:} Program execution, suspended, execute an interrupt handler.
+\end{itemize}
+\centerline{\includegraphics[width=0.5\linewidth]{ExceptionHandler}}
+
+\subsection{Summary}
+\begin{itemize}
+\item Using \textbf{process as an abstraction} of running program.
+\item Includes necessary information (environment) of execution, Memory, Hardware and OS contexts.
+\item \textbf{Process from OS perspective}: PCB and process table
+\item \textbf{How OS \& Process interact}: System calls, Exception / Interrupt
+\end{itemize}
+
+\subsubsection{REFER TO TEXTBOOK:}
+\begin{itemize}
+\item Modern Operating System (3rd Edition): Section 2.1
+\item Operating System Concepts (8th Edition): Section 3.1
+\end{itemize}
 
 
 
