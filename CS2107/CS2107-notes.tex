@@ -457,11 +457,146 @@ is public knowledge.
 
 
 \section{2. Authentication Credential}
+\begin{itemize}
+\item \textbf{Authentication Credential} as any data (PIN, digi. certificate, password) or device that is issued to individual / system used to authenticate identity for purposes of facilitating access.
+\item \textbf{Authentication}: Process of assuring communicating entity or origin of piece of information is one it claims to be.
+\item \textbf{Authenticity implies integrity}.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{communicatingEntity}}
+\begin{itemize}
+\item \textbf{Authentication Process}: 
+	\begin{itemize}
+	\item For \textbf{data-origin auth}, one way is to use crypto scheme such as Signature, or MAC (message auth. code).
+	\item For \textbf{communication entity auth}, need some authentication protocol employing above crypto primitives.
+	\end{itemize}
+\item \textbf{Credential}: Unforgeable info required for authentication. (E.g. password is an authentication credential.)
+\end{itemize}
+
+\subsection{2.1 Password}
+\subsubsection{Password System}
+\begin{enumerate}
+\item \textbf{Bootstrapping}: User, server establish common password, server keeps file recording identity \textit{(userid, username)} \& \textit{password}. \\
+- (Bootstrapping, establish user chosen /or default password.)
+\item \textbf{Authentication}: Server authenticates entity. Entity who gives correct password to claimed identity authentic.
+\item \textbf{Password Reset}: Many reasons to reset password.
+\end{enumerate}
+
+\subsubsection{Weak Authentication System, Replay Attack}
+\begin{itemize}
+\item Simple sending of identity and password protocol is \textbf{"weak authentication"} system.
+\item Such protocol subjected to simple \textbf{"replay attack"}. 
+\item Information sniffed from communication channel, replay to impersonate.
+\item Under \textit{strong authentication}, info sniffed cannot be used to impersonate.
+\end{itemize}
+
+\subsubsection{Attacks on Password System}
+\begin{itemize}
+\item \textbf{Attack bootstrapping}: Attacks make use of default passwords.
+\item \textbf{Attack password reset process}: \textit{Security-Cost Usability tradeoff}: \\
+- \textbf{Fallback authentication}: Security Qn / Pw. reset. \\
+- Enhance usability, reduce cost but reduce security. \\
+- \textbf{Danger}: Social engineering + pw. reset.
+\end{itemize}
 
 
+\begin{itemize}
+\item \textbf{Search for correct password}: 
+\begin{itemize}
+\item \textbf{Exhaustive search}: Test all combinations
+\item \textbf{Dictionary Attacks}: Online \& Offline dictionary attacks.
+\end{itemize}
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{dictionaryAttack}}
+
+\begin{itemize}
+\item \textbf{Stealing of password}: 
+\begin{enumerate}
+\item \textbf{Sniffing}: Shoulder surfing (look-over-shoulder attack), Sniffing communication (uncommon now, sniffing unencrypted password over public network in clear).
+\item \textbf{Viruses, Keylogger}: Computer viruses as key-loggers, or hardware keyloggers. Send captured data back to attack via "covert channel".
+\item \textbf{Phishing}: Trick to voluntarily send password to attacker. Social engineering attack. \\
+- \textbf{Spear Phishing}: targeted attack against particular small group of users. \\
+- \textbf{Phishing, Pharming, Vishing, Smishing} \\
+- \textbf{Prevention}: User training, blacklisting.
+\item \textbf{Cache}: Shared workstation where information is cached.
+\item Lost of password file
+\end{enumerate}
+\end{itemize}
+
+\subsubsection{Password Strength}
+\begin{itemize}
+\item \textbf{Password Entropy}: Measure of (randomness) password strength. 
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{passwordEntropy}}
+\begin{itemize}
+\item Truly random password high "entropy", difficult to remember. User selection biased. Human generated 20-digit password likely to attain 
+entropy much less than 20 $log_2(10)$.
+\item RFC 4086 suggests password at least 29 bits of entropy to secure against \textbf{online attacks}.
+\item If cryptographic keys generated from password, \textbf{offline attacks} possible, password should have at least 128 bits of entropy.
+\end{itemize}
 
 
+\begin{itemize}
+\item \textbf{Online vs. Offline attack}: Need to communicate with server not under control to check whether password is correct.
+\item E.g. WPA2 personal vulnerable to offline dict. attack. Some "hash" of password sent in clear.
+\item \textbf{Enhance password system}: \\
+- Make online attack difficult by adding intentional delay / lock. \\
+- Make offline attack difficult by applying KDF to password. \\
+- System check for weak password / regular changes of password.
+\item \textbf{Password vs. Secret Key}: \\
+- KDF: key derivation function. \\
+- Password as source for crypto secret key. \\
+- Using cryptographic hash, hash multiple times to form key, increase cost of exhaustive search. Tradeoff utility.
+\end{itemize}
 
+\columnbreak
+\begin{itemize}
+\item \textbf{Password Files}: \\
+\textbf{Hashing}: \\
+- File stores userid, password. Add additional layer of protection. \\
+- Password file should be "hashed" and "salted"! \\
+- (Not "encrypted", don't want way to decrypt and get back) \\
+- To authenticate, store and compare hash. \\
+\textbf{Salt:} \\
+- Need same password hash to two diff. values, for two diff. userid. \\
+- (Rainbow table: precomputed table caching outputs of crypto hash function to crack hashes) \\
+- Achieve this by salting. New salt randomly generated, concat to pw., output different hash. Salt and hash stored in database.
+\end{itemize}
+
+\subsubsection{ATM Skimming}
+\begin{itemize}
+\item Demonstrates password stealing.
+\item Authentication: User presents card, and PIN.
+\item Data encoded into magnetic strip using well-known standards, easy to "copy" card by reading and writing to spoofed card.
+\item ATM Skimmer: card-reader, camera overlooking keypad / spoofed keypad, some means to record, transmit.
+\item \textbf{Measures}: Anti-skimmer devices, shielding keypad, increase awareness, change to unforgeable smartcard.
+\end{itemize}
+
+\subsection{2.2 Biometric}
+\begin{itemize}
+\item \textbf{Biometric data as password}. For identification, or verification.
+\item \textbf{Enrollment}: template of user biometric data captured, stored (bootstrapping). \textbf{Verification}: capture biometric data, compare using matching algorithm.
+\item Inevitable noise capturing biom. data, leading to error in matching. \\
+- \textbf{FMR (False Match Rate)}, \textbf{FNMR (False non-match rate)}. \\
+- Adjust threshold to adjust FMR \& FNMR. \\
+- \textbf{EER} (Equal Error Rate, FNMR = FMR) \\
+- \textbf{FER} (False-to-enroll rate, users' data uncaptureable, e.g. injury)  \\
+- \textbf{FTC} (Failure to capture rate, uncaptureable during auth, e.g. finger dirty
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{FMR}}
+\begin{itemize}
+\item \textbf{Fingerprint as biometric}: performance depends on quality of scanner, EER range from 0.5\% to 5\%.
+\item Biometric data easily spoofable, include \textit{liveness detection} to verify entity.
+\end{itemize}
+
+\subsection{2.3 Multi-factor / Multi-step Authentication}
+\begin{itemize}
+\item \textbf{n-factor Authentication}: Require $n$ authentication factors.
+\item \textbf{"Factors"}: \textbf{Know} (Pw, PIN), \textbf{Have} (card, phone, token), \textbf{Are} (Biometric).
+\item Must be distinct factors for multi-factor (Know + Have, Have + Are) etc.
+\item One Time Password token: \textbf{Time-based /or Sequence-based}.
+\item \textbf{2-Step Verification}: Both same factor, e.g (email + password, both "what-you-know", cannot be called "2-factor".)
+\item \textbf{out-of-band}: In 2-step verification, two commnuication channels, main and separate for add. authentication. Non-main called "out-of-band" channel, assume attacker unable to compromise both channels.
+\end{itemize}
 
 
 
