@@ -275,7 +275,7 @@ One-time pad (OTP) is an encryption technique that requires the use of a single-
 Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \\ - DES [Data Encryption Standard 1977] 
 \\ - RC4 [Rivest's Cipher 4 1987]
-\\ - A5/1 [used in GSM 1987]
+\\ - A5/1 [used in GSM 1987]: Used in WEP Wifi 1999, switched to WPA2
 \\ - AES [Adv. Encrypt. Std.], RSA).
 \begin{itemize}
 \item Designs take into consideration of known-plaintext-attack, freq. analysis and other known attacks.
@@ -344,7 +344,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \item \textbf{Stream Cipher}: A symmetric key cipher where plaintext combined with \textbf{pseudorandom cipher digit stream (keystream)}.
 \item ``Inspired'' by one-time-pad, generate some cyrptographically secure pseudorandom sequence. 
 \item w/o knowing secret key, computationally diff. to distingush from truly random sequence. Similarly diff. to get short secret key from sequence, or predict part of sequence from another part.
-\item \textbf{IV}: Most ciphers have Initialization Vector, randomly chosen or from counter.
+\item \textbf{IV}: Most ciphers have \textbf{Initialization Vector}, randomly chosen or from counter.
 \end{itemize}
 \centerline{\includegraphics[width=0.95\linewidth]{streamCipher}}
 
@@ -428,8 +428,48 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 - By XOR'ing this int. byte with original IV / ciphertext, find plaintext!
 \item \textbf{Easily extend algorithm} to find all plaintext, by using increasing length of padding, decrypt from end to start. (Right to Left, repeat process).
 \end{itemize}
-\centerline{\includegraphics[width=0.95\linewidth]{paddingOracle1}}
-\centerline{\includegraphics[width=0.95\linewidth]{paddingOracle2}}
+\centerline{\includegraphics[width=0.8\linewidth]{paddingOracle1}}
+\centerline{\includegraphics[width=0.8\linewidth]{paddingOracle2}}
+
+\section{Cryptography Pitfalls}
+\begin{itemize}
+\item Any secure encryption scheme can be vulnerable if not implemented or adopted properly. Examples include: \\
+\textbf{- Predictable Randomness}: Secret key generated predictable, compromise security \\
+\textbf{- Modify/Design own encryption scheme}: ``Don't roll your own crypto /security protocol''. Use standard library.
+\end{itemize}
+
+\subsubsection{Wrong choice of IV}
+\begin{itemize}
+\item \textbf{IV Generation}: IV's must not be same for two different ciphertext. 
+\item E.g. To encrypt file F, IV dervied from filename/meta-data. 
+\item E.g. \textit{Microsoft RC4 [implementation] Flaw}, in both Word and Excel, where same IV used when document modified, causing part of documents recovered with negligible amount of computation.
+\item When using AES under CBC mode, IV should be unpredictable to prevent certain attack. (E.g. IV = 1, 2, 3). BEAST attack exploits this.
+\item \textbf{Reusing one-time pad}: E.g. US Verona Project against Soviets.
+\end{itemize} 
+
+\subsubsection{Reliance on Obscurity: Kerchoff's Principle}
+\begin{itemize}
+\item \textbf{Principle}: System should be secure even if everything about system, except secret key, 
+is public knowledge.
+\item \textbf{Security through Obscurity}: To hide design of system to achieve security. Not advisable to reveal certain settings (network structure, setttings, algorithm, implementation, usernames etc). Obscurity as additional layer in defense-in-depth strategy. Deter, discourage novice attackers.
+\item E.g. \textbf{Against relying on Obscurity}: RC4 algorithm was trade secret, but was anonymously posted. MIFARE Classic smartcard also reversed-engineered.
+\end{itemize}
+
+
+\section{2. Authentication Credential}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
