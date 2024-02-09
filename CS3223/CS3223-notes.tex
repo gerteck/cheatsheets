@@ -100,6 +100,32 @@
 %itemsep = 0mm
 %\setlist{nosep}
 
+% For Code Blocks
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{gray!25!white},
+	basicstyle=\scriptsize,
+	numbers=none,    %or = none or left
+	showstringspaces=false,
+	breaklines=true,
+	breakatwhitespace=false,                  
+	captionpos=b,                    
+	keepspaces=true,                                 
+	numbersep=5pt,                  
+	showspaces=false,                
+	showtabs=false,                  
+	tabsize=2,
+ }
+%Helpful:
+%[linewidth = 1.0 \linewidth]
+%\lstinline{}
+% use \code{} for \lstinline with colorbox.
+\newcommand{\code}[1]{\colorbox{gray!25!}{\lstinline|#1|}}
+\lstset{style=mystyle}
+
+
 % -------------------------------------------------------------------------------
 
 % START OF DOCUMENT HERE
@@ -520,20 +546,140 @@ $B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{extendibleHashing3}}
 
+\section{4. Query Evaluation: Sorting \& Selection}
+DBMS describes data it manages using tables, indexes (metadata), which is stored in special tables (system catalogs). This data used to find best way to evaluate a query.
+\centerline{\includegraphics[width = 0.8\linewidth]{queryProcessing}}
+\begin{itemize}
+\item SQL queries translate into extended form of relational algebra
+\item Query evaluation plans represented as tree of relational operators, with labels identifying algorithm to use at each node.
+\item R. operators building blocks for evaluating queries, implementation of operators optimized for good perf.
+\end{itemize}
+
+\section{External Sorting}
+Sorting collection of records on some (search) key is useful and required in variety of situations, including 
+\begin{itemize}
+\item Some sorted table of results: \code{SELECT * FROM student ORDER BY age}.
+\item Bulk loading a $B^+$-tree index
+\item Implementation of other relational algebra operators (e.g. projection, join), which require some sorting step.
+\end{itemize}
+When data to be sorted too large to fit into available main memory. we need some \textbf{external sorting algorithm}. Algos seek to minimize cost of disk accesses.
+
+\subsection{External Merge Sort}
+\begin{itemize}
+\item \textbf{Main Idea}: Pass 0: Creating initial sorted runs (each of X memory pages), then continue during merging passes till you get final sorted pass.
+\item Sort entire fire by breaking into smaller subfiles, sorting subfiles and merging using minimal amount of main memory at given time.
+\item \textbf{Each sorted subfile is referred to as a run}.
+\item Sorting 11-page data R using 3 vs 4 memory pages:
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{externalMergeSortExample}}
+\subsection{External Merge Sort Analysis}
+\begin{itemize}
+\item \textbf{Note}: We consider only I/O costs, which approx by counting no. of pages read/written as per cost model. (Simple cost model to convey main idea).
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{externalMergeSortSummary}}
 
 
+\subsubsection{External Merge Sort Steps}
+\centerline{\includegraphics[width = 1\linewidth]{externalMergeSort}}
 
+\columnbreak
 
+\subsection{External Sort Optimization: I/O Cost vs. No. of I/Os}
+\begin{itemize}
+\item \textbf{Cost Metric}: No. of page I/Os. 
+\item Only an approx of true I/O costs, ignores effect of \textbf{block(ed)} I/O, \textbf{single request to read/write several consecutive pages can be cheaper} than read/write same number of pages through independent I/O requests.
+\item \textbf{Others}: Consider CPU costs as well, can use \textit{double buffering} to keep CPU busy while I/O op. in progress.
+\end{itemize}
 
+\subsection{External Sort, Block(ed) Page I/O Optimization}
+\subsubsection{Non-Block(ed) Page I/O}
+\begin{itemize}
+\item \textbf{Consider only No. of page I/O as metric}: Minimize no. of passes in sorting, as each page in file read and written in each pass. 
+\item This means we maximise fan-in \textbf{during merging} (aka, how many runs merged per pass), allocate just one buffer pool page per run, and one buffer page for output of merge.
+\item Hence, (B-1)-way merge per run, minimizing number of passes in sorting algorithm.
+\end{itemize}
 
+\subsubsection{Block(ed) Page I/O}
+\begin{itemize}
+\item \textbf{Optimization}: Access in blocks may reduce average cost to read/write single page, consideration to read/write in units of more than one page, or R/W in units of a \textbf{buffer block}.
+\item \textbf{Buffer block}, of \textbf{$b$ pages}. \textbf{$B$ is total number of buffer pages} for sorting. 
+\end{itemize}
+\centerline{\includegraphics[width = 0.6\linewidth]{blockedIO}}
+\begin{itemize}
+\item Set aside one buffer block for output of merge. ($B-b$). One buffer block per input run ($\frac{B-b}{b}$). 
+\item \textbf{Means can merge} at most floor($\frac{B-b}{b}$) sorted runs in each merge pass.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{blockedIO2}}
+\begin{itemize}
+\item \textbf{Overall}: \\
+- Larger buffer blocks, (lower average page I/O cost). \\
+- But num. passes increase, num page I/O increase. 
+\item \textbf{Decrease per-page I/O cost tradeoffs Increase No. of page I/Os.}
+\end{itemize}
 
+\columnbreak
 
+\subsection{Sorting using $B^+$-trees}
+\begin{itemize}
+\item When table to be sorted has existing $B^+$-tree index on sorting attributes.
+\begin{itemize}
+\item Format 1: Sequentially scan leaf pages of $B^+$-tree.
+\item Format 2/3:  Sequentially scan leaf pages of $B^+$-tree.For each leaf page visited, retrieve data records using RIDs.
+\end{itemize}
+\end{itemize}
 
+\section{Selection $\sigma_p(R)$}
+Select rows from Relation $R$ that satisfy selection predicate $p$
 
+\subsection{Access Path}
+\begin{itemize}
+\item \textbf{Access path} refers to the given way of accessing data records/entries.
+\begin{itemize}
+\item \textbf{Table scan}: scan all data pages.
+\item \textbf{Index scan}: scan all index pages.
+\item \textbf{Index Intersection}: Combine results from multiple index scans (e.g. intersect, union).
+\end{itemize}
+\item Index scan/intersect follow by \textbf{RID lookups} to retrieve data records.
+\end{itemize}
 
+\subsubsection{Selectivity of Access Path}
+\centerline{\includegraphics[width = 0.8\linewidth]{selectivity}}
+\begin{itemize}
+\item \textbf{Most Selective Access Path minimizes cost of data retrieval.}
+\end{itemize}
 
+\subsection{Covering Index}
+\centerline{\includegraphics[width = 0.7\linewidth]{coveringIndex}}
 
+\subsubsection{$B^+$-Tree: Include Columns}
+\centerline{\includegraphics[width = 0.7\linewidth]{includeColumns}}
 
+\subsection{$B^+$-Tree: Selection Evaluation}
+\centerline{\includegraphics[width = 1\linewidth]{bTreeSelectionEvaluation}}
+
+\subsection{CNF Predicates}
+\begin{itemize}
+\item \textbf{Selectivity of an access path} depends on primary conjuncts in selection condition (w.r.t. index involved.)
+\item Each conjunct acts as filter on table, fraction of tuples satisfying given conjuct called reduction factor.
+\end{itemize}
+
+\centerline{\includegraphics[width = 1\linewidth]{CNF}}
+\begin{itemize}
+\item \textbf{Non-equality Comparison Operators}: $<, \leq, >, \geq, <>$, between, in.
+\end{itemize}
+
+\subsection{Tree Index matching CNF Selection}
+\begin{itemize}
+\item Determines if Index is useful / appropriate, if index can be used to retrieve just the tuples that satisfy the condition.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{matchingPredicatesTree}}
+
+\subsection{Hash Index matching CNF Selection}
+\centerline{\includegraphics[width = 1\linewidth]{matchingPredicatesHash}}
+
+\columnbreak
+
+TBC>>>
 
 \end{multicols*}
 \end{document}
