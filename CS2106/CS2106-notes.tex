@@ -548,30 +548,209 @@ int main( int argc, char* argv[] )
 \item Operating System Concepts (8th Edition): Section 3.1
 \end{itemize}
 
+\vfill \null
+\columnbreak
+
+\section{3. Process Scheduling}
+A multiprogrammed computer frequently has multiple processes/threads computing for CPU at the same time. Occurs whenever $\geq$ 2 simultaneously in ready state. 
+\begin{itemize}
+\item \textbf{Scheduler}: Part of OS to decide which process to run next.
+\item \textbf{Scheduling Algorithm}: Algo used.
+\item \textbf{Scheduling Problem}: Choosing, ready process $>$ available CPUs.
+\item In addition to picking right process, need \textbf{efficient use of CPU} as process switching is expensive. (Switch user to kernel mode, save state of process, memory map , memory cache may need to reload, etc.)
+\item \textbf{I/O Input/Output} (disk or network): When process enters blocked state waiting for external device to complete work.
+\end{itemize}
+
+\subsubsection{Process Behavior}
+\begin{itemize}
+\item Process' unique \textbf{requirement of CPU time.}
+\item Process goes through phases of CPU-activity \& IO-activity.
+\item \textbf{Compute/CPU-Bound Process} (computation, e.g. number crunching) vs. \textbf{IO-bound Process} (e.g. read/write to file, print to screen)
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{processBehavior}}
+
+\subsubsection{Process Environment}
+\begin{itemize}
+\item \textbf{Batch Processing}: No user, no interaction / responsiveness required.
+\item \textbf{Interactive / Multiprogramming}: Active user interacting with system. Need responsive, consistent in response time.
+\item \textbf{Real Time Processing}: Deadline to meet, usually periodic process.
+\end{itemize}
+
+\subsection{Scheduler Evaluation Criteria}
+\begin{itemize}
+\item Many criteria to evaluating algo, largely influenced by p. environment. May be conflicting.
+\item \textbf{All Systems}: \\
+- \textit{Fairness}: CPU time (per process basis / per user basis). \textbf{No starvation}. \\
+- \textit{Balance}: All parts of computing system utilized.
+\item \textbf{Batch Systems}: \\
+- \textit{Throughput}: Maximize jobs per hour. \\
+- \textit{Turnaround time}: Minimize time btwn. submission \& termination. \\
+- \textit{CPU utilization}: keep CPU busy all the time.
+\item \textbf{Interactive Systems}: \\
+- \textit{Response time}: respond to requests quickly. \\
+- \textit{Proportionality}: meet users' expectations.
+\item \textbf{Real-time Systems}: \\
+- \textit{Meeting deadlines}: avoid losing data. (e.g. livestream)\\
+- \textit{Predictability}: avoid quality degradation in multimedia.
+\end{itemize}
+
+\subsection{Concurrent Execution}
+\begin{itemize}
+\item \textbf{Concurrent Processes}: Logical concept to cover multitasked processes.
+\item \textbf{Virtual parallelism}: Illusion of parallelism (psedoparallelism)
+\item \textbf{Physical parallelism}: Multiple CPUs/Cores, mutliple parallel exec
+\end{itemize}
+
+
+\columnbreak
+
+\subsection{When to Schedule}
+Key issue, when to make schedule decisions. \\
+E.g. When new process created, run parent or child. When process exits, when process blocks on I/O, or I/O interrupt.
+\begin{itemize}
+\item \textbf{Non-preemptive (cooperative)}: Process stays scheduled (running state) until it blocks, or gives up CPU voluntarily.
+\item \textbf{Preemptive (Fixed Quota)}: Process given fixed time quota to run (possible to block / give up early). At end of quota, running process suspended, another picked if available.
+\end{itemize}
+
+
+\subsubsection{Interleaved Execution (Timeslicing)}
+\begin{itemize}
+\item \textbf{Concurrent Execution on 1 CPU}: Interleave instructions from both processes.
+\item \textbf{OS overhead}: Multitasking needs to change context between programs, incurs overhead.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{timeslice}}
+\begin{itemize}
+\item \textbf{Scheduling a Process}: \\
+1. Scheduler triggered (OS takes over) \\
+2. If Context Switch needed, save context, place on blocked/ready queue. \\
+3. Pick suitable process $P$ to run base on scheduling algo. \\
+4. Setup context for $P$. \\
+5. Let process $P$ run.
+\end{itemize}
+
+\null \null \null \null \null \null
+\null \null \null \null \null \null
+\null \null \null \null \null \null
+\columnbreak
+
+\section{Scheduling in Batch Systems}
+\textbf{Environment}: No user interaction, non-preemptive scheduling predominant. \\
+Scheduling algoritms generally easier to understand and implement, with variants and improvements for other type of system. \\
+\textbf{Criteria}: Turnaround time (related to waiting time, time spent waiting for CPU). Throughput. CPU utilization.
+
+\subsection{Batch Systems Scheduling Algorithms}
+\subsection{FCFS: First-Come First-Served}
+\begin{itemize}
+\item Tasks stored on \textbf{FIFO queue based on arrival time}.
+\item Pick first task in queue to run until done / blocked. Blocked task removed from FIFO queue, when ready, place at back of queue ("newly arrived").
+\item \textbf{Evaluation}: \\
+- \textit{No starvation}. (Every task eventually processed) \\
+- \textit{Covoy Effect}. (CPU-Bound followed by IO-Bound tasks heavily inefficient.) Simple reordering can reduce average waiting time.
+\end{itemize}
+
+\subsection{SJF: Shortest Job First (Nonpreemptive)}
+\begin{itemize}
+\item Select task with \textbf{smallest total CPU time}.
+\item Need to know total CPU time for task in advance. \\
+- Possible to guess future CPU time by previous CPU-bound phases. 
+\end{itemize}
+\centerline{\includegraphics[width=0.6\linewidth]{exponentialAverage}}
+
+\begin{itemize}
+\item \textbf{Evaluation}: \\
+- \textit{Starvation Possible} (Biased towards short jobs)
+- \textit{Minimize average waiting time}.
+- Optimal only when all jobs available simultaneously.
+\end{itemize}
+
+\subsection{SRT: Shortest Remaining Time Next (Preemptive)}
+\begin{itemize}
+\item \textbf{Preemptive ver of SJF}. \\
+- Scheduler chooses process whose remaining run time is shortest.
+\item When new job arrives, total time compared to current process' remaining (or expected) time.
+\end{itemize}
+
+\subsection{Batch System Scheduling Examples}
+\centerline{\includegraphics[width=1\linewidth]{batchScheduling}}
+
+\null
+\columnbreak
+
+\section{Scheduling in Interactive Systems}
+\textbf{Criteria}: Response time (time btwm request \& response). Predictability (Less variation in response time). \\
+\textbf{Environment}: User interaction. Preemptive scheduling used to ensure good response time. Scheduler needs to run periodically. \\
+\textbf{Ensuring Periodic Scheduler}: Use timer \textbf{interrupts} (based on hardware clock). OS ensures timer interrupt cannot be intercepted by any other program. Interrupt handle \textbf{invokes scheduler}.
+\begin{itemize}
+\item \textbf{ITI: Interval of Timer Interrupt}: Timing Interval that interrupt happens, and OS scheduler triggered. Typical values (1ms - 10ms).
+\item \textbf{Time Quantum}: Execution duration given to each process, constant / variable. Must be multiples of ITI. Typical values (5ms - 100ms).
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{ITI}}
+
+\subsection{Interactive Systems Scheduling Algorithms}
+\subsection{RR: Round Robin}
+\begin{itemize}
+\item Preemptive ver. of FCFS.
+\item \textbf{Tasks stored in FIFO queue}. Each process assigned time quantum, if still running at end, CPU preempted, given to another process. Task placed at end of queue to wait for another turn.
+\item \textbf{Response time guarantee}: $n$ tasks, $q$ quantum. Time before task gets CPU bounded by $(n-1)q$.
+\item \textbf{Evaluation}: \\
+- Setting quantum too short cause many process switches, lower CPU efficiency \\
+- Too long quantum causes poor response to short interactive requests.
+\end{itemize}
+
+\subsection{Priority Scheduling: Priority Based}
+\begin{itemize}
+\item Each process assigned a priority, runnable process with highest priority p allowed to run. \\
+- \textbf{Preemptive ver.}: Higher p. process can preempt running low p. process. \\
+- \textbf{Non-preemptive ver.}: Late high p. process wait for next scheduling.
+
+\item \textbf{Evaluation}: \\
+- \textbf{Possible Starvation}: High p. process may hog CPU. \\
+To prevent this, scheduler may \textbf{decrease priority} of currently running process at each clock tick (clock interrupt). Or, give some max time quantum, when used up, allow next in line to run. \\
+- \textbf{Priority Inversion}: When lower priority task preempts higher priority task. (If lower priority task locks some resource, e.g. file, gets switched, higher priority task cannot run)
+\end{itemize}
+
+\columnbreak
+
+\subsection{MLFQ: Multi-Level Feedback Queue}
+\begin{itemize}
+\item More efficient to give CPU-bound process large quantum once in a while, rather than small quanta frequently to reduce swapping. Also, giving all processes large quantum means poor response time. \\
+Hence, solution to set \textbf{multiple priority queues}.
+\item As (CPU-bound) process sinks deeper into priority queues, run less frequently, saving CPU for short, interactive processes.
+\item Hence, \textbf{adaptively learn process behavior}, minimize both: \\
+- Min. Response time for IO bound processes \\
+- Min. Turnaround time for CPU bound processes.
+\item \textbf{MLFQ Rules}: \\
+- \textbf{Basic Rule}: Higher priority process runs. If same p, run in RR. \\
+- \textbf{Priority Setting}: New job given highest priority. If job fully utilize time slice, priority reduced. If job gives up / blocks before time slice finished, priority retained.
+\item \textbf{Evaluation}:
+- \textbf{Can be gamed}: User typing carriage returns at random every few seconds doing wonders for his response time.
+\end{itemize}
+
+
+\subsection{Lottery Scheduling}
+\begin{itemize}
+\item Give processes lottery tickets for system resources. When scheduling, chose ticket at random.
+\item "All processes equal, some processes more equal." More important processes given extra tickets.
+\item \textbf{Evaluation}: \\
+- \textit{Responsive}: New process can participate in next lottery. \\
+- \textit{Good Control}: Each process can distribute to child processes proportionally w.r.t to need. \\
+\end{itemize}
+
+\subsection{Interactive System Scheduling Examples}
+\centerline{\includegraphics[width=1\linewidth]{interactiveScheduling}}
+
+
+\subsubsection{Others}
+\begin{itemize}
+\item \textbf{Shortest Process Next}: Estimate (using calculated aging).
+\item \textbf{Guaranteed / Fair-Share Scheduling}: Track CPU usage, run accordingly. Each user gets agreed allocation of CPU.
+\end{itemize}
 
 
 
+\columnbreak
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\section{4.}
 
 
 
