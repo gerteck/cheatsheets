@@ -630,6 +630,9 @@ When data to be sorted too large to fit into available main memory. we need some
 
 \section{Selection $\sigma_p(R)$}
 Select rows from Relation $R$ that satisfy selection predicate $p$
+\begin{itemize}
+\item \textbf{Index Matching}: Index \textbf{matches} selection predicate if index can be used to evaluate it. Consider Hash index, and B+ Tree index.
+\end{itemize}
 
 \subsection{Access Path}
 \begin{itemize}
@@ -643,7 +646,7 @@ Select rows from Relation $R$ that satisfy selection predicate $p$
 \end{itemize}
 
 \subsubsection{Selectivity of Access Path}
-\centerline{\includegraphics[width = 0.8\linewidth]{selectivity}}
+\centerline{\includegraphics[width = 1\linewidth]{selectivity}}
 \begin{itemize}
 \item \textbf{Most Selective Access Path minimizes cost of data retrieval.}
 \end{itemize}
@@ -651,7 +654,7 @@ Select rows from Relation $R$ that satisfy selection predicate $p$
 \subsection{Covering Index}
 \centerline{\includegraphics[width = 0.7\linewidth]{coveringIndex}}
 
-\subsubsection{$B^+$-Tree: Include Columns}
+\subsubsection{$B^+$-Tree: Include Columns (In Index)}
 \centerline{\includegraphics[width = 0.7\linewidth]{includeColumns}}
 
 \subsection{$B^+$-Tree: Selection Evaluation}
@@ -679,7 +682,36 @@ Select rows from Relation $R$ that satisfy selection predicate $p$
 
 \columnbreak
 
-TBC>>>
+\subsection{Examples of Index matching CNF Selection}
+\centerline{\includegraphics[width = 1\linewidth]{matchingPredicates}}
+\medskip
+
+\subsubsection{Primary and Covered Conjuncts}
+\begin{itemize}
+\item \textbf{Primary Conjuncts}: Subset of conjuncts in selection predicate $p$ that index $I$ \textbf{matches}.
+\item In general, only subset of conjuncts of predicate matches index.
+\item \textbf{Covered Conjunct}: Conjunct C in predicate $p$ covered if all attributes in $C$ appear in the key, or \textit{include column(s)} of index $I$.
+\item Primary conjuncts subset of covered conjuncts.
+\end{itemize}
+
+\subsection{Cost of Evaluation of Selection Predicate $p$}
+
+\centerline{\includegraphics[width = 0.9\linewidth]{notation}}
+
+\subsection{Cost of $B^+$-tree Index Evaluation of $p$}
+\centerline{\includegraphics[width = 0.95\linewidth]{BTreeEvaluationCost}}
+\centerline{\includegraphics[width = 0.95\linewidth]{BTreeEvaluationCostExample}}
+
+\subsection{Cost of Hash Index Evaluation of $p$}
+\centerline{\includegraphics[width = 0.95\linewidth]{hashEvaluationCost}}
+
+\subsection{Evaluating Non-Disjunctive / Disjunctive Conjuncts}
+\centerline{\includegraphics[width = 1\linewidth]{Disjunct}}
+\begin{itemize}
+\item \textbf{Possible strategies to evaluate Disjunctive / Non-Disjunctive predicates}
+\item File scan, Use both (fetch RID, take Union), Use B+ tree etc.
+\end{itemize}
+
 
 \end{multicols*}
 \end{document}
