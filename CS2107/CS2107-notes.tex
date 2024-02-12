@@ -600,9 +600,73 @@ entropy much less than 20 $log_2(10)$.
 
 
 
+\columnbreak
+
+\section{3. Authenticity (Data Origin)}
+
+\subsection{Crypto Primitive: Public Key Cryptography}
+Public key crypto primitive includes public key encryption and signature. Goal is for confidentiality, and authenticity.
+\begin{itemize}
+\item Symmetric-key encryption uses same key for encrypt, decrypt.
+\item \textbf{Public Key (Asymmetric-key) scheme}: Uses different keys for encryption and decryption.
+\item Decryption algo also needs public key. When said "using private key to decrypt", this means using both.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{publicKeyCrypto}}
+
+\begin{itemize}
+\item \textbf{Security Requirement}: Given public key \& ciphertext, difficult to determine private key \& plaintext. (Encryption oracle accessible.)
+\item \textbf{(PKC) Public Key Crypto}: Handles scenario of sharing symmetric key via secure channel. PKC only requires secure broadcast channel to distribute the public key. However, building secure broadcast channel to distribute public key is challenging.
+\item \textbf{PKC:} Useful for encryption, important application is in authentication (e.g. HTTPS). Limitations compared to symmetric in speed.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{keyDistribution}}
+\begin{itemize}
+\item \textbf{Remark}: Many PKC represent data as integers, algo used are some arithmetic operation on integers, represented using binary.
+\item A 1024-bit key is represented under binary representation. An algorithm exhaustively searchs 1024-bit integers ($2^{1024}$) is infeasible.
+\item For this course, we will consider \textbf{"classroom" RSA}, most basic form RSA.
+\item \textbf{In Practice}: Padded RSA (to destroy some property), choose strong primes, fast secure ways to generate primes, secure implementation to guard against side-channel attack, "e" is fixed mostly at 65537. Considerations of quantum computer.
+\end{itemize}
+
+\subsubsection{Popular PKC Schemes}
+\textbf{RSA}: Key size - 2048 bits. \\
+\textbf{ElGamal}: Exploit techniques in Elliptic Curve Cryptography (ECC), reduce key size to - 300 bits. \\
+\textbf{Paillier}: Partial homomorphic with respect to addition.
 
 
 
+\subsection{Public Key: RSA ("Classroom RSA")}
+\centerline{\includegraphics[width=1\linewidth]{classroomRSA}}
+\begin{itemize}
+\item \textbf{Correctness of RSA}: For any positive $m < n$, and any pair of public/private keys, that \textbf{Decrypt(Encrypt($m$)) = $m$}.
+\item $(m^e)^d$ mod $n$ = $m$
+\item Correctness depends on the property of modulo.
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{RSAexample}}
+\begin{itemize}
+\item \textbf{Interchangeable role of encryption \& decryption key}: Swap role of $d$ and $e$, public can decrypt, owner can encrypt. Usually does not hld in other PKC. This property useful in designing \textbf{signature scheme}.
+\item \textbf{Algorithmic Issues}: There is efficient algo to compute exponentiation, hence, efficient way to encrypt, and decrypt (given $n, m, e$, find $m^e$ mod $n$ for encrypt, given $c, d, n$, computer $c^d$ mod $n$).
+\item \textit{Step 1 setup}:  Find random prime, randomly pick number, test if prime. (Primality Test). 
+\textit{Step 3 setup}: Value of $d$ efficiently computable from $e$ and $n$ using \textit{extended Euclidean algorithm}.
+\end{itemize}
+
+\subsubsection{Security of RSA}
+\begin{itemize}
+\item Getting RSA private key from public key as difficult as factorizing $n$.
+\item However, not known whether the problem of getting plaintext from ciphertext as difficult as factorization.
+\item \textbf{post-Quantum cryptography}: Generally refers to PKC that are secure against quantum computer.
+\item Significant efforts to migrate current systems to post-quantum crypto (Quantum possibility to render RSA algo insecure by 2030). From 2016, NIST plans to choose standard by 2024. Four candidates for Rd 4 (2022). 
+\end{itemize}
+
+\subsection{Data Authenticity (Hash): Unkeyed Hash}
+
+\subsection{Data Authenticity (Mac): Keyed Hash}
+
+\subsection{Data Authenticity (Signature): Asymmetric Key}
+
+\subsection{Attacks \& Pitfalls}
+
+\subsection{Birthday Attack on hash}
+\subsection{Design flaw: Using encryption for authenticity}
+\subsection{Time-Space tradeoff}
 
 
 
