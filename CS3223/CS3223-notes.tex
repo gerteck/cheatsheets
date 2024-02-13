@@ -154,7 +154,7 @@ AY23/24 Sem 2, github.com/gerteck
 
 \subsubsection{Course Details}
 \begin{itemize}
-\item Prerequisite knowledges: CS2040S, CS2102, CS2106 background (helpful).
+\item Prerequisite Knowledge: CS2040S, CS2102, CS2106 background (helpful).
 \item Reference Textbook: Raghu \& Johannes Database M. Systems, 2002. \\
 Encouraged to read ahead based on schedule before the lecture.
 \item Course covers data structures, algorithms, different components making up database systems.
@@ -218,8 +218,9 @@ Encouraged to read ahead based on schedule before the lecture.
 
 \subsubsection{Storage Manager Components}
 \begin{itemize}
-\item Data is stored, retrieved in units called \textbf{disk blocks (or pages}. (Each block = sequence of one or more contiguous sectors.
-\item \textbf{FIles \& access methods layer (aka file layer)} - deals with organization and retrieval of data.
+\item Data is stored, retrieved in units called \textbf{disk blocks (or pages)}. \\
+- Each block = sequence of one or more contiguous sectors.
+\item \textbf{Files \& access methods layer (aka file layer)} - deals with organization and retrieval of data.
 \item \textbf{Buffer Manager} - controls reading/writing of disk pages.
 \item \textbf{Disk Space Manager} - keeps track of pages used by file layer.
 \end{itemize}
@@ -328,12 +329,12 @@ Two main types of indexes
 	\end{itemize}
 \end{itemize}
 
-\subsection{Tree-basd Indexing: $B^+$-Tree }
+\subsection{Tree-based Indexing: $B^+$-Tree}
 $B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully, most widely used index structure as it adjusts well to changes and supports both equality and range queries.
 \begin{itemize}
 \item \textbf{Balanced tree}: Operations (insert, delete) on tree keep it balanced.
 \item \textbf{Internal nodes} direct the search.
-\item \textbf{Leaf nodes} contain the data entries. Leaf pages linked using page pointers for easy traversal of sequence of leaf pages in either direciton.
+\item \textbf{Leaf nodes} contain the data entries. Leaf pages linked using page pointers for easy traversal of sequence of leaf pages in either direction.
 \item \textbf{Value $d$} is parameter of $B^+$-tree, called order of the tree, is a measure of capacity of a tree node. Each node contains $m$ entries, where $d \leq m \leq 2d$, except root node, where $1 \leq m \leq 2d$
 \end{itemize}
 
@@ -343,7 +344,7 @@ $B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully
 \begin{itemize}
 \item Each node is either a \textbf{leaf node} (bottom-most level) or an internal node. 
 \item Top-most internal node is the \textbf{root node} located at \textbf{level 0}.
-\item \textbf{Height of Tree} = number of level of internal nodes. (Leaf nodes are at level $h$ where $h$ = height of tree.
+\item \textbf{Height of Tree} = number of level of internal nodes. (Leaf nodes are at level $h$ where $h$ = height of tree).
 \item Nodes at same level are \textbf{sibling nodes} if they have the same parent node.
 \item \textbf{Leaf Nodes}:
 	\begin{itemize}
@@ -416,7 +417,7 @@ $B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully
 \subsection{$B^+$-Tree Deletion}
 \begin{itemize}
 \item \textbf{Algorithm for deletion} takes an entry, finds leaf node it belongs to, and deletes it.
-\item \textbf	{Underflowed node}: When node is at minimum occupancy before deletion, and goes below threshold, we must either \textbf{redistribute entries from adjacent sibling}, or \textbf{merge node with sibling} to maintain minimum occupancy.
+\item \textbf{Underflowed node}: When node is at minimum occupancy before deletion, and goes below threshold, we must either \textbf{redistribute entries from adjacent sibling}, or \textbf{merge node with sibling} to maintain minimum occupancy.
 \item \textbf{Merging}: Underflowed node needs to be merged if each of \textbf{adjacent} sibling nodes has exactly $d$ entries.
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{Bdeletion1}}
@@ -425,7 +426,7 @@ $B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{Bdeletion2}}
 \begin{itemize}
-\item Chances are high that redistribution is possible if node has two siblings, and unlike merging, redistribution is guaranteed to propage no further than parent node. Also, pages have more space, reducing likelihood of split on subsequent insertions.
+\item Chances are high that redistribution is possible if node has two siblings, and unlike merging, redistribution is guaranteed to propagate no further than parent node. Also, pages have more space, reducing likelihood of split on subsequent insertions.
 \end{itemize}
 
 \columnbreak
@@ -435,7 +436,7 @@ $B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully
 \item Entries added to a $B^+$ in two ways.
 	\begin{enumerate}
 	\item Have existing collection of data records with $B^+$ tree index on it. When record added to collection, corresponding entry added to $B^+$ tree. (Insert, Delete individually)
-	\item Have collection of data records we want to create new $B^+$ tree index on some key field(s). Start with an empty tree. Inserting one by one expensive dur to overhead, systems provide \textbf{bulk loading} utility.
+	\item Have collection of data records we want to create new $B^+$ tree index on some key field(s). Start with an empty tree. Inserting one by one expensive due to overhead, systems provide \textbf{bulk loading} utility.
 	\end{enumerate}
 \item \textbf{Bulk Loading}: 
 	\begin{enumerate}
@@ -487,7 +488,7 @@ $B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully
 
 \subsubsection{Examples: Linear Hashing Search \& Insert}
 \begin{itemize}
-\item Even though overflowed bucket split, not neccessary mean enough space if bit value not right. Still require overflow page.
+\item Even though overflowed bucket split, not necessary mean enough space if bit value not right. Still require overflow page.
 \item Using \textbf{level and next}, we determine how many additional bits to consider in \textbf{second hashing function}.
 \item \textbf{Second hashing function}: Is simply looking at the m rightmost bits of the hash.
 \end{itemize}
@@ -514,7 +515,7 @@ $B^+$ tree is a dynamic structure that adjusts to changes in the file gracefully
 
 \subsection{Extendible Hashing}
 \begin{itemize}
-\item \textbf{Extendible hashing}: dynamically updateable disk-based index structure, implements hashing scheme utilizing a \textbf{directory of pointers to buckets}. 
+\item \textbf{Extendible hashing}: dynamically updatable disk-based index structure, implements hashing scheme utilizing a \textbf{directory of pointers to buckets}. 
 \item Overflows handled by doubling the directory which logically doubles the number of buckets. \textbf{Physically, only the overflown bucket is split}.
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{extendibleHashing}}
@@ -562,7 +563,7 @@ Sorting collection of records on some (search) key is useful and required in var
 \item Bulk loading a $B^+$-tree index
 \item Implementation of other relational algebra operators (e.g. projection, join), which require some sorting step.
 \end{itemize}
-When data to be sorted too large to fit into available main memory. we need some \textbf{external sorting algorithm}. Algos seek to minimize cost of disk accesses.
+When data to be sorted too large to fit into available main memory. Need some \textbf{external sorting algorithm}. Algos seek to minimize cost of disk accesses.
 
 \subsection{External Merge Sort}
 \begin{itemize}
@@ -624,7 +625,7 @@ When data to be sorted too large to fit into available main memory. we need some
 \item When table to be sorted has existing $B^+$-tree index on sorting attributes.
 \begin{itemize}
 \item Format 1: Sequentially scan leaf pages of $B^+$-tree.
-\item Format 2/3:  Sequentially scan leaf pages of $B^+$-tree.For each leaf page visited, retrieve data records using RIDs.
+\item Format 2/3:  Sequentially scan leaf pages of $B^+$-tree. For each leaf page visited, retrieve data records using RIDs.
 \end{itemize}
 \end{itemize}
 

@@ -139,7 +139,7 @@ CS2107: Introductory module, illustrates fundamentals of how systems fail due to
 Persistent threats are threats that often operate within the shadows, outside of attention focused. 
 \begin{itemize}
 \item Highly targeted, often use combination of social engineering and software vulnerabilities to establish footholds within the targeted enterprise.
-\item Network protection not enough to migitgate threats, comprehensive monitoring program required to scan all internal and external network traffic. Identifying, securing data is also key to protecting assets.
+\item Network protection not enough to mitigate threats, comprehensive monitoring program required to scan all internal and external network traffic. Identifying, securing data is also key to protecting assets.
 \item Recent attack types: Formjacking, Ransomware, Living off the Land (LotL), 
 \end{itemize}
 
@@ -158,7 +158,7 @@ Systems may fail due to operator mistakes, hardware failures, poor implementatio
 \subsubsection{Difficulties in achieving Security}
 \begin{itemize}
 \item \textbf{Security not considered} (in early design stage). \\
-Lack of adverarial thinking in design / trade-off in security with ease-of-use, performance / cost.
+Lack of adversarial thinking in design / trade-off in security with ease-of-use, performance / cost.
 \item Difficult to formulate requirements /design / implementation bugs. 
 \item Difficult to operate/manage (Human error). \\
 \item \textbf{Known Vulnerabilities: CVE (Common vulnerabilities \& Exposures}. Repository of discovered vulnerabilities. Significant portion considered "implementation bugs".
@@ -175,7 +175,7 @@ Lack of adverarial thinking in design / trade-off in security with ease-of-use, 
 \item Formulate attack scenario by defining attacks it can prevent. 
 \item Notions of "Oracle": Encryption, Decryption, Padding Oracle.
 \item \textbf{Key strength}: Quantifying security by equivalence of best-known attack to exhaustive search.
-\item No known efficent attacks on modern schemes under "original" threat models, but there are pitfalls. Such as implementation error (wrong mode, wrong random source, mishandle of IV), side channel attack, implicity require integrity, padding oracle attack.
+\item No known efficient attacks on modern schemes under "original" threat models, but there are pitfalls. Such as implementation error (wrong mode, wrong random source, mishandle of IV), side channel attack, implicity require integrity, padding oracle attack.
 \item Design of various symmetric key encryption schemes:
 	\begin{itemize}
 	\item One-time pad, stream cipher (xor'ing with "pseudo-random" string)
@@ -198,7 +198,7 @@ Measuring \textbf{security of a system}: Through attack classes it can prevent. 
 \item Attacker's knowledge (info / service exposed) and computing resources
 \item Attacker's goal
 \end{itemize}
-\textbf{Types of information we assume access to:} (Access to info can be formulate to accesses to an \textbf{"Oracle"}).
+\textbf{Types of information we assume access to:} (Access to info can be formulated to accesses to an \textbf{"Oracle"}).
 \begin{itemize}
 \item \textbf{Ciphertext only attack:} Adversary given collection of ciphertext c. May know some properties 
 of the plaintext, for e.g. the plaintext is an English sentence. (adv. can’t choose plaintext).
@@ -287,7 +287,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \item \textbf{Security of Encryption Scheme}: Quantified by \textbf{length of key}, w.r.t. exhaustive search.
 \item Given a key length of 32 bits, there are $2^{32}$ possible keys. Hence, exhaustive search needs to ``loop'' $2^{32}$ in worst case. 
 \item \textbf{No. of bits to be considered ``secure''}: 128, 192, 256 bits, \\
-- (NIST reccomendation for AES).
+- (NIST recommendation for AES).
 \end{itemize}
 
 \subsection{1. DES, AES and Exhaustive Search}
@@ -308,7 +308,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \subsubsection{Mode-of-Operation: ECB Mode on AES}
 \begin{itemize}
 \item \textbf{Electronic Book Code}: Divide plaintext into blocks, apply block cipher to each block, with the same key.
-\item ECB leaks information! AES encryption determinsitic without randomly chosen IV.
+\item ECB leaks information! AES encryption deterministic without randomly chosen IV.
 \item \textbf{Deterministic}: Produces same ciphertext for given plaintext and key over separate executions.
 \end{itemize}
 \centerline{\includegraphics[width=0.7\linewidth]{ECB}}
@@ -317,7 +317,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \begin{itemize}
 \item \textbf{Cipher Block Chaining on AES}: Using an IV, uses chaining process that causes decryption of block of ciphertext to depend on all preceding ciphertext blocks.
 \item \textbf{Initialization Vector (IV)}: Arbitrary number of certain length used with secret key, to provide the initial state, for data encryption.
-\item \textbf{Encryption}: Each plaintext block is XOR-ed with previous ciphertext block, and then encrypted. Process repeats untill all plaintext is ciphertext blocks.
+\item \textbf{Encryption}: Each plaintext block is XOR-ed with previous ciphertext block, and then encrypted. Process repeats until all plaintext is ciphertext blocks.
 \item \textbf{Decryption}: Reverse encryption process. Note, process does not need to start with final block, can happen simultaneously as all inputs present.
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{CBC}}
@@ -331,7 +331,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 
 \subsubsection{Mode-of-Operation: GCM Mode (Galois/Counter)}
 \begin{itemize}
-\item \textbf{GCM}: Combines Counter mode (CTR) with Galois authenication. Construction of mode more complicated, is ``Authenticated-Encryption''.
+\item \textbf{GCM}: Combines Counter mode (CTR) with Galois authentication. Construction of mode more complicated, is ``Authenticated-Encryption''.
 \item Ciphertext consists of extra tag for authentication, secure in presence of decryption oracle.
 \end{itemize}
 
@@ -342,7 +342,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \subsubsection{Stream Cipher}
 \begin{itemize}
 \item \textbf{Stream Cipher}: A symmetric key cipher where plaintext combined with \textbf{pseudorandom cipher digit stream (keystream)}.
-\item ``Inspired'' by one-time-pad, generate some cyrptographically secure pseudorandom sequence. 
+\item ``Inspired'' by one-time-pad, generate some cryptographically secure pseudorandom sequence. 
 \item w/o knowing secret key, computationally diff. to distingush from truly random sequence. Similarly diff. to get short secret key from sequence, or predict part of sequence from another part.
 \item \textbf{IV}: Most ciphers have \textbf{Initialization Vector}, randomly chosen or from counter.
 \end{itemize}
@@ -358,7 +358,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \end{itemize}
 \centerline{\includegraphics[width=0.95\linewidth]{uniqueIV}}
 \begin{itemize}
-\item IV also needed in \textbf{CBC mode}, to make encryption non-deterministic. If encyrption deterministic (without IV), it will leak information on whether plaintext of two ciphertext are the same, if $C_1 == C_2$. Could be crucial piece of information.
+\item IV also needed in \textbf{CBC mode}, to make encryption non-deterministic. If encryption deterministic (without IV), it will leak information on whether plaintext of two ciphertext are the same, if $C_1 == C_2$. Could be crucial piece of information.
 \end{itemize}
 
 
@@ -367,14 +367,14 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \subsection{Meet-In-The-Middle Attack (Double / Triple DES)}
 \subsubsection{Double / Triple DES}
 \begin{itemize}
-\item \textbf{Double / Triple DES}: To improve DES security, (DES weak as key length of 56 bits short), do multiple repeated encryptions using different keys. A reason for this may be to utilize already existing suitable hardware to encrypt.
-\item DES does not form a group ( $E_{k1} ( E_{k2} (x) ) \neq E_{k2} (x) $) for some $k3$, so makes sense to use multiple encryptions.
+\item \textbf{Double / Triple DES}: To improve DES security, (DES weak as key length of 56 bits short), do multiple repeated encryption using different keys. A reason for this may be to utilize already existing suitable hardware to encrypt.
+\item DES does not form a group ( $E_{k1} ( E_{k2} (x) ) \neq E_{k2} (x) $) for some $k3$, so makes sense to use multiple encryption.
 \item \textbf{Double DES}: Consider double encryption, we expect key-strength to be 112. ($2^{56 + 56}$). However, attacker, with storage space, can reduce key strength to below 57.
 \end{itemize}
 
 \subsubsection{Meet-In-The-Middle Attack}
 \begin{itemize}
-\item \textbf{MITM}: Meet-in-the-middle Attack, a well-known plaintext attack, is a generic space-time tradeoff cryptographic attack against encryption schemes that perfrom multiple encryption operations in sequence.
+\item \textbf{MITM}: Meet-in-the-middle Attack, a well-known plaintext attack, is a generic space-time tradeoff cryptographic attack against encryption schemes that perform multiple encryption operations in sequence.
 \item Breaking two-part encryption from both sides simultaneously.
 \item Primary reason why \textbf{Double DES not used}, and why \textbf{Triple DES key} (168-bit) can be brute forced by attacker with $2^{56}$ space and $2^{122}$ operations.
 \item \textbf{Mechanism}: Assume attack has a \textbf{pair ($m, c$)} of plaintext and corresponding ciphertext.
@@ -387,7 +387,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \subsubsection{Padding Format}
 \begin{itemize}
 \item For fixed size blocks, e.g. block size of AES is 128bits (16 bytes), padding is needed to fit plaintext into last block.
-\item Many ways to fill values, but important piece of information encoded: \textbf{number of padded bits}. If information missing, receiver will not know lenght of plaintext.
+\item Many ways to fill value, but important piece of information encoded: \textbf{number of padded bits}. If information missing, receiver will not know lenght of plaintext.
 \item E.g. \textbf{PKCS\#7 Padding Standard.}
 \end{itemize}
 \centerline{\includegraphics[width=0.8\linewidth]{PKCS7}}
@@ -399,7 +399,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 -  \textbf{Encryption Oracle}: Output ciphertext for given plaintext, of s. key $k$. \\
 -  \textbf{Decryption Oracle:} Output plaintext given ciphertext, of s. key $k$.
 \item \textbf{Padding Oracle}: Attacker can query a ciphertext (encrypted using some secret key $k$, padding oracle knows $k$). Oracle outputs yes/no if plaintext is in correct ``padding'' format.
-\item Padding Oracle can come in many forms, e.g. query response behaviour, response time, subtle differences.
+\item Padding Oracle can come in many forms, e.g. query response behavior, response time, subtle differences.
 \item \textbf{Padding Oracle Attack Model}: \\
 - Attacker has ciphertext including iv: (iv, $c$) \\
 - Attack's goal: plaintext of (iv, $c$).
@@ -441,7 +441,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \subsubsection{Wrong choice of IV}
 \begin{itemize}
 \item \textbf{IV Generation}: IV's must not be same for two different ciphertext. 
-\item E.g. To encrypt file F, IV dervied from filename/meta-data. 
+\item E.g. To encrypt file F, IV derived from filename/meta-data. 
 \item E.g. \textit{Microsoft RC4 [implementation] Flaw}, in both Word and Excel, where same IV used when document modified, causing part of documents recovered with negligible amount of computation.
 \item When using AES under CBC mode, IV should be unpredictable to prevent certain attack. (E.g. IV = 1, 2, 3). BEAST attack exploits this.
 \item \textbf{Reusing one-time pad}: E.g. US Verona Project against Soviets.
@@ -451,7 +451,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \begin{itemize}
 \item \textbf{Principle}: System should be secure even if everything about system, except secret key, 
 is public knowledge.
-\item \textbf{Security through Obscurity}: To hide design of system to achieve security. Not advisable to reveal certain settings (network structure, setttings, algorithm, implementation, usernames etc). Obscurity as additional layer in defense-in-depth strategy. Deter, discourage novice attackers.
+\item \textbf{Security through Obscurity}: To hide design of system to achieve security. Not advisable to reveal certain settings (network structure, settings, algorithm, implementation, usernames etc). Obscurity as additional layer in defense-in-depth strategy. Deter, discourage novice attackers.
 \item E.g. \textbf{Against relying on Obscurity}: RC4 algorithm was trade secret, but was anonymously posted. MIFARE Classic smartcard also reversed-engineered.
 \end{itemize}
 
@@ -595,7 +595,7 @@ entropy much less than 20 $log_2(10)$.
 \item Must be distinct factors for multi-factor (Know + Have, Have + Are) etc.
 \item One Time Password token: \textbf{Time-based /or Sequence-based}.
 \item \textbf{2-Step Verification}: Both same factor, e.g (email + password, both "what-you-know", cannot be called "2-factor".)
-\item \textbf{out-of-band}: In 2-step verification, two commnuication channels, main and separate for add. authentication. Non-main called "out-of-band" channel, assume attacker unable to compromise both channels.
+\item \textbf{out-of-band}: In 2-step verification, two communication channels, main and separate for add. authentication. Non-main called "out-of-band" channel, assume attacker unable to compromise both channels.
 \end{itemize}
 
 
@@ -621,7 +621,7 @@ Public key crypto primitive includes public key encryption and signature. Goal i
 \centerline{\includegraphics[width=1\linewidth]{keyDistribution}}
 \begin{itemize}
 \item \textbf{Remark}: Many PKC represent data as integers, algo used are some arithmetic operation on integers, represented using binary.
-\item A 1024-bit key is represented under binary representation. An algorithm exhaustively searchs 1024-bit integers ($2^{1024}$) is infeasible.
+\item A 1024-bit key is represented under binary representation. An algorithm exhaustively searches 1024-bit integers ($2^{1024}$) is infeasible.
 \item For this course, we will consider \textbf{"classroom" RSA}, most basic form RSA.
 \item \textbf{In Practice}: Padded RSA (to destroy some property), choose strong primes, fast secure ways to generate primes, secure implementation to guard against side-channel attack, "e" is fixed mostly at 65537. Considerations of quantum computer.
 \end{itemize}

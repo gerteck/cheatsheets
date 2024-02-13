@@ -154,8 +154,10 @@ AY23/24 Sem 2, github.com/gerteck
 
 
 \section{1. Introduction}
-
-\textbf{Course objectives:} Introduces basic concepts in operating systems. Focusing on OS structure and architecture, process management, memory management, file management and OS protection mechanism. At the end of the course, identify and understand major functionalities of modern operating systems and extend and apply the knowledge in future related courses.
+\textbf{Course objectives:} Introduces basic concepts in operating systems. Focusing on: \\
+- OS structure and architecture, process management, memory management, file management and OS protection mechanism. \\
+- Identify and understand major functionalities of modern operating systems. \\
+- Extend and apply the knowledge in future courses.
 
 \textbf{Supplementary Text}: Modern Operating System (5th Edition), by Andrew S. Tanenbaum, Pearson, 2023.
 
@@ -195,8 +197,8 @@ An OS is a program that acts as an intermediary between a computer user and the 
 \item OS is known as the \textbf{kernel}. \\
 		Program that deals with hardware issues, provide system call interface and special code for interrupt handlers, device drivers.
 \item Kernel code is different from normal programs: \\
-		No use of system call in kernal code, can't use normal libraries, no normal I/O (must do I/O itself).
-\item \textbf{Implementing OS}: Historically in assembly/machine, now in HLLs (C, C++). Heavily hardware achitecture dependent. Challenges include complexity, debugging, codebase size.
+		No use of system call in kernel code, can't use normal libraries, no normal I/O (must do I/O itself).
+\item \textbf{Implementing OS}: Historically in assembly/machine, now in HLLs (C, C++). Heavily hardware architecture dependent. Challenges include complexity, debugging, codebase size.
 \end{itemize}
 
 \subsubsection{OS Structures}
@@ -226,7 +228,7 @@ An OS is a program that acts as an intermediary between a computer user and the 
 \item \textbf{Virtual Machine}: Software emulation of hardware. 
 \item \textbf{Virtualization of underlying hardware}: Illusion of complete hardware to level above. (Memory, CPU etc.) Normal OS can then run on top of virtual machine. Aka \textbf{Hypervisor}. 
 	\begin{itemize}
-	\item \textbf{Type 1 Hypervisor}: Provides individual virtual machines to guests OSes (e.g. IBM VM/370)
+	\item \textbf{Type 1 Hypervisor}: Provides individual virtual machines to guest OSes (e.g. IBM VM/370)
 	\item \textbf{Type 2 Hypervisor}: Runs in host OS, Guest OS runs inside Virtual Machine, (e.g. VMware)
 	\end{itemize}
 \end{itemize}
@@ -289,13 +291,13 @@ Hence, portion of memory space used as \textbf{stack memory} that stores executi
 \item \textbf{Memory region to store information function invocation.}
 \item \textbf{Stack Frame}: Describes information of function invocation.
 \item Stack frame added on top when function is invoked, stack "grows", removed from top when function call ends, stack "shrinks".
-\item Stack Frame contains return PC address of caller, arguments for function, storage for local variables, add on.... (AKSJKFGJHKLJHD)
+\item Stack Frame contains return PC address of caller, arguments for function, storage for local variable, etc.
 \item \textbf{Stack Pointer}: Indicates top of stack region (first unused memory location). Usually indicated in specialized register.
 \end{itemize}
 
 
 \subsubsection{Function Call Convention: Stack Frame Setup / Teardown}
-There are different ways to setup stack frame, known as function call convention, differences about (info stored in frame, which portion of stack fram prepared \& cleared by caller / callee etc). Dependent on hardware \& programming language. \\
+There are different ways to setup stack frame, known as function call convention, differences about (info stored in frame, which portion of stack frame prepared \& cleared by caller / callee etc). Dependent on hardware \& programming language. \\
 \medskip
 \textbf{Example Scheme:}
 \centerline{\includegraphics[width=1\linewidth]{stackSetupTeardown}}
@@ -346,7 +348,7 @@ Most programming languages allow dynamically allocated memory, i.e. acquire memo
 \textbf{Process State}:
 \begin{itemize}
 \item Processes require a process state as indication of execution status. (Running / Not Running / Ready to Run etc.)
-\item \textbf{Process Model}: Set of states and transitions, describes behaviours of a process.
+\item \textbf{Process Model}: Set of states and transitions, describes behaviors of a process.
 \item \textbf{Global View of Process States}: Given $n$ processes, \\
 - With 1 CPU, $\leq$ 1 process in running state, 1 transition at a time. \\
 - With $m$ CPUs, $\leq$ m processes running state, possibly parallel transitions.
@@ -421,7 +423,7 @@ int main( int argc, char* argv[] )
 \subsection{The Master Process: \code{init}}
 \begin{itemize}
 \item Every process has parent process, consider special initial process.
-\item \textbf{\code{init} process}: Created in kernel at boot up time, trad. has PID = 1. 
+\item \textbf{\code{init} process}: Created in kernel at boot up time, usually PID = 1. 
 \item \textbf{Purpose}: Watches and respawns other (critical) processes where needed.
 \item \code{fork()} creates the process tree, where \code{init} is the root process.
 \end{itemize}
@@ -557,7 +559,7 @@ A multiprogrammed computer frequently has multiple processes/threads computing f
 \item \textbf{Scheduler}: Part of OS to decide which process to run next.
 \item \textbf{Scheduling Algorithm}: Algo used.
 \item \textbf{Scheduling Problem}: Choosing, ready process $>$ available CPUs.
-\item In addition to picking right process, need \textbf{efficient use of CPU} as process switching is expensive. (Switch user to kernel mode, save state of process, memory map , memory cache may need to reload, etc.)
+\item In addition to picking right process, need \textbf{efficient use of CPU} as process switching is expensive. (Switch user to kernel mode, save state of process, memory map, memory cache may need to reload, etc.)
 \item \textbf{I/O Input/Output} (disk or network): When process enters blocked state waiting for external device to complete work.
 \end{itemize}
 
@@ -584,7 +586,8 @@ A multiprogrammed computer frequently has multiple processes/threads computing f
 - \textit{Balance}: All parts of computing system utilized.
 \item \textbf{Batch Systems}: \\
 - \textit{Throughput}: Maximize jobs per hour. \\
-- \textit{Turnaround time}: Minimize time btwn. submission \& termination. \\
+- \textit{Turnaround time}: Minimize time btwn. submission \& termination. \\ 
+- \textit{++(Waiting Time)}: Related to turnaround, time waiting for CPU \\
 - \textit{CPU utilization}: keep CPU busy all the time.
 \item \textbf{Interactive Systems}: \\
 - \textit{Response time}: respond to requests quickly. \\
@@ -597,8 +600,8 @@ A multiprogrammed computer frequently has multiple processes/threads computing f
 \subsection{Concurrent Execution}
 \begin{itemize}
 \item \textbf{Concurrent Processes}: Logical concept to cover multitasked processes.
-\item \textbf{Virtual parallelism}: Illusion of parallelism (psedoparallelism)
-\item \textbf{Physical parallelism}: Multiple CPUs/Cores, mutliple parallel exec
+\item \textbf{Virtual parallelism}: Illusion of parallelism (pseudo-parallelism)
+\item \textbf{Physical parallelism}: Multiple CPUs/Cores, multiple parallel exec
 \end{itemize}
 
 
@@ -677,7 +680,7 @@ Scheduling algoritms generally easier to understand and implement, with variants
 \columnbreak
 
 \section{Scheduling in Interactive Systems}
-\textbf{Criteria}: Response time (time btwm request \& response). Predictability (Less variation in response time). \\
+\textbf{Criteria}: Response time (time btwn request \& response). Predictability (Less variation in response time). \\
 \textbf{Environment}: User interaction. Preemptive scheduling used to ensure good response time. Scheduler needs to run periodically. \\
 \textbf{Ensuring Periodic Scheduler}: Use timer \textbf{interrupts} (based on hardware clock). OS ensures timer interrupt cannot be intercepted by any other program. Interrupt handle \textbf{invokes scheduler}.
 \begin{itemize}
