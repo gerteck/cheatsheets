@@ -198,7 +198,7 @@ Encouraged to read ahead based on schedule before the lecture.
 		\item seek time: moving arms to position disk head on track.
 		\item rotational delay: waiting for block to rotate under head.
 		\item transfer time: actually moving data to/from disk surface.
-		\item \textbf{access time}: = seek time + rotational delay + transfer time. (CPT considered negligible). 
+		\item \textbf{access time = seek time + rotational delay + transfer time. (CPT considered negligible). }
 	\end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{diskAccessTime}}
 \item \textbf{Concept of Sequential vs random I/O.} \\
@@ -712,6 +712,107 @@ Select rows from Relation $R$ that satisfy selection predicate $p$
 \item \textbf{Possible strategies to evaluate Disjunctive / Non-Disjunctive predicates}
 \item File scan, Use both (fetch RID, take Union), Use B+ tree etc.
 \end{itemize}
+
+
+\section{Clustered vs. Unclustered Index (B+Tree)}
+\begin{itemize}
+\item \textbf{Clustered Index}: Order of its data entries is the same or `close to' order of the data records (in pages).
+\item Layman Terms: If clustered, if we do a file scan, records will be in order with respect to the attribute.
+\item An index using Format 1 for data entries is a clustered index.
+\item Logically, at most one clustered index for each relation.
+\item \textbf{Implication}: Tutorial 3 Q4: When doing index scan with RID lookup, for clustered index, RID page I/O incurred will be the number of leaf pages.
+
+\item \textbf{Unclustered Index}: Order of data entries not same as actual order of data records. To retrieve each tuple / entry, need to do separate RID lookup / page retrieval. 
+\item \textbf{Implication}: Tutorial 3 Q4: When doing index scan with RID lookup, for unclustered index, RID page I/O incurred will be number of pages of tuples ($>$ no. of leaf pages.
+\end{itemize}
+\centerline{\includegraphics[width = 0.95\linewidth]{clusteredIndex}}
+
+\section{Dense vs. Sparse Index (B+Tree)}
+\begin{itemize}
+\item \textbf{Dense index}: there is an index record for every search key value in the data.
+\item The total number of records in the index table and main table are the same.
+\item Gives quick access to records, effective for range searches as each key value has an entry, but takes more storage, and insertion and deletion higher overhead.
+\item For \textit{unclustered index}, must be dense.
+
+\item \textbf{Sparse index}: Some search key value has no have index record. (Main table index points records in specific gap (range of space where index resides in).
+\item Uses less storage space, lessen effect of insert/delete on index maintenance operations. Time to locate data in index table more, and sparse index records need to be clustered.
+\item For sparse index, records need to be clustered (in order).
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{denseIndex}}
+\medskip
+\centerline{\includegraphics[width = 0.8\linewidth]{denseIndex2}}
+\medskip
+\centerline{\includegraphics[width = 0.8\linewidth]{clusteredIndex2}}
+
+\vfill \null
+\columnbreak
+
+\section{PostgreSQL: Buffer Replacement Policy}
+PostgreSQL: Open source relational database management system.
+
+\begin{itemize}
+\item \textbf{Port Number}: By default, server listens on port number 5432 for client connections.
+\item PostgreSQL uses variant of Clock policy as default buffer replacement policy. 
+\end{itemize}
+
+\subsection{Overview of PostgreSQL}
+\subsubsection{Shared-memory Data Structures}
+\begin{itemize}
+\item As multiple backend server processes may access database at same time, access to shared-memory structures (buffer pool) controlled to ensure consistent access and updates. Use \textbf{locks} (spin locks, light-weight locks) to control access.
+\item \textbf{Locking Protocol}: Before accessing shared-memory structure, process acquire lock, upon completion of access, process release lock.
+\end{itemize}
+
+\subsubsection{Buffer Manager}
+\begin{itemize}
+\item Two main types of Buffers used: Shared Buffer, Local Buffer.
+\item \textbf{Shared Buffer}: Used for holding page from globally accesible relation. 
+\item \textbf{Local Buffer}: Usef for holding page from temporary relation locally accessible to specific process.
+\end{itemize}
+
+\subsubsection{Management of Shared Buffers}
+\begin{itemize}
+\item Initially, all shared buffers maintained in free list.
+\item \textbf{Free list}: Buffer in free list if contents invalid. When new buffer needed, check if buffer available in free list, returned to satisfy buffer request.
+\item If no available buffer, use \textbf{buffer replacement policy} to select victim buffer for eviction to make room for new request. (Use variant of Clock algorithm)
+
+\item \textbf{Record Deleted/Modified}: Not immediately removed/changed. Multiple versions of record maintained to support \textbf{multiversion concurrency control}.
+\item \textbf{Vacuuming Process}: Periodically, vacuuming process runs to remove obsolete versions of records that can be safely deleted from relations. If entire page of records removed, buffer holding page becomes invalid, returned to free list.
+\item \textit{bgwriter}: background writer process that writes out dirty shared buffers to partly help speed up buffer replacement.
+\end{itemize}
+
+\subsubsection{PostgreSQL Buffer Pool}
+\begin{itemize}
+\item \textbf{Buffer Pool}: Implemented as array of disk blocks, index to each array entry referred to a \code{buffer_id}, each disk block location identified by buffer tag.
+\item Pin count for each buffer frame known as reference count \code{refcount}.
+\item Each buffer frame associated with a buffer descriptor, stores metadata about contents.
+\item Given a buffer tag, hash-based buffer table is used to efficiently locate buffer id of buffer frame that stores the disk block (corresponding to given tag) if disk block resident in buffer pool.
+\end{itemize}
+
+\columnbreak
+
+\begin{itemize}
+\item PostgreSQL’s buffer manager implementation uses various spin locks and light-weight locks to control access to its shared-memory data structures. For example, the metadata for the Clock replacement policy is stored in a data structure pointed to by a global variable named StrategyControl which consists of a spin lock named \code{buffer_strategy_lock}. This spin lock is used to control access to various data structures (e.g., free list) by using the functions SpinLockAcquire and SpinLockRelease, respectively, to acquire and release the spin lock \code{buffer_strategy_lock}.
+\end{itemize}
+
+\subsection{Implementing LRU Strategy}
+\begin{itemize}
+\item Simple approach to implement LRU Policy: \textbf{Stack LRU} Method.
+\item Use doubly Linked List to link up buffer pages. Page closer to the front is more recently used, than page closer to tail of list.
+\item Whenever buffer page referenced (``Used''), moved to front of list. 
+\item When replacement page sought from list, \textbf{unpinned} buffer page closest to tail (LRU) selected for eviction.
+\item \textbf{Whenever buffer accessed, position needs to be adjusted}:
+\begin{enumerate}
+\item If accessed page in buffer pool already, containing buffer needs to be moved to top of stack.
+\item If accessed page not in buffer pool, \textbf{free buffer available} to hold page, selected buffer from free list needs to be inserted onto top of stack.
+\item If accessed page not in buffer pool, \textbf{free list empty}, selected victim buffer moved from current stack position to top of the stack.
+\item If buffer in buffer pool \textbf{returned to the free list}, buffer removed from stack.
+\end{enumerate}
+
+\end{itemize}
+
+
+
+
 
 
 \end{multicols*}
