@@ -807,8 +807,73 @@ PostgreSQL: Open source relational database management system.
 \item If accessed page not in buffer pool, \textbf{free list empty}, selected victim buffer moved from current stack position to top of the stack.
 \item If buffer in buffer pool \textbf{returned to the free list}, buffer removed from stack.
 \end{enumerate}
-
 \end{itemize}
+
+\vfill \null 
+\columnbreak
+
+\vfill \null 
+\columnbreak
+
+\section{5. Query Evaluation: Projection \& Join}
+
+\section{Projection: $\pi_{A1,...,Am}(R)$}
+\begin{itemize}
+\item $\pi_{L}(R)$ projects columns given by list L from relation R.
+\item $\pi^*_{L}(R)$ same as $\pi_{L}(R)$ but preserves duplicates.
+\item Example: \code{select distinct age from R}
+\end{itemize}
+
+\subsection{Projection Operation  $\pi_{A1,...,Am}(R)$}
+\begin{itemize}
+\item \textbf{Projection involves two tasks}: 
+\begin{enumerate}
+\item Remove unwanted attributes. (from tuples)
+\item Eliminate any duplicate tuples produced.
+\end{enumerate}
+\item \textbf{Two approaches to Project}:
+\begin{enumerate}
+\item Projection based on \textbf{sorting}.
+\item Projection based on \textbf{hashing}.
+\end{enumerate}
+\end{itemize}
+
+\subsection{Sort-based Approach}
+
+\subsubsection{Simple Sort-based Approach}
+\begin{itemize}
+\item Treat each step as a black box, push tuples through pipeline to sort.
+\end{itemize}
+\centerline{\includegraphics[width = 0.9\linewidth]{naivesort}}
+\medskip
+\centerline{\includegraphics[width = 0.9\linewidth]{naivesortcost}}
+
+\subsubsection{Optimized Sort-based Approach}
+\begin{itemize}
+\item By opening black box and examining the sort algorithm (external merge sort), we can optimize the sort-based approach.
+\end{itemize}
+\centerline{\includegraphics[width = 0.75\linewidth]{optimizedsort}}
+
+\subsection{Hash-based Approach}
+\begin{itemize}
+\item For  $\pi_{L}(R)$, we build a \textbf{main-memory hash table} T to detect and remove duplicates.
+\item Cost = |R| if T fits in main memory.
+\item \textbf{Two Phases}: Partitioning phase and Duplicate Elimination phase.
+\end{itemize}
+\centerline{\includegraphics[width = 0.8\linewidth]{hashBasedPhases}}
+\smallskip
+
+\textbf{Overview of Hash-based Approach}
+\centerline{\includegraphics[width = 1\linewidth]{hashBased}}
+\smallskip
+
+\textbf{Overview of Partition Phase, Duplicate Elimination Phase}
+\centerline{\includegraphics[width = 1\linewidth]{hashBasedPhases2}}
+
+\subsubsection{Illustration of Partitioning Phase}
+\centerline{\includegraphics[width = 1\linewidth]{partitioningPhase}}
+
+
 
 
 
