@@ -693,10 +693,13 @@ Scheduling algoritms generally easier to understand and implement, with variants
 \subsection{RR: Round Robin}
 \begin{itemize}
 \item Preemptive ver. of FCFS.
-\item \textbf{Tasks stored in FIFO queue}. Each process assigned time quantum, if still running at end, CPU preempted, given to another process. Task placed at end of queue to wait for another turn.
-\item \textbf{Response time guarantee}: $n$ tasks, $q$ quantum. Time before task gets CPU bounded by $(n-1)q$.
+\item \textbf{Tasks stored in FIFO queue}. Each process assigned time quantum.
+\item If task still running at end of quantum / blocked / gives up CPU voluntarily, CPU preempted, given to another process. 
+\item Task placed at end of queue to wait for another turn.
+\item \textbf{Response time guarantee}: $n$ tasks, $q$ quantum. \\
+Time before task gets CPU bounded by $(n-1)q$.
 \item \textbf{Evaluation}: \\
-- Setting quantum too short cause many process switches, lower CPU efficiency \\
+- Too short quantum $=$ many process switches, lower CPU efficiency \\
 - Too long quantum causes poor response to short interactive requests.
 \end{itemize}
 
