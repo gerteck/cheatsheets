@@ -696,7 +696,6 @@ Select rows from Relation $R$ that satisfy selection predicate $p$
 \end{itemize}
 
 \subsection{Cost of Evaluation of Selection Predicate $p$}
-
 \centerline{\includegraphics[width = 0.9\linewidth]{notation}}
 
 \subsection{Cost of $B^+$-tree Index Evaluation of $p$}
@@ -856,29 +855,128 @@ PostgreSQL: Open source relational database management system.
 
 \subsection{Hash-based Approach}
 \begin{itemize}
-\item For  $\pi_{L}(R)$, we build a \textbf{main-memory hash table} T to detect and remove duplicates.
-\item Cost = |R| if T fits in main memory.
+\item For  , we build a \textbf{main-memory hash table} T to detect and remove duplicates.
+\item Cost = $|R|$ if T fits in main memory.
 \item \textbf{Two Phases}: Partitioning phase and Duplicate Elimination phase.
 \end{itemize}
-\centerline{\includegraphics[width = 0.8\linewidth]{hashBasedPhases}}
+\centerline{\includegraphics[width = 1\linewidth]{hashBasedPhases}}
 \smallskip
 
-\textbf{Overview of Hash-based Approach}
+\subsubsection{Overview of Hash-based Approach}
 \centerline{\includegraphics[width = 1\linewidth]{hashBased}}
 \smallskip
 
-\textbf{Overview of Partition Phase, Duplicate Elimination Phase}
 \centerline{\includegraphics[width = 1\linewidth]{hashBasedPhases2}}
 
-\subsubsection{Illustration of Partitioning Phase}
-\centerline{\includegraphics[width = 1\linewidth]{partitioningPhase}}
+\subsubsection{Hash-based Approach Partition Overflow}
+\begin{itemize}
+\item \textbf{Partition Overflow Problem}: When hash table for $\pi^*_{L}(R)$ (Partitioned table) is larger than available memory buffers.
+\item Recursively apply hash-based partitioning to the overflowed partition.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{overflow}}
+
+\subsubsection{Notation}
+\centerline{\includegraphics[width = 0.9\linewidth]{notation}}
 
 
+\subsubsection{Illustration of Partitioning, Duplicate Elimination Phase}
+\centerline{\includegraphics[width = 1\linewidth]{partitioningDuplicateEliminationPhase}}
+
+\subsubsection{Analysis of Hash-based Approach}
+\begin{itemize}
+\item Approach is effective if \textbf{B is large relative to $|R|$.}
+\end{itemize}
+\centerline{\includegraphics[width = 0.9\linewidth]{hashAnalysis}}
 
 
+\subsection{Sort-based vs. Hash-based Analysis}
+\centerline{\includegraphics[width = 0.9\linewidth]{sortvsHash}}
+
+\subsection{Projection Operation: using Indexes}
+\begin{itemize}
+\item If there is an index whose search key ($+$ include columns) contains all wanted attributes, \textbf{replace table scan with index scan}.
+\item If index ordered (B$+$-tree), search key includes wanted attributes as prefix, scan data entries in order, compare adjacent duplicate data entries.
+\item E.g. B$+$-tree index on $R$ with key (A, B) to evaluate query $\pi_{A}(R)$.
+\end{itemize}
 
 
+\section{Join: $R_{\bowtie_\theta}S$}
+\begin{itemize}
+\item Join is where there is match between values of specified columns. 
+\item Two-table joins, multiple-table joins, self-joins etc.
+\item Example: \code{SELECT * FROM customer c, orders o WHERE c.name = o.name;}
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{joinOperation}}
 
+\subsection{Join Algorithms}
+\begin{itemize}
+\item \textbf{Iteration-Based}: Block nested loop.
+\item \textbf{Index-Based}: Index nested loop.
+\item \textbf{Partition-Based}: Sort-merge join, hash join.
+\end{itemize}
+
+\subsubsection{Join Algorithms Analysis}
+\begin{itemize}
+\item \textbf{Factors to Consider}: 
+\item \textit{Type of join predicates} (equality predicates e.g. $R.A_i = S.B_j$), (inequality predicates e.g. $R.A_i < S.B_j$)
+\item \textit{Size of join operands}
+\item Available \textit{buffer space}, available \textit{access methods}.
+\item Given a join $R_{\bowtie_\theta}S$, R is \textbf{outer relation}, S is \textbf{inner relation}
+\end{itemize}
+
+\subsection{Tuple/Page-based Nested Loop Join}
+\begin{itemize}
+\item Simplest join algo is \textbf{tuple-at-a-time} nested loop evaluation. We scan outer relation R, and for each tuple in R, scan inner relation S.
+\item Simple refinement is \textbf{join page-at-a-time}. For each page of R, retrieve each page of S, and write out matching tuples.
+\item Importance of page-orientated operations for minimizing disk I/O.
+\item \textbf{Observation}: Choose outer relation R to be smaller of two relations.
+\end{itemize}
+\smallskip
+\centerline{\includegraphics[width = 1\linewidth]{nestedJoinLoop}}
+
+\columnbreak
+
+\subsection{Block Nested Loop Join}
+\begin{itemize}
+\item Simple nested loops join algo does not effectively utilize buffer pages.
+\item If enough memory, read whole of R (smaller relation), use one of extra buffer page to scan larger relation S. Last buffer page used as output buffer. Each relation scanned just once, optimal!
+\item \textbf{Generalization}: Break relation R into \textit{blocks} that can fit into available buffer pages, and scan all of S for each block of R. 
+\item $R$ is \textbf{outer relation}, as it is scanned only once. $S$ is \textbf{inner relation}, scanned multiple times.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{blockedNestedLoop}}
+
+\subsection{Index Nested Loop Join}
+\begin{itemize}
+\item If exists index on one of the relations on the join attribute(s), take advantage by making \textbf{indexed relation to be inner relation (S)}.
+\item For each tuple in R, use index to retrieve matching tuples of S.
+\item Cost of scanning R is M, and cost of retrieving matching S tuples depends on kind of index and number of matching tuples.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{indexNestedLoop}}
+
+\columnbreak
+
+\subsection{Sort-Merge Join}
+\begin{itemize}
+\item Basic idea: Sort both relations on join attribute and look for qualifying tuples by essentially merging the two relations.
+\item Exploit partitioning, compare R tuples with only S tuples in same partition (rather than all S tuples), avoid enumeration of cross-product of R \& S. (Works only for equality join conditions.)
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{sortMergeJoin}}
+\centerline{\includegraphics[width = 1\linewidth]{sortMergeJoin2}}
+\centerline{\includegraphics[width = 1\linewidth]{sortMergeJoin3}}
+
+\columnbreak
+
+\subsection{Hash Join}
+\begin{itemize}
+\item Hash join algorithm, like sort-merge join, identifies partitions in R \& S in partitioning phase, and compares tuples in corresponding partitions.
+\item \textbf{Idea}: Unlike sort-merge join, use \textbf{hashing to identify partitions} over sorting. Hash both relations on join attribute using \textbf{same hash function $h$}. 
+\item Partitioning (building) phase of hash join similar to partitioning in hash-based projection.
+\end{itemize}
+
+
+\subsection{Grace Hash Join}
+\centerline{\includegraphics[width = 1\linewidth]{hashJoin}}
+\centerline{\includegraphics[width = 1\linewidth]{hashJoin2}}
 
 \end{multicols*}
 \end{document}
