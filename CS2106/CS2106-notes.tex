@@ -546,8 +546,14 @@ int main( int argc, char* argv[] )
 
 \subsubsection{REFER TO TEXTBOOK:}
 \begin{itemize}
-\item Modern Operating System (3rd Edition): Section 2.1
-\item Operating System Concepts (8th Edition): Section 3.1
+\item \textbf{Modern Operating System (3rd Edition)}
+\begin{itemize}
+\item Section 2.1: Processes
+\item Section 2.4: Process Scheduling
+\item Section 2.2: Threads
+\end{itemize}
+\item \textbf{Operating System Concepts (8th Edition)}
+\item Section 3.1
 \end{itemize}
 
 \vfill \null
@@ -756,16 +762,139 @@ Hence, solution to set \textbf{multiple priority queues}.
 
 \columnbreak
 
-\section{4.}
+\section{4. Threads}
+In trad. OS, each process has an address space and single thread of control. Desirable instead to have multiple threads of control in the same address space running in quasi-prallel, as though (almost) separate processes (except for shared address space).
+
+\subsubsection{Motivation for Thread}
+\begin{itemize}
+\item \textbf{Process is Expensive}: Process creation under \code{fork()} model duplicate memory space, most of process context.
+\item Context switch also requires overhead, save/restore process info.
+\item \textbf{Communication}: Hard for independent processes to communicate with each other. Independent memory space, no shared variable, requires IPC.
+\item \textbf{Thread}: "quick hack" into popular mechanism. 
+\item \textbf{Basic Idea}: Traditional process only single thread of control. (Only one instruction executing at a time). 
+\item Add more threads (of control) to same program, multiply parts of programs executing at same time conceptually.
+\end{itemize}
+
+\subsection{Process and Thread}
+\begin{itemize}
+\item \textbf{Multi-threaded Process}: Single process can have multiple threads.
+\item Threads in same process share same: \textit{Memory Context} (text, data heap), \textit{OS Context} (Process id, files etc.)
+\item \textbf{Unique info per thread}: Id (thread id), Registers (GPR and special), "Stack".
+\item \textbf{Process Context Switch vs. Thread Switch}: \\
+- \textit{Process Context Switch}: Switch OS, Hardware, Memory Context.\\
+- \textit{Thread Switch (same process)}: Just hardware context (registers, stack). \\
+- Thread is \textbf{lightweight process}.
+\end{itemize}
+\centerline{\includegraphics[width=0.5\linewidth]{ProcessThread}}
+
+\subsubsection{Threads: Benefits}
+\begin{itemize}
+\item \textbf{Resource Sharing}: Ability for parallel entities to share address space and all of data. No need add. mechanism for passing info.
+\item \textbf{Economy}: Threads are lighter weight than process, faster to create and destroy. Less resources to manage.
+\item \textbf{Responsiveness}: No performance gain when all CPU bound, but when substantial computing and substantial I/O, threads allows activities to overlap, speeding up application.
+\item \textbf{Scalability}: Multithreaded program can take advantage of multiple CPUs.
+\end{itemize}
+
+\subsubsection{Threads: Problems}
+\begin{itemize}
+\item \textbf{System Call Concurrency}:  Parallel execution of multiple threads: parallel system call possible. Need to guarantee correctness and determine correct behavior.
+\item \textbf{Process Behavior (OS dependent)}: Impact on process operations, (e.g. If one thread executes exec() / exit(), what about other threads / whole process).
+\end{itemize}
+
+\subsection{Thread Models (ways to support threads)}
+\begin{itemize}
+\item \textbf{User Thread}: Thread implemented as a \textbf{user library}. (Runtime system (in the process) will handle thread related operation.)
+\item Kernel not aware of threads in process.
+\item \textbf{Kernel Thread}: Thread implemented in the OS. Operation handled as system calls. 
+\item Kernel thread-level scheduling possible, where kernel schedule by threads instead of by process.
+\item Kernel may make use of threads for own execution.
+\item \textbf{Threads on Modern Processor}: Threads started as software mechanism, now exists hardware support on modern processors (multiple register sets on same core, \textit{simultaneous multi-threading (SMT)}, "Hyperthreading" on Intel).
+\end{itemize}
+
+\subsubsection{User Thread}
+\begin{itemize}
+\item \textbf{Advantages}: Can have any multithreaded program on any OS, thread operations are just library calls, generally more configurable and flexible (e.g. customized thread scheduling policy.)
+\item \textbf{Disadvantages}: OS not aware of threads, scheduling is performed at process level. (One thread blocked, process blocked, all threads blocked). Cannot exploit multiple CPUs.
+\end{itemize}
+
+\subsubsection{Kernel Thread}
+\begin{itemize}
+\item \textbf{Advantages}: Kernel can schedule on thread levels: $>$ 1 thread in same process can run simultaneouly on multiple CPUs.
+\item \textbf{Disadvantages}: Thread operations now system calls, slower and more resource intensive. Generally less flexible, used by all multithreaded programs, so too many / few features, overkill / not flexible enough for different programs.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{UserKernelThread}}
+
+\subsection{Hybrid Thread Model}
+\begin{itemize}
+\item Have both Kernel and User threads, where OS schedule on kernel threads only, and user thread binds to a kernel thread.
+\item Offers flexibility, limit concurrency of any process / user.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{hybridThreadModel}}
+
+\section{POSIX Threads}
+IEEE defined standards (1003.1c) for threads, called \textit{Pthreads}, most UNIX systems support it. Defines over 60 function calls.
+
+\subsection{Pthread}
+\begin{itemize}
+\item \textbf{POSIX}: Portable Operating System Interface. (family of standards)
+\item Defines the API as well as the behavior, but not implementation.
+\item pthread can be implemented as user / kernel thread.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{pthreadBasics}}
+\medskip
+\centerline{\includegraphics[width=1\linewidth]{pthreadExample}}
+
+\begin{lstlisting} [linewidth = 1.0 \linewidth],
+#include <stdio.h>
+#include <pthread.h>
+int globalVar;
+
+void* doSum( void* arg){ 
+    int i;
+    for (i = 0; i < 1000; i++) {
+        globalVar++; }
+}
+
+
+int main() {
+    pthread_t tid[5]; //5 threads id
+    int i;
+
+    for (i = 0; i < 5; i++) {
+        pthread_create( &tid[i], NULL, doSum, NULL ); }
+
+    //Wait for all threads to finish
+    for (i = 0; i < 5; i++) {
+        pthread_join( tid[i], NULL ); }
+
+    printf("Global variable is %i\n", globalVar);
+    return 0;
+}
+\end{lstlisting}
+
+\centerline{\includegraphics[width=1\linewidth]{pthreadSync}}
+
+\columnbreak
+
+\subsubsection{Summary of Pthread}
+\begin{itemize}
+\item \textbf{All Pthread threads have certain properties}: each one has identifier, set of registers (including program counter), set of attributes which are stored in a structure.
+\item Attributes include stack size, scheduling params etc.
+
+\item \textit{pthread\_create call}: New thread created, returns thread identifier of newly created thread as function value.
+\item \textit{pthread\_exit}: Thread terminate by calling, stops thread and releases stack.
+\item \textit{pthread\_join}: Thread needing to wait for another thread to finish work and exit before continuing can call to wait for specific other thread to terminate. (TID) of thread to wait for given as parameter.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{pthreadFunctionCalls}}
 
 
 
 
+\vfill \null
+\columnbreak
 
-
-
-
-
+\section{5. Inter-Process Communication (IPC)}
 
 
 
