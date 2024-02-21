@@ -789,11 +789,7 @@ PostgreSQL: Open source relational database management system.
 
 \columnbreak
 
-\begin{itemize}
-\item PostgreSQL’s buffer manager implementation uses various spin locks and light-weight locks to control access to its shared-memory data structures. For example, the metadata for the Clock replacement policy is stored in a data structure pointed to by a global variable named StrategyControl which consists of a spin lock named \code{buffer_strategy_lock}. This spin lock is used to control access to various data structures (e.g., free list) by using the functions SpinLockAcquire and SpinLockRelease, respectively, to acquire and release the spin lock \code{buffer_strategy_lock}.
-\end{itemize}
-
-\subsection{Implementing LRU Strategy}
+\subsection{Implementing LRU Buffer Replacement Policy}
 \begin{itemize}
 \item Simple approach to implement LRU Policy: \textbf{Stack LRU} Method.
 \item Use doubly Linked List to link up buffer pages. Page closer to the front is more recently used, than page closer to tail of list.
@@ -808,10 +804,78 @@ PostgreSQL: Open source relational database management system.
 \end{enumerate}
 \end{itemize}
 
-\vfill \null 
+\subsection{Enhanced LRU (ELRU) Buffer Replacement Policy}
+\begin{itemize}
+\item A disadvantage of LRU is that a page that is accessed only once could evict a frequently accessed page from the buffer.
+\item To address this limitation, ELRU, which is a variant of LRU, keeps track of additional page access information to manage the eviction of buffer pages in two separate groups.
+\item In contrast to LRU which uses only the last access time of buffer pages, ELRU maintains the last two access times of buffer pages.
+\end{itemize}
+
+\subsubsection{Specifications of ELRU}
+\begin{itemize}
+\item Specifically, let $B = B_1 \cup B_2$ denote the set of unpinned buffer pages that can be selected for replacement.
+\item $B_1$  is the set of buffer pages that have been accessed only once.
+\item $B_2$  is the set of buffer pages that have been accessed at least twice. 
+\item The ELRU policy selects a replacement page from $B$ for replacement as follows. If $B_1$ is non-empty, ELRU selects the least recently accessed page in $B_1$
+ as the replacement page; i.e., ELRU applies the conventional LRU policy to select the replacement page from $B_1$. Otherwise, if $B_1$ is empty, ELRU selects the page in $B_2$
+ with the smallest second-last access time as the replacement page.
+\end{itemize}
+
+
+\null \null \null \null
 \columnbreak
 
-\vfill \null 
+\subsection{PostgreSQL:  Normal Buffer Replacement Strategy (Clock-Sweep)}
+\begin{itemize}
+\item \textbf{PostgreSQL standard Buffer Replacement Strategy}
+\item There is a "free list" of buffers that are prime candidates for replacement.
+In particular, buffers that are completely free (contain no valid page) are
+always in this list.  We could also throw buffers into this list if we
+consider their pages unlikely to be needed soon; however, the current
+algorithm never does that.  The list is singly-linked using fields in the
+buffer headers; we maintain head and tail pointers in global variables.
+(Note: although the list links are in the buffer headers, they are
+considered to be protected by the buffer\_strategy\_lock, not the buffer-header
+spinlocks.)  
+\item To choose a victim buffer to recycle when there are no free
+buffers available, we use a simple clock-sweep algorithm, which avoids the
+need to take system-wide locks during common operations.  It works like
+this:
+\item Each buffer header contains a usage counter, which is incremented (up to a
+small limit value) whenever the buffer is pinned.  (This requires only the
+buffer header spinlock, which would have to be taken anyway to increment the
+buffer reference count, so it's nearly free.)
+\item The "clock hand" is a buffer index, nextVictimBuffer, that moves circularly
+through all the available buffers.  nextVictimBuffer is protected by the
+buffer\_strategy\_lock.
+\end{itemize}
+
+\subsubsection{Clock-Sweep Buffer Replacement Algorithm}
+\begin{itemize}
+\item The \textbf{algorithm} for a process that needs to obtain a victim buffer is:
+\begin{enumerate}
+\item Obtain buffer\_strategy\_lock.
+\item If buffer free list is nonempty, remove its head buffer.  Release
+buffer\_strategy\_lock.  If the buffer is pinned or has a nonzero usage count,
+it cannot be used; ignore it go back to step 1.  Otherwise, pin the buffer,
+and return it.
+\item Otherwise, the buffer free list is empty.  Select the buffer pointed to by
+nextVictimBuffer, and circularly advance nextVictimBuffer for next time.
+Release buffer\_strategy\_lock.
+\item If the selected buffer is pinned or has a nonzero usage count, it cannot
+be used.  Decrement its usage count (if nonzero), reacquire
+buffer\_strategy\_lock, and return to step 3 to examine the next buffer.
+\item Pin the selected buffer, and return.
+\end{enumerate}
+\item (Note that if the selected buffer is dirty, we will have to write it out
+before we can recycle it; if someone else pins the buffer meanwhile we will
+have to give up and try another buffer.  This however is not a concern
+of the basic select-a-victim-buffer algorithm.)
+\end{itemize}
+
+
+
+\null \null \null \null
 \columnbreak
 
 \section{5. Query Evaluation: Projection \& Join}
