@@ -896,6 +896,92 @@ int main() {
 
 \section{5. Inter-Process Communication (IPC)}
 
+Given that processes frequently need to communicate, some need for communication, preferably in some well-structured way not using interrupts. Consider that cooperating processes have independent memory space, making IPC necessary.
+
+\section{Common Communication Mechanisms}
+
+\section{Shared Memory}
+\begin{itemize}
+\item \textbf{General Idea}: Process 1 creates shared memory region $M$, process 2 attaches $M$ to its own memory space. Both processes can now communicate using memory region $M$. Applicable to multiple processes.
+\item $M$ behaves similar to normal memory region, any writes to region can be seen by all other parties.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{sharedMemory}}
+\begin{itemize}
+\item \textbf{Advantages}:  \\
+- Efficient, as only initial steps of create \& attach $M$ involves OS. \\
+- Ease of use, as $M$ behaves as normal memory space, info of any size/type writable easily.
+\item \textbf{Disadvantages}: \\
+- Synchronization: Shared resource, need to sync access still. \\
+- Implementation is harder.
+\end{itemize}
+\centerline{\includegraphics[width=0.60\linewidth]{sharedMemoryExample}}
+
+
+\section{Message Passing}
+\begin{itemize}
+\item \textbf{General Idea}: Process 1 prepares, send message $M$. Process 2 receives it.
+\item Message sending / receiving usually provided as system calls.
+\item \textbf{Additional properties}: Naming (identify other party), synchronization (behavior of send/rec ops).
+\item \textbf{Msg} has to be stored in kernel memory space. Each send/rec op needs to go through OS (system call).
+\end{itemize}
+
+\subsubsection{Direct Communication (Naming Scheme)}
+\begin{itemize}
+\item Sender/Receiver of message \textbf{explicitly names other party}.
+\item E.g. \code{Send(P2, Msg)} \& \code{Receive(P1, Msg)}.
+\item One link per pair of process, need know identity of other party.
+\end{itemize}
+
+\subsubsection{Indirect Communication (Naming Scheme)}
+\begin{itemize}
+\item Messages sent / recieved from message storage, \textbf{aka mailbox / port}.
+\item E.g. \code{Send(MB, Msg)} \& \code{Receive(MB, Msg)}.
+\item One mailbox can be shared among a number of processes
+\end{itemize}
+
+\subsection{Synchronization Behaviors}
+\begin{itemize}
+\item \textbf{Blocking Primitives (Synchronous)}: Sender blocked until message received, receiver blocked until message has arrived.
+\item \textbf{Non-Block Primitives (Asynchronous)}: Sender resume operation immediately, receiver either receive, or indicate message not ready yet.
+\end{itemize}
+
+\begin{itemize}
+\item \textbf{Advantages}: \\
+- Portable, easily implemented on diff. processing env. \\
+- Easier synchronization: Esp. when synchronous primitive used.
+\item \textbf{Disadvantages}: \\
+- Inefficient, require OS intervention \\
+- Harder to use, less flexi, messages limited in size / format.
+\end{itemize}
+
+\section{Pipe (Unix Specific)}
+\begin{itemize}
+\item Unix process has 3 default communication channels: \\
+- \textbf{stdin} (standard in): Commonly linked to keyboard input. \\
+- \textbf{stderr} (standard error): Only used print out error msg. \\
+- \textbf{stdout} (standard out): Commonly linked to screen. 
+\end{itemize}
+\centerline{\includegraphics[width=0.90\linewidth]{piping1}}
+
+\begin{itemize}
+\item \textbf{Unix Shell Piping}: Unix shell provides \code{|} symbol to link input/output channels of one process to another, aka \textit{piping}.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{piping2}}
+
+\centerline{\includegraphics[width=0.8\linewidth]{piping3}}
+
+
+\section{Signal (Unix Specific)}
+\begin{itemize}
+\item Form of IPC. \textbf{Asynchronous notification} regarding an event. Sent to process / thread.
+\item Recipient of signal must handle signal by: Default set of handlers or user supplied handler.
+\item \textbf{Common UNIX signals}: Kill, Stop, Continue, Arithm. error etc.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{customHandler}}
+
+
+
 
 
 
