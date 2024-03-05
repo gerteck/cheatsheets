@@ -217,9 +217,9 @@ Can choose, feed any plaintext m, obtain corresponding ciphertext c (all encrypt
 \item \textbf{Note}: total break most difficult goal, since achieves all. Distinguishability weakest goal, design cryptosystem preventing weakest goal.
 \end{itemize}
 
-\section{Classicial Ciphers (Symmetric)}
+\section{1.1 Classicial Ciphers (Symmetric)}
 
-\subsection{1. Substitution Cipher}
+\subsection{1.1.1 Substitution Cipher}
 \begin{itemize}
 \item \textbf{Plaintext, ciphertext}: String over a set of symbols U.
 \item \textbf{Key}: Subsitution table S, 1-1 onto function from U to U.
@@ -229,7 +229,7 @@ Can choose, feed any plaintext m, obtain corresponding ciphertext c (all encrypt
 \item \textbf{Ciphertext only attack}: Vulnerable to frequency analysis attack, when plaintexts English sentences.
 \end{itemize}
 
-\subsection{2. Permutation Cipher (aka transposition cipher)}
+\subsection{1.1.2 Permutation Cipher (aka transposition cipher)}
 \begin{itemize}
 \item Groups plaintext into blocks of $t$ characters, applies secret permutation (1-1 onto function). Fails miserably on known-plaintext attack.
 \centerline{\includegraphics[width=0.4\linewidth]{permutationCipher}}
@@ -257,7 +257,7 @@ same.
 
 \columnbreak
 
-\subsection{3. One Time Pad}
+\subsection{1.1.3 One Time Pad}
 One-time pad (OTP) is an encryption technique that requires the use of a single-use pre-shared key that is larger than or equal to the size of the message being sent. 
 \begin{itemize}
 \item Plaintext is paired with a random secret key (known as one-time pad). 
@@ -271,7 +271,7 @@ One-time pad (OTP) is an encryption technique that requires the use of a single-
 \item \textbf{Security}: OTP leaks no information of plaintext, sometimes called "unbreakable". There is a exhaustive key for any English sentence. (Perfect Secrecy)
 \end{itemize}
 
-\section{Modern Ciphers (Symmetric)}
+\section{1.2 Modern Ciphers (Symmetric)}
 Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \\ - DES [Data Encryption Standard 1977] 
 \\ - RC4 [Rivest's Cipher 4 1987]
@@ -290,14 +290,14 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 - (NIST recommendation for AES).
 \end{itemize}
 
-\subsection{1. DES, AES and Exhaustive Search}
+\subsection{1.2.1 DES, AES and Exhaustive Search}
 \begin{itemize}
 \item \textbf{Exhaustive Search on DES}: Key length of DES is 56 bits. Previously, seemed infeasible, but has since become easily broken.
 \item \textbf{AES}: New standard for block cipher in 2000, AES block length is 127, key length can be 128, 192 or 256 bits. 
 \item Currently, no known attacks on AES. NSA classifies AES as ``Suite B Cryptography''.
 \end{itemize}
 
-\subsection{2. Block Cipher \& Mode-of-Operations}
+\subsection{1.2.2 Block Cipher \& Mode-of-Operations}
 \begin{itemize}
 \item \textbf{Block Cipher}: DES \& AES known as ``Block Cipher''. Block cipher designed for some fixed size input/output. \\
 - E.g. AES designed for 128 bits input/output.
@@ -338,7 +338,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \subsubsection{Python Programming: CBC}
 \centerline{\includegraphics[width=0.95\linewidth]{CBCProgramming}}
 
-\subsection{3. Stream Cipher and IVs}
+\subsection{1.2.3 Stream Cipher and IVs}
 \subsubsection{Stream Cipher}
 \begin{itemize}
 \item \textbf{Stream Cipher}: A symmetric key cipher where plaintext combined with \textbf{pseudorandom cipher digit stream (keystream)}.
@@ -362,9 +362,9 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \end{itemize}
 
 
-\section{Types of Attacks}
+\section{1.3 Types of Attacks}
 
-\subsection{Meet-In-The-Middle Attack (Double / Triple DES)}
+\subsection{1.3.1 Meet-In-The-Middle Attack (Double / Triple DES)}
 \subsubsection{Double / Triple DES}
 \begin{itemize}
 \item \textbf{Double / Triple DES}: To improve DES security, (DES weak as key length of 56 bits short), do multiple repeated encryption using different keys. A reason for this may be to utilize already existing suitable hardware to encrypt.
@@ -383,7 +383,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \centerline{\includegraphics[width=1\linewidth]{MITM}}
 
 
-\subsection{Padding Oracle Attack}
+\subsection{1.3.2 Padding Oracle Attack}
 \subsubsection{Padding Format}
 \begin{itemize}
 \item For fixed size blocks, e.g. block size of AES is 128bits (16 bytes), padding is needed to fit plaintext into last block.
@@ -431,7 +431,7 @@ Generally refers to schemes that use computer to encrypt / decrypt. E.g:
 \centerline{\includegraphics[width=0.8\linewidth]{paddingOracle1}}
 \centerline{\includegraphics[width=0.8\linewidth]{paddingOracle2}}
 
-\section{Cryptography Pitfalls}
+\section{1.4 Cryptography Pitfalls}
 \begin{itemize}
 \item Any secure encryption scheme can be vulnerable if not implemented or adopted properly. Examples include: \\
 \textbf{- Predictable Randomness}: Secret key generated predictable, compromise security \\
@@ -604,7 +604,7 @@ entropy much less than 20 $log_2(10)$.
 
 \section{3. Authenticity (Data Origin)}
 
-\subsection{Crypto Primitive: Public Key Cryptography}
+\subsection{3.1 Crypto Primitive: Public Key Cryptography}
 Public key crypto primitive includes public key encryption and signature. Goal is for confidentiality, and authenticity.
 \begin{itemize}
 \item Symmetric-key encryption uses same key for encrypt, decrypt.
@@ -656,18 +656,207 @@ Public key crypto primitive includes public key encryption and signature. Goal i
 \item Significant efforts to migrate current systems to post-quantum crypto (Quantum possibility to render RSA algo insecure by 2030). From 2016, NIST plans to choose standard by 2024. Four candidates for Rd 4 (2022). 
 \end{itemize}
 
-\subsection{Data Authenticity (Hash): Unkeyed Hash}
+\subsection{Summary of Data Authenticity}
+\null
+\centerline{\includegraphics[width=1\linewidth]{authSummary1}}
+\null
+\centerline{\includegraphics[width=1\linewidth]{authSummary2}}
+\null
+\centerline{\includegraphics[width=1\linewidth]{authSummary3}}
 
-\subsection{Data Authenticity (Mac): Keyed Hash}
+\vfill \null
 
-\subsection{Data Authenticity (Signature): Asymmetric Key}
+\columnbreak
 
-\subsection{Attacks \& Pitfalls}
+\subsection{3.2 Data Authenticity (Hash): Unkeyed Hash}
+\textbf{Follow Kerckhoff's Principle}: Adversary knows all the algorithms.
+
+\subsubsection{Hash}
+\begin{itemize}
+\item \textbf{A (cryptographic) hash} is a function that takes an arbitrary large message as input, and 
+outputs a fixed size (say 160 bits) digest.
+\item \textbf{Collision-resistant}:It is difficult for an attacker to find two different messages m1 , m2 that “hash” to the same digest.
+\item \textbf{One-way}:  A hash that is collision-resistant is also one-way, that is, given a digest d, it is difficult to find a 
+message m s.t. $h(m)=d$.
+\item Examples of non-secure hash algorithms: (taking selected bits from data, CRC checksum).
+\item \textbf{Popular Hash}: 
+	\begin{itemize}
+	\item \textbf{SHA-0, SHA-1/2/3}: SHA-1 popular standard producing 160-bits message digest, employed in SSL, SSH etc. In 2017, successful collision attack on SHA-1 found.
+	\item \textbf{MD5}: Produces 128-bit digest. However, algorithm that can find collisions have been found.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Application Scenario of Unkeyed Hash (no secret keys)}
+\begin{itemize}
+\item \textbf{Example:} Alice downloaded a software vlc-2.2.8-win32.exe from the web. Is the downloaded file authentic?
+\item Since the website is hosted with HTTPS protocol, Alice is being assured that the content displayed on the
+browser is from VLC and authentic.
+\item However, the downloading site is a 3rd-party, channel not secure. Possibility 3rd party website is malicious and giving out virus infested software.
+\item To verify that the file indeed original, after download, check the integrity by matching the “hash” of the file with the “SHA-256 checksum” displayed in the browser. If they match, file is intact. If not, file is corrupted.
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{unkeyedHash}}
+
+\begin{itemize}
+\item For the attacker, to find a $F'$ that has the same hash as F, this is known as \textbf{2nd preimage problem}.
+\item Although practically, some part of program needs to be same to be workable, we focus on modest goal of finding any file. If easiest goal preventable, so is harder goal. Hence, for hash, \textbf{easiest attack goal is ``collision''}.
+\item \textbf{A Hash function H() is called collision-resistant} if it is computationally difficult to 
+solve collision attack. More specifically, it is collision-resistant if no method can 
+significantly outperform birthday attack
+\end{itemize}
+
+\columnbreak
+
+\subsection{3.3 Data Authenticity (MAC): Keyed Hash}
+\begin{itemize}
+\item \textbf{MAC}: Message Authentication Code.
+\item \textbf{A keyed-hash} is a function that takes an arbitrary large message and a \textbf{secret key} as 
+input, and outputs a fixed size (say 160 bits) MAC.
+\item \textbf{Forgery-resistant}: Even with multiple valid pairs of messages and mac, difficult for attacker to forge the mac of 
+message not seen before.
+\item \textbf{Popular Keyed-Hash (MAC)}
+	\begin{itemize}
+	\item \textbf{CBC-MAC}: (based on AES under CBC mode)
+	\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{CBCMac}}
+	\begin{itemize}
+	\item \textbf{HMAC} : based on SHA (optional)
+	\end{itemize}
+\end{itemize}
+
+\subsection{Application Scenario for MAC (keyed hash)}
+\begin{itemize}
+\item In the previous example (on vlc), we assume secure channel to send the digest.
+\item In scenarios without secure channel to deliver the digest, we can protect the digest with the help of some secrets. 
+	\begin{itemize}
+	\item In the symmetric key setting, it is called the mac.
+	\item In the public key setting, it is called the digital signature
+	\end{itemize}
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{MACusecase}}	
+\begin{itemize}
+\item Attacker would need to forge valid pair of (message, mac).
+\item Typically, the mac is appended to F. Stored as a single file / transmitted together. (Aka authentication tag / code). Later, entity can carry out the verification process using secret key. 
+\end{itemize}
+
+\null
+\null\null\null
+\columnbreak
+
+\subsection{3.4 Data Authenticity (Signature): Asymmetric Key}
+\textbf{Public Key Version of MAC is called Signature}
+
+\begin{itemize}
+\item Here, the owner uses the private key to generate the signature. The public can
+use the public key to verify the signature.
+\item So, anyone can verify the authenticity of the data, but only the person who know
+the private key can generate the signature.
+\end{itemize}
+
+\centerline{\includegraphics[width=0.9\linewidth]{Signature}}	
+
+\begin{itemize}
+\item Similarly, computed signature appended to F and stored as a single file.
+\item ``Alice signs file F'': signature is computed using Alice's private key and F, then appended to F.
+\item \textbf{Authenticity'} of F can be verified by anyone, using the public key. The valid signature 
+can only be computed by someone who knows the private key. So, if it is valid, then F must be 
+authentic. 
+\item \textbf{Non-repudiation}:  Assurance that someone cannot deny previous commitments or 
+actions.
+\item	Can be seen as digital signature, certified authentic, on top of ease of key management.
+\item \textbf{Popular Signature Scheme}:
+	\begin{itemize}
+	\item A popular group of schemes use RSA for the sign/verify component: RSASSA-PSS, RSASSA-PKCS1: signature scheme based on RSA
+	\item DSA (Digital Signature Algorithm) is another popular standard whose security
+depends on discrete log.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Design of Signature Scheme}
+\textbf{Signature} need two things: \textbf{Unkeyed hash,  sign/verify algorithm}.
+\centerline{\includegraphics[width=0.9\linewidth]{signatureScheme}}	
+\begin{itemize}
+\item Hashing done not only for purpose of efficiency.
+\item For RSA-based signature, to be secure, hash must be carried out, e.g. if message very short, only 1 byte.
+\item For RSA, essentially, signature is the ``encrypted'' digest. During verification, decrypt to obtain digest and compare.
+\item \textit{Note}: Here, we use private key to encrypt. Previously, we used public key to encrypt. Role flipped.
+\end{itemize}
+
+
+\subsection{3.5 Attacks \& Pitfalls}
 
 \subsection{Birthday Attack on hash}
-\subsection{Design flaw: Using encryption for authenticity}
-\subsection{Time-Space tradeoff}
+Similar to ``exhaustive search'' in encryption. Birthday attack applicable to all hash functions, similar to how exhaustive search is on all encryption schemes.
 
+\begin{itemize}
+\item Hashes are designed to be \textbf{collision-resistant}, hard to find two diff. messages give same digest. However, subjected to birthday attack.
+\item We want to design a hash so that known attacks cannot do better than birthday attack.
+\item \textbf{Birthday attack} is an attack that occurs when someone exploits the mathematics behind the birthday problem in probability theory to launch a cryptographic attack. 
+\item The birthday problem states that in a group of 23 people, there's a 50\% chance that at least two will have the same birthday.
+\end{itemize}
+
+\subsubsection{Birthday Attack Formula}
+\begin{itemize}
+\item Suppose we have \textbf{$M$ messages}.
+\item Each value tagged with value randomly chosen, range of values = [1, T]. \textbf{($T$ is no. of values)}
+\item \textbf{If}:
+\end{itemize}
+\centerline{$M > 1.17 * T^{0.5}$}
+\begin{itemize}
+\item There is a probability higher than 0.5 that there is a pair of messages tagged with the same value.
+\item i.e. \textbf{$P$(collision) $>$ 0.5}.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{birthdayAttack}}
+\begin{itemize}
+\item In general, for a \textbf{set of $T$ values}, where \textbf{$M$ values chosen randomly},
+\item the probability \textbf{at least one value chosen more than once} (aka collision) approximately:
+\end{itemize}
+\centerline{$ p(M;T)\approx 1-e^{-M(M-1)/(2T)}$}
+\smallskip
+\centerline{$\approx 1-e^{-M^{2}/(2T)}$}
+\begin{itemize}
+\item NIST recommendation of key length: (2019-2030) \\
+Security Strength (key length for symmetric key): 112 \\
+Discrete Logarithm Key (length of digest): 224.
+\item The length of truncated message digests used shall be at least twice the desired security
+strength required for the digital signature. (Due to birthday attack)
+\end{itemize}
+
+\columnbreak
+
+\subsection{3.6 Additional Notes}
+\subsection{3.6.1 Design flaw: Using encryption for authenticity}
+\begin{itemize}
+\item Encryption is designed to provide confidentiality. It does not necessary guarantee 
+integrity and authenticity. 
+\item In example, XYZ wants to achieve “authenticity”, but wrongly employed encryption to achieve that. (Some encryption schemes also provide authenticity, but not all.)
+\item Note that a lot of details are omitted. Simply adding mac to the instructions is not sufficiently secure. To prevent 
+“replay” attack, “nonce” is required. Essentially, problem is about authenticity a communicating party, not just authenticating the data source. Hence a secure implementation would employ TLS (to be covered) first, and then send the instruction via TLS. Secure but less efficient.
+\end{itemize}
+
+\subsection{3.6.2 Password Vs. Secret Key in Crypto}
+\begin{itemize}
+\item Passwords are generated by human to be remembered by humans.
+\item Secret keys (e.g. 128-bit AES encrypt key, 1024-bit RSA key) machine generated, truly random, or derived based on data.
+\item However, sometimes password used as source for secret key. (E.g. use password to encrypt file). 
+\item Transformation is called \textbf{key derivation function}, (KDF)
+\end{itemize}
+
+
+\subsection{3.6.3 Hash Application: Password file protection)}
+\begin{itemize}
+\item Password file stores userid, password. 
+\item This file could be leaked (insider / accidental leakage, hack). Many well-known incidents where weak/unprotected password files leak, large number of passwords compromise. Desirable to add additional layer of protection on file. (See 2.1).
+\item \textbf{Password file should be ``hashed'' and ``salted''}.
+\item During authentication, password entered is hashed, and compared with value stored in password file.
+\item \textbf{Salt is important}: If no attacker can just hash a common password, and check to see if it matches any of the 100,000 leaked passwords. Salt (not secret) forces attacker to test one by one.
+\item Due to one-way property of hash, password file if leaked, is not as disasterous.
+\end{itemize}
+
+\null \null \null
+\columnbreak
+
+\vfill\null
+\columnbreak 
 
 
 
