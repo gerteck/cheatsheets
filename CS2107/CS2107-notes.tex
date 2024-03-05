@@ -858,6 +858,145 @@ integrity and authenticity.
 \vfill\null
 \columnbreak 
 
+\section{4. PKI and Channel Security}
+
+\subsection{PKI and Channel Security Summary}
+\centerline{\includegraphics[width=1\linewidth]{PKISummary}}	
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{PKISummary2}}	
+
+\section{4.1 Public Key Distribution}
+In order to use digital signature (compared to symmetric key, or unkeyed digest, or MAC, which require some secret key between sender and receiver), we still need a \textbf{secure way for receiver to obtain sender's public key}.
+
+\subsubsection{Why require Public Key Distribution?}
+\begin{itemize}
+\item While both need secure channel to distribute keys, it is easier to securely ``broadcast'' public key than to ``establish'' different symmetric key for every pair.
+\item With public key distributed, can use for encryption (\textbf{confidentiality}) and signature verification (\textbf{authenticity}).
+\item \textbf{Public Key}: Entity broadcasts public key to public billboard only once, and no need know existence of receiver while broadcasting.
+\item \textbf{Symmetric Key}: Entity needs different symmetric key per pair, and both entities need to interact to establish key.
+\end{itemize}
+
+\subsubsection{Key Distribution Methods}
+\begin{itemize}
+\item Public Announcement on existing mechanism (social media, name card)
+\item Hard coded in verification programs
+\item Publish in publicly available directory
+\item Public Key Infrastructure (PKI)
+\end{itemize}
+
+First few solutions have potential issues. How to verify information submitted is authentic, not everyone trusts the server, server may be overwhelmed, cannot handle load. Hence, \textbf{PKI} as a distributed way to broadcast the keys.
+
+\columnbreak
+
+\section{4.2 Public Key Infrastructure (PKI)}
+
+PKI is a standardized system that distribute public keys. To address limitation of the previous 
+methods. \\
+A main objective is to be deployable on a large scale. 
+\begin{itemize}
+\item \textbf{Two main components}: \textbf{Certificate}, and \textbf{Chain of trust of Certificate Authority (CA)}.
+\item “Public PKI” refer to the PKI we adopted in Internet for domain name, emails address etc. In short,  “PKI”. 
+\item “Private PKI” are systems for other applications, has own set of “CA”. (E.g. possible for company to set up a PKI for own usage).
+\end{itemize}
+
+\subsection{4.2.1 Certificate Authority (CA)}
+\begin{itemize}
+\item  \textbf{CA} is a trusted authority that manages a directory of public keys, issues certificates. An entity can request to add its public key. CA also has its \textbf{own public-private key}. 
+\item Anyone can send queries to search the directory. (Certificates facilitate checking/querying to be done in an offline manner.)
+\item Assume some CA’s public keys securely distributed via other means. (so, we still need a secure channel to distribute the CA’s public key, e.g. pre-loaded in OS, known as ``root CAs'').
+\item Not all
+CAs’ public keys are preloaded. Other CA’s public keys can be added through the chain-of-trust.
+\end{itemize}
+
+\subsection{4.2.2 Certificate }
+\begin{itemize}
+\item \textbf{Certificate} simply document signed by CA, containing an identity, associated public key, valid time window, and signature of CA. It binds the public key to the identity, and is certified by the signature.
+\item \textbf{Rationale: Certificate for distributing public keys}:
+\begin{itemize}
+\item `Lazy CA'': A certificate is simply a precomputed ``reply''. CA ``signs'' message beforehand, and pass to sender, and sender sends this signed message to receiver. This is called the certificate.
+\item Since no one except CA can produce the valid signature, authenticity of information in certificate as good as coming directly from the CA.
+\end{itemize}
+\item \textbf{A certificate} is a digital document that contains at least the following 4 main items:
+	\begin{enumerate}
+	\item The name(s), for e.g. alice@yahoo.com or bbc.com or *.bbc.com (note that *.bbc.com is a set of names)
+	\item The public key of the owner.
+	\item The time window that this certificate is valid. (Expiry)
+	\item The signature of the CA
+	\end{enumerate}
+\item \textbf{Other important info:} 
+	\begin{itemize}
+	\item Usage of certificate (type of name email or domain name, whether name can take role of a CA (chain of trust))
+	\item Digest (Fingerprint), for verification without using CA's public key
+	\item Meta data such as algo involved in verifying signature. (E.g. ECC / RSA, key length)
+	\end{itemize}
+\item Hence, from certificate, receiver can obtain sender's public key, and verify authenticity without connection to CA. 
+\item \textbf{Assumption}: Receiver trusts CA.
+\item \textbf{Standard}: E.g. ITU-T X.509 standardisation body, specifies format for certificates, certificate revocation lists, validation algorithm.
+\item Self-signed certificate by a CA is also called “root-certificate”
+\end{itemize}
+
+\columnbreak
+
+\subsection{4.2.3 Certificate Authority \& Trust Relationship}
+\begin{itemize}
+\item \textbf{Reponsibility of CA}: CA needs to verify information is correct, which could be costly. Getting certificate signed by reputable CA is not free.
+\item \textbf{Certificate Chain-of-trust}: There might be too many CAs. Root CA (preloaded public key) to CA\#1, to CA\#2 etc. is called \textbf{chain of trust}.
+\end{itemize}
+
+\subsection{4.2.4 Certificate Revocation}
+\begin{itemize}
+\item Non-expired certificates may be revoked due to different reasons: 
+	\begin{itemize}
+	\item Private key compromised, vulnerability in choosing key, admin left organization, Business entity closed, Issuing CA compromised. 
+	\end{itemize}
+\item Verifier needs to check if certificate is still valid, although the certificate not expired yet. (conflicting requirement!!)
+\item \textbf{Two different approaches to certificate revocation:}
+	\begin{itemize}
+	\item \textbf{Certificate Revocation List (CRL)}: CA periodically signs and publishes a revocation list. Need an online CRL Distribution Point.
+	\item \textbf{Online Certificate Status Protocol (OCSP)}: OCSP Responder validates a cert in question. Need an online OCSP Responder.
+	\end{itemize}
+\item Recommendation is for a user (e.g. browser) to periodically (say weekly) update its local cache of revocation list. The user does not need to online check whenever the user wants to verify a certificate.
+\end{itemize}
+
+\section{4.3 Limitations/Attacks on PKI}
+
+\subsection{4.3.1 Implementation Bugs}
+\begin{itemize}
+\item Same as many other secure designs, it is vulnerable if not implemented correctly
+\item \textbf{E.g.} Some browsers ignore substrings after null characters when displaying in address bar but include them when verifying certificate. (ww.nus.sg\textbackslash0.hacker123.com $\rightarrow$ displayed as www.nus.sg). Viewer thought connected via https to a, but in fact connected to b).
+\end{itemize}
+
+\subsection{4.3.2 Abuse by CA}
+\begin{itemize}
+\item Many CA’s. One could be malicious. Rogue CA can forge any cert.
+\item \textbf{E.g.}: Trustwave issue man-in-middle digital cert, Lenovo's SuperFish scandal.
+\end{itemize}
+
+\subsection{4.3.3 Social Engineering}
+\begin{itemize}
+\item Social engineering exploits \textbf{confusing naming convention}, so that the verifiers are tricked into using a wrong name.
+\item E.g, an attacker first rightfully registered for a domain name that resembles a targeted domain name. Next, used the registered domain to confuse the victim in phishing attack. 
+\item A few techniques to confuse the verifier: “Domain typosquatting”, “Homograph attack”, using sub-domain name. These attack are aka Domain spoofing, URL spoofing, Fake URL, etc
+\item \textbf{Typosquatting}: Register for domain name (e.g. one letter off), employ phishing attack. Rely on typos made by users when inputting website address, lead to any URL.
+\item \textbf{Sub-Domain}: E.g. rightful owner of 123.com can get sub.domain nus.edu.sg.123.com (*.123.com) 
+\end{itemize}
+
+
+
+
+
+\section{4.4. (basic) Authentication}
+
+\section{4.5 Key-exchange}
+
+\section{4.6 Authenticated Key-exchange}
+
+\section{4.7 Securing Communication Channel (Put all together)}
+
+
+
+
+
 
 
 
