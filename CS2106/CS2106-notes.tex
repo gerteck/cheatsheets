@@ -1186,13 +1186,117 @@ have some forms of synchronization mechanism
 \vfill \null
 \columnbreak
 
-\section{7. }
+\section{7. Memory Management}
+How OSes create abstractions from memory and how they manage them.
+
+\section{7.1 Memory}
+\begin{itemize}
+\item \textbf{Physical memory storage}: Random Access Memory (RAM) accessible in O(1), think as an array of bytes, with \textbf{physical address} as "unique index".
+\item \textbf{Contiguous memory region}: Interval of consecutive addresses.
+\item \textbf{Memory hierarchy}: OS abstracts hierarchy into useful mode, and manages it.
+\end{itemize}
+\textbf{Binding of Memory Address for executable:} Executable contains code (text), data layout (data), that has been compiled by the compiler into machine code. This is \textit{load and run} into the main memory when we execute. 
+\\ \textbf{Two types of data in a process}:
+\begin{enumerate}
+\item \textbf{Transient} Data: Valid for limited duration (e.g. function params, var)
+\item \textbf{Persistent} Data: Valid for duration of program unless removed (e.g. global var, dynamically allocated memory).
+\end{enumerate}
+
+\textbf{OS needs to perform the following tasks}:
+\begin{itemize}
+\item Allocate memory space to new processes
+\item Manage memory space for processes
+\item Protect memory space of processes from each other
+\item Provides memory related system calls to processes
+\item Manage memory space for internal use
+\end{itemize}
+
+\section{7.2 Memory Abstraction}
+Memory abstraction: presenting a logical interface for memory accesses.
+
+\subsection{No Memory Abstraction}
+\begin{itemize}
+\item \textbf{Pros}: Straightforward, fast, addresses fixed during compile time.
+\item \textbf{Cons}: Both processes assume they start at 0, resulting in conflicts. Hard to protect memory.
+\end{itemize}
+
+\subsubsection{Solution 1: Relocate Addresses}
+\begin{itemize}
+\item Recalculate memory references when process is loaded into memory, e.g. if process B is located at address
+8000, add 8000 to all memory addresses. 
+\item However, the loading time is slow and it is not easy to distinguish a memory address from any arbitrary integer.
+\end{itemize}
 
 
+\subsubsection{Solution 2: Base + Limit Registers}
+\begin{itemize}
+\item Use a special \textbf{Base Register} that stores the starting address of the process memory space. 
+All memory references will be offset by this register value. We then use a \textbf{Limit Register} to indicate the range, i.e. cannot access past the limit. 
+\item However, there is a lot of overhead since we need to perform an addition and comparison per access. This
+is later generalised in segmentation.
+\end{itemize}
 
 
+\subsubsection{Memory Abstraction: Physical and Logical Addresses}
+\begin{itemize}
+\item \textbf{Physical Address}: Generally, embedding \textbf{physical addresses} in programs is a bad idea.
+\item \textbf{Logical Address}: Thus let each process have a self contained, independent logical memory space that they will reference using logical addresses, then the OS will do the mapping.
+\item \textbf{Multitasking}: Need ways to partition memory, switch between processes using different memory partitions. 
+\item When physical memory is full, either remove partitions used by terminated processes or swap blocked process to secondary storage.
+\end{itemize}
 
 
+\section{7.3 Contiguous Memory Allocation}
+Allocating and managing \textbf{continuous} chunk of memory.
+
+\subsubsection{Assumptions}
+\begin{itemize}
+\item Each process uses a \textbf{memory partition} of a contiguous memory region.
+\item Physical memory \textbf{large enough} to contain processes with complete memory space.
+\end{itemize}
+
+\subsection{Fixed-Size Partitions}
+Physical memory split into fixed number of partitions, process occupies one.
+\begin{itemize}
+\item \textbf{Internal fragmentation}: When process does not occupy entire partition.
+\item \textbf{Easy to manage, fast to allocate}: Give any free partition, all same.
+\item \textbf{Need to fit largest process:} All smaller processes will waste space in partition large enough to accomodate largest process.
+\end{itemize}
+
+\subsection{Variable-Size (Dynamic) Partitions}
+Allocate just the right amount of space needed, forming \textbf{holes} (free memory spaces) between such partitions.
+\begin{itemize}
+\item \textbf{No internal fragmentation}: All processes get the exact space required.
+\item \textbf{External fragmentation}: When holes between processes become unusable, wasting space. Can be
+fixed via compaction, but slow (running processes need to stop). Better than internal, as internal is unreachable.
+\item \textbf{Maintain more info} in OS, \textbf{slower to allocate} to find appropriate region.
+\end{itemize}
+
+\subsection{Allocation Algorithms}
+Assuming the OS maintain a list of partitions and holes. Algorithm to locate partition of size N: Search for hole with size $M > N$. \textbf{Variants:}
+\begin{itemize}
+\item \textbf{First-Fit}: Take the first hole that is large enough. Split it into two, give the process the required space, and the remaining space is a new hole.
+\item \textbf{Best-Fit}: Take the smallest hole that is large enough.
+\item \textbf{Worst-Fit}: Take the largest hole. (Creates larger holes for next process).
+\item \textbf{Merging and Compaction}: Try to merge freed partition with adjacent holes. Can also do compaction i.e. move partitions around,
+but this is expensive and should not be done frequently.
+\end{itemize}
+\textbf{Partition info} can be maintained as either a linked list or a bitmap. For linked list, each node contains: 1. Status: True = Occupied, False = Free, 2. Start Address, 3. Length of partition/hole, 4. Pointer to next node.
+
+
+\subsection{Dynamic Allocation: Buddy System}
+\textbf{Buddy Memory Allocation}: Implementation of multiple free lists, provides efficient partition splitting, locating free partition (O(1)), partition deallocating and coalescing (merging).
+\begin{itemize}
+\item Free block is \textbf{split into half repeatedly} to meet request size. The two halves forms a sibling blocks (buddy blocks). Later, when buddy blocks both free, can merge to form larger block.
+\item \textbf{Buddy Blocks}: Two blocks B and C are buddy of size $2^k$, if the lowest K bits (bits 0 .. K-1) of B and C identical, and Bit $K$ of B and C is different.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{buddyBlocks}}
+
+\section{7.4 Disjoint Memory Allocation}
+ Allocating and managing memory in disjoint areas.
+
+\section{7.5 Virtual Memory Management}
+ Use of secondary storage as an extended memory region.
 
 
 
