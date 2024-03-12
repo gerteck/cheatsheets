@@ -981,61 +981,322 @@ Given that processes frequently need to communicate, some need for communication
 \centerline{\includegraphics[width=0.8\linewidth]{customHandler}}
 
 
-
-
-
-
-
-
-
-
-
 \vfill \null
 \columnbreak
 
 
+\section{6. Synchronization}
 
-~ End.
+\textbf{Problems with Concurrent Execution}: When process execute in interleaving fashion AND share a modifiable resource, can cause \textbf{synchronization problems}. 
+\begin{itemize}
+\item Single sequential process execution deterministic, concurrent processes execution may be non-deterministic.
+\item \textbf{Race Condition}: When final result depends on who runs precisely when. 
+\end{itemize}
+
+\subsection{Critical Regions / Sections}
+\begin{itemize}
+\item \textbf{Critical Section}: Part of the program where shared memory is accessed (with race condition).
+\item Incorrect execution is due to \textbf{unsynchronized access to shared modifiable resource}.
+\item If no two processes in their CS at same time, we can avoid races.
+\item \textbf{4 Conditions of good Critical Section / Region (CS) Implementation:}
+	\begin{enumerate}
+	\item \textbf{Mutual Exclusion}: No two processes simultaneously inside their CS.
+	\item \textbf{Progress}: If no process in CS, one waiting process granted access.
+	\item \textbf{Bounded Wait}: No process waits forever to enter its CS.
+	\item \textbf{Independence}: No process outside CS may block any process.
+	\end{enumerate}
+\item \textbf{Symptoms of Incorrect Synchronization:}
+	\begin{itemize}
+	\item \textbf{Deadlock}: All processes blocked, no progress.
+	\item \textbf{Livelock}: Process keep changing state to avoid deadlock, make no progress (dl avoidance mechanism), typically process not blocked.
+	\item \textbf{Starvation}: Some processes blocked forever.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Critical Section Implementations}
+\begin{itemize}
+\item \textbf{Assembly Level Implementations:} Mechanism provided by processor.
+\item \textbf{High Level Language Implementations:} Utilizes only normal programming constructs. (E.g. CS lock using normal variables)
+\item \textbf{High Level Abstraction:} Abstracted mechanisms that provide additional useful features (E.g. abstract data types, provided as library calls, and involve system calls). 
+\end{itemize}
+
+\section{6.1 Assembly Level Implementation}
+
+\subsection{Test and Set (TSL) Instruction}
+Common machine instruction to aid synchronization: TSL RX,LOCK. (Test and Set Lock). \code{TestAndSet Register, MemoryLocation}
+\begin{itemize}
+\item \textbf{Behavior}: Load current content at \textbf{MemoryLocation} into \textbf{Register}, and stores a 1 into \textbf{MemoryLocation}
+\item \textbf{Atomic}: Performed as a single machine operation, indivisible.
+\item Assume equivalent high level lanugage ver of \textbf{TSL}:
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{testSet}}
+\begin{itemize}
+\item \textbf{How Implementation works}: Before entering CS, a process calls enterCS, busy wait until lock is free; then it acquires the lock and returns. After leaving CS process calls ExitCS, which stores a 0 in lock. 
+\item \textbf{Inefficient}: Employs busy waiting, wasteful use of processing power.
+\item \textbf{Variants of instruction}: \code{CompareandExchange}, \code{AtomicSwap}, \code{Load Link}.
+\end{itemize}
+
+\section{6.2 High Level Language Implementation}
+
+\subsection{Bad: Lock Variables}
+Have a single, shared (lock) variable, initially 0. When entering CS, test lock and sets to 1.Thus, 0 means no process in CS, 1 means some process in CS.
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{HLL1}}
+
+\subsection{Bad: Lock Variables with Interrupts Disabled}
+Solve the problem by preventing context switch, by disabling interrupts.
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{HLL2}}
+
+\subsection{Bad: Strict Alternation}
+The integer variable turn, initially 0, keeps track of whose turn it is to enter the critical region and examine or update the shared memory.
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{HLL3}}
+\textbf{Independence property violated}: After P0 enters CS, sets turn to 1, and wants to enter CS again, needs to wait for P1 to enter its CS to set turn to 0. If P1 does not enter CS, turn stuck at 1, P0 starves.
+
+\subsection{Bad: Sub-Peterson Algorithm (without turn)}
+Leading up to peterson's algorithm. Use global shared array Want, if process wishes to enter CS, set Want[n] to 1.
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{HLL4}}
+
+\subsection{Good: Peterson's Algorithm}
+Assume that writing to Turn is an \textbf{atomic operation}.
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{Peterson}}
+Process can store their process number, or the other process number in turn. 
+Consider both processes trying to enter CS almost simultaneously. 
+Both store in turn variable. Whichever store done last is the one that counts; first one overwritten and lost. After, only one can enter CS, the other will loop. 
+
+\columnbreak
+
+\section{6.3 High Level Abstraction Implementation}
+
+\subsection{Semaphore}
+
+\subsubsection{Understanding}
+\begin{itemize}
+\item E.W. Dijkstra proposed using semaphore to count the number of wakeups saved for future use. (Processes sleep while waiting for shared resource).
+\item \textbf{Atomic}: Once a semaphore operation started, no other process can access semaphore until operation has completed or blocked.
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{semaphore}}
+
+\textbf{Semaphore}: A generalized synchronization mechanism that specify behavior and not implementation. Provides a way to block a number of processes, which will then be known as \textbf{sleeping processes}.
+
+\begin{itemize}
+\item Semaphore S seen as a "protected integer", with non-negative initial value. 
+\item A general semaphore (aka counting semaphore) can have values $S \geq 0$. A binary semaphore or mutex has values $S = 0$ or 1.
+\end{itemize}
+
+\subsubsection{Wait(S)}
+Takes in a semaphore. If semaphore value is $\leq$ 0, blocks current process. \\
+Decrements the value when it proceeds. Atomic operation. Aka \textbf{down()}.
+
+\subsubsection{Signal(S)}
+Takes in a semaphore, wakes up one sleeping process (if any) and increments the semaphore value. This is an atomic operation and never blocks. Aka \textbf{up()}.
+
+\subsection{Semaphore Invariant}
+\begin{itemize}
+\item $S_{current} \geq 0$
+\item $S_{current} = S_{initial} + \#signal(S) - \#wait(S)$
+\item $\#signal(S)$ is number of $signal()$ executed, $\#wait(S)$ is number of $wait()$ operations completed.
+\end{itemize}
+
+\subsection{Mutex (Binary Semaphore Usage)}
+\begin{itemize}
+\item Set binary semaphore $s = 1$, for any process, do \textbf{wait(s)} before entering CS, and \textbf{signal(s)} after finishing CS.
+\item S can only be 0 or 1, deduced by semaphore invariant.
+\item This usage known as \textbf{mutex} (Mutual Exclusion)
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{mutexProof}}
+\begin{itemize}
+\item \textbf{Possible Deadlock}: Note incorrect usage of semaphore may still result in deadlock, e.g. incorrect interleave usage of semaphore.
+\item \textbf{Conditional Variable}: Similar to semaphore, but allows process to wait for some event to happen. Once event happens, broadcast made to wake up all waiting tasks.
+\end{itemize}
+
+\section{6.4 Classical Synchronization Problems}
+
+\subsection{Producer-Consumer Problem}
+Processes share a bounded buffer of size K. Producers produce items to insert in buffer, only when the buffer
+is not full. Consumers remove items from buffer, only when the buffer is not empty. \textit{How to sync the two?}
+
+\subsubsection{Busy Waiting Solution (Inefficient)}
+\centerline{\includegraphics[width=0.95\linewidth]{PCBusyWaiting}}
+
+\subsubsection{Blocking Solution}
+Solution uses three semaphores, one called (\textit{notFull}) for counting empty slots, one called (\textit{notEmpty}) for counting full slots, and one called \textit{mutex} to make sure producer and consumer do not access the buffer at the same time. 
+\begin{itemize}
+\item \textit{NotFull} is initially equal to the number of slots in the buffer, \textit{NotEmpty} is initially 0, and \textit{mutex} is initially 1.
+\item When producing item, wait(notFull), which decrements. Then, acquire mutex. After producing, signal (release) mutex, and signal(notEmpty), causing it to increment.
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{PCBlocking}}
+
+\subsection{Readers and Writers Problem}
+Processes share a data structure $D$, where readers can access and read information from D together, while
+writers must have exclusive access to $D$ to write information. \textit{How to sync the two?} \\ \smallskip
+\centerline{\includegraphics[width=1\linewidth]{ReaderWriter}}
+\begin{itemize}
+\item \textbf{Problem}: As long as at least one reader active, subsequent readers admitted. Writer kept suspended until no reader is present. Writer may never get in.
+\item \textbf{Rectification}: Program could be written slightly differently: when reader arrives and a writer is waiting, the reader suspended behind writer
+instead of being admitted immediately. Writer waits for readers active to finish, but not readers after. Disadvantage is less concurrency and thus lower performance. 
+\end{itemize}
+
+\subsection{Dining Philosophers}
+Five philosophers are seated around a table, and there are five single chopsticks placed between each pair
+of philosophers. When any philosopher wants to eat, he/she will have to acquire both chopsticks from his/her left and right. \\
+\textit{How can we have a deadlock-free and starvation-free way to allow the philosophers to eat freely?}
+
+\subsubsection{Obvious Wrong Solutions}
+\begin{itemize}
+\item \textbf{Wait till fork is available}: Obvious solution is wrong. If all five philosophers take their left forks simultaneously. None will be able to take their right forks, and there will be a deadlock.
+\item \textbf{After taking left fork, check right fork. If not available, put down left one, wait, and repeats}: Also fails, for different reason, if all philosophers start algorithm simultaneously, will cause livelock, fail to make progress, cause starvation. 
+\item \textbf{Use single mutex}: Before acquiring forks, wait(mutex), after putting down, signal(mutex). While no deadlock, no starvation, It has perfomance bug, only one can eat at an instant. With five forks, at least two philosophers can eat at same time.
+\end{itemize}
+
+\subsubsection{Tanenbaum Solution}
+The solution presented is deadlock-free and allows the maximum parallelism for an arbitrary number of philosophers.
+\begin{itemize}
+\item It uses an array, state, to keep track of whether a philosopher is eating, thinking, or hungry (trying to acquire cultery forks).
+\item A philosopher may move into eating state only if neither neighbor is eating. Philosopher i’s neighbors are defined by the macros LEFT and RIGHT. In
+other words, if i is 2, LEFT is 1 and RIGHT is 3.
+\item The program uses an array of semaphores, one per philosopher, so hungry philosophers can block if the needed forks are busy.
+\end{itemize}
+\medskip
+\centerline{\includegraphics[width=1\linewidth]{DiningP}}
+
+\subsubsection{Limited Eater Solution}
+\centerline{\includegraphics[width=1\linewidth]{DiningP2}}
+
+\columnbreak
+
+\section{6.5 Synchronization Implementations}
+POSIX Implementations in Unix: \\ \medskip
+\centerline{\includegraphics[width=1\linewidth]{POSIXsemaphore}}
+\smallskip
+\begin{itemize}
+\item Programming languages with thread support will 
+have some forms of synchronization mechanism
+\item \textbf{Examples:}
+	\begin{itemize}
+	\item Java: all object has built-in lock (mutex) (monitor), synchronized method access, etc
+	\item Python: supports mutex, semaphore, conditional variable, etc
+	\item C$++$: Added built-in thread in C$++$11; Support mutex, conditional variable
+	\end{itemize}
+\end{itemize}
+
+\vfill \null
+\columnbreak
+
+\section{7. Memory Management}
+How OSes create abstractions from memory and how they manage them.
+
+\section{7.1 Memory}
+\begin{itemize}
+\item \textbf{Physical memory storage}: Random Access Memory (RAM) accessible in O(1), think as an array of bytes, with \textbf{physical address} as "unique index".
+\item \textbf{Contiguous memory region}: Interval of consecutive addresses.
+\item \textbf{Memory hierarchy}: OS abstracts hierarchy into useful mode, and manages it.
+\end{itemize}
+\textbf{Binding of Memory Address for executable:} Executable contains code (text), data layout (data), that has been compiled by the compiler into machine code. This is \textit{load and run} into the main memory when we execute. 
+\\ \textbf{Two types of data in a process}:
+\begin{enumerate}
+\item \textbf{Transient} Data: Valid for limited duration (e.g. function params, var)
+\item \textbf{Persistent} Data: Valid for duration of program unless removed (e.g. global var, dynamically allocated memory).
+\end{enumerate}
+
+\textbf{OS needs to perform the following tasks}:
+\begin{itemize}
+\item Allocate memory space to new processes
+\item Manage memory space for processes
+\item Protect memory space of processes from each other
+\item Provides memory related system calls to processes
+\item Manage memory space for internal use
+\end{itemize}
+
+\section{7.2 Memory Abstraction}
+Memory abstraction: presenting a logical interface for memory accesses.
+
+\subsection{No Memory Abstraction}
+\begin{itemize}
+\item \textbf{Pros}: Straightforward, fast, addresses fixed during compile time.
+\item \textbf{Cons}: Both processes assume they start at 0, resulting in conflicts. Hard to protect memory.
+\end{itemize}
+
+\subsubsection{Solution 1: Relocate Addresses}
+\begin{itemize}
+\item Recalculate memory references when process is loaded into memory, e.g. if process B is located at address
+8000, add 8000 to all memory addresses. 
+\item However, the loading time is slow and it is not easy to distinguish a memory address from any arbitrary integer.
+\end{itemize}
 
 
+\subsubsection{Solution 2: Base + Limit Registers}
+\begin{itemize}
+\item Use a special \textbf{Base Register} that stores the starting address of the process memory space. 
+All memory references will be offset by this register value. We then use a \textbf{Limit Register} to indicate the range, i.e. cannot access past the limit. 
+\item However, there is a lot of overhead since we need to perform an addition and comparison per access. This
+is later generalised in segmentation.
+\end{itemize}
 
 
+\subsubsection{Memory Abstraction: Physical and Logical Addresses}
+\begin{itemize}
+\item \textbf{Physical Address}: Generally, embedding \textbf{physical addresses} in programs is a bad idea.
+\item \textbf{Logical Address}: Thus let each process have a self contained, independent logical memory space that they will reference using logical addresses, then the OS will do the mapping.
+\item \textbf{Multitasking}: Need ways to partition memory, switch between processes using different memory partitions. 
+\item When physical memory is full, either remove partitions used by terminated processes or swap blocked process to secondary storage.
+\end{itemize}
 
 
+\section{7.3 Contiguous Memory Allocation}
+Allocating and managing \textbf{continuous} chunk of memory.
+
+\subsubsection{Assumptions}
+\begin{itemize}
+\item Each process uses a \textbf{memory partition} of a contiguous memory region.
+\item Physical memory \textbf{large enough} to contain processes with complete memory space.
+\end{itemize}
+
+\subsection{Fixed-Size Partitions}
+Physical memory split into fixed number of partitions, process occupies one.
+\begin{itemize}
+\item \textbf{Internal fragmentation}: When process does not occupy entire partition.
+\item \textbf{Easy to manage, fast to allocate}: Give any free partition, all same.
+\item \textbf{Need to fit largest process:} All smaller processes will waste space in partition large enough to accomodate largest process.
+\end{itemize}
+
+\subsection{Variable-Size (Dynamic) Partitions}
+Allocate just the right amount of space needed, forming \textbf{holes} (free memory spaces) between such partitions.
+\begin{itemize}
+\item \textbf{No internal fragmentation}: All processes get the exact space required.
+\item \textbf{External fragmentation}: When holes between processes become unusable, wasting space. Can be
+fixed via compaction, but slow (running processes need to stop). Better than internal, as internal is unreachable.
+\item \textbf{Maintain more info} in OS, \textbf{slower to allocate} to find appropriate region.
+\end{itemize}
+
+\subsection{Allocation Algorithms}
+Assuming the OS maintain a list of partitions and holes. Algorithm to locate partition of size N: Search for hole with size $M > N$. \textbf{Variants:}
+\begin{itemize}
+\item \textbf{First-Fit}: Take the first hole that is large enough. Split it into two, give the process the required space, and the remaining space is a new hole.
+\item \textbf{Best-Fit}: Take the smallest hole that is large enough.
+\item \textbf{Worst-Fit}: Take the largest hole. (Creates larger holes for next process).
+\item \textbf{Merging and Compaction}: Try to merge freed partition with adjacent holes. Can also do compaction i.e. move partitions around,
+but this is expensive and should not be done frequently.
+\end{itemize}
+\textbf{Partition info} can be maintained as either a linked list or a bitmap. For linked list, each node contains: 1. Status: True = Occupied, False = Free, 2. Start Address, 3. Length of partition/hole, 4. Pointer to next node.
 
 
+\subsection{Dynamic Allocation: Buddy System}
+\textbf{Buddy Memory Allocation}: Implementation of multiple free lists, provides efficient partition splitting, locating free partition (O(1)), partition deallocating and coalescing (merging).
+\begin{itemize}
+\item Free block is \textbf{split into half repeatedly} to meet request size. The two halves forms a sibling blocks (buddy blocks). Later, when buddy blocks both free, can merge to form larger block.
+\item \textbf{Buddy Blocks}: Two blocks B and C are buddy of size $2^k$, if the lowest K bits (bits 0 .. K-1) of B and C identical, and Bit $K$ of B and C is different.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{buddyBlocks}}
 
+\section{7.4 Disjoint Memory Allocation}
+ Allocating and managing memory in disjoint areas.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\section{7.5 Virtual Memory Management}
+ Use of secondary storage as an extended memory region.
 
 
 

@@ -984,24 +984,143 @@ CAs’ public keys are preloaded. Other CA’s public keys can be added through 
 
 
 
+\section{Authentication Protocols}
+Consider 3 types of protocols: (basic) authentication, key-exchange, authenticated key-exchange. 
+\begin{itemize}
+\item \textbf{Attack Model}: Attack-then-impersonate
+\item \textbf{Types:} Unilateral, Mutual
+\item \textbf{Authentication Method:} Challenge-response
+\end{itemize}
 
-\section{4.4. (basic) Authentication}
+\section{4.4. (basic) Authentication Protocol}
+\centerline{\includegraphics[width=0.8\linewidth]{basicAuth}}	
+\begin{itemize}
+\item \textbf{Scenario}: Entity wants to convince Bob that she is indeed Alice. The entity does so by convincing Bob that she knows some “secrets”.
+\item \textbf{Attack Model}: Attack-then-impersonate. Attacker (Mallory) can sniff and modify the communication between the authentic Alice and 
+Bob. Attacker uses stolen info to impersonate Alice. Can simply \textbf{"replay"} password sent to impersonate.
+\end{itemize}
+
+\subsection{Authentication: Challenge-reponse}
+Suppose Alice and Bob have a shared secret $k$, both agreed on a message authentication code (MAC). An entity who knows $k$ is either Alice or Bob. Entity P
+wants to convince Alice that he is Bob. (P: “Prover”).
+\begin{enumerate}
+\item P sends to Alice a hello message.
+\item \textbf{Challenge}: Alice randomly picks message $m$ and sends $m$ to $P$.
+\item \textbf{Response}: $P$ computes $t = mac_k(m)$. $P$ sends $t$ to Alice.
+\item Alice verifies tag received is indeed mac of $m$. If so, accept, else reject.
+\end{enumerate}
+\begin{itemize}
+\item By property of \textbf{mac}, even if Eve (third party) sniff communication and obtain multiple pairs of valid $m$, $t$, Eve still (1) can’t get the secret key $k$, (2) can’t forge the mac for messages that Eve has not seen before!
+\item Eve can’t replay response as challenge randomly chosen, likely different in next authentication session. Challenge $m$ ensures \textbf{freshness} of authentication process. It is also known as the cryptographic \textbf{nonce}.
+\item This protocol only authenticates Bob. That is, authenticity of Bob is verified. Hence, called \textbf{unilateral authentication}. There are also protocols to verify both parties, which are called mutual authentication.
+\end{itemize}
+
+\subsection{Authentication: Challenge-reponse using PKC}
+Public key version using signature (Unilateral Authentication). Alice wants to authenticate entity $P$ who claims to be Bob.
+\begin{enumerate}
+\item (Challenge) Alice chooses a random message $r$ and sends to $P$: (“Bob, here is your challenge”, r)
+\item (Response) P uses his private key to sign $r$. P also attaches a certificate: (sign(r), certificate)
+\item Alice verifies certificate belongs to Bob and valid. Next, extracts public key from certificate and verify signature sign(r) is correct. If so, accept.
+\end{enumerate}
+\begin{itemize}
+\item If Alice already knows Bob’s public key, the certificate can be omitted.
+\item Assume Attacker observes multiple interactions. By security property of signature, eavesdropper cannot derive Bob’s private key, can’t forge response.
+\item Nonce r ensure freshness. 
+\end{itemize}
+
 
 \section{4.5 Key-exchange}
+Two communicating entities want to establish a shared key between them. Consider attack Eve who can sniff, goal to steal established key.
 
-\section{4.6 Authenticated Key-exchange}
+\subsection{PKC-based Key-exchange}
+\centerline{\includegraphics[width=1\linewidth]{PKCKeyExchange}}	
+\begin{itemize}
+\item Attacker (Eve) can only obtain the public key $k_e$ and the ciphertext $c$.
+\item By security of PKC, from the public and ciphertext, attacker can’t get any information of the plaintext, which is the key $k$.
+\end{itemize}
 
-\section{4.7 Securing Communication Channel (Put all together)}
+\subsection{Diffie-Hellman Key-exchange}
+\centerline{\includegraphics[width=1\linewidth]{DHKeyExchange}}	
+\medskip
+\subsubsection{Diffie-Hellman Key-exchange Example}
+\centerline{\includegraphics[width=1\linewidth]{DHKeyExchangeExample}}	
+
+\null \null 
+\null \null \null 
+\columnbreak
+
+\section{4.6 Authenticated Key-exchange Protocol}
+Consider \textbf{malicious Mallory}, who can sniff, spoof and modify message.
+\begin{itemize}
+\item Mallory first allows Alice and Bob carry out strong authentication. After, Mallory interrupts and takes over channel. Mallory pretends to be
+Bob! Even if employ challenge-response, Mallory still succeeds.
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{authKeyExchangeMallory}}	
+
+\begin{itemize}
+\item \textbf{Authenticated Key-Exchange}: Protect subsequent interactions. \\
+1. Authenticated key-exchange, outcome new shared secret session key $k$. \\
+2. All subsequent communication protected (encrypted + mac) using $k$.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{authKeyExchangeSummary}}	
+
+\begin{itemize}
+\item Turns out authenticated key-exchange easily obtained from existing key-exchange, (either PKC-based key-exchange or DH-based key-exchange). Done by signing all
+communication using the private key.
+\item Special name for authenticated key-exchange that uses DH: it is known as \textbf{Station-To-Station Protocol (STS)}.
+\end{itemize}
+
+\subsection{Station-to-Station Protocol (based on DH)}
+Assume both Alice and Bob agreed on two public parameters, generator $g$ and large (e.g. 1000 bits) prime $p$. Both g and p are not secret and known to the public.
+Consider unilateral authentication. Alice want to authenticate Bob. Can be easily extended to mutual authentication. 
+\centerline{\includegraphics[width=1\linewidth]{stationToStation}}	
+Remark: This is unilateral authentication. Can extend it to mutual by making Alice signs her messages in step (2.1).
+
+\subsection{Password based Encrypted Key Exchange}
+(Asymmetric) Previous authenticated key-exchange protocols such as Station-to-station are based on public key. 
+\begin{itemize}
+\item (Symmetric) There are also symmetric key version, i.e both entities share a symmetric key. An entity is authentic if it can prove to the other that it knows the key.
+\item (Password) A special case of symmetric key is when the key is a password.
+\item Password usually has very low entropy, thus potentially vulnerable to “offline” dictionary attack (see tutorial). There are secure protocols that, 
+even if entropy of password low, still secure against offline dictionary attack (to guess password correct, attacker forced to interact with online server). These are called \textbf{“Password-Authenticated Key agreement” (PAKE).}
+\end{itemize}
+
+\centerline{\includegraphics[width=0.8\linewidth]{authSummary4}}	
+\medskip
+\centerline{\includegraphics[width=1\linewidth]{authSummary5}}	
 
 
 
 
+\section{4.7 Securing Communication Channel (Ensuring Channel Security)}
+Given a "public channel" that facilitates communication, but presences of Mallory. Use unsecure public communication as carrier, add layer of crypto primitives on the messages, so channel is as secure as a “private channel”.
+\begin{itemize}
+\item \textbf{Scenario}: Alice wants to visit website Bob.com. Alice ueses free wifi called Mallory.  Everyone can access, thus public channel. Secure public channel using crypto. 
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{tls1}}
 
 
 
 
+\subsection{TLS: Transport Layer Security}
+\centerline{\includegraphics[width=1\linewidth]{tls2}}
+\centerline{\includegraphics[width=1\linewidth]{tls3}}
+Role of sequence number and last message is to make sure mallory is not able to add messages in between, or after the connection is closed.
+
+\subsection{Relationship among TLS/SSL/https}
+\begin{itemize}
+\item SSL and Transport Layer Security (TLS) are protocols that secure communication using cryptographic mean. 
+\item SSL is the predecessor of TLS. 
+\item Https is built on top of TLS
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{tls4}}
 
 
+\columnbreak 
+\vfill\null
+\columnbreak
+
+\section{5. Network Security}
 
 
 
