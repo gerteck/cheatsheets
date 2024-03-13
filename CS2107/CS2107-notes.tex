@@ -794,7 +794,7 @@ Similar to ``exhaustive search'' in encryption. Birthday attack applicable to al
 \item The birthday problem states that in a group of 23 people, there's a 50\% chance that at least two will have the same birthday.
 \end{itemize}
 
-\subsubsection{Birthday Attack Formula}
+\subsubsection{Birthday Attack Formula (Single Common Pool)}
 \begin{itemize}
 \item Suppose we have \textbf{$M$ messages}.
 \item Each value tagged with value randomly chosen, range of values = [1, T]. \textbf{($T$ is no. of values)}
@@ -821,7 +821,18 @@ Discrete Logarithm Key (length of digest): 224.
 strength required for the digital signature. (Due to birthday attack)
 \end{itemize}
 
-\columnbreak
+\subsubsection{Variant of Birthday Attack (Two Pools)}
+The first version in lecture notes takes a pair from a common pool.
+\begin{itemize}
+\item Consider where there are two pools. One item in the pair is drawn from a pool, and another item drawn from another pool.
+\item Let $S$ be a set of $k$ distinct elements where each element is an $n$ bits
+binary string. Now, let us independently and randomly select a set $T$
+of $m$ $n$-bit binary strings.
+\item It can be shown that, the probability that
+$S$ has non-empty intersection with $T$ is more than
+\end{itemize}
+\centerline{$1 - 2.7^{-km2^{-n}}$}
+
 
 \subsection{3.6 Additional Notes}
 \subsection{3.6.1 Design flaw: Using encryption for authenticity}
@@ -842,7 +853,7 @@ integrity and authenticity.
 \end{itemize}
 
 
-\subsection{3.6.3 Hash Application: Password file protection)}
+\subsection{3.6.3 Hash Application: (Password file protection)}
 \begin{itemize}
 \item Password file stores userid, password. 
 \item This file could be leaked (insider / accidental leakage, hack). Many well-known incidents where weak/unprotected password files leak, large number of passwords compromise. Desirable to add additional layer of protection on file. (See 2.1).
