@@ -880,7 +880,7 @@ of the basic select-a-victim-buffer algorithm.)
 
 \section{5. Query Evaluation: Projection \& Join}
 
-\section{Projection: $\pi_{A1,...,Am}(R)$}
+\section{5.1 Projection: $\pi_{A1,...,Am}(R)$}
 \begin{itemize}
 \item $\pi_{L}(R)$ projects columns given by list L from relation R.
 \item $\pi^*_{L}(R)$ same as $\pi_{L}(R)$ but preserves duplicates.
@@ -901,7 +901,7 @@ of the basic select-a-victim-buffer algorithm.)
 \end{enumerate}
 \end{itemize}
 
-\subsection{Sort-based Approach}
+\subsection{5.1.1 Sort-based Approach}
 
 \subsubsection{Simple Sort-based Approach}
 \begin{itemize}
@@ -917,7 +917,7 @@ of the basic select-a-victim-buffer algorithm.)
 \end{itemize}
 \centerline{\includegraphics[width = 0.75\linewidth]{optimizedsort}}
 
-\subsection{Hash-based Approach}
+\subsection{5.1.2 Hash-based Approach}
 \begin{itemize}
 \item For  , we build a \textbf{main-memory hash table} T to detect and remove duplicates.
 \item Cost = $|R|$ if T fits in main memory.
@@ -956,7 +956,7 @@ of the basic select-a-victim-buffer algorithm.)
 \subsection{Sort-based vs. Hash-based Analysis}
 \centerline{\includegraphics[width = 0.9\linewidth]{sortvsHash}}
 
-\subsection{Projection Operation: using Indexes}
+\subsection{5.1.3 Projection Operation: using Indexes}
 \begin{itemize}
 \item If there is an index whose search key ($+$ include columns) contains all wanted attributes, \textbf{replace table scan with index scan}.
 \item If index ordered (B$+$-tree), search key includes wanted attributes as prefix, scan data entries in order, compare adjacent duplicate data entries.
@@ -964,7 +964,7 @@ of the basic select-a-victim-buffer algorithm.)
 \end{itemize}
 
 
-\section{Join: $R_{\bowtie_\theta}S$}
+\section{5.2 Join: $R_{\bowtie_\theta}S$}
 \begin{itemize}
 \item Join is where there is match between values of specified columns. 
 \item Two-table joins, multiple-table joins, self-joins etc.
@@ -988,7 +988,7 @@ of the basic select-a-victim-buffer algorithm.)
 \item Given a join $R_{\bowtie_\theta}S$, R is \textbf{outer relation}, S is \textbf{inner relation}
 \end{itemize}
 
-\subsection{Tuple/Page-based Nested Loop Join}
+\subsection{Tuple/Page-based Nested Loop Join (Naive)}
 \begin{itemize}
 \item Simplest join algo is \textbf{tuple-at-a-time} nested loop evaluation. We scan outer relation R, and for each tuple in R, scan inner relation S.
 \item Simple refinement is \textbf{join page-at-a-time}. For each page of R, retrieve each page of S, and write out matching tuples.
@@ -1000,7 +1000,7 @@ of the basic select-a-victim-buffer algorithm.)
 
 \columnbreak
 
-\subsection{Block Nested Loop Join}
+\subsection{5.2.1 Block Nested Loop Join}
 \begin{itemize}
 \item Simple nested loops join algo does not effectively utilize buffer pages.
 \item If enough memory, read whole of R (smaller relation), use one of extra buffer page to scan larger relation S. Last buffer page used as output buffer. Each relation scanned just once, optimal!
@@ -1009,7 +1009,7 @@ of the basic select-a-victim-buffer algorithm.)
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{blockedNestedLoop}}
 
-\subsection{Index Nested Loop Join}
+\subsection{5.2.2 Index Nested Loop Join}
 \begin{itemize}
 \item If exists index on one of the relations on the join attribute(s), take advantage by making \textbf{indexed relation to be inner relation (S)}.
 \item For each tuple in R, use index to retrieve matching tuples of S.
@@ -1019,7 +1019,7 @@ of the basic select-a-victim-buffer algorithm.)
 
 \columnbreak
 
-\subsection{Sort-Merge Join}
+\subsection{5.2.3 Sort-Merge Join}
 \begin{itemize}
 \item Basic idea: Sort both relations on join attribute and look for qualifying tuples by essentially merging the two relations.
 \item Exploit partitioning, compare R tuples with only S tuples in same partition (rather than all S tuples), avoid enumeration of cross-product of R \& S. (Works only for equality join conditions.)
@@ -1030,7 +1030,7 @@ of the basic select-a-victim-buffer algorithm.)
 
 \columnbreak
 
-\subsection{Hash Join}
+\subsection{5.2.4 Hash Join}
 \begin{itemize}
 \item Hash join algorithm, like sort-merge join, identifies partitions in R \& S in partitioning phase, and compares tuples in corresponding partitions.
 \item \textbf{Idea}: Unlike sort-merge join, use \textbf{hashing to identify partitions} over sorting. Hash both relations on join attribute using \textbf{same hash function $h$}. 
@@ -1047,16 +1047,16 @@ of the basic select-a-victim-buffer algorithm.)
 
 
 \section{6. Query Evaluation \& Optimization}
-\section{Set Operations}
+\section{6.1 Set Operations}
 Set operations include \textbf{cross product} ($R \times S$), \textbf{intersection} ($R \cap S$), \textbf{union} ($R \cup S$), \textbf{difference} ($R - S$).
 \begin{itemize}
 \item Note that \textbf{intersection \& cross-product} are just special cases of join! (with equality on all fields as join condition for intersection, and with no join condition for cross-product).
 \item \textbf{Union}: Main point to addresss is elimination of duplicates.
 \item \textbf{Difference}: Variation of technique for duplicate elimination. Both can use sorting-based approach or hashing-based approach.
 \end{itemize}
-\centerline{\includegraphics[width = 0.9\linewidth]{sortHash}}
+\centerline{\includegraphics[width = 1\linewidth]{sortHash}}
 
-\section{Aggregation Operations}
+\section{6.2 Aggregation Operations}
 
 \subsubsection{Simple Aggregation}
 \begin{itemize}
@@ -1075,24 +1075,38 @@ Set operations include \textbf{cross product} ($R \times S$), \textbf{intersecti
 +-tree index’s search key, the data entries (and data records if necessary) for each group can beretrieved without an explicit sorting.,
 \end{itemize}
 
-\section{Query Evaluation}
-
-\subsection{Query Evaluation Approaches}
-
-\subsection{Materialized Evaluation}
-
-\subsection{Pipelined Evaluation}
-
-\vfill\null
 \columnbreak
 
-\section{Query Processing}
+\section{6.3 Query Evaluation}
+
+\subsection{6.3.1 Query Evaluation Approaches}
+\subsubsection{Materialized Evaluation}
+\begin{itemize}
+\item An operator is evaluated only when each of its operands has been completely
+evaluated or materialized.
+\item Intermediate results are materialized to disk
+\end{itemize}
+
+\subsubsection{Pipelined Evaluation}
+\begin{itemize}
+\item The output produced by a operator is passed directly to its parent operator.
+\item Execution of operators is interleaved. Top-down, demand-drive approach.
+\item An operator O is a \textbf{blocking operator} if O may not be able to produce any output until it has received all the input tuples from its child operator(s). Examples of blocking operator: external merge sort, sort-merge join, Grace hash join.
+\item \textbf{Iterator Interface} for operator evaluation. "open, getNext, close" functions to initialize state of iterator, generate next output tuple and deallocate state information.
+\item For examples of Iterator on Hash-based Projection, Nested Loop Join, Table Scan, see slides.
+\end{itemize}
+
+\subsubsection{Pipelined Evaluation with Partial Materialization}
+Also possible to have a mix of both approaches.
+
+\section{6.4 Query Processing}
 \centerline{\includegraphics[width = 1\linewidth]{queryProcessing2}}
 
 \subsection{Query Plans}
 SQL Query $Q$ $\rightarrow$ Logical Plan for $Q$ $\rightarrow$ Physical Plan for $Q$. 
 \centerline{\includegraphics[width = 1\linewidth]{QueryPlans}}
 
+\columnbreak
 
 \subsubsection{Logical Query Plans}
 \begin{itemize}
@@ -1107,32 +1121,132 @@ SQL Query $Q$ $\rightarrow$ Logical Plan for $Q$ $\rightarrow$ Physical Plan for
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{QueryPlansPhysical}}
 
-\columnbreak
-
 \subsubsection{Note: Join Plan Notation}
 \centerline{\includegraphics[width = 1\linewidth]{joinPlanNotation}}
 
-\section{Query Optimization}
-The process of finding a good evaluation plan is called query optimization.
+\section{6.5 Query Optimization}
+The process of finding a good query evaluation plan is called query optimization. Optimizing a relational algebra expression involves (three) basic steps: 
+\begin{enumerate}
+\item \textbf{Search Space}: What is space (subset) of query plans being considered? (Since number of possible plans too large).
+\item \textbf{Plan Enumeration}:	How to enumerate space of query plans. 
+\item \textbf{Cost Model}:	Estimate cost of each enumerated plan, choose plan with lowest estimated cost.
+\end{enumerate}
+SQL queries optimized by decomposing into blocks, optimize single block at a time. A query block can be expressed as a \textbf{relational algebra expression}.
 
-\subsubsection{Why Optimize?}
+\subsection{Relational Algebra Equivalence Rules}
+\centerline{\includegraphics[width = 1\linewidth]{equivalence}}
 \begin{itemize}
-\item
+\item Using equivalence, we can find equivalent logical query plans.
+\item Generally, we want to push down selection, projection operations to reduce size of table for subsequent joining.
+\end{itemize}
 
+\subsection{Types of Query Plan Trees}
+\begin{itemize}
+\item \textbf{Linear}: Query plan is linear if at least one operand for each join operation is a base relation; otherwise, the plan is \textbf{bushy}.
+\item A linear query plan is \textbf{left-deep} if every right join operand is a base relation, and \textbf{right-deep} if every left join operand is a base relation.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{queryPlanTrees}}
+
+\subsection{6.5.1 Search Space (Pruning)}
+Consider search space for simple two join operations: (12. Growth of search space is exponential!)
+\centerline{\includegraphics[width = 0.8\linewidth]{queryPlanSearchSpace}}
+\begin{itemize}
+\item Not all algebraically equivalent plans considered, make cost of optimization prohibitively expensive.
+\item \textbf{Use heuristics to prune search space}: (System R Optimizer) Enumerates only left-deep query plans, avoids cross-product query plans (only join with condition), Considers early selections \& projections.
 \end{itemize}
 
 
+\subsection{6.5.2 Query Plan Enumeration}
+Dynamic programming (using solution of subset to solve superset problem).
 
-\subsection{Types of Query Plan Trees}
+\subsubsection{Straightforward DP formulation}
+For each relation, consider best access plan. Then, for each subset of relations, consider best plan to join.
+\centerline{\includegraphics[width = 0.9\linewidth]{dp}}
 
-\subsection{Cost Estimation of Query Plans}
+\subsubsection{Enhanced dynamic programming approach (System R Optimizer)}
+Consider \textbf{sort order} of query plan's output. Also use heurisitics to prune search space.
+\begin{itemize}
+\item Maintains optPlan($S_i$, $o_i$i) instead of optPlan($S_i$).
+\item $o_i$ captures the sort order of output produced by query plan wrt $S_i$, null if output is unordered or a sequence of attributes.
+\item optPlan($S_i$, $o_i$i) = cheapest query plan for relation with output ordered by if not null
+\end{itemize}
+\centerline{\includegraphics[width = 0.9\linewidth]{systemR}}
 
-\section{Join Selectivity}
+\vfill \null
+\columnbreak
 
+\subsection{6.5.3 Cost Estimation of Query Plans}
+Cost estimation involves the following:
+\begin{enumerate}
+\item What is the \textbf{evaluation cost} of each operation? Cost model depends on: size of input operands, available buffer pages,
+available indexes, etc.
+\item What is the \textbf{output size} of each operation?
+\end{enumerate}
+Use a \textbf{cost model} for each operator's algorithms. 
+
+\subsubsection{Estimation Assumptions}
+\begin{enumerate}
+\item \textbf{Uniformity assumption}: uniform distribution of attribute values
+\item \textbf{Independence assumption}: independent distribution of values in different attributes
+\item \textbf{Inclusion assumption}: For Join R(R.A=S.B)S, if no. tuples in A $\leq$ B, consider $\pi_A(R) \subset \pi_B(R)$.
+\end{enumerate}
+
+\textbf{Database Statistics}: Relation cardinality (no. of tuples), no. of distinct values / highest / lowest / frequent values in each column, column group statistics, histograms etc.
+
+\subsection{Size Estimation}
+For selection operations across joins, to estimate $||q||$, each predicate term potentially filters out some tuples.
+\begin{itemize}
+\item \textbf{Reduction factor}: denoted $rf(t_i)$, is fraction of tuples in input relation that satisfy $t_i$.
+\item \textbf{Reduction factor} also known as \textbf{Selectivity Factor}.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{sizeEstimation}}
+
+\subsection{A. Selectivity Factor Estimation (within Relation)}
+\begin{itemize}
+\item \textbf{Simple Uniformity Assumption}: Using number of unique tuple values, find rf: \\
+e.g. $||R|| = 45$, $||\pi_A(R)|| = 15$, $rf(A=c) \approx \frac{1}{||\pi_A(R)||} = \frac{1}{15}$
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{sizeEstimationUA}}
+\smallskip
+\centerline{\includegraphics[width = 1\linewidth]{sizeEstimationUA2}}
+
+\vfill \null
+\columnbreak
+
+\subsection{B. Join Selectivity (inter-Relation selectivity)}
+\begin{itemize}
+\item \textbf{Join selectivity factor}: Selectivity factor for join predicates
+\item \textbf{Inclusion asumption}: Assume every (smaller) relation tuple joins with some (larger) relation tuple.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{joinSelectivity}}
+\smallskip
+\centerline{\includegraphics[width = 1\linewidth]{joinSelectivity2}}
+
+\bigskip
 
 \subsection{Estimation using Histograms}
+\begin{itemize}
+\item \textbf{Histogram}: stat. info maintained by DBMS to estimate data distribution.
+\item \textbf{Main idea using histogram}: Partition attribute’s domain into sub-ranges called buckets, assume value distribution within each bucket is uniform.
+\item \textbf{Equiwidth Histograms}: Each bucket has (almost) equal number of values
+\item \textbf{Equidepth Histograms}: Each bucket has (almost) equal number of tuples, sub-ranges of adjacent buckets might overlap.
+\item \textbf{MCV: Most Common Values}: Separately keep track of the frequencies of the top-k most common
+values and exclude MCV from histogram’s buckets.
+\item \textbf{Accuracy of histograms}: Equiwidth $<$ Equidepth $<$ w. MCV excluded.
+\end{itemize}
 
+\subsection{Type of Histograms \& Estimation Accuracy}
+\centerline{\includegraphics[width = 0.9\linewidth]{equiwidthHistogram}}
+\smallskip
+\centerline{\includegraphics[width = 0.9\linewidth]{equidepthHistogram}}
+\smallskip
+\centerline{\includegraphics[width = 1\linewidth]{histogram1}}
+\smallskip
+\centerline{\includegraphics[width = 1\linewidth]{histogram2}}
 
+\columnbreak
+
+\section{7. Transaction Management}
 
 
 
