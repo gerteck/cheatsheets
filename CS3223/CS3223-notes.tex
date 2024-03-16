@@ -1050,6 +1050,8 @@ of the basic select-a-victim-buffer algorithm.)
 
 \section{Set Operations}
 
+
+
 \section{Aggregation Operation}
 
 \section{Query Evaluation}
@@ -1060,12 +1062,45 @@ of the basic select-a-victim-buffer algorithm.)
 
 \subsection{Pipelined Evaluation}
 
+\vfill\null
+\columnbreak
 
 \section{Query Processing}
+\centerline{\includegraphics[width = 1\linewidth]{queryProcessing2}}
 
 \subsection{Query Plans}
+SQL Query $Q$ $\rightarrow$ Logical Plan for $Q$ $\rightarrow$ Physical Plan for $Q$. 
+\centerline{\includegraphics[width = 1\linewidth]{QueryPlans}}
+
+
+\subsubsection{Logical Query Plans}
+\begin{itemize}
+\item A query generally has many equivalent \textit{logical query plans}.
+\item E.g. for join, the number of logical query plans grows exponentially.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{QueryPlansLogical}}
+
+\subsubsection{Physical Query Plans}
+\begin{itemize}
+\item Subsequently, each logical plan can be implemented by many physical query plans.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{QueryPlansPhysical}}
+
+\columnbreak
+
+\subsubsection{Note: Join Plan Notation}
+\centerline{\includegraphics[width = 1\linewidth]{joinPlanNotation}}
 
 \section{Query Optimization}
+The process of finding a good evaluation plan is called query optimization.
+
+\subsubsection{Why Optimize?}
+\begin{itemize}
+\item
+
+\end{itemize}•
+
+
 
 \subsection{Types of Query Plan Trees}
 
