@@ -1047,10 +1047,33 @@ of the basic select-a-victim-buffer algorithm.)
 
 
 \section{6. Query Evaluation \& Optimization}
-
 \section{Set Operations}
+Set operations include \textbf{cross product} ($R \times S$), \textbf{intersection} ($R \cap S$), \textbf{union} ($R \cup S$), \textbf{difference} ($R - S$).
+\begin{itemize}
+\item Note that \textbf{intersection \& cross-product} are just special cases of join! (with equality on all fields as join condition for intersection, and with no join condition for cross-product).
+\item \textbf{Union}: Main point to addresss is elimination of duplicates.
+\item \textbf{Difference}: Variation of technique for duplicate elimination. Both can use sorting-based approach or hashing-based approach.
+\end{itemize}
+\centerline{\includegraphics[width = 0.9\linewidth]{sortHash}}
 
-\section{Aggregation Operation}
+\section{Aggregation Operations}
+
+\subsubsection{Simple Aggregation}
+\begin{itemize}
+\item E.g. \code{select count(*) from Movies}
+\item \textbf{Aggregate Operators}: SUM, COUNT, AVG, MIN, MAX
+\item \textbf{Algorithm}: Maintain some running information while scanning table.
+\end{itemize}
+
+\subsubsection{Group-by Aggregation}
+\begin{itemize}
+\item \code{select year, count(*) from Movies group by year}
+\item \textbf{Sorting Approach}: Sort relation on grouping attribute(s), scan sorted relation to compute aggregate for each group.
+\item \textbf{Hashing Approach}: Scan relation to build a hash table on grouping attribute(s), For each group, maintain (grouping-value, running-information).
+\item \textbf{Using Index}: If there is covering index for query, avoid table scan. Aggregation operation can be computed from index's data entries instead of data records.
+\item \textbf{Ordered scan using index}: For group-by aggregation, if set of group-by attributes forms a prefix of a B
++-tree index’s search key, the data entries (and data records if necessary) for each group can beretrieved without an explicit sorting.,
+\end{itemize}
 
 \section{Query Evaluation}
 
