@@ -1281,7 +1281,7 @@ Assuming the OS maintain a list of partitions and holes. Algorithm to locate par
 \item \textbf{Merging and Compaction}: Try to merge freed partition with adjacent holes. Can also do compaction i.e. move partitions around,
 but this is expensive and should not be done frequently.
 \end{itemize}
-\textbf{Partition info} can be maintained as either a linked list or a bitmap. For linked list, each node contains: 1. Status: True = Occupied, False = Free, 2. Start Address, 3. Length of partition/hole, 4. Pointer to next node.
+\textbf{Partition info} can be maintained as either a \textbf{linked list} or a bitmap. For \textbf{linked list}, each node contains: 1. Status: True = Occupied, False = Free, 2. Start Address, 3. Length of partition/hole, 4. Pointer to next node.
 
 
 \subsection{Dynamic Allocation: Buddy System}
@@ -1293,10 +1293,129 @@ but this is expensive and should not be done frequently.
 \centerline{\includegraphics[width=0.8\linewidth]{buddyBlocks}}
 
 \section{7.4 Disjoint Memory Allocation}
- Allocating and managing memory in disjoint areas.
+Allocating, managing memory in disjoint areas. (Remove assumption, process memory space now \textbf{split into disjoint} physical memory ranges.)
+
+
+\subsection{7.4.1 Paging Scheme}
+Split physical memory into \textbf{physical frames} and logical memory into \textbf{logical pages} of same size.
+Logical memory remains contiguous (page-wise), while each page can be mapped (loaded) into any available disjoint memory frame.
+
+\subsubsection{Page Table (Lookup Mechanism)}
+To support translation, use \textbf{page table} (one per process), array where the index is the page number and value is the frame number. 
+
+\centerline{\textbf{Physical Address} = Frame\_number $\times$ sizeof(physical\_frame) + offset} 
+\smallskip
+
+Two design decisions to simplify address translation: \\
+1. Keep frame/page size as a power of 2 \\
+2. Keep frame and page size equal \\ \smallskip
+For page/frame size of $2^n$ and address of $m$ bits, to translate, we copy the last $n$ bits (the offset), then for the rightmost $m-n$ bits (page number),
+we index it into the page table and replace it with the value (frame number).
+\centerline{\includegraphics[width=0.6\linewidth]{paging}}
+
+\subsubsection{Paging: Analysis}
+\begin{itemize}
+\item \textbf{No external fragmentation}: No leftover physical memory region
+\item \textbf{Has internal fragmentation}: When a logical memory space is not a multiple of page size. (Max one page per process not fully utilized).
+\item \textbf{Clear separation of logical and physical}: Flexible, simple translation
+\end{itemize}
+
+\subsubsection{Paging: Implementation}
+Each process has own page table, stored in its PCB (\textit{Memory Context}). This PCB is in RAM. However, require \textbf{two RAM accesses} for every mem reference. \\
+1. Read the indexed page table entry to get frame number \\
+2. Access to actual memory item
+
+
+\subsubsection{Paging: Translation Look-Aside Buffer}
+The TLB is on the chip, and provides hardware support for paging. It caches 4KB of page table entries, cache multiple at once, like associative cache.
+\begin{itemize}
+\item \textbf{Fast}: Takes 1ns vs 50ns for RAM
+\item \textbf{TLB-Hit vs TLB-Miss}: RAM is only accessed upon the latter, and TLB is updated after that
+\item \textbf{Context switching}: In CS2106, can assume TLB is fully flushed when context switch (so new process does not get incorrect translation), as it is part of a process’ hardware context.
+\end{itemize}
+
+\subsubsection{Paging: Protection}
+Extend the paging entries to include bits to support memory protection.
+\begin{enumerate}
+\item \textbf{Access right bits}: On whether the page itself is writable, readable or executable, e.g. cannot
+write over text of process, but can execute
+\item \textbf{Valid bit}: Some pages may be out of range for certain processes for certain reasons. OS will set these
+valid bits when running. If out-of-range access is done, OS will catch.
+\end{enumerate}
+
+\subsubsection{Paging: Page Sharing}
+Allow processes to share same frame, hence multiple pages pointing to same physical frame. E.g. some library code shared between processes. Use
+a shared bit in the page table entry to track whether the page is shared.
+\begin{itemize}
+\item \textbf{Shared code page}: When shared library code or system calls, etc.
+\item \textbf{Copy-On-Write}: When a parent forks, the parent and child share the same pages, i.e. page table is
+copied but frames remain. Using a shared bit, when the child needs to update a shared page, then the
+frame is duplicated and page “unshared”.
+\end{itemize}
+
+
+\subsection{7.4.2 Segmentation Scheme}
+The memory space of a process contains \textbf{multiple logical regions} with different usages, permissions, lifetime, scope etc. (E.g. 4 types: Text, Data, Heap, Stack).
+\smallskip
+No need to put all the regions together in a contiguous logical memory space. Difficult to allow them to
+shrink/grow freely individual if together. Also hard to check if a memory access is in-range. Hence, \textbf{manage memory at the level of memory segments}.
+
+\subsubsection{Segmentation Scheme}
+All program memory references specified as (Segment name + Offset). \\
+\textbf{Memory segments}: Split the regions into their own segments
+\begin{itemize}
+\item \textbf{Name}: For reference, usually translated to an index, e.g. Text = 0, Data = 1, Heap = 2, etc.
+\item \textbf{Base}: The physical base address
+\item \textbf{Limit}: Indicate range of segment
+\end{itemize}
+
+\subsubsection{Segment Table}
+Keep a table of [Base, Limit], indexed by the name indices / segment ids. Store segment table inside registers as size is fixed and small, for fast use.
+\centerline{\includegraphics[width=0.7\linewidth]{segmentation}}
+1. With [SegId, Offset], we use SegId to get the [Base, Limit]. \\
+2. Check if Offset $<$ Limit, if so, segmentation fault. \\
+3. Else access Base + Offset
+
+
+\subsubsection{Segmentation Analysis}
+\begin{itemize}
+\item \textbf{Independent segments}: Each segment is contiguous and independent, and can shrink and grow independently
+\item \textbf{External fragmentation}: Variable size, contiguous memory regions result in the same problem
+\item \textbf{Not the same as paging}: Solving different problems
+\end{itemize}
+
+\subsection{7.4.3 Segmentation with Paging}
+Each segment is now composed of pages and has a page
+table of its own. The segment table now points to the
+page table address instead of the base address. Page
+limit remains unchanged.
+
 
 \section{7.5 Virtual Memory Management}
- Use of secondary storage as an extended memory region.
+ Use of secondary storage as an extended memory region. Remove assumption, physical memory (RAM) may not be large enough to hold one or more processes’
+logical memory space completely.
+\begin{itemize}
+\item A popular solution is to keep some pages in the physical memory, while others on secondary storage or disks (HDD, SDD). Bringing the pages
+in and out of memory is called \textbf{swapping}.
+\item \textbf{Logical not restricted by physical}: Logical memory address size is no longer restricted by physical
+\item \textbf{More processes in memory}: Improves CPU utilisation since more processes to choose to run
+\end{itemize}
+
+\subsection{7.5.1 Extended Paging Scheme}
+We add a “Is Memory Resident” bit in page table entries. When CPU tries to access non-memory resident pages, a \textbf{page fault} occurs. OS then needs to bring non-memory resident page into physical memory.
+\centerline{\includegraphics[width=1\linewidth]{extendedPaging}}
+
+\subsubsection{Page Fault}
+Updated page accessing process, now with page faults.
+\begin{enumerate}
+\item (Hardware) Check page table. If memory resident, done, else continue
+\item (Hardware) Page fault: TRAP to OS
+\item (OS) Locate page in secondary storage
+\item (OS) Load copy of page in physical memory frame
+\item (OS) Update page table
+\item (OS) Go back to step 1 to retry
+\end{enumerate}
+
 
 
 
