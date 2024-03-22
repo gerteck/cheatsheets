@@ -1385,44 +1385,221 @@ Keep a table of [Base, Limit], indexed by the name indices / segment ids. Store 
 \end{itemize}
 
 \subsection{7.4.3 Segmentation with Paging}
-Each segment is now composed of pages and has a page
-table of its own. The segment table now points to the
-page table address instead of the base address. Page
-limit remains unchanged.
+Each segment is now composed of pages and has a page table of its own. The segment table now points to the
+page table address instead of the base address. Page limit remains unchanged.
 
 
 \section{7.5 Virtual Memory Management}
- Use of secondary storage as an extended memory region. Remove assumption, physical memory (RAM) may not be large enough to hold one or more processes’
-logical memory space completely.
+Fully separate \textbf{logical memory} from \textbf{physical memory}. Use of secondary storage (HDD, SSD etc.) as extended memory region, as physical memory (RAM) may not be large enough to hold processes’ logical memory space completely. 
 \begin{itemize}
-\item A popular solution is to keep some pages in the physical memory, while others on secondary storage or disks (HDD, SDD). Bringing the pages
-in and out of memory is called \textbf{swapping}.
-\item \textbf{Logical not restricted by physical}: Logical memory address size is no longer restricted by physical
-\item \textbf{More processes in memory}: Improves CPU utilisation since more processes to choose to run
+\item A popular solution: keep some pages in physical memory, others on secondary storage. Bringing pages
+in and out of memory called \textbf{swapping}.
+\item \textbf{Logical Memory Address Size not restricted by physical}
+\item \textbf{Efficient use of physical memory}: Only needed pages swapped in.
+\item \textbf{More processes in memory}: Improves CPU utilisation since more processes can reside in memory, and to be chosen to run
 \end{itemize}
 
 \subsection{7.5.1 Extended Paging Scheme}
 We add a “Is Memory Resident” bit in page table entries. When CPU tries to access non-memory resident pages, a \textbf{page fault} occurs. OS then needs to bring non-memory resident page into physical memory.
 \centerline{\includegraphics[width=1\linewidth]{extendedPaging}}
 
-\subsubsection{Page Fault}
-Updated page accessing process, now with page faults.
+\subsubsection{Page Fault (See diagram above)}
+Updated page accessing process, now with page faults.\\
+1. (Hardware) Check page table. If memory resident, done, else continue\\
+2. (Hardware) Page fault: TRAP to OS\\
+3. (OS) Locate page in secondary storage\\
+4. (OS) Load copy of page in physical memory frame\\
+5. (OS) Update page table\\
+6. (OS) Go back to step 1 to retry\\
+
+\begin{itemize}
+\item \textbf{Thrash}: Poor performance of virtual memory / paging system when same pages loaded repeatedly due to lack of main memory.
+\item \textbf{Thrashing}: Constants state of paging and \textbf{page faults}.
+\end{itemize}
+
+\subsubsection{Virtual Memory and Locality}
+\begin{itemize}
+\item \textit{Temporal Locality}: Memory address used now likely to be used again.  Cost of loading is amortized.
+\item \textit{Spatial Locality}: Memory addresses close to the address used now likely to be used soon. A page contains these many consecutive locations.
+\end{itemize}
+
+\subsubsection{Demand Paging}
+What we have described thus far is demand paging, i.e. OS only copies a page into memory if a page
+fault occurs, as compared to anticipatory paging. Unneeded pages never loaded, more efficient use of physical memory.
+\begin{itemize}
+\item Process start with \textbf{no memory resident page}, only allocate page when there is page fault.  Fast startup time, small memory footprint.
+\item Process may be sluggish at start due to multiple page faults, may cause cascading thrashing on other processes.
+\end{itemize}
+
+\columnbreak
+
+\subsection{7.5.2 Page Table Structure}
+\textbf{Page Table} exists with process info, takes up \textbf{physical memory space}! Even if large number of pages are on disk (secondary storage), 
+page tables themselves still take up a lot of space in memory. This results in \textbf{high overhead and fragmentation}, since the table itself needs to occupy several
+pages.
+
+\subsubsection{A. Direct Paging}
+We keep all entries in a single page table, and we allocate each process this huge page table. To compute the size of this table:
 \begin{enumerate}
-\item (Hardware) Check page table. If memory resident, done, else continue
-\item (Hardware) Page fault: TRAP to OS
-\item (OS) Locate page in secondary storage
-\item (OS) Load copy of page in physical memory frame
-\item (OS) Update page table
-\item (OS) Go back to step 1 to retry
+\item Find number of pages from virtual address (byte-addressed) / Page Size.
+\item For $2^p$ pages (b-bit addresses), need $p$ bits to specify one unique page.
+\item If virtual address has 32 bits, and each page/frame is $4KB$ = $2^{12}B$, then $p = 32 - 12 = 20$ bits.
+\item This also means $2^{20}$ pages and page table entries.
+\item If each page table entry is 2 bytes, then page table size is $2^{20} \times 2$B $= 2$MB.
+\end{enumerate}
+But not all processes use the full virtual memory space, so much of this table will be unused
+
+\subsubsection{B. 2-Level Paging}
+We further split the page table into regions, and only allocate these regions when needed. Keep directory of these regions. Each table
+entry points to the base address of the next page table. Further extendable to multilevel paging.
+\begin{itemize}
+\item \textbf{Size of page table}: Generally we want each (region) table to be same size as a page, to reduce fragmentation.
+\item \textbf{Page directory base register}: One register that stores base address of process’ page directory, update during context switching.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{2levelPaging}}
+\begin{itemize}
+\item \textbf{Pros}: Enables page table structures to grow beyond size of a frame. Can have empty entries in page directory, corresponding page tables need not be allocated.
+\item \textbf{Cons}: Requires two serialized memory accesses just to get the frame number (directory + page table), only then to access data.
+\item Use TLB? TLB hits eliminate page-table accesses, but TLB misses experience longer \textit{page-table walks} (traversal of page-tables in hardware).
+\end{itemize}
+
+\columnbreak
+
+\subsubsection{Overhead calculation (2 Level Paging)}
+\begin{enumerate}
+\item E.g. all tables/pages $=$ 4KB, each entry $=$ 2B, virtual address $=$ 32 bits. 
+\item Since each frame/page is 4KB, the offset is $2^{12}$B, i.e. we only look the first 20 bits of the address. 
+\item Since each page table (the ones that are split) is 4KB big, and each entry is 2B, then each table has $2^{12} \div 2$ = $2^{11}$ entries. 
+\item That means directory has $2^{20} \div 2^{11} = 2^9$ entries. This means it will take up $2^9 \times 2$B $= 2^{10}$B $= 1$KB. 
+\item Although technically directory itself would also take 1 page, we can consider it to only have
+an overhead of 1KB. Let’s say we only allocated and are using 3 page tables. 
+\item Then total overhead $= 1$KB$ + 12$KB $= 13$KB.
 \end{enumerate}
 
+\smallskip
+
+\centerline{\includegraphics[width=0.9\linewidth]{2levelPaging2}}
+
+\subsubsection{Hierarchical Page Table}
+\centerline{\includegraphics[width=1\linewidth]{2levelPaging3}}
 
 
+\subsubsection{C. Inverted Page Table}
+We want to keep a page table that tells us which process is using which frame. We can thus keep an array
+with the same size as number of frames. In each entry, we store the \textbf{PID} and \textbf{page number}.
+\begin{itemize}
+\item \textbf{Fast lookup by frame}: Often to support RAM management operations
+\item \textbf{Ease of use}: Frame management is a lot easier $+$ one table for all processes
+\item \textbf{Slow translation}: From page number to frame number, since we need to search through the entire
+table. However, normally we use page directories and tables for that. Inverted page table used as auxiliary structure, e.g. to show processes using a frame.
+\end{itemize}
 
+\columnbreak
 
+\subsection{7.5.3 Page Replacement Algorithms}
+When there are no free pages during a page fault, we will need to replace an existing page. 
+Based on a \textbf{dirty bit} for the page entry, if the page has been modified, it will need to be written back to disk.
 
+\subsubsection{Memory Reference Strings}
+The offset does not matter when talking about page replacement, only page numbers. A sequence of page numbers is called a memory reference string.
+(E.g. 3, 2, 1, 0, 3, 2, 4, 3, 2, 1, 0, 4).
 
+\subsubsection{Memory Access Time}
+\centerline{$T_{access} = (1 - p) \times T_{mem} + p \times T_{page fault}$}
+Want to reduce $p$ (probability of page fault) since $T_{fault} >> T_{mem}$.
 
+\subsubsection{A. Optimal Page Replacement (OPT)}
+Replace the page that will not be used again for the longest period of time. \textbf{Minimum page faults guaranteed}, used as a benchmark. However, \textbf{need to know the future}, not feasible irl.
+
+\subsubsection{B. FIFO Page Replacement}
+Evict oldest memory page (based on loading time, NOT access time).
+\begin{itemize}
+\item \textbf{Queue}: Maintain queue of resident pages, update during page fault.
+\item \textbf{Simple to implement}: No need hardware support
+\item \textbf{Belady’s anomaly}: Generally, if number of frames in RAM increases, page faults should
+occur less frequently. However, for FIFO, we may actually see the opposite.
+\item \textbf{Does not exploit temporal locality}: This is the reason for above.
+\end{itemize}
+
+\subsubsection{C. LRU: Least Recently Used Page Replacement}
+Replace the page that has not been used (accessed) in the longest time.
+\begin{itemize}
+\item \textbf{Temporal locality}: Makes use of it. Does not suffer Belady’s anomaly.
+\item \textbf{Close to optimal algorithm}: Good approximation
+\item \textbf{Difficult implementation}: Need to keep track of
+last access time, thus need substantial hardware support.
+\end{itemize}
+\textbf{LRU Implementation Details}
+\begin{enumerate}
+\item \textbf{Time counter}: A logical time counter that increments for every stored reference and is stored
+along with it. However, deletion is O(n) since we need to find the page with the lowest counter. We
+may also have overflow issues with the counter.
+\item \textbf{Stack}: Maintain a stack of page numbers. When a page is referenced, we pop it out from the stack (if inside), and push it to the top. 
+For replacement, we remove the bottom most page. Hard to implement in hardware, and not exactly a stack, since we can pop from anywhere.
+\end{enumerate}
+
+\subsubsection{D. Second-Chance Page Replacement (CLOCK)}
+Modified FIFO, maintain a separate reference bit for each page entry. When all page entries
+have same reference bit, effectively becomes a FIFO algo. \\
+1. We maintain a circular queue of page numbers, and a pointer to the “oldest”, or victim page. \\
+2. When we load a page entry, we set the reference bit to 0 (for CS2106). \\
+3. Upon accessing the page entry, we will set the reference bit to 1 \\
+4. When a page replacement is required, we check the current victim page \\
+(a) If the reference bit is 0, we replace it. \\
+(b) Else if the reference bit is 1, we set it to 0 and move the pointer to the next page \\
+5. Repeat step 4 until a victim page with reference bit 0 is found.
+
+\subsection{7.5.4 Frame Allocation}
+If there are N physical frames and M processes competing for frames, we need to distribute these frames.
+\begin{enumerate}
+\item \textbf{Equal allocation}: Each process gets $N/M$ frames.
+\item \textbf{Proportional allocation}: Each process gets $\frac{size_p}{size_{total}} \times N$ frames.
+\end{enumerate}
+
+\subsubsection{Local (Page) Replacement}
+Victim page selected among \textbf{pages of process} that caused the page fault.
+\begin{itemize}
+\item \textbf{Constant frame allocation}: Number of frames is the same, performance is stable between runs.
+\item \textbf{Insufficient allocation}: Will result in hindering of the process
+\item \textbf{Thrashing}: Limited to one process, but that single process can hog the I/O (to bring non-resident pages into RAM) and degrade the performance of other processes.
+\end{itemize}
+
+\subsubsection{Global (Page) Replacement}
+Victim page is selected among pages of all processes.
+\begin{itemize}
+\item \textbf{Self-adjustment}: Processes that need more frames can get them from other processes
+\item \textbf{Malicious processes}: Can affect others.
+\item \textbf{Inconsistent performance}: Between runs
+\item \textbf{Cascading thrashing}: One process that thrashes
+will steal pages from others, resulting in other processes also thrashing
+\end{itemize}
+
+\subsubsection{Working Set Model}
+Generally, the \textbf{(working) set} of pages referenced by a process is quite constant in a period of time due to locality.
+The number of page faults is minimal until the process transmits to a new locality, e.g. new function call, etc. \\
+\textbf{Working Set Model}: monitors the memory usage patterns of processes and 
+adjusts the frame allocations based on the working set of each process
+
+\begin{itemize}
+\item Define a \textbf{working set} window $\delta$, which is an interval of time
+\item $W(t, \delta)$ is the set of active pages in the interval at time $t$
+\item We thus want to allocate enough frames for pages in $W(t, \delta)$ to reduce page fault
+\item Accuracy of model depends on choice of $\delta$: Too small, miss pages in current locality. Too large, contains pages from different localities.
+\end{itemize}
+
+\subsubsection{All Page Entry Bits Thus Far}
+1. Access Right Bits \\
+2. Valid Bit \\
+3. Is-Shared Bit\\
+4. Is-Memory Resident Bit\\
+5. Dirty Bit\\
+6. Reference Bit (for CLOCK)\\
+
+\null \null  \null 
+\null \null  \null 
+\columnbreak
+
+\section{8. File Systems}
 
 
 
