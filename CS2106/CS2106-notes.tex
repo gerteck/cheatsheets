@@ -1576,9 +1576,10 @@ will steal pages from others, resulting in other processes also thrashing
 
 \subsubsection{Working Set Model}
 Generally, the \textbf{(working) set} of pages referenced by a process is quite constant in a period of time due to locality.
-The number of page faults is minimal until the process transmits to a new locality, e.g. new function call, etc. \\
-\textbf{Working Set Model}: monitors the memory usage patterns of processes and 
-adjusts the frame allocations based on the working set of each process
+The number of page faults is minimal until process transmits to new locality, e.g. new function call, etc. \\
+\textbf{Working Set Model}: monitors the memory usage patterns of processes \textbf{(look back last $x$ frames and see how many unique frames used)} and adjusts the frame allocations based on the working set of each process.
+
+\centerline{\includegraphics[width=0.85\linewidth]{workingSet}}
 
 \begin{itemize}
 \item Define a \textbf{working set} window $\delta$, which is an interval of time
@@ -1595,11 +1596,123 @@ adjusts the frame allocations based on the working set of each process
 5. Dirty Bit\\
 6. Reference Bit (for CLOCK)\\
 
-\null \null  \null 
-\null \null  \null 
 \columnbreak
 
 \section{8. File Systems}
+\textbf{Motivation}: Physical memory (RAM) is violate, use external storage for \textit{persistent} info. Direct access to storage media \textbf{not portable / standard}. \\
+ \textbf{File systems} consists of files and directories, and provides an abstraction for access, high level resource management scheme, protection and sharing between processes and users.
+
+\subsection{General Criteria (of File System)}
+\begin{itemize}
+\item \textbf{Self-Contained}: Info on media should describe the
+entire organisation. Hence, can plug-and-play on another system.
+\item \textbf{Persistent}: Data persists beyond processes and OS
+\item \textbf{Efficient}: Good management of free and used space, minimal overhead for bookkeeping.
+\end{itemize}
+
+\section{8.1 File System Abstractions}
+\subsection{8.1.1 File}
+\begin{itemize}
+\item \textbf{File}: A logical unit of information created by a process, an ADT.
+\item \textbf{File Metadata}: Attributes associated with the file.
+\item Metadata includes: Name, Identifier (UID), Type, Size, Protection (permissions), Time/Date/Owner, Table of Content.
+\item \textit{Abstract Data Type (ADT)}: Set of common operations with various possible implementation.
+\end{itemize}
+
+\subsubsection{File Name}
+A human readable reference to the file. Different FS have different rules. Rules include length, case-sensitivity, allowed special symbols and file extension. Some FS use extension to indicate file type. (Name.extension)
+
+\subsubsection{File Type}
+Each file type has an associated set of operations and possibly specific program for processing. Common file types:
+\begin{itemize}
+\item \textbf{Regular files}: contains user info \\
+- \textbf{ASCII files}: text files, source codes, etc. Can be printed as is. \\
+- \textbf{Binary files}: executables, mp3, pdf, etc. Have a predefined internal structure that needs a specific program to process
+\item \textbf{Directories}: system files for FS structure
+\item \textbf{Special files}: character/block oriented
+\end{itemize}
+\textbf{Distinguishing File Type}:
+\begin{itemize}
+\item \textbf{Windows}: Uses file extension as file type
+\item \textbf{UNIX}: Uses magic number embedded at beginning of file
+\end{itemize}
+
+\subsubsection{File Protection}
+Control access to information stored in file. Most common approach: restrict access based on user identity. \\
+Type of accesses: (R/W, Append, Execute[load into memory, execute], Delete, List[read metadata]).  \\
+\textit{Related to CS2107 Access Control List, Permission Bits.} \\
+
+\begin{itemize}
+\item  \textbf{Access Control Scheme} A list of user identity \& allowed access types. 
+\item Very customizable, but too much information associated with file.
+\item Unix: Classify users into three classes (owner, group, universe), and define permission of R/W/E for these 3 classes of users.
+\item \textbf{Access Control List (ACL)}: Minimal ACL (same as permission bits), extended ACL (added named users/groups).
+\end{itemize}
+
+\subsection{8.1.2 File Data}
+\subsubsection{Different Structure}
+\begin{itemize}
+\item \textbf{Array of bytes}: Just raw bytes having a certain offset from the start of file.
+\item \textbf{Fixed length records}: Each record has a fixed size.
+This array of records can grow / shrink, and easy to jump to any record using offset.
+\item \textbf{Variable length records}: Flexible but hard to locate a record.
+\end{itemize}
+
+\subsubsection{Access Methods}
+\begin{itemize}
+\item \textbf{Sequential access}: Read in order from beginning.
+Cannot skip but can rewind.
+\item \textbf{Random access}: Read in any order, either via a
+read(offset) or seek(offset). UNIX and Windows
+both use the latter.
+\item \textbf{Direct access}: Basically random access but with
+records instead of bytes. (For files with fixed-length records).
+\end{itemize}
+
+\subsection{8.1.3 File Operations}
+Generally these operations are \textbf{system calls}, as it provides protection, and concurrent and efficient access.
+
+\subsubsection{Metadata Operations}
+1. Rename \\
+2. Change attributes, e.g. file access permissions, dates, ownerships, etc. \\
+3. Read attribute, e.g. get file creation time
+
+\subsubsection{Data Operations}
+1. \textbf{Create} a new file with no data \\
+2. \textbf{Open} a file to prepare the necessary information for file operations later
+3. \textbf{Read} data from file, usually from current position
+4. \textbf{Write} data to file, usually from current position
+5. \textbf{Reposition} (seek) to new location
+6. \textbf{Truncate} removes data between specified position to end of file
+
+\subsubsection{Representation of Open File}
+1. \textbf{File pointer}: Current location in file
+2. \textbf{Disk location}: Actual file location on disk
+3. \textbf{Open count}: Useful to determine when to remove the entry.
+
+\subsubsection{Two Table Approach}
+1. \textbf{System-wide open-file table}
+\begin{itemize}
+\item Keeps track of open files in the system, one entry per unique file.
+\item If one process opens the same file twice, or two processes open the same file, there will be two
+separate entries
+\item If one process opens a file then forks, only one entry here
+\end{itemize}
+2. \textbf{Per-process open-file table}
+\begin{itemize}
+\item Keeps track of open files for a process, also known as file descriptors
+\item Each entry points to a system-wide table entry
+\item If one process opens a file then forks, there will be two fds pointing to the same system-wide table entry. They will thus share the same offset.
+\end{itemize}
+
+
+
+
+
+\section{8.2 File System Implementation}
+
+
+\section{8.3 File System Case Studies}
 
 
 
