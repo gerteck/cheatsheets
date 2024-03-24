@@ -1913,7 +1913,19 @@ have some fixed size entry
 some other data structure for more information
 \end{enumerate}
 
+\null
+\columnbreak
 
+\subsection{8.2.4 Walkthrough on File Operation}
+We have looked at static information for a FS stored on media. At runtime, when user interacts with file, run-time information is needed, which is maintained by OS in memory. Involves common in-memory information (System-wide open file table, per-process open file table, buffer for disk blocks read from/written to disk.)
+
+\subsubsection{Create [touch, New-Item etc.]}
+\centerline{\includegraphics[width=1\linewidth]{fileCreation}}
+
+\bigskip
+
+\subsubsection{Open}
+\centerline{\includegraphics[width=1\linewidth]{fileOpen}}
 
 
 
@@ -1922,6 +1934,10 @@ some other data structure for more information
 
 \vfill \null
 \columnbreak
+
+\vfill \null
+\columnbreak
+
 
 \section{8.3 File System Case Studies}
 
