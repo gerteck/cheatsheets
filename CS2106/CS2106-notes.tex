@@ -1916,7 +1916,7 @@ some other data structure for more information
 \null
 \columnbreak
 
-\subsection{8.2.4 Walkthrough on File Operation}
+\subsection{8.2.5 Walkthrough on File Operation}
 We have looked at static information for a FS stored on media. At runtime, when user interacts with file, run-time information is needed, which is maintained by OS in memory. Involves common in-memory information (System-wide open file table, per-process open file table, buffer for disk blocks read from/written to disk.)
 
 \subsubsection{Create [touch, New-Item etc.]}
@@ -1927,39 +1927,155 @@ We have looked at static information for a FS stored on media. At runtime, when 
 \subsubsection{Open}
 \centerline{\includegraphics[width=1\linewidth]{fileOpen}}
 
+\bigskip
 
-
-
-
-
-\vfill \null
+\vfill\null
 \columnbreak
 
-\vfill \null
+\subsection{8.2.6 Extra Knowledge}
+
+\subsubsection{FS Consistency Check}
+Performed when sudden power loss or crash happens. \textit{CHKDSK} for Windows, \textit{fsck} for Linux.
+
+\subsubsection{Defragmentation}
+When fragmentation on disk gets too severe, I/O performance may suffer. On Windows, official and 3rd
+party software are used to solve this problem. On Linux, the file allocation algorithm allocates files further apart, and free blocks near existing data blocks
+are used if possible, keeping fragmentation low when disk occupancy is < 90\%.
+
+\subsubsection{Journaling}
+Like saving state. Information or actual data is written into a separate log file before an operation
+is performed, so that it can recover to an earlier stable state or re-perform the interrupted file operation.
+
+\subsubsection{Interesting FS}
+\begin{itemize}
+\item \textbf{Virtual FS}: Provides another layer of abstraction on top of existing file systems, allowing applications
+to access files on different file systems
+\item \textbf{Network FS}: Allows files to reside on different machines, and file operations are now network operations
+\item \textbf{New Technology FS NTFS}: Used in Windows XP onwards, provides file encryption, compression, versioning, and hard/symbolic link
+\item \textbf{Ext3/Ext4}: Variant of Ext2 with journaling and expanded max file and file system sizes
+\item \textbf{Hierarchical FS Plus (HFS+)}: Used in Mac OS X, provides compression, encryption, large FS/- files/number of files support, metadata journaling.
+\end{itemize}
+
+
+
+\vfill\null
 \columnbreak
 
 
 \section{8.3 File System Case Studies}
 
+\section{MS-DOS FAT}
+Microsoft Disk Operating System File Allocation Table. Works with linked list block allocation and the FAT is cached in RAM for traversal.
+The index of the block is the index of its FAT entry. A block is also called a cluster. \\
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{MSDOSFat}}
+
+\subsection{FAT FS:}
+\begin{itemize}
+\item \textbf{Each partition} has: OS boot block (to start file system), FAT, FAT duplicate (optional), Root directory, Data blocks.
+\item \textbf{Each FAT Entry has values}: FREE code (block is unused), Block number of next block of file, EOF code i.e. NULL, BAD block (unusable).
+\item \textbf{Directory}: Special type of file. Root directory in special location, rest in data blocks. Each file or subdirectory \textbf{represented by a directory entry}.
+\end{itemize}
+
+\subsubsection{Directory Entry}
+Each entry has a fixed size of 32 bytes. The first byte of name may have meaning. Attributes (e.g. read-only, is-Dir/file flag, hidden). First disk block of linked list (2 bytes). 
+
+\centerline{\includegraphics[width=1\linewidth]{directoryEntry}}
+
+\subsubsection{MS-DOS FAT Tracing Process}
+1. Get required directory table from disk blocks. Likely cache at this point. \\
+2. Get required directory entry and find first disk block number. \\
+3. Use FAT to find remaining disk block numbers, until EOF code reached. \\
+4. Use numbers for disk access on file data blocks. If subdirectory, repeat 1. \\
+
+
+\centerline{\includegraphics[width=1\linewidth]{FATtracing}}
+
+\subsubsection{MS-DOS FAT Common Tasks}
+\begin{itemize}
+\item \textbf{File Deletion}: Soft delete, set first letter in filename to a special value 0xE5, free data blocks in link list.
+\item \textbf{Free space management}: No record, calculated by going through FAT.
+\item \textbf{Fat12/16/32}: Bigger FAT, (Disk block index 12 for FAT12 etc.), more disk block, more bits to represent cluster. Larger usable partition size.
+\item \textbf{Long File Name Support, VFAT}: Virtual FAT, use multiple directory entries for file with long file name.
+\end{itemize}
 
 
 
+\section{Linux Ext2}
+Popular intricate file system in Linux, embeds traditional Unix FS ideas.  \\
+The layout of the file system is different. 
+\begin{itemize}
+\item Blocks are grouped into \textbf{block groups}.
+\item each file/directory is described by a single special structure called \textbf{I-Node (Index Node)}, containing file metadata and
+data block addresses.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{Ext2}}
+
+\subsubsection{Partition Information}
+\begin{itemize}
+\item \textbf{MBR: Master boot record}: Same as before
+\item \textbf{Block Groups}: OS boot block. \\
+\textbf{Superblock}: Describes the whole file system, e.g. total I-Node number, I-Nodes per
+group, total disk blocks, disk blocks per group, etc. Duplicated in each block group for redundancy. \\
+\textbf{Group descriptors}: Describe each of the block group, e.g. number of free disk blocks
+and I-Nodes per group, location of bitmap etc. Duplicated in each block group for redundancy. \\
+\textbf{Block bitmap}: Keeps track of usage status of blocks in this block group (1 = Occupied,
+0 = Free) \\
+\textbf{I-Node bitmap}: Same but for I-Nodes \\
+\textbf{I-Node table}: Array of I-Nodes in this block group \\
+\textbf{Data blocks}
+\end{itemize}
 
 
+\subsubsection{I-Node Structure}
+\centerline{\includegraphics[width=1\linewidth]{INode}}
+
+\subsubsection{Multilevel Data Block Pointers}
+Allows for fast access to small files and flexibility to handle huge files. The first 12 data block pointers directly point to the disk block. The next pointer points to a single indirect block, which contains direct pointers. The next pointer points to a double indirect block, which contains pointers to single indirect blocks. Finally, we have one triple indirect block.
+\smallskip
+Assuming each disk block address is 4B, each disk block is 1KB, then in total, we have 12 $\times$ 1KB $+$ 256 $\times$ 1KB $+$
+2562 $\times$ 1KB $+$ 2563 $\times$ 1KB = 16843020KB = 16GB.
 
 
+\columnbreak
+
+\subsubsection{Directory Structure}
+A directory is just another file. Fata blocks form a “linked list” of directory entries for files and subdirectories.
+Each entry has: I-Node number for file/subdirectory, 0 for unused entry, Size to traverse to next entry, length of name, Type (file, subdirectory, special etc), Name of file/subdirectory (up to 255) characters.
 
 
+\centerline{\includegraphics[width=1\linewidth]{directoryStructure2}}
+
+\subsubsection{Linux Ext2 Tracing Process}
+1. Get root directory I-Node. Generally a fixed number e.g. 2. Read it. \\
+2. If next part in pathname is \textbf{subdirectory}:  (a) Locate directory entry in curr directory,  (b) Get I-Node number, read I-Node, contains metadata on subdirectory data, (c) Current directory is now this subdirectory. \\
+3. Else if is \textbf{file}: (a) Locate directory entry in curr directory, (b) Get I-Node number, read I-Node, which contains metadata on the file data.
+
+\centerline{\includegraphics[width=1\linewidth]{ExtTracing}}
 
 
+\subsection{Some Ext2 Operations}
+\subsubsection{Open}
+1. Go through tracing process. If F is not found, terminate with error. \\
+2. Load file info into a new entry E in the system-wide table (i.e. store the I-Node pointer) \\
+3. Create an entry (file descriptor) in process P ’s table to point to E \\
+4. Return fd of this entry \\
 
+\subsubsection{Delete}
+1. Remove its directory entry by pointing the previous entry to the next entry. If first entry, make it a blank record. \\
+2. Update I-Node bitmap and mark corresponding I-Node as free \\
+3. Update block bitmap and mark the corresponding blocks as free \\
 
+\subsubsection{Hard Link} 
+1. Create a new directory entry in B with same I-Node number as X in A \\
+2. Update X I-Node’s reference count \\
+3. For deletion, decrement the reference count, then when it goes to 0, perform actual deletion (or cleanup).
 
-
-
-
-
-
+\subsubsection{Symbolic Link}
+1. Create new file Y in directory B, i.e. new Y I-Node $+$ new dir. entry for Y \\
+2. Store pathname of file X in file Y , i.e. as the file content \\
+3. As only pathname is stored, the link easily invalidated.
 
 
 
