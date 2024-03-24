@@ -1660,11 +1660,8 @@ This array of records can grow / shrink, and easy to jump to any record using of
 
 \subsubsection{Access Methods}
 \begin{itemize}
-\item \textbf{Sequential access}: Read in order from beginning.
-Cannot skip but can rewind.
-\item \textbf{Random access}: Read in any order, either via a
-read(offset) or seek(offset). UNIX and Windows
-both use the latter.
+\item \textbf{Sequential access}: Read in order from beginning. Can't skip, can rewind.
+\item \textbf{Random access}: Read in any order, via read(offset) or seek(offset). UNIX and Windows both use seek.
 \item \textbf{Direct access}: Basically random access but with
 records instead of bytes. (For files with fixed-length records).
 \end{itemize}
@@ -1679,38 +1676,252 @@ Generally these operations are \textbf{system calls}, as it provides protection,
 
 \subsubsection{Data Operations}
 1. \textbf{Create} a new file with no data \\
-2. \textbf{Open} a file to prepare the necessary information for file operations later
-3. \textbf{Read} data from file, usually from current position
-4. \textbf{Write} data to file, usually from current position
-5. \textbf{Reposition} (seek) to new location
+2. \textbf{Open} a file to prepare the necessary information for file operations later \\
+3. \textbf{Read} data from file, usually from current position \\
+4. \textbf{Write} data to file, usually from current position \\
+5. \textbf{Reposition} (seek) to new location \\
 6. \textbf{Truncate} removes data between specified position to end of file
 
 \subsubsection{Representation of Open File}
-1. \textbf{File pointer}: Current location in file
-2. \textbf{Disk location}: Actual file location on disk
-3. \textbf{Open count}: Useful to determine when to remove the entry.
+1. \textbf{File pointer}: Current location in file \\
+2. \textbf{Disk location}: Actual file location on disk \\
+3. \textbf{Open count}: Useful to determine when to remove the entry. \\
 
-\subsubsection{Two Table Approach}
+\subsubsection{Two Table Approach (One system-wide, PCB per process)}
 1. \textbf{System-wide open-file table}
 \begin{itemize}
 \item Keeps track of open files in the system, one entry per unique file.
 \item If one process opens the same file twice, or two processes open the same file, there will be two
 separate entries
-\item If one process opens a file then forks, only one entry here
+\item If one process opens a file then forks, only one entry here.
 \end{itemize}
 2. \textbf{Per-process open-file table}
 \begin{itemize}
-\item Keeps track of open files for a process, also known as file descriptors
+\item \textbf{File Descriptor Table}: Keeps track of open files for a process, also known as file descriptors
 \item Each entry points to a system-wide table entry
 \item If one process opens a file then forks, there will be two fds pointing to the same system-wide table entry. They will thus share the same offset.
 \end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{fileOperation}}
 
+\subsection{8.1.4 Directory}
+Helps user group files, and helps system keep track of files.
 
+\subsubsection{Single-Level Directory}
+All files are contained under the root directory. (E.g. Audio CD)
 
+\subsubsection{Tree-Structured Directory}
+Since directories can contain directories, they are like trees or subtrees. Files are like leaves.
+\begin{itemize}
+\item \textbf{Absolute pathname}: Can refer to file by path
+from root to file.
+\item \textbf{Relative pathname}: Can refer to file by path from
+current working directory (CWD).
+\end{itemize}
 
+\subsubsection{DAG Directory Structure}
+If a \textbf{file can be shared}, might get a DAG (Directed Acyclic Graph) from a tree, “skips” levels, i.e. share a file/directory such that it appears in multiple directories but refers to the same copy of actual content.
+\begin{itemize}
+\item \textbf{UNIX Hard link}: Directories A and B have separate
+pointers to file F . Only works with files. \\
+- \textbf{Pros}: Low overhead, only adds pointers \\
+- \textbf{Cons}: Deletion problems - what if one directory deletes F? 
+\item `ln` command in UNIX
+\item \textbf{Symbolic link}: Directory B creates a special link
+file G that contains path name of F . When G is accessed, we access F instead. \\
+- Pros: Simple deletion. B deletes G, not F . A deletes F , and G remains but does not work. \\
+- Cons: Larger overhead - G takes up actual disk
+space
+\item ln -s command in UNIX
+\end{itemize}
+
+\subsubsection{General Graph Directory Structure}
+General Graph Created when the tree has a cycle. Though possible in
+UNIX, it is not desirable.
+\begin{itemize}
+\item \textbf{Hard to traverse}: Need to prevent infinite loops.
+\item \textbf{Hard to determine} when to remove a file/directory
+\item \textbf{In UNIX}: general graph created when symbolic link allowed to link to directory.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{directoryStructure}}
+
+\subsubsection{UNIX Context: File Operations}
+\begin{itemize}
+\item \textbf{int open(char *path, int flags)}: Takes in a path and flags, and returns a file descriptor
+(fd) integer.
+\item \textbf{int read(int fd, void *buf, int n)}: Takes in a fd, a buffer and an integer n and reads up
+to n bytes into the buffer. It is sequential - starts at current offset and increments offset by bytes read.
+\item \textbf{int write(int fd, void *buf, int n)}: Takes in a fd, a buffer and an integer n and write up to
+n bytes from buffer into the file. It is sequential - starts at current offset and increments offset by bytes written. Appends new data if file size goes beyond EOF. Throws error if file size limit, quota, disk space, etc.
+are exceeded.
+\item \textbf{off\_t lseek(int fd, off\_t offset, int whence)}: Takes in a fd, an offset and a whence and moves current position in file. If offset is positive, move forward, else move backward. The value of whence can be: SEEK\_SET: set absolute offset (from start of file), SEEK\_CUR: set relative offset from current position, SEEK\_END: set relative offset from end of file.
+\item \textbf{int close(int fd)} Closes an opened fd, and kernel can remove associated data structures. Process termination automatically closes all open files.
+\end{itemize}
+
+\subsection{8.1.5 Disk I/O}
+\subsubsection{Disk Structure (Recap)}
+\begin{itemize} 
+\item \textbf{Track}: One ring around the disk. One disk can have
+many tracks of different radii.
+\item \textbf{Sector}: Much like the sector of a circle, this is a
+sector of a track
+\item \textbf{Disk head}: The reader stick that moves above the
+disk and transform the disk’s magnetic field into electrical current or vice versa
+\item \textbf{Rotation}: By rotating, we can change sector
+\item \textbf{Seek}: By shifting the disk head towards and away from the centre of the disk, we can change track
+\end{itemize}
+
+\subsection{Disk Scheduling Algorithms}
+Due to significant seek and rotational latency, OS should schedule disk I/O requests. This is to \textbf{reduce overall waiting time}, focus on \textbf{reducing seeking time} (aka moving between tracks).
+\begin{itemize}
+\item \textbf{First-Come First-Serve}: Move disk head to next track.
+\item \textbf{Shortest Seek First}: Move head to nearest track within schedule.
+\item \textbf{SCAN}: Bidirectional, go from innermost to outermost, then back to innermost. Much like lift algorithms.
+\item \textbf{C-SCAN}: Unidirectional, go from outermost to innermost, then reset.
+\item \textbf{Deadline}: 3 queues for requests: 1. Sorted, 2. Read FIFO (sorted chronologically), 3. Write FIFO (sorted chronologically).
+\item \textbf{noop}: No sorting involved. Actually same as FCFS
+\item \textbf{cfq}: Completely fair queuing, time sliced and per process sorted queues
+\item \textbf{bfq}: Budget fair queuing or multiqueue, fair sharing based on number of sectors requested
+\end{itemize}
+
+\centerline{\includegraphics[width=0.8\linewidth]{SCANDiskHeadMovement}}
+
+\columnbreak
 
 \section{8.2 File System Implementation}
+Earlier, we saw that a disk has various sectors. To the OS, what it sees is a 1-D array of logical blocks, usually 512B to 4KB big. The mapping between logical blocks and sectors is hardware dependent.
+\centerline{\includegraphics[width=0.8\linewidth]{OSview}}
 
+\subsection{8.2.1 Disk Organisation}
+\begin{itemize}
+\item \textbf{Master boot record}: Found at sector 0. Contains: Simple boot code and Partition table.
+\item \textbf{Partitions}: Each partition is an independent file system. Contains: \\
+1. OS boot block (information for boot-up), 2. Partition details, e.g. total number of blocks, number and location of free disk blocks, 3. Directory structure, 4. File information, 5. Actual file data.
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{diskOrganization}}
+
+\subsection{8.2.2 Files Info and File Data}
+We view a file logically as a collection of logical blocks. There will be \textbf{internal fragmentation} as file size may not be a multiple of logical block size. \\
+\textbf{Good file implementation}: When allocating file data, need to keep
+track of logical blocks, allow efficient access and utilise disk space efficiently.
+
+\subsubsection{A. Contiguous File Block Allocation}
+Allocate consecutive disk blocks to a file. File information will just store start + length for each file.
+\begin{itemize}
+\item \textbf{Easy to keep track}: Each file just needs starting block $+$ length.
+\item \textbf{Fast access}: Just need to seek first block
+\item \textbf{External fragmentation}: After a lot of creation/deletion, disk can have many small “gaps”.
+\item \textbf{File size}: Needs to be specified in advance, hard to change.
+\end{itemize}
+
+\subsubsection{B. Linked List (stored in block itself)}
+Maintain disk blocks as linked list. Each disk block stores the next disk block number besides the file data. \\
+\textbf{File information} will store first and last disk number for each file.
+\begin{itemize}
+\item \textbf{No external fragmentation}: Solves the previous problem
+\item \textbf{Slow access}: O(n) access
+\item \textbf{Less usable space}: Need to use space for pointer
+\item \textbf{Less reliability}: Fails if one pointer is incorrect
+\end{itemize}
+
+\columnbreak
+
+\subsubsection{A. Contiguous. B. Linked List V1}
+\centerline{\includegraphics[width=1\linewidth]{blockAllocation}}
+
+\subsubsection{C. Linked List V2.0 (FAT)}
+Same as linked list but now we move all pointers into a \textbf{file allocation table (FAT)} in memory. This is used by MS-DOS.
+\begin{itemize}
+\item \textbf{Faster access}: Linked list traversal is now all in memory.
+\item \textbf{Takes up space}: FAT tracks all disk blocks. This
+number can be huge when disk is large, consuming
+valuable memory.
+\end{itemize}
+
+\subsubsection{D. Indexed Allocation (Separate Index Block)}
+We use one block per file to store an array of indices of all other blocks. For example, index of 0-th block will be value of IndexBlock[0].
+\begin{itemize}
+\item \textbf{Less memory overhead}: Only index block of
+opened files need to be in memory (compared to whole FAT).
+\item \textbf{Fast direct access}: No need for traversal.
+\item \textbf{Limited max file size}: Max number of blocks is
+the max array size of index block.
+\item \textbf{Index block overhead}: Consumes space, keep updated.
+\item \textbf{Variations}: 
+	\begin{enumerate}
+	\item \textbf{Linked Scheme}: Keep linked list of index blocks, index block contains pointer to next index block.
+	\item \textbf{Multilevel Index}: Similar to multi-level paging. FIrst level index points to a number of second level index blocks etc.
+	\item \textbf{Combined Scheme}: Both direct indexing and multi-level scheme. \textbf{Unix I-node} does this. (Direct pointers, single indirect block, double indirect, triple indirect)
+	\end{enumerate}
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{blockAllocation2}}
+
+\vfill \null
+
+\columnbreak
+
+\subsection{8.2.3 Free Space Management}
+\textbf{Free List}: We want to know which disk blocks are free or not free,
+so that we can easily allocate (remove from free list) or free blocks (add to free list space).
+
+\subsubsection{A. Bitmap (to track free blocks)}
+Each block is 1 bit, if it’s 1 means it’s free, else it’s taken.
+\begin{itemize}
+\item \textbf{Easy to manipulate}: Use simple bit operations to find
+first free block or n-consecutive free blocks
+\item \textbf{Need to keep it memory}: For efficiency reasons.
+\end{itemize}
+
+\subsubsection{B. Linked List}
+We basically have a linked list of blocks used to contain indices of free blocks.
+\begin{itemize}
+\item \textbf{Easy to locate free block}: Just use first block.
+\item \textbf{Just need pointer to first block in memory}: Though we can cache other linked list blocks for efficiency.
+\item \textbf{High (Low) overhead}: We can mitigate this by using free
+blocks to store this list. Just make sure to give up free block holding linked list last.
+\item \textbf{Runs alternative}: If the free space tends to be in
+contiguous runs, we can instead store first index $+$ length. But may not work as well as fragmentation worsens.
+\end{itemize}
+
+\subsection{8.2.4 Directory Structure Implementation}
+The goal of a directory structure is to keep track of files in directory, and map file name to file information. A file is opened before use using some pathname (E.g. \code{open(``data.txt'')})
+\begin{itemize}
+\item \textbf{Path name}: List of directory names traversed from root.
+\item \textbf{A sub-directory}: usually stored as file entry with special type in a directory.
+\end{itemize}
+
+\subsubsection{A. Linear List (Indexed List)}
+Directory contains a list of entries, one entry per file. The entry contains the file name (and possibly other metadata) and file information or pointer to file information.
+\begin{itemize}
+\item \textbf{Inefficient searching}: Especially for large directories or deep tree traversal, e.g. (search all entries to see if file exists).
+\item \textbf{Solution}: Cache the last few searches
+\end{itemize}
+
+\subsubsection{B. Hash Table}
+Directory contains a size N hash table. We hash the file name from 0 to $N - 1$, and use chained collision resolution.
+\begin{itemize}
+\item \textbf{Fast lookup}
+\item \textbf{Cons: Limited size for hash table, depends on a good hash function}
+\end{itemize}
+
+\subsubsection{C. File Information}
+Two approaches to store file information in a directory entry:
+\begin{enumerate}
+\item \textbf{Store everything in directory entry}: Likely
+have some fixed size entry
+\item \textbf{Store only file name and pointer}: Pointer to
+some other data structure for more information
+\end{enumerate}
+
+
+
+
+
+
+
+
+\vfill \null
+\columnbreak
 
 \section{8.3 File System Case Studies}
 
