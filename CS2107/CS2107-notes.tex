@@ -1330,6 +1330,84 @@ Seems protecting lowest layer, can protect information in all layer. However, no
 
 
 \section{5.6 Network Protection: Firewall, Intrusion Detection System}
+SSL/TLS, WPA2 insufficient to protect network. DoS attacks cannot be prevented. Does not protect interactions with many services and applications (e.g. DNS server). Not practical, due to efficiency, to establish a SSL/TLS to the DNS 
+server for a DNS query, susceptible to DNS spoofing. \textbf{Need to control the flow of traffic} between networks, especially between the untrusted public network (Internet) and the trusted internal network.
+\begin{itemize}
+\item \textbf{Principle of Least Privilege PoLP}: requires that in a particular abstraction layer of a computing 
+environment, every module (e.g. process/ user/program) must be able to access only the information and resources that are necessary for its legitimate purpose. (adopted in domains of security)
+\item Need to divide computer network into segments and deny unnecessary access. 
+\item Firewall, IDS are tools to control network access.
+\end{itemize}
+
+\subsection{5.6.1 Firewall}
+\textbf{A firewall}: device/program, controls flow of network traffic between networks or 
+hosts that employ differing security postures. It sits at the border between networks and 
+looks at addresses, services and other characteristics of traffic. It then controls what traffic is 
+allowed to enter the network (ingress filtering), or leave the network (egress filtering).
+\begin{itemize}
+\item \textbf{ DMZ: Demilitarized Zone}. A sub-network that exposes the organization’s external 
+service to the (untrusted) Internet.
+\item Adds additional layer of security, an external network node can access only what is exposed in the DMZ, 
+while the rest of the organization's network is firewalled.
+\item \textbf{2-firewall Setting}: The first firewall ("front-end" or "perimeter" firewall) configured to allow traffic 
+destined to the DMZ only. The second firewall ("back-end" or "internal" firewall) only allows traffic to the DMZ from the internal network.
+\end{itemize}
+
+\subsubsection{Packet Filtering/Screening}
+Firewall’s controls are achieved by “packets filtering” (aka screening). Filtering may occur in router, gateway/bridge, host, etc. Packet filtering inspects every packet, typically only on the TCP/IP packet’s header information (network \& transport layer). If the payload is inspected, we call it \textbf{deep packet inspection (DPI)}. Action taken after inspection could be to allow packet to pass, drop packet, reject packet (inform sender), log info, notify system admin, modify packet.
+
+\begin{itemize}
+\item \textbf{Example Firewall Rules}: 
+\item Drop packets with “source ip-address” not within the organization’s network. (To 
+stop attacks originated within the network).
+\item Whitelist: Drop all packets except those specified in the white-list. (e.g. drop all except http, email 
+protocol, and DNS)
+\item Blacklist: Accept all packets except those specified in the black-list. (e.g. allow https except ip-address in 
+the blacklist)
+\end{itemize}
+
+\subsubsection{Firewall Design}
+A firewall enforces a set of rules provided by the network administrator. 
+An example of rules for Firewall-2 (back-end firewall) would be:
+\begin{itemize}
+\item Block HTTP
+\item Allow from Internal Network to Mail Server: SMTP, POP3
+\end{itemize}
+An example of rules for Firewall-1 (front-end firewall) would be:
+\begin{itemize}
+\item Allow from anywhere to Mail Server: SMTP only
+\end{itemize}
+How the rules are to be specified thus differs based on the devices and software. For a firewall configuration, the table is processed in a top-down manner, and the first matching rule determines the action taken. Hence, the most specific rule is on top, and the most general rule is last.
+
+
+\centerline{\includegraphics[width=1\linewidth]{firewall}}
+
+
+\subsubsection{Types of Firewall}
+There are 6 types of firewalls in the textbook, but they are usually grouped into 3 types.
+\begin{enumerate}
+\item \textbf{(Traditional) Packet Filters}: Filters packets based on information in packet headers.
+\item \textbf{Stateful-Inspection (Packet Filters)}: Maintains a state table of all active connections, and filters packets based on active connection states.
+\item \textbf{Application Proxy}: Understands application logic and acts as a relay of application-level traffic
+\end{enumerate}
+
+
+\subsection{5.6.2 Intrusion Detection System}
+An IDS system consists of a set of “sensors” who gather data. Sensors could be in the host, or network router. The data are analyzed for intrusion. Popular open-source IDS: Snort.
+
+\subsubsection{Three types of IDS:}
+\begin{itemize}
+\item \textbf{Attack signature Detection}: The attack has specific, well-defined signature. For e.g. using certain port 
+number, certain source ip address. 
+\item \textbf{Anomaly Detection}:  The IDS attempt to detect abnormal pattern. For e.g. a sudden surge of 
+packets with certain port number.
+\item \textbf{Behavior-based IDS}:  Can be viewed as a type of anomaly detection that focuses on human 
+behavior. For e.g. The system might keep the profile of each user. It then tries to detect any user who deviates from the profile (e.g. start to download large files).
+\end{itemize}
+
+
+
+
 
 
 \section{5.7 Network Security Management}
