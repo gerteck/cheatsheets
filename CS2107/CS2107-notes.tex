@@ -1273,14 +1273,73 @@ above, but not the information generated in layer 2.
 \end{itemize}
 
 \subsection{5.5.1 Secure Sockets Layer / Transport Layer Security (SSL/TLS)}
+The SSL/TLS sits on top of the transport layer. Application passes data, destination IP address to SSL/TLS. SSL/TLS protects the data using encryption (for confidentiality) and MAC (for authenticity), instructs transport layer to send protected data. 
+\begin{itemize}
+\item \textbf{End-to-end Encryption}: End-to-end encryption performed. Data stays encrypted from one end of its journey to the other.
+\item \textbf{Link Encryption / Hop-by-Hop Encryption}. Encryption occurs at the Data Link and Physical layers, and the packet is decrypted at every device between the two ends.
+\end{itemize}
 
+\subsubsection{Attack Scenario 1: Attacker at the Physical Layer}
+Suppose attacker at physical layer, can sniff/spoof message at layer. Alice uploads her report in café using free and open WIFI, \textbf{no WPA} protection. Anyone in café has access to physical layer. 
+\begin{itemize}
+\item \textbf{Cannot learn application data}: protected by SSL/TLS in application layer, protected from attacker in lower layers
+\item \textbf{Can learn website IP address}: IP headers from network layer, not protected by TLS/SSL (on transport layer) from attacker below at data link/physical layer.
+\end{itemize}
 
+\subsubsection{Attack Scenario 2: Attacker at the Application Layer}
+Adversary at the application layer. E.g. malicious JavaScript code injected into LumiNUS, executed by Alice’s computer. 
+\begin{itemize}
+\item \textbf{Can learn/spoof application data}: SSL/TLS cannot protect info from attacker at its layer and above layer. 
+\item \textbf{Cannot learn website IP address}: MAC address defined at layer 2. Attacker at application 
+layer unable to attack “downwards”, only can attack upwards.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{TLSSSL}}
+
+\subsection{5.5.2 WIFI Protected Access II (WPA2)}
+WPA2: popular protocol, common in home WIFI access points, more secure than Wired Equivalent Privacy (WEP) (broken), and WPA. Provides protection at layer 2 (Link) and layer 1 (Physical). However, not all information in layer 2 are protected.
+
+\subsubsection{Attack Scenario: Attacker at the Physical Layer}
+Attacker at the physical layer who is able to sniff and spoof information, and Alice uploads a report. 
+\begin{itemize}
+\item \textbf{Cannot learn application data / website IP address}: Data from the upper layers have been encrypted with AES.
+\item \textbf{Can learn MAC address}: MAC addresses assigned in the link layer, and is never encrypted.
+\end{itemize}
+Anyone within the range of network might see traffic, but scrambled with up-to-date encryption standards. WPA2 uses AES and keys that 
+are 64 hexadecimal digits long. WPA3 was announced in January 2018.
+
+\subsection{5.5.3 Internet Protocol Security (IPsec)}
+IPsec provides \textbf{integrity and authenticity} protection of IP addresses, but not confidentiality. Attackers unable to “spoof” source IP 
+addresses, but can learn source and destination IP addresses of sniffed packets. Mechanism whose goal is to protect the IP layer. \\ \smallskip
+IPsec is a is a protocol suite for securing Internet Protocol (IP) communications by \textbf{authenticating and encrypting each IP packet of a communication session}. IPsec includes protocols for establishing mutual authentication between agents at the beginning of the session and negotiation of cryptographic keys to be used during the session. 
+
+\begin{itemize}
+\item Used in protecting data flows between a pair of hosts (host-to-host), between a pair of security gateways (network to-network), or between a security gateway.
+\item Uses cryptographic security services to protect communications over Internet Protocol (IP) networks.
+\item Supports network-level peer authentication, data origin authentication, data integrity, data confidentiality (encryption), and 
+replay protection. 
+\end{itemize}
+IPsec is an end-to-end security scheme operating in the Internet Layer of the Internet Protocol Suite, while some other Internet security systems in widespread use, such as Transport Layer Security (TLS) and Secure Shell (SSH), operate in the upper layers at
+Application layer. Hence, only IPsec protects any application traffic over an IP network. Applications can be automatically secured by IPsec at the IP layer.
+
+\subsection{Which Layer to Protect?}
+Seems protecting lowest layer, can protect information in all layer. However, not feasible as intermediate node needs to access some higher layer info, e.g. ip-address, and sit in higher layer. Hence, a malicious intermediate node could be a MITM in higher layer.
+\begin{itemize}
+\item Typical implementation use TLS/SSL + WPA2.
+\item IPSEC most expensive to implement, difficult to deploy. (“touches” OS).
+\end{itemize}
 
 
 \section{5.6 Network Protection: Firewall, Intrusion Detection System}
 
 
-\section{5.7 Network Protection: Management}
+\section{5.7 Network Security Management}
+There is a need to continuously monitor and adjust network characteristics. Best Practices:
+\begin{itemize}
+\item \textbf{Security Operations Center (SOC)}: Centralised unit in an organisation that monitors the IT systems and deals with security 
+issues.
+\item \textbf{Security Information and Event Management (SIEM)} “SIM”: Approach that aims to provide real-time analysis of 
+security alerts generated by network hardware and network applications. May include capabilities of Data aggregation and correlation, - Event alerting, Compliance report generation, Forensic analysis.
+\end{itemize}
 
 
 
