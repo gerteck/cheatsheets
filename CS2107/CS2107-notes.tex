@@ -1132,6 +1132,157 @@ Role of sequence number and last message is to make sure mallory is not able to 
 \columnbreak
 
 \section{5. Network Security}
+Cryptography and PKI establishes end-2-end security (w.r.t. Confidentiality \& authenticity) even in the presence of MITM. However, there are other issues in Networking, where Availability not addressed and Routing needs protection. We want to mitigate MITM as much as possible (e.g. concerned on implementation flaws, side-channel leakage, unprotected channels, etc).
+\begin{itemize}
+\item \textbf{Routing}: Layering. Intermediate nodes need to see and modify routing info at different “layers”. Protection at different layers. MITM in different layers
+\item \textbf{Monitoring and segmentation}: Firewall, Intrusion Detection, DMZ, Server’s zone.
+\item \textbf{Specific Attacks}: Name resolution attacks (poisoning, spoofing, ARP, DNS), Flaw in protocol (e.g. TLS renegotiation attack), Port Scanning, DDOS, botnets.
+\item \textbf{Popular Protocols}: SSL/TLS (application), IPSEC (network), WPA (link)
+\item What does padlock, https in browser mean? What can a MITM (in link layer) get? What can an attacker obtain via DNS spoofing?
+\item Tools: Wireshark, nmap.
+\end{itemize}
+
+\section{5.1 Background on Networking}
+\subsection{5.1.1 Brief Overview}
+Computer Network establishes communication between large number of nodes. For robustness and resource sharing, use packet switching.
+\begin{itemize}
+\item \textbf{Network Security}: Attackers among intermediate nodes. Steal, modify (traffic routed to wrong places), disrupt. Guess who is talking to who.
+\item \textbf{Multiple hops}: At each intermediate node, routing data read and modified.
+\item \textbf{Network Layers}:  Partitions complex communication system into several abstraction layers. E.g. view layer-N protocol built upon a virtual connection at layer N-1. Passes down the message, level below abstracted.
+\item \textbf{Ports}: Each node has total 65535 ports. If no process "listening" port to process data, port is "closed".
+\item \textbf{Addressing Schemes (different Layers)}: A single node has different names in different layers.
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{addressingSchemes}}
+
+\subsubsection{5.1.2 MITM: Man-In-The-Middle}
+A MITM sits in-between two communicating parties. Unless otherwise stated, the MITM can sniff, spoof, modify, drop the data. 
+Very often, when mentioning a MITM, it is clear from context which part of the header the MITM has access to.
+\begin{itemize}
+\item \textbf{MITM in Layer x}: we mean a MITM along the virtual connection in layer x. The MITM can see and modify data unit in that layer. For IP 
+layer, the MITM has access to the IP packet, including the header and payload.
+\item E.g. Evil cafe owner free wifi can MITM in Data Link layer, sniff, spoof, modify, drop. Anyone in cafe tapping in wirelessly is MITM in physical layer who can sniff, spoof, but not drop, nor modify. 
+\end{itemize}
+
+
+\section{5.2 Name Resolution and Attacks}
+Each peer entity has a name. A single node may have different "name" at different layer. Initial design of resolution protocols did not take security into account, easy for attackers to manipulate outcome. 
+
+\begin{itemize}
+\item \textbf{Domain Name System (DNS)}: maps domain names to their respective IP addresses. It uses a hierarchical decentralized naming system. An attacker can thus target the association of the domain name with the IP address.
+\item \textbf{Address Resolution Protocol (ARP)}: associates or maps IP addresses (logical addresses) with MAC addresses (physical addresses). Uses broadcast mechanism on a local network. An attacker on the local network can target the association.
+\end{itemize}
+
+\subsection{Domain Name System (DNS) Attack}
+\textbf{Name Resolution}: Given a domain name (e.g. www.comp.nus.edu.sg), its IP address found by looking up locally stored host table, or querying DNS server.
+\begin{itemize}
+\item The entity (aka client) initiating query (UDP protocol) is resolver. If address found, domain name is resolved. 
+\item Each query contains 16-bit number, Query ID (QID). Response from name server must contain QID. If QID in response no match query QID, client rejects answer. 
+\item Note no encryption or MAC involved, QID was probably not meant for authentication, but as efficient way to match multiple queries. 
+\item \textbf{DNS server resolves domain name}, can be the “single-point-of-failure” for network. 
+\item A DoS attacks, instead of attacking a Web server, could attack the DNS server instead.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{DNSSpoofing}}
+
+\subsection{Poisoning attack on ARP table}
+A switch connects a few nodes. (Note that switch handles mac-addresses, router handles ip-addresses.) E.g. our home wifi “router”, although often called as a “router”, it also functions as a switch. It contains a gateway which performs routing.
+\begin{itemize}
+\item Switch connect ports based on mac-addresses, has ARP table associating port to mac-addresses.
+\item Resolution of IP to MAC address done by nodes (e.g. phone) with own ARP table. Nodes update each others (ARP query mechanism).
+\item \textbf{ARP poisoning} is an attack that modifies (aka “poisons”) the tables so as to gain MITM access.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{ARPPoisoning}}
+
+
+\section{5.3 Denial of Service Attack}
+DoS attacks target \textbf{availability}, preventing some service from being accessible and usable 
+upon demand by an authorised entity, delaying time-critical operations. Many successful DOS attacks simply flood the victims with overwhelming requests/data. When DOS carried out by large number of attackers, \textbf{DDOS: Distributed Denial of Service}.
+
+\subsection{Reflection and Amplification attack}
+\begin{itemize}
+\item \textbf{Reflection}: Reflection attack type of DOS where attackers send requests to intermediate nodes, 
+which in turn send overwhelming traffic to the victim. 
+\item Indirect, more difficult to trace. 
+\item \textbf{Amplification}: Refection attack mechanism can be measured by its amplification factor, which is the size of traffic 
+the victim received over the size of traffic sent by the attacker.
+\item A single request could trigger multiple responses from the intermediate nodes. Reflection attack aka amplification attack.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{DoSAttacks}}
+
+\subsubsection{DoS Example 1: ICMP/Smurf Flood Attack}
+“smurf”: Attack can bring down big targets. Attack makes use of public servers to target a specific victim IP address. This 
+is done via: \\ \smallskip
+1. An attacker sends the “ICMP PING” request to router, instructing router to broadcast request. \\
+2. The request’s source IP address spoofed, replaced with victim IP address. \\
+3. The router thus broadcasts this request. \\
+4. Every entity that receives request replies, sends “Echo reply” to source, which is the victim. \\
+5. The victim is overwhelmed with “Echo reply”s from the entire network. \\
+6. The attacker thus takes advantage of the amplification effect to attack the victim.
+\begin{itemize}
+\item Attack no longer effective, as most routers are now configured to not broadcast the requests. To prevent this attack, the measure is to simply disable a feature that was previously thought to be useful.
+\end{itemize}
+
+\subsubsection{DoS Example 2: Application-Layer DoS Attack (HTTP Get)}
+The trick is to simply flood a web server with HTTP requests. Effective if large number of attackers, since each attacker can only send requests at a low rate. Distributed Denial of Service (DDoS).
+\begin{itemize}
+\item DDoS is normally achieved via a \textbf{botnet}.
+\item A bot, or zombie, is a compromised machine, and a botnet, or zombie army, is a large collection of connected bots, communicating via covert channels.
+\item \textbf{Covert channels}: to prevent the owner of the zombie computer from noticing. Owners unaware system used.
+\item \textbf{A botnet has a command-and-control mechanism}, can be controlled by a single individual to carry out a Distributed Denial of Service attack.
+\item \textbf{Other Botnet Usages}: Vulnerability Scanning, Anonymising HTTP Proxy, Email Address Harvesting, Cipher Breaking etc.
+\end{itemize}
+
+\section{5.4 Useful Tools}
+\subsection{Wireshark (packets analyzer)}
+Wireshark is a popular, free and open-source network packet analyser. It generally performs capturing at the 
+link layer. This depends on the operating system and hardware, however. It essentially captures “interactions” 
+between the operating system and the network card driver.
+\\ \smallskip
+Some things that Wireshark can do: View list of packets, View packet details, View packet bytes, Filter for packets, Follow TCP stream.
+
+\subsection{Nmap (Port Scanner)}
+A port helps a server decide which application process to handle an incoming packet. By saying that a process or service is “listening” to a particular port, we mean that the process is running and ready to process packets with that particular port number. We also say a port 
+is “open” when there exists such a process running in the server. 
+\begin{itemize}
+\item \textbf{Port scanning}: process of determining which ports are open on hosts in a network.
+\item \textbf{Port scanner}: tool to perform port scanning. Useful for both attackers and 
+network administrators to scan for vulnerabilities. Nmap is a very popular port scanner.
+\item \textbf{Nmap} is a full featured port-scanning tool: Command-line tool with a GUI frontend.
+\item Installation: sudo apt-get install nmap, zenmap 
+\item Usage: nmap [ScanType(s)] [Options] \{target specification\}
+\item Examples: TCP ACK scan (a stealthier scan): nmap -sA, OS fingerprinting: nmap -O, Service/version detection: nmap -sV.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{portNumbers}}
+
+\section{5.5 Network Protection: Cryptography}
+There are several cryptographic techniques that can help us achieve confidentiality (via encryption) and authenticity (via MAC, PKI, and Strong Authentication) over a public communication channel, even if the adversary can sniff and spoof the data.
+\\ \smallskip
+There are various security protocols that essentially achieve that, but operates at different layers. Some well-known protocols are:
+TLS/SSL, WIFI Protected Access II (WPA2), Internet Protocol Security (IPsec). 
+
+\subsubsection{Note: Discussion of Security protocols and attacks}
+Security protocol considers the layer it aims to protect. 
+\begin{itemize}
+\item \textbf{Complication}: Some protections span across multiple layers, or do not provide full protection of the targeted layer.
+\item When analysing an attack, insightful to figure out at which layer the attacker resides or if attacks span across multiple layers. Hard to pinpoint the layer.
+\item \textbf{General Guideline}: A security protocol that protects layer k would protect information from that layer and above 
+against an attacker sitting at layer k-1 and below.
+\item E.g. if attacker resides at layer 1, security protocol protects layer 3. Security protocol protects information generated in layer 3 and 
+above, but not the information generated in layer 2.
+\end{itemize}
+
+\subsection{5.5.1 Secure Sockets Layer / Transport Layer Security (SSL/TLS)}
+
+
+
+
+\section{5.6 Network Protection: Firewall, Intrusion Detection System}
+
+
+\section{5.7 Network Protection: Management}
+
+
 
 
 
