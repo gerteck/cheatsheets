@@ -1248,6 +1248,75 @@ values and exclude MCV from histogram’s buckets.
 
 \section{7. Transaction Management}
 
+\section{7.1 Transactions}
+A transaction is an abstraction representing a logical unit of work. Ensure 4 properties of Xacts / Txn. (\textbf{ACID}). \\
+\textbf{Concurrency control manager} component ensures isolate, \textbf{recovery manager component} ensures durability.
+
+\begin{itemize}
+\item \textbf{Atomicity}: Either all or none of the actions in Xact happen.
+\item \textbf{Consistency}: If each Xact is consistent, DB starts consistent, ends up consistent.
+\item \textbf{Isolation}: Execution of one Xact is isolated from other Xacts.
+\item \textbf{Durability}: If a Xact commits, its effects persist.
+\end{itemize}
+
+\subsubsection{Notation}
+\begin{itemize}
+\item \textbf{Transaction Schedule}: a list of actions from a set of Xacts, where
+the order of the actions within each Xact is preserved.
+\item \textbf{Serial Schedule}: Actions of Xacts are not interleaved.
+\item \textbf{Read From}: $T_j$ reads object $O$ from $T_i$ in schedule if last write action on $O$ is by $I$, and $J$ reads after.
+\item \textbf{Final Write}: $T_i$ performs final write on $O$ in a schedule
+S if it does the last write action on $O$.
+\item \textbf{Correctness of Interleaved Xact Executions}: Correct if “equivalent” to some serial schedule over the same set of Xacts.
+\end{itemize}
+
+\subsection{View Equivalent / Serializable}
+\textbf{View Equivalent}: Two schedules over same set of Xacts are view equivalent if they have \textbf{same read froms} and the \textbf{same final write}. \\
+\textbf{View Serializable}: A schedule is a \textbf{view serializable schedule (VSS)} if it is view equivalent to some serial schedule over the same set of Xacts. 
+\\
+\textbf{Testing for View Serializability}: Given a schedule S, construct a directed graph (denoted by VSG(S)) to capture the read-from and final-write relations among the transactions in S. If VSG(S) is cyclic, then S is not VSS. If acyclic, it is VSS iff there exists serial schedule produced from topological ordering of VSG(S) that is view equivalent to S.
+
+\subsection{Conflicting Actions}
+\textbf{Conflict}: Two actions on same object conflict if at least 1 write, different Xacts. (E.g. W + R, W + W, R + W).
+
+\subsubsection{Anomalies with Interleaved Xact Executions}
+\begin{itemize}
+\item \textbf{Dirty Read Problem (WR Conflict)}: $T_2$ reads object produced by uncomitted Xact (which then aborts).
+\item \textbf{Unrepeatable Read Problem (RW Conflict)}: $T_2$ updates object, reading yields different values before and after while $T_1$ in progress.
+\item \textbf{Lost Update Problem (WW Conflict)}: $T_2$ overwrites value of object while $T_1$ still in progress.
+\item \textbf{Phantom Read}: Re-executing query on search condition gives different results (bc new added Object) (prevent by predicate / index locking).
+\end{itemize}
+
+\columnbreak
+
+\subsection{Conflict Equivalent / Serializable}
+\textbf{Conflict Equivalent}: Two schedules over same set of Xacts are \textit{conflict equivalent} if they order every pair of conflicting actions of two committed Xacts in the same way. \\
+\textbf{Conflict Serializable}: A schedule is a \textit{conflict serializable schedule (CSS)} if it is conflict equivalent to a serial schedule over same set of Xacts.
+
+\subsubsection{Testing for conflict serializability}
+\begin{enumerate}
+\item A schedule is conflict serializable iff its conflict serializability graph is acyclic. (CSG(S): contains node for each commited Xact in S, each edge is a conflict).
+\item A schedule that is conflict serializable $rightarrow$ view serializable.
+\item If S is view serializable and S has no blind writes, then S is also conflict serializable.
+\end{enumerate}
+\textbf{Blind write}: Did not read before write.
+
+\section{7.2 Recovery}
+\begin{itemize}
+\item \textbf{Cascading Abort}: Recursive aborting process: If $T_1$ reads from $T_2$, former must abort when latter aborts for correctness.
+\item \textbf{Recoverable}: If $T_2$ reads from $T_1$, $T_2$ commits only after $T_1$. Guarantees commited Xacts will not be aborted.
+\item \textbf{Cascadeless}: Whenever $T_i$ reads from $T_j$ in
+S, $Commit_j$ must precede this read action. Only can read from committed Xact.
+\item Cascadeless schedule is recoverable.
+\item \textbf{Before-Images}: (for recovery) log before action \& restore (must be strict).
+\item \textbf{Strict}: for every $W_i(O)$ in $S$, $O$ is not read/written by another Xact until $T_i$ aborts or commits.
+\item Strict schedule is cascadeless.
+\end{itemize}
+
+\section{8. Concurrency Control}
+
+
+
 
 
 
