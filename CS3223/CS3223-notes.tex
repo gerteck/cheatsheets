@@ -1296,7 +1296,7 @@ S if it does the last write action on $O$.
 \subsubsection{Testing for conflict serializability}
 \begin{enumerate}
 \item A schedule is conflict serializable iff its conflict serializability graph is acyclic. (CSG(S): contains node for each commited Xact in S, each edge is a conflict).
-\item A schedule that is conflict serializable $rightarrow$ view serializable.
+\item A schedule that is conflict serializable $\implies$ view serializable.
 \item If S is view serializable and S has no blind writes, then S is also conflict serializable.
 \end{enumerate}
 \textbf{Blind write}: Did not read before write.
@@ -1314,6 +1314,87 @@ S, $Commit_j$ must precede this read action. Only can read from committed Xact.
 \end{itemize}
 
 \section{8. Concurrency Control}
+\textbf{Transaction Scheduler}: Scheduler receives input actions (read, write commit, abort) and either outputs, postpones (blocks Xact) or rejects (aborts Xact) action. \\
+\textbf{Concurrency Control Algorithms}: Includes lock-based concurrency control, timestamp-based concurrency control, multiversion concurrency control, optimistic concurrency control.
+
+\subsection{8.1 Lock-Based Concurrency Control}
+Xact requests for appropriate lock on object to access. Shared (S) lock for reading, Exclusive (X) lock for writing.
+
+\subsubsection{2PL: Two Phase Locking}
+\begin{itemize}
+\item May release locks at any time
+\item Once Xact releases a lock, cannot request any more locks.
+\item \textbf{Growing/Shrinking phase}: before/after releasing 1st lock.
+\item Prevents all anomalies, including phantom read.
+\end{itemize}
+
+\subsubsection{Strict 2PL}
+\begin{itemize}
+\item \textbf{Strict 2PL}: Xact must hold lock until it commits or aborts.
+\item 2PL $\implies$ conflict serializable
+\item Strict 2PL $\implies$ strict \& conflict serializable.
+\end{itemize}
+
+\subsection{8.2 Lock Management}
+\textbf{Deadlock Detection}: waits-for graph (WFG)
+\begin{itemize}
+\item \textbf{Nodes}: active Xacts, \textbf{Edge}: $T_i \rightarrow T_j$, $T_i$ waiting for $T_j$ to release lock.
+\item WFG cycle $\implies$ deadlock. Break deadlock by aborting a Xact in cycle. 
+\item Alternative to WFG: \textit{timeout mechanism}.
+\end{itemize}
+\textbf{Deadlock Prevention}: Older $\rightarrow$ Higher priority (smaller timestamp)
+\begin{itemize}
+\item \textbf{wait-die policy}: lower-priority aborts instead of waiting (less aggressive, younger txns may keep aborting).
+\item \textbf{wound-wait policy}: (preemptive) higher priority aborts lower.
+\centerline{\includegraphics[width = 0.9\linewidth]{deadlockPrevention}}
+\item Restarted xact use original timestamp to avoid starvation.
+\end{itemize}
+
+\subsubsection{Lock Conversion}
+\begin{itemize}
+\item Increases concurrency, only allowed in growing phase.
+\item \textbf{Lock upgrade ($UG_i(A)$)}: allowed if no other xact holding shared lock on $A$ and $T_i$ has not yet released any lock. (ensures serializable schedule).
+\item \textbf{Lock downgrade ($DG_i(A)$)}: allowed if $T_i$ has not modified $A$ and not released any lock.
+\end{itemize}
+
+\subsubsection{Performance of Locking}
+\begin{itemize}
+\item block/abort mechn. resolve xact conflict but delays, wastes work done. 
+\item To increase system throughput: Reducing locking granularity, reduce time lock held, reduce hotspots (freq accessed/modified DB object).
+\end{itemize}
+
+\subsection{8.3 ANSI SQL Isolation Levels}
+\centerline{\includegraphics[width = 0.95\linewidth]{ANSISQL}}
+\begin{itemize}
+\item \textbf{short-duration lock}: can be released before commit/abort.
+\item \textbf{long-duration lock}: held until xact commits/aborts.
+\end{itemize}
+
+\subsection{8.4 Locking Granularity}
+\begin{itemize}
+\item (coarsest/most granular) databse $>$ relation $>$ page $>$ tuple
+\item \textbf{multi-granular} lock: request different granularity.
+\item If $T$ holds lock mode $M$ on data granule $D$, then $T$ implicity holds $M$ on data granules finer than $D$.
+\end{itemize}
+\textbf{$I$-lock (intention)}
+\begin{itemize}
+\item Before \textbf{acquring any S-/X-lock on $G$}, must acquire $I$-locks on coarser granules in \textit{top-down} manner. $I$-lock sharable with $I$-locks.
+\item Limits concurrency: $S$-lock incompatible with $I$-lock.
+\end{itemize}
+
+\textbf{$IS-$ and $IX-$ lock (intention shared/exclusive)}
+\begin{itemize}
+\item Acquire locks \textit{top-down}, release locks \textit{bottom-up}.
+\item To obtain \textbf{S or IS lock}: must hold \textbf{S or IS lock} on parent.
+\item To obtain \textbf{X or IX lock}: must hold \textbf{IX lock} on parent.
+\end{itemize}
+\centerline{\includegraphics[width = 0.95\linewidth]{lockCompatibility}}
+
+
+
+
+
+
 
 
 
