@@ -1690,14 +1690,14 @@ Generally these operations are \textbf{system calls}, as it provides protection,
 \subsubsection{Two Table Approach (One system-wide, PCB per process)}
 1. \textbf{System-wide open-file table}
 \begin{itemize}
-\item Keeps track of open files in the system, one entry per unique file.
+\item Keeps track of open files in the system.
 \item If one process opens the same file twice, or two processes open the same file, there will be two
 separate entries
 \item If one process opens a file then forks, only one entry here.
 \end{itemize}
 2. \textbf{Per-process open-file table}
 \begin{itemize}
-\item \textbf{File Descriptor Table}: Keeps track of open files for a process, also known as file descriptors
+\item \textbf{File Descriptor Table}: Keeps track of open files for a process.
 \item Each entry points to a system-wide table entry
 \item If one process opens a file then forks, there will be two fds pointing to the same system-wide table entry. They will thus share the same offset.
 \end{itemize}
