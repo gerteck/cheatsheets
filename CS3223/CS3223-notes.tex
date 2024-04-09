@@ -125,7 +125,6 @@
 \newcommand{\code}[1]{\colorbox{gray!25!}{\lstinline|#1|}}
 \lstset{style=mystyle}
 
-
 % -------------------------------------------------------------------------------
 
 % START OF DOCUMENT HERE
@@ -142,6 +141,9 @@
 \setlength{\postmulticols}{1pt}
 \setlength{\multicolsep}{1pt}
 \setlength{\columnsep}{2pt}
+
+%% Faster Loading Sections
+%% \iffalse
 
 %% DOCUMENT NAME HERE
 \begin{center}
@@ -1390,15 +1392,89 @@ Xact requests for appropriate lock on object to access. Shared (S) lock for read
 \end{itemize}
 \centerline{\includegraphics[width = 0.95\linewidth]{lockCompatibility}}
 
+%% Faster Loading
+%% \fi
+
+\section{9. Multiversion Concurrency Control (MVCC)}
+Maintain multiple versions of each object. 
+\begin{itemize}
+\item $W_i(O)$ creates new version of $O$, $R_i(O)$ reads $i_{th}$ version.
+\item Read-only xacts not blocked by update xacts
+\item update xacts not blocked by read xacts.
+\item Read-only xacts never aborted.
+\item \textbf{multi-verson} Schedule: read can return \textit{any} version
+\item \textbf{mono-verson} Schedule: always reads most recent version
+\item \textbf{multi-version view equivalent}: $(S \equiv_{mv} S')$ is same set of \textit{read-from} relationships. 
+$(R_i(x_j) \in S  \Leftrightarrow (R_i(x_j) \in S')$ (final write does not matter, only in mono-version).
+\item \textbf{multi-version view serialisable (MVSS)}: exists a serial mono-version schedule that is multi-version view equivalent.
+\item (mono-version) view serialisable $\Rightarrow$ MVSS
+\item VSS $\subset$ MVSS, VSS $\Rightarrow$ MVSS, MSS $\rlap{\(\quad\not\)}\implies$ VSS
+\end{itemize}
+
+\subsection{MVCC Protocols}
+Multiversion two-phase locking, timestamp ordering, snapshot isolation.
+
+\section{9.1 Snapshot Isolation (SI)}
+Widely used (e.g. Oracle, PostgreSQL, SQL Server)
+\begin{itemize}
+\item Each xact sees a snapshot of the DB comprising updates by xacts commited before T starts.
+\item start($T$): time $T$ starts, commit($T$): time $T$ commits
+\item \textbf{concurrent} xacts: overlap based on start($T$), commit($T$)
+\item \textbf{protocol}: $O_i$ more recent/newer version if commit($T_i$) later.
+	\begin{itemize}
+	\item $W_i(O)$ creates version $i$ of $O$.
+	\item $R_i(O)$ reads either(it's own) latest ver. $W_i(O)$ OR latest $O$ created by xact commited before start($T_i$)
+	\end{itemize}
+\item \textbf{concurrent update property}: If multiple concurrent xact update same object, only 1 commits (ensures serialisable).
+	\begin{itemize}
+	\item \textbf{FCW} (first commiter wins): when $T$ commit, check if exist concurrect xact $T'$ update same object, if exist, $T$ abort.
+	\item \textbf{FUW} (first updater wins): who update first commits. acquire X-lock to update. (lock used just to detect updating/concurrent access, when xact commit/abort, release X-lock)
+	\item (FUW): $T$ proceeds iff all concurrent $T'$ (previously holding the X-lock) aborts and O has not been updated by any concurrent txn. / else abort T (e.g. if concurrent $T$ commits)
+	\end{itemize}
+\item \textbf{garbage collection}: if not read by any (active/future) xact. delete $O_i$ if there exists newer $O_j$ (commit($T_i$) $<$ commit($T_j$)) such that for every active xact $T_k$ started after commit($T_i$), we have commit($T_j$ ) < start($T_k$)
+\item \textbf{performance}: similar to READ\_COMMITTED but without lost update or unrepeatable read anomalies.
+	\begin{itemize}
+	\item snapshot isolation $\rlap{\(\quad\not\)}\implies$ serialisability \\
+ (some non-serialisable executions)
+	\item \textbf{write skew anomaly}: $R_1(x_0), R_2(y_0), W_1(y_1), W_2(x_2)$
+	\item \textbf{read-only txn anomaly}: $T_3 \dashrightarrow^{rw} T_2 \dashrightarrow^{rw} T_1 \rightarrow^{wr} T_3$ 
+	\end{itemize}
+\item $\times$ does not guarantee serialisability
+\end{itemize}
+
+\section{9.2 Serializable Snapshot Isolation (SSI)}
+Stronger protocol ensuring MVSS (multiversion view serializable schedule). (serializable SI schedules).
+\begin{itemize}
+\item Keep track of \textbf{rw dependencies} among concurrent xacts; \\
+	 possible false positives.
+\item Detect formation of $T_j$ involving two rw dependencies:
+\centerline{\includegraphics[width = 0.2\linewidth]{rw}}
+\item Abort one of $T_i, T_j, T_k$ if detected.
+\end{itemize}
+
+\subsection{Transactional Dependencies: ww, wr, rw}
+\begin{itemize}
+\item \textbf{immediate successor} $\rightarrow$ no $W(x)$ commits betw commits $x_j$, $x_i$.
+\item \textbf{dependency serialisation graph, DSG}:
+	\begin{itemize}
+	\item Schedule of set of committed transactions \{$T_1, ..., T_k$\}
+	\item nodes: (committed) transactions
+	\item edges: transactional dependencies
+	\item e.g. $T_i \dashrightarrow^{wr} T_j$ (dashed line concurrent, solid line non-concurrent)
+	\end{itemize}
+\item if $S$ is a SI schedule that is not MVSS, then
+	\begin{itemize}
+	\item There is at least one cycle in DSG(S)
+	\item For each cycle in DSG(S), $\exists T_i, T_j , T_k$ such that: \\
+•  $T_i \dashrightarrow^{rw} T_j \dashrightarrow^{rw} T_k$ exists \\
+•  $T_i$ and $T_k$ may be same txn (eg. write-skew anomaly)
+	\end{itemize}
+\end{itemize}
+\medskip
+\centerline{\includegraphics[width = 0.95\linewidth]{SIAnomaly}}
 
 
-
-
-
-
-
-
-
+\section{10. Crash Recovery}
 
 
 
