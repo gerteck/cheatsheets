@@ -142,9 +142,6 @@
 \setlength{\multicolsep}{1pt}
 \setlength{\columnsep}{2pt}
 
-%% Faster Loading Sections
-%% \iffalse
-
 %% DOCUMENT NAME HERE
 \begin{center}
      \Large{\textbf{CS3223 Database Systems Implementation}} \\
@@ -1392,9 +1389,6 @@ Xact requests for appropriate lock on object to access. Shared (S) lock for read
 \end{itemize}
 \centerline{\includegraphics[width = 0.95\linewidth]{lockCompatibility}}
 
-%% Faster Loading
-%% \fi
-
 \section{9. Multiversion Concurrency Control (MVCC)}
 Maintain multiple versions of each object. 
 \begin{itemize}
@@ -1458,8 +1452,7 @@ Stronger protocol ensuring MVSS (multiversion view serializable schedule). (seri
 \item \textbf{dependency serialisation graph, DSG}:
 	\begin{itemize}
 	\item Schedule of set of committed transactions \{$T_1, ..., T_k$\}
-	\item nodes: (committed) transactions
-	\item edges: transactional dependencies
+	\item \textbf{nodes}: (committed) transactions, \textbf{edges}: transactional dependencies
 	\item e.g. $T_i \dashrightarrow^{wr} T_j$ (dashed line concurrent, solid line non-concurrent)
 	\end{itemize}
 \item if $S$ is a SI schedule that is not MVSS, then
@@ -1470,31 +1463,106 @@ Stronger protocol ensuring MVSS (multiversion view serializable schedule). (seri
 •  $T_i$ and $T_k$ may be same txn (eg. write-skew anomaly)
 	\end{itemize}
 \end{itemize}
-\medskip
-\centerline{\includegraphics[width = 0.95\linewidth]{SIAnomaly}}
+
+%% \centerline{\includegraphics[width = 0.95\linewidth]{SIAnomaly}}
 
 
 \section{10. Crash Recovery}
+\begin{itemize}
+\item \textbf{recovery manager} guarantees atomicity and durability: \\
+	\hspace{5mm} undo: preserve atomicity (remove effect of aborts) \\
+	\hspace{5mm} redo: durability (re-install effects of commits)
+\item recovery manager supports 3 ops: commit(T), abort(T), restart.
+\item \textbf{failure types}: transaction failures (xact aborts), system crash (violatile mem loss), media failures (non-violatile mem loss)
+\item \textbf{steal policy}: can write dirty page to disk before commit
+\item \textbf{force policy}: must write all dirty pages to disk at commit.
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{stealForce}}
 
+\section{ARIES Recovery Algorithm}
+\textbf{Steal; no-force;} assumes \textbf{strict 2PL} for concurrency control.
 
+\subsubsection{Data Structures}
+\begin{itemize}
+\item \textbf{log file}: sequential file of records in stable storage
+\item \textbf{transaction table (TT)}: 1 entry for each active xact \\
+ (xact ID, last LSN, C/U status)
+\item \textbf{dirty page table (DPT)}: 1 entry per dirty page in buffer pool \\
+ (pageID, recLSN) = earliest log record that dirtied page.
+\item \textbf{log records}: (type, xact ID, prevLSN, otherinfo) \\
+	\hspace{2mm} - \textit{update}: pageID, before-image, after-image\\
+	\hspace{2mm} - \textit{compensation} (CLR): pageID, undoNextLSN (ULR's prevLSN), \\
+			\hspace{8mm} action to undo (when update described by ULR is undone).\\
+	\hspace{2mm} - \textit{commit}: force-write all records $\leq$ r to stable storage \\
+			\hspace{8mm} (flush all log records for xact to disk)\\
+	\hspace{2mm} - \textit{abort}: create when txn is to be aborted\\
+	\hspace{2mm} - \textit{end}: create when all processing for $T$ is completed.\\
+	\hspace{2mm} - \textit{checkpoint}: speed up recovery (scan from checkpoint)\\
+\end{itemize}
 
+\subsubsection{Implementing abort}
+\textbf{Write-ahead logging (WAL)} protocol: do not flush uncommitted update to DB until log record containing its before-image has been flushed to log.
+\begin{itemize}
+\item each DB page contains \textbf{pageLSN} (LSN of latest update).
+\item before flushing db page P, ensure all log records $\leq$ P.pageLSN have flushed to disk
+\end{itemize}
 
+\subsubsection{Implementing commit}
+\textbf{Force-at-commit} protocol: do not commit xact until the after-images of all its updated records are in stable storage.
+\begin{itemize}
+\item \textit{commit} LR; xact considered commit if its commit log record has been writtentto stable sotrage.
+\end{itemize}
 
+\subsubsection{Implementing restart}
+\textbf{1. analysis phase} - TT (active txns) \& DPT (superset of dirty) \\
+1.1 initialise TT \& DPT (retrieve ECPLR from BCPLR) \\
+1.2 for each $r$ in log file in forward direction/chronological \\
+\hspace{10mm} if \textit{end LR}, remove $T$ from TT; continue \\
+\hspace{10mm} if \textit{redoable LR} for P and P not in DPT: \\
+	\hspace{15 mm} create P's entry in DPT with recLSN=$r$.LSN \\
+\hspace{10mm} add or update entry for $T$ in TT: lastLSN = $r$.LSN\\
+	\hspace{15mm} if \textit{commit LR}: update status=C
+	
+\smallskip
+\textbf{2. redo phase} - restore DB to state at time of crash \\
+2.1 start from \textbf{redoLSN} = smallest recLSN in DPT \\
+2.2 scan in forward direction for all \textit{redoable LR} \\
+\hspace{10mm} if \textit{not redoable} or \textit{NOT optimisation cond}: continue \\
+\hspace{10mm} if P.pageLSN < $r$.LSN: ($r$ has not been installed) \\
+	\hspace{15mm} reapply logged action in $r$ to P\\
+	\hspace{15mm} update P.pageLSN = r.LSN\\
+\hspace{10mm} \textit{(optimisation)} else: recLSN $\leq$ r.LSN $\leq$ P.pageLSN\\
+	\hspace{15mm} update P in DPT: recLSN=P.pageLSN+1 \\
+2.3 create \textit{end LR} for all status=C in TT; remove entry\\
+\hspace{10mm} \textit{optimisation} cond: (P $\not\in$ DPT) \textit{or} (DPT P.recLSN $>$ r.LSN)\\
+	\hspace{15mm} item update of $r$ has already been applied to P
 
+\smallskip
+\textbf{3. undo phase} - abort \textbf{loser} txns (active at crash) in \textit{reverse} \\
+3.1 initialise $L$ = set of lastLSN (status=U) from TT \\
+\hspace{10mm} \texttt{update-L-and-TT(LSN)} := if LSN is not null, add to L; \\
+\hspace{10mm} else create \textit{end LR} for T and remove T from TT \\
+3.2 while $L \neq \emptyset$: \\
+\hspace{10mm} $r$ = largest lastLSN in L; delete $r$ from L \\
+\hspace{10mm} if $r$ is \textit{update LR} for T on P: \\
+	\hspace{15mm} create \textit{CLR} $r_2$ with $r_2$.undoNextLSN=r.prevLSN \\
+	\hspace{15mm} update TT: T.lastLSN=$r_2$.LSN \\
+	\hspace{15mm} undo logged action and update P.pageLSN=$r_2$.LSN \\
+	\hspace{15mm} \texttt{update-L-and-TT}(r.prevLSN) \\
+\hspace{10mm} else if $r$ is \textit{CLR}: \texttt{update-L-and-TT}(r.undoNextLSN) \\
+\hspace{10mm} else $r$ is \textit{abort LR}: \texttt{update-L-and-TT}(r.prevLSN) 
 
+\smallskip
 
-
-
-
-
-
-
-
-
-
-
-
-
+\subsection{Normal Transaction Processing}
+\begin{itemize}
+\item \textbf{TT}: create new or update existing entry for $T$ (lastLSN) \\
+\hspace{5mm} • when $T$ commits, update status=C \\
+\hspace{5mm} • when end log record is generated, remove $T$'s entry \\
+\item P is updated: update P.pageLSN = r.LSN
+\item P is updated \& not in DPT: create entry (recLSN=r.LSN)
+\item when P is flushed to disk: remove P's \textbf{DPT} entry
+\end{itemize}
 
 
 
