@@ -117,8 +117,6 @@
 \setlength{\multicolsep}{1pt}
 \setlength{\columnsep}{2pt}
 
-%% TODO COMMENT OUT
-\iffalse
 
 %% DOCUMENT NAME HERE
 \begin{center}
@@ -1647,9 +1645,6 @@ Defence mechanisms and countermeasures, to be adopted at different stages of the
 \vfill \null
 \columnbreak
 
-%% COMMENT OUT
-\fi
-
 \section{7. Access Control}
 \begin{itemize}
 \item \textbf{Access control}: selective restriction of access to place/resource.
@@ -1660,24 +1655,160 @@ Defence mechanisms and countermeasures, to be adopted at different stages of the
 
 
 \subsection{7.1 Access Control Model}
-Structure to specify restrictions on subjects (users), objects and operations (actions).
+Structure to specify restrictions on operations (actions) on objects by subjects (users). An access control system specifies and enforces these restrictions. Access control also provides security perimeter which in turn facilitates segregation of accesses. Such segregation confines and localizes damage caused by attacks.
+
+\subsubsection{Security Perimeter}
+Well-defined security perimeter or boundary allows parts of the system that lie within this perimeter that to malfunction without compromising the security. Leave vulnerable parts within the perimeter.
+\begin{itemize}
+\item \textbf{Principle of Least Privilege}: Disallow camera app to access information not needed.
+\item \textbf{Compartmentalization}: Host separate services (e.g. fee payment and exam result database or IT and OT) separately, so if one is compromised / fail, does not affect the other.
+\item \textbf{Swiss Cheese Model / Defence in Depth}: Multiple layers of protection, such that vulnerabilities in one layer of protection is caught by another layer. 
+\item \textbf{Segregation of Duties}: Eliminate single point of failure, assign different components to different persons.
+\end{itemize}
+\textbf{Example of security perimeter} on Android: No app by default has permission to perform potentially adverse operations. Each app associated with a ``manifest file'' which lists down permissions the app wishes to have. Isolation of apps is a key design consideration, compared to Windows / Mac.
+
+\subsubsection{Terminology}
+A principal (or subject) wants to access an object with some operation.
+\begin{itemize}
+\item \textbf{Principal}: Refers to some (human) user
+\item \textbf{Subject}: Entity in system that operates on behalf of the principal (e.g. processes / requests)
+\item \textbf{Reference monitor}: Entity that grants or denies access.
+\item \textbf{Access}: Access to object classified: Observe (read), Alter (write, delete), Action (execute)
+\end{itemize}
+
+\subsubsection{Access Right Policy}
+Who decides access rights to an object?
+\begin{itemize}
+\item \textbf{Discretionary access control}: Owner of object decides rights.
+\item \textbf{Mandatory access control}: System-wide policy decides.
+\end{itemize}
 
 
 \subsection{7.2 Access Control Matrix}
+We can use a table called the access control matrix to specify the access rights of a 
+particular principal to a particular object. This is similar to an adjacency matrix.
+\begin{itemize}
+\item r: read, w: write, x: execute, s: execute as owner, o: owner
+\end{itemize}
+Matrix iterates and specifies access rights for all possible pairs of principals and objects.
 
-
+\subsubsection{Access Control List / Capabilities}
+Matrix table can be very large and difficult to manage. Seldomly explicitly stored. Hence represent differently using ACL or capabilities.
+\begin{itemize}
+\item \textbf{ACL}: Access control list. Stores access rights to particular object as a list, object centered. Easy to know all subjects that can access a specific object, but difficult to find all objects a specific subject can access.
+\item \textbf{Capabilities}: Reverses of ACL. Stores list of capabilities for every subject, capabilities as in access rights to an object, defined as an unforgeable token that ives possessor certain rights to an object. Similar but inversed strength / weakness.
+\end{itemize}
+However, sizes of lists may still be too large. Intermediate control can simplify the representation by grouping subjects and objects and defining access rights on these defined groups.
 
 \subsection{7.3 Intermediate Control}
+In UNIX file permission, an ACL is used, but unlike the above implementation of the ACL, 
+this ACL only specifies the rights for three parties: Owner, Group, World (others). Subjects in the same group have the same access rights.
+\begin{itemize}
+\item \textbf{Users and Groups}: Groups are ways to classify users. In UNIX, groups can only be created by root. The information on the groups are stored in the file /etc/group. 
+\item \textbf{Privileges}: Used to describe access right to execute a process. Considered a form of intermediate control. Aka protection rings. Each ring has a number, a lower rin number has higher privilege. 
+\end{itemize}
 
+\subsubsection{Models of Intermediate Control}
+In both models, objects and subjects are divided into linear models e.g. level 0, level 1, level 2, and a higher level corresponds to higher “security”. Multi-level security, may have information at different security levels and incompatible classifications.
 
+\begin{itemize}
+\item \textbf{Bell-LaPadula Model}: Focuses on confidentiality. No read up (prevent lower level getting higher info). No write down (prevent leakae of info to lower level). ``No `sensitive' info leaking down''.
+\item \textbf{Biba Model}: Focus on integrity. No write up (prevent poisonin upper level data). No read down (to prevent subject reading data posioned by lower level subjects). ``No `malicious' info going up.''
+\end{itemize}
+If model imposes both Biba and Bell-LaPadula, subjects can only read/write in same level. Not practical.
 
 \subsection{7.4 Unix}
 
+\subsubsection{Terminology}
+\begin{itemize}
+\item \textbf{Objects}: In UNIX, objects of access control include Files, Directories, Memory Devices, I/O Devices. All these resources treated as files.
+\item \textbf{User}: Each user has unique user/login name, UID (numeric user identifier stored in /etc/passwd, and belong to one or more groups.
+\item \textbf{Group}: Unique group name, numeric group identifier (GID)
+\item \textbf{Principals}: made up of UID and GID.
+\item \textbf{Special User}: superuser, UID 0, usually username root.
+\item \textbf{Subjects}: Processes, each with own process ID. PID.
+\end{itemize}
+
+\subsubsection{Password File Protection: /etc/passwd}
+passwd file is world-readable as some info in /etc/passwd needed by non-root processes. File contains a list of user accounts in format: (jsmith:x:1001:1000:Joe Smith,Room1007,(234)555-8910,(234)555-0044,email:/home/jsmith:/bin/sh). Includes username, info to validate user password, UID, GID, Gecos field (comments / description), path to user's home directory, and startup program upon login (e.g. shell).
+
+\subsubsection{Shadow Password File /etc/shadow}
+This is the file that actually contains the hashed passwords. The fields of the entry are:
+Login Name, Hashed Password, Date Of Last Password Change, min / max password age, etc. 
+
+\subsubsection{File System Permission}
+When we use ls -la, we see list of all content within directory. Each entry also shows permissions (- is file, d is directory), link count, owner, filesize, last modification time, filename.
+\begin{itemize}
+\item \textbf{chmod}: Use chmod command to change file permission bits.
+\item In general, the owner of a file and superuser can change permission bits.
+\end{itemize}
+
+\subsubsection{Access Control for Unix}
+In UNIX, objects are files owned by a user and a group. Associated with a 9-bit permission. When non-root user (subject) wishes to access a file (object), checked in order: If user is owner, permission bits for owner decide the access rights. If not owner, but user’s group (GID) owns file, permission bits for group decide access right. If neither, file permission bits for other decide the access rights.
+
+\subsubsection{Search Path Issues}
+When a user types in the command to execute a program, e.g. “su”, without specifying the full path, what happens is that there will be a search for this program through the directories specified in the search path.
+\begin{itemize}
+\item Search path is a list of directories, search goes through them one by one to find the program. Once a program with name found in a directory, the search stops and the program will be executed.
+\item If attacker manages to store a malicious program at the directory that appears in 
+the beginning of the search path, has a common name, when a user exerts command, the malicious program will be invoked instead.
+\item To prevent such an attack, specify the full path always. Also avoid putting the current directory (“.”) within the search path, e.g. ./a.out. 
+\end{itemize}
+
 
 \subsection{7.5 Elevated Privilege and Controlled Invocation}
+Certain resources in UNIX/Linus system can only be accessed by superuser (e.g. , listening at trusted port 0-1023, access /etc/shadow file). User may need these resources for legit operations (e.g. change password). Not advisable for user to elevate their user status to superuser. One solution is controlled invocation.
+\begin{itemize}
+\item \textbf{Controlled invocation}: the OS provides a predefined set of operations 
+(programs / applications) in superuser mode, and the user can then invoke those operations with the superuser mode
+\item \textbf{Bridges}: Predefined application as predefined “bridges” for 
+user to access sensitive data. (“bridge” can only be built by the system.) 
+\end{itemize}
+If “bridge” not implemented correctly, contains exploitable vulnerabilities, attacker can trick bridge to perform unexpected “illegal” operations. Malicious process is now running with “elevated privilege”. Attacks known as \textbf{“privilege escalation”}. 
+
+\section{//8. Web Security}
+Covered here briefly.
+\begin{itemize}
+\item Web (HTTP) is in the “application” layer w.r.t. network and os. Nonetheless, it is a popular platform with many services built on top of it, and hence worth attention. HTTPS is HTTP on top of TLS.
+\item Browser interacts with multiple sites. Cookies associate to sites. Weak separation among different sites. Access control intended to have boundary between sites based on same-source-origin. Unfortunately, turn out that the separation is weak (ambiguity, etc).
+\item Human-in-the-loop. (confusing URL and address bar as potential attacks).
+\item Cookie as authentication token.
+\end{itemize}
+
+\subsection{Web Security Issues}
+\begin{itemize}
+\item Browsers run with the same privileges as the user – they can thus access the user’s files
+\item At an instance, multiple servers with different domain names could provide the 
+content. Access isolation among sites is thus required.
+\item Browsers support a rich command set and controls for content providers to render 
+the content
+\item Browsers keep user’s information and secrets. For example, some are stored in 
+cookies.
+\item For enhanced functionality, many browsers support plugins, add-ons and extensions by third parties. The exact definitions and differences between these three may not be clear.
+\item Users can update content in the server, and more and more sensitive data is stored 
+in the Web or on the cloud
+\item For the PC, the browser is becoming the main/super application. To some extent, the browser IS the OS.
+\end{itemize}
+
+\subsection{Web Security Threat Models}
+\begin{itemize}
+\item \textbf{Attackers as Another End Systems}: Computers connected to networks referred to as end systems. Attackers can be another end systems, such as malicious web server that lures victim to visit or client who has access to targeted server. 
+\item \textbf{Attackers as Man-In-The-Middle}: attacker secretly relays and possibly 
+alters the communications between two parties who believe that they are directly 
+communicating with each other. (E.g. at IP layer).
+\end{itemize}
+
+\subsection{Web Security Attacks}
+\begin{itemize}
+\item \textbf{Vulnerability in secure communication channel (SSL/TLS)}: If system not designed/implemented correctly. (e.g. re-negotiation attack, BEAST attack).
+\item \textbf{URL/Address Bar Insecurity}: Mislead user, do address bar spoofing, render popup over address bar etc. 
+\item \textbf{Cookies (Leakage)}: Use same-origin policy as protection to protect cookies. Script can only access cookies stored by other webpage if both have same origin. However, prone to errors / adopt different definition.
+\item \textbf{Cross Site Scripting (XSS) Attacks}: Reflected (Non-Persistent) XSS Attack, or Stored XSS (persistent). Injection attack on web apps, attack another web user by causing latter to run a (malicious) script in execution context of a page from an involved web server, thus subverting the Same Origin Policy. Exploiting the victim’s trust of the involved server: (Reflected XSS: web server returns page reflecting injected script), (Persistent XSS: web server stores a page containing the injected script). Defence rely mostly on input-(in)validation carried out by server.
+\item \textbf{Cross Site Request Forgery (XSRF)}: ``Sea surf / session riding''. Reverse of XSS, exploits the server’s trust of the client. (E.g. victim already authenticated, click on URL / run script embedded in webpage). Relatively easier to prevent, require dynamic anti-CSRF token authentication information in request.
+\end{itemize}
+Other attacks include: Drive-by download, web bug (tracking bug, web beacon), clickjacking, click fraud.
 
 
-\subsection{7.6 Controlled Invocation in Unix}
 
 
 
@@ -1694,12 +1825,6 @@ Structure to specify restrictions on subjects (users), objects and operations (a
 
 
 
-
-\vfill \null
-\columnbreak
-
-
-\section{8. Web Security}
 
 
 
