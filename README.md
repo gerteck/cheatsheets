@@ -21,6 +21,10 @@ Do drop me a message if there are any errors or mistakes. Additionally, do perus
     - CS3241 Computer Graphics
     - ST2334 Probability and Statistics
 
-- AY23/24 SS2
-    - In Progress. (CS2106, CS2107, CS3223)
-    - Taking CS2101 and CS2103T, but will try a different note taking approach from doing on LaTeX. 
+- AY23/24 S2
+    - CS2106 Introduction to Operating Systems
+    - CS2107 Introudction to Information Security
+    - CS3223 Database Systems Implementation
+
+- AY24/25 S1
+    - I'm heading to UofT, St. George! 
