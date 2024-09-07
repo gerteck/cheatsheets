@@ -1,0 +1,275 @@
+\documentclass[10pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+%\usepackage{hyperref}
+
+\usepackage{newtxtext} 
+
+%for strikeout
+\usepackage{ulem}
+
+%For editing parbox
+\usepackage[table]{xcolor}
+%For editing itemise margins, reduce iterm separaion and list separation
+\usepackage{enumitem}
+% For math
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+% For hyperlinks
+\usepackage{hyperref}
+
+%For pictures / figures
+\usepackage{color,graphicx,overpic}
+\graphicspath{ {./images/} }
+
+%\usepackage{newtxtext} 
+%\usepackage{amssymb}
+%\usepackage[table]{xcolor}
+%\usepackage{vwcol}
+%\usepackage{tikz}
+%\usepackage{wrapfig}
+%\usepackage{makecell}
+
+\pdfinfo{
+  /Title (CSC465-notes.pdf)
+  /Creator (Ger Teck)
+  /Author (Ger Teck)
+  /Subject ()
+  /Keywords (tex)}
+
+%% Margins for PAPER
+
+% This sets page margins to .5 inch if using letter paper, and to 1cm
+% if using A4 paper. (This probably isn't strictly necessary.)
+% If using another size paper, use default 1cm margins.
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
+	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+		{\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm} }
+		{\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm} }
+	}
+
+% Turn off header and footer
+\pagestyle{empty}
+% for tight centres (less spacing)
+\newenvironment{tightcenter}{%
+  \setlength\topsep{0.5pt}
+  \setlength\parskip{0.5pt}
+  \begin{center}
+}{%
+  \end{center}
+}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+% change font
+%\renewcommand{\familydefault}{\sfdefault}
+%\renewcommand\rmdefault{\sfdefault}
+\linespread{1.05}
+
+\makeatother
+
+% Define BibTeX command
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+%% this changes all items (enumerate and itemize, reduce margins) ITEMIZE SEPARATION HERE
+\setlength{\leftmargini}{0.5cm}
+\setlength{\leftmarginii}{0.5cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 0mm}
+
+%itemsep = 0mm
+%\setlist{nosep}
+
+% Add PToP Macros ---------------------------------------------------------------------------------------------
+\usepackage{amsmath}
+% macros for unified programming and math notations
+% needs amsmath package
+
+% ==> and <==
+\newcommand{\imp}{\Rightarrow}
+\newcommand{\impby}{\Leftarrow}
+\newcommand{\pmi}{\impby}
+
+% logical and ("et" in Latin), logical or ("vel" in Latin)
+\newcommand{\et}{\wedge}
+\newcommand{\vel}{\vee}
+
+% max and min as up/down arrows: \bmax, \bmin
+\newcommand{\bmax}{\mathbin{\uparrow}}
+\newcommand{\bmin}{\mathbin{\downarrow}}
+
+% bunch cardinality
+\newcommand{\card}{\not{\mathrm{c}}}
+
+% null bunch
+\newcommand{\nul}{\mathit{null}}
+% nil string
+\newcommand{\nil}{\mathit{nil}}
+
+% some common bunches: nat, xnat, int, xint, rat, xrat
+\newcommand{\nat}{\mathit{nat}}
+\newcommand{\xnat}{\mathit{xnat}}
+\renewcommand{\int}{\mathit{int}}
+\newcommand{\xint}{\mathit{xint}}
+\newcommand{\rat}{\mathit{rat}}
+\newcommand{\xrat}{\mathit{xrat}}
+
+% 0 \bto 3 = 0,..3
+% (b stands for bunch)
+\newcommand{\bto}{\mathord{,}..}
+% 0 \sto 3 = 0;..3
+% (s stands for string)
+\newcommand{\sto}{\mathord{;}..}
+
+% the | in "n -> i | L"
+\newcommand{\ow}{\mid}
+
+% dependent composition P.Q
+\newcommand{\dc}{\mathrel{.}}
+
+% ok
+\newcommand{\ok}{\mathit{ok}}
+
+% :=
+\newcommand{\get}{\mathpunct{:=}}
+
+% if-then-else-fi
+\newcommand{\cond}[3]{\mbox{\textbf{if} $#1$ \textbf{then} $#2$ \textbf{else} $#3$ \textbf{fi}}}
+% if c then stuff
+% else fluff fi
+\newcommand{\condb}[3]{\begin{array}[t]{@{}l}\mbox{\textbf{if} $#1$ \textbf{then} $#2$} \\ \mbox{\textbf{else} $#3$ \textbf{fi}} \end{array}}
+% if c then
+%   stuff
+% else
+%   fluff
+% fi
+\newcommand{\condbb}[3]{\begin{array}[t]{@{}l}\mbox{\textbf{if} $#1$ \textbf{then}} \\ \quad #2 \\ \mbox{\textbf{else}} \\ \quad #3 \\ \mbox{\textbf{fi}} \end{array}}
+
+% while-do-od
+\newcommand{\while}[2]{\mbox{\textbf{while} $#1$ \textbf{do} $#2$ \textbf{od}}}
+% while b
+% do body od
+\newcommand{\whileb}[2]{\begin{array}[t]{@{}l}\mbox{\textbf{while} $#1$} \\ \mbox{\textbf{do} $#2$ \textbf{od}} \end{array}}
+
+% funktion applikation
+\newcommand{\ap}{\,}
+
+% enlarged relation symbol
+\newcommand{\bigrel}[1]{\mathrel{\,\mbox{\Large$#1$\small$ $}\,}}
+
+% some common enlarged relation symbols
+\newcommand{\Eq}{\bigrel{=}}
+\newcommand{\Imp}{\bigrel{\imp}}
+\newcommand{\Impby}{\bigrel{\impby}}
+\newcommand{\Pmi}{\Impby}
+
+\newcommand{\blankrel}[1]{\mathrel{\phantom{#1}}}
+\newcommand{\Blank}{\blankrel{\Eq}}
+
+% function
+% with domain: \fun{local_variable}{domain}{body}
+% omit domain: \fn{local_variable}{body}
+\newcommand{\fun}[3]{\langle #1 \colon #2 \rightarrow #3 \rangle}
+\newcommand{\fn}[2]{\langle #1 \to #2 \rangle}
+
+% quantified expressions sans quantifier
+% with domain: \bind{local_variable}{domain}{body}
+% omit domain: \bnd{local_variable}{body}
+\newcommand{\bind}[3]{#1 \colon #2 \cdot #3}
+\newcommand{\bnd}[2]{#1 \cdot #2}
+
+% MAX and MIN
+\newcommand{\MAX}{\mathop{\mathit{MAX}}}
+\newcommand{\MIN}{\mathop{\mathit{MIN}}}
+
+% multiple terms splitted into lines, like this:
+%    A
+%  + B
+%  + C
+% and you type:
+% \begin{terms}
+% & A \\
+% + & B \\
+% + & C
+% \end{terms}
+\newenvironment{terms}{\begin{array}[t]{@{}c@{\ }l}}{\end{array}}
+
+% multiple lines, each left-justified
+% \begin{lines}
+% xxx + \\
+% yyy + \\
+% zzz
+% \end{lines}
+\newenvironment{lines}{\begin{array}[t]{@{}l}}{\end{array}}
+
+% End of PToP Latex Macros -------------------------------------------------------
+
+% -------------------------------------------------------------------------------
+
+% START OF DOCUMENT HERE
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{3}
+
+% multicol parameters
+% These lengths are set only within the two main columns
+%\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+
+%% DOCUMENT NAME HERE
+\begin{center}
+     \Large{\textbf{CSC465 Formal Methods  \\
+     				in Software Design }} \\
+\end{center}
+University of Toronto, 2024 Fall, \href{https://github.com/gerteck}{github.com/gerteck} \smallskip
+
+Entire course by Prof. Eric Hehner available online at \href{http://hehner.ca/FMSD}{hehner.ca/FMSD}. \\
+aPToP textbook is available free at \href{http://hehner.ca/aPToP}{hehner.ca/aPToP}. \\
+Author's website is \href{http://hehner.ca}{hehner.ca}.
+
+\section{0. Introduction}
+
+
+\subsection{subsection}
+\begin{itemize}
+\item Item
+\end{itemize}
+
+
+
+
+
+
+
+
+
+\end{multicols*}
+\end{document}
