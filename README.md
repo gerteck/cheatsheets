@@ -25,6 +25,3 @@ Do drop me a message if there are any errors or mistakes. Additionally, do perus
     - CS2106 Introduction to Operating Systems
     - CS2107 Introudction to Information Security
     - CS3223 Database Systems Implementation
-
-- AY24/25 S1
-    - I'm heading to UofT, St. George! 
