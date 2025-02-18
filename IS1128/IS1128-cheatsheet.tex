@@ -1,0 +1,319 @@
+\documentclass[12pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+%\usepackage{hyperref}
+
+\usepackage{newtxtext} 
+
+%for strikeout
+\usepackage{ulem}
+
+%For editing parbox
+\usepackage[table]{xcolor}
+%For editing itemise margins, reduce iterm separaion and list separation
+\usepackage{enumitem}
+% For math
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+
+%For pictures / figures
+\usepackage{color,graphicx,overpic}
+\graphicspath{ {./images/} }
+
+%\usepackage{newtxtext} 
+%\usepackage{amssymb}
+%\usepackage[table]{xcolor}
+%\usepackage{vwcol}
+%\usepackage{tikz}
+%\usepackage{wrapfig}
+%\usepackage{makecell}
+
+\pdfinfo{
+  /Title (IS1128.pdf)
+  /Creator (Ger Teck)
+  /Author (Ger Teck)
+  /Subject ()
+  /Keywords (tex)}
+
+%% Margins for PAPER
+
+% This sets page margins to .5 inch if using letter paper, and to 1cm
+% if using A4 paper. (This probably isn't strictly necessary.)
+% If using another size paper, use default 1cm margins.
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+	}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% for tight centres (less spacing)
+\newenvironment{tightcenter}{%
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+}{%
+  \end{center}
+}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+% change font
+%\renewcommand{\familydefault}{\sfdefault}
+%\renewcommand\rmdefault{\sfdefault}
+\makeatother
+
+% Define BibTeX command
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+%% this changes all items (enumerate and itemize, reduce margins)
+\setlength{\leftmargini}{0.5cm}
+\setlength{\leftmarginii}{0.5cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm}
+\itemsep = 2mm
+%\setlist{nosep}
+
+% -------------------------------------------------------------------------------
+
+% START OF DOCUMENT HERE
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{3}
+
+% multicol parameters
+% These lengths are set only within the two main columns
+\setlength{\columnseprule}{0pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{2pt}
+\setlength{\columnsep}{2pt}
+
+\section{IS1128 IT, Mangemnt, Organizatn}
+Module focuses on information technologies (IT) in organizations and the interplay between IT, work, management, and organizations. 
+\begin{itemize}
+\item Multifaceted roles of IT, support communication, collaboration, and organizational improvements in operations, planning, and decision making.
+\item Opportunities for IT-enabled innovations and issues involving information systems (IS) adoption and deployment.
+\item Impacts of modern IT and the related artificial intelligence (AI) technologies on knowledge workers, teamwork, work design, management practices, and the organization. 
+\end{itemize}
+
+
+\subsection{1. \underline{Impact of IT/IS on Businesses}}
+\begin{itemize}
+\item Global spending on information technology (IT) and IT services steadily increasing. Organizational, management, and cultural changes required for firms to derive full business value from IT investment. But does not guarantee good returns.
+\item Impacts on Organziations (structure, culture, team capability), Technology, Management. 
+\end{itemize}
+
+\subsubsection{Strategic business objectives}
+\begin{itemize}
+\item \textbf{Survival}: Information technologies as necessity of business. \textit{Innovation Diffusion Model}: Roger’s bell curve adoption of technology (Innovators, early adopters, early/late majority, laggards).
+\item \textbf{Operational excellence}: Improvement of efficiency and effectiveness to attain higher profitability. (e.g. accounting systems, marketing forecasters, production management software). \textit{Automating (faster), Learning (better - exploitation and exploration), Strategizing (smarter than rivals)}. E.g. Walmart VMI Retail Link reduces bullwhip effect.
+\item \textbf{New products/service/business model}: E.g. sharing economy, Netflix, etc.
+\item \textbf{Customer and supplier intimacy}:  Customers served well become repeat customers. Close relationships with suppliers result in lower costs. E.g. investment in CRM solutions.
+\item \textbf{Improved Decision Making}: Real-time and accurate information. Better forecasts, planning, response time. E.g. IJooz real time metrics, Starbucks GIS.
+\item \textbf{Competitive advantage}: Advantage over competitors. Better performance, price competitive. Sometimes, about creating brand image of innovation at a initial loss. 
+\end{itemize}
+
+Overall, growing interdependence between information technology and implementing corporate strategies to achieve corporate goal. We assume a \textbf{sociotechnical view}, where optimal organizational performance achieved by jointly optimizing both social and 
+technical systems used in production. Helps avoid purely technological approach.
+
+\subsection{2. \underline{IS and Organizations}}
+Features of organizations relevant to build and use IT/IS successfully: Organizational structure, Business model, Business process, Business/IT alignment.
+
+\subsubsection{Organization}
+\begin{itemize}
+\item \textbf{Technical}: A stable, formal social structure that takes resources from the environment and processes them to produce inputs. Formal legal entities with internal rules, procedures. 
+\item \textbf{Behavioral}: A collection of rights, privileges, obligations, and responsibilities delicately balanced through conflict and conflict resolution.
+\item Organizations are Bureaucracies with clear-cut divisions of labor and specialization, adhere to \textit{principle of efficiency} to maximizing output using limited inputs.
+\end{itemize}
+
+\subsubsection{Organizational Structure}
+The formal configuration between individuals and groups regarding the allocation of tasks, responsibilities, and authority within the organization. We define 5 basic kinds:
+\begin{itemize}
+\item \textbf{Entrepreneurial}: Simple structure, Fast-changing environment, Major decision made by one or two key personnel, Direct supervision, e.g., small start-up business.  
+\item \textbf{Machine Bureaucracy}: Centralized management/decision making, Stable environment, High degree of formalization and work specialization, Standardization of work processes, Many levels in the chain of command, Goal: achieve internal efficiency, e.g., midsize manufacturing firm, government agencies.  
+\item \textbf{Divisionalized Bureaucracy}: Multiple machine bureaucracies, Each producing a different product or service, Decentralized decision-making at the divisional level, Little coordination among separate divisions, Topped by a central headquarters, e.g., Fortune 500 firms with multiple product lines.  
+\item \textbf{Professional Bureaucracy}: Knowledge-based organization, Standardization of skills, Goods and services depend on professionals' expertise, Highly trained professionals provide nonroutine services, Formalized but decentralized to give autonomy, Department heads with weak centralized authority, Small top management, Few middle managers, Goal: Innovate and provide high-quality services, e.g., law firms, universities, hospitals.  
+\item \textbf{Adhocracy}: Low formalization and decentralization, Task-force organization responding to a rapidly changing environment, Engages in nonroutine tasks and uses sophisticated technology, Goal: Innovation and rapid adaptation, Large groups of specialists in short-lived multidisciplinary teams, Weak central management, e.g., NASA, Pixar Animation Studios.  
+\end{itemize}
+Information systems often reflect organizational structure, such as centralization or decentralization. 
+
+\subsubsection{Business Model}
+ A business model specifies how a company will create, deliver, and capture value. What does company do? How unique? Revenue, Cost, key resources / activities / partners needed? Business Model Canvas.
+\begin{itemize}
+\item \textbf{Business Processeses}:  Logically related set of activities/steps that define how specific business tasks are performed. Flows of material, information, knowledge, tied to functional area or be cross-functional
+\item Businesses can be seen as collection of business processes, business processes may be assets or liabilities.
+\item Focus on alignment of IT strategy with business’s strategy. Continuous process of adjusting business goals and IS architecture to achieve business objectives, support/enable business transformation.
+\end{itemize}
+
+\subsection{3. \underline{IS and Competition Strategies}}
+Focus on how Porter’s competitive forces model, the value chain model, and SWOT analysis help companies develop competitive advantages (CA) using IT/IS. Competition strategies for organizations to handle disruptive 
+technology and disruptors.
+
+\subsubsection{A. Where to Compete: Analyzing Competitive Forces 5 Forces}
+Analyze competitive forces to focus resources effectively. Michael Porter’s Five Forces Model provides a general view of a firm, competitors, and environment. 
+\begin{itemize}
+    \item \textbf{Rivalry among existing competitors}: High intensity if competitors are numerous or roughly equal in size and power. Slow Industry growth, High exit barriers.  Rivals are highly committed with leadership aspirations.  Firms struggle to read each other's signals due to unfamiliarity.  
+    \item \textbf{Threat of new entrants}: Barriers to entry include Supply-side economies of scale, Demand-side benefits of scale. Customer switching costs. Capital requirements. Incumbency advantages independent of size. Unequal access to distribution channels. Restrictive government policies.  
+    \item \textbf{Bargaining power of suppliers}  Suppliers are powerful if:  
+            More concentrated than the industry they sell to.  
+            Do not depend heavily on the industry for revenue.  
+            Switching costs in changing suppliers are high.  
+            Products differentiated.  
+            No substitutes.  
+            Can credibly threaten forward integration.  
+
+    \item \textbf{Bargaining power of buyers}  
+        Buyers have strong negotiation power if:  
+           few buyers or large purchase volume.  
+           Products standardized or undifferentiated.  
+           Switching costs low.  
+           Can credibly threaten backward integration.  
+
+    \item \textbf{Threat of substitute products or services}  
+        High threat if substitutes offer attractive price-performance trade-off and switching costs low.  
+\end{itemize}
+
+\subsubsection{Type of Business}
+\begin{itemize}
+    \item \textbf{Pipeline Business}: Creates value by controlling a linear series of activities. 
+	Follows the classic value chain model.  Inputs (e.g., materials from suppliers) undergo transformations into a finished product with higher value.  
+        - E.g. Nike, Dell.  
+
+    \item \textbf{Platform Business}  
+        Facilitates interactions between producers and consumers. 
+        \textit{Critical asset:}  Community. Resources of participating groups.  
+        Strategic focus shifts from: Resource control to orchestrating resources,
+            Internal process optimization to facilitating external interactions,
+            End-user value to maximizing ecosystem value.  
+        - E.g. Gojek, Airbnb.  
+\end{itemize}
+
+\subsubsection{Network Effects}
+\begin{itemize}
+    \item \textbf{Direct Network Effects (One-Side Effects)}:
+        Utility user receives increases as the number of users grows. E.g. Communication platforms.  
+        \textit{Differentiation}: Capacity-constrained vs. capacity-unconstrained assets.  
+    \item \textbf{Indirect Network Effects (Cross-Side Effects)}:
+        Value of a service for one user group rises when another user group expands. Critical for multi-sided platforms.  
+\end{itemize}
+
+
+\subsubsection{Market Concentration}
+\begin{itemize}
+    \item \textbf{Concentration Ratio (CR)}: Measures the combined market share percentage of the largest firms in an industry.  
+        - Typically calculated for the top three or four firms (e.g., CR4).  Market types:  Monopoly: CR1 $~$ 100\%, Oligopoly: CR5 $>$ 60\%, Pure competition: CR4 $~$ 0\%.  
+
+    \item \textbf{Herfindahl-Hirschman Index (HHI)}: Derived by summing the squares of all firms' market shares.  
+        Higher values equal dominance by large players. Value ranges: Decimal format: (0,1]. Whole number format: (0,10000].  
+	\item Sample reference: HHI $<$ 1500 non-concentrated, HHI 1500-2500 moderate, HHI $>$ 2500 is highly concentrated.
+\end{itemize}
+
+\subsubsection{B. How to Compete: Choosing Generic Strategy}
+\begin{itemize}
+\item \textbf{Low cost leadership strategy}: Lower price than competitors, greater efficiency. Keep tight control of overheads and maximizing the 
+cost benefit of industrial experience and new technology. Avoid unprofitable/marginal customer accounts, minimize running cost or investment in processes seen as ancillary, such as R\&D, advertisement, and customer 
+service.
+\item \textbf{Product differentiation} New products/services, Innovation, high start-up and running cost.
+\item \textbf{Market Niche} Specific market focus.
+\end{itemize}
+
+\subsubsection{C. Identify Resources and Capabilities}
+\begin{itemize}
+    	\item \textbf{Resources}: Organization’s specific assets utilizable to achieve cost or product differentiation E.g., proprietary technology, brand equity, a loyal and established customer base
+	\item \textbf{Capability}:T he organization’s ability to leverage these resources in the marketplace.
+	\item \textbf{Distinctive Competencies}: innovation, agility, quality, or low cost. The resources and capabilities develop these competencies, that contribute to some sustained competitive advantages.
+\end{itemize}
+
+
+\subsubsection{SWOT Analysis}
+Strengths, Weaknesses, Opportunities, and Threats. SWOT analysis is a framework to help assess and understand the internal 
+and external forces that may create opportunities or risks for an organization.
+\begin{itemize}
+\item \textbf{Strengths}: Traits giving advantage over competitors
+\item \textbf{Weaknesses}: Traits specific to the business that put it at disadvantage.
+\item \textbf{Opportunities}: Elements in external environment that allow formulation, implementation of strategies.
+\item \textbf{Threats}: Threats in external environment that could endanger businesss, CA, profits. (Not specific)
+\end{itemize}
+
+
+\subsubsection{D. Identify How to Compete: Analyzing the Value Chain}
+\begin{itemize}
+    \item Organizations as series of activities adding value to products or services (value chain). Analysis helps determine where value is added and the costs incurred. Highlights areas where competitive strategies can be applied.
+    \item Differentiates between:
+    \begin{itemize}
+        \item \textbf{Primary activities} (e.g., inbound logistics, operations, marketing, sales, service).
+        \item \textbf{Support activities} (e.g., firm infrastructure, HR, technology development, procurement).
+    \end{itemize}
+    \item IS can improve efficiency, strengthen customer/supplier relationships. E.g. through benchmarking, industry best practices.
+\end{itemize}
+
+
+\subsubsection{Disruptive Technologies}
+Technologies that introduce sweeping changes to industries and markets by outperforming existing products. Provides substitute products that perform as well or better, and drives transformation across industries. 
+E.g. Internet, IoT, Mobile payments, Generative AI (GenAI). Need to adapt to digital disruptions.
+
+\subsubsection{Adaptation Strategies}
+\begin{itemize}
+    \item \textbf{Fight Back}: Compete directly through new units, acquisitions, or joint ventures. E.g. Carmakers shifting towards electric vehicles.
+    \item \textbf{Double Down}: Strengthen existing advantages and focus on core business. (Think it is a fad, ignore, low ROI)
+    \item \textbf{Retrench}: Yield ground to new entrants and conduct survival tactics. E.g. Mergers, acquisitions, lobbying.
+    \item \textbf{Move Away}: Shift towards new business opportunities.
+\end{itemize}
+\textbf{Two Strategic Dimensions for these adaptation strategies}: Existing Market vs. New Market and Offensive Strategy vs. Defensive Strategy. Companies always end up doing some hybrid.
+\begin{itemize}
+\item \textbf{Successful Adaptations}: Business innovation, quick to adapt.
+\item \textbf{Failed Adaptations}:  Failure to embrace new business models enabled by digital disruption. Business myopia focus too much on existing revenue streams.
+\item \textbf{Considerations}: What is the value proposition? What new opportunies does disruption open up (business/tech trend)? What capabilities needed to realize opportunities?
+\end{itemize}
+
+\subsection{4. \underline{IS Strategic Deployment}}
+Factors organizations need to consider in IT planning and implementation. Includes system acquisition strategies, system development/delivery methods, system conversion strategies. 
+\begin{itemize}
+\item \textbf{Internally}: Consider perspective of Business/IT Alignment, Organizational, managerial IT features.
+\item \textbf{Exernallly}: PESTLE analysis. (Political, Economic, Sociological, Technological, Legal, Environment). E.g. govt regulations, inflation rate, religion, laws, env. concerns.
+\end{itemize}
+
+
+\subsubsection{Feasibility Analysis}
+\begin{itemize}
+    \item \textbf{Organizational Feasibility}: how well solution fits within the organization’s strategic planning objectives and goals.
+    \item \textbf{Political Feasibility}: how well solution fits within the organization’s political environment.
+    \item \textbf{Technological Feasibility}: how well solution supportable given organization’s current technology infrastructure and resources, (hardware, software, networking, personnel).    
+    \item \textbf{Behavioral/Operational Feasibility}: how well fits within the organization’s culture and the extent to which users are expected to accept the solution. (E.g. Amazon surveillance of workers)
+    \item \textbf{Economic Feasibility}: net economic benefits of a particular solution: Cost-Benefit Analysis (CBA)
+\end{itemize}
+
+
+
+
+
+
+\end{multicols*}
+\end{document}
