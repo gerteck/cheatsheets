@@ -1,0 +1,234 @@
+\documentclass[10pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+%\usepackage{hyperref}
+
+\usepackage{newtxtext} 
+
+%for strikeout
+\usepackage{ulem}
+
+%For editing parbox
+\usepackage[table]{xcolor}
+%For editing itemise margins, reduce iterm separaion and list separation
+\usepackage{enumitem}
+% For math
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+
+%For pictures / figures
+\usepackage{color,graphicx,overpic}
+\graphicspath{ {./images/} }
+
+%\usepackage{newtxtext} 
+%\usepackage{amssymb}
+%\usepackage[table]{xcolor}
+%\usepackage{vwcol}
+%\usepackage{tikz}
+%\usepackage{wrapfig}
+%\usepackage{makecell}
+
+\pdfinfo{
+  /Title (CS3213.pdf)
+  /Creator (Ger Teck)
+  /Author (Ger Teck)
+  /Subject ()
+  /Keywords (tex)}
+
+%% Margins for PAPER
+
+% This sets page margins to .5 inch if using letter paper, and to 1cm
+% if using A4 paper. (This probably isn't strictly necessary.)
+% If using another size paper, use default 1cm margins.
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+	}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% for tight centres (less spacing)
+\newenvironment{tightcenter}{%
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+}{%
+  \end{center}
+}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+% change font
+%\renewcommand{\familydefault}{\sfdefault}
+%\renewcommand\rmdefault{\sfdefault}
+\makeatother
+
+% Define BibTeX command
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+%% this changes all items (enumerate and itemize, reduce margins)
+\setlength{\leftmargini}{0.5cm}
+\setlength{\leftmarginii}{0.5cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm}
+%\setlist{nosep}
+
+% -------------------------------------------------------------------------------
+
+% START OF DOCUMENT HERE
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{3}
+
+% multicol parameters
+% These lengths are set only within the two main columns
+\setlength{\columnseprule}{0pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{2pt}
+\setlength{\columnsep}{2pt}
+
+\section{CS3213 Foundations of S. Engineering (FSE)}
+\centerline{AY24/25 Sem 2. github.com/gerteck}
+Software Engineering Foundations. Methodologies to develop working software, address customers’ needs efficiently. \\
+• Software development processes (agile vs. plan-driven) \\
+• Requirements engineering, Modeling, Software architectures \\ 
+• Software testing, Static analysis, Debugging, fault localization. 
+
+\subsection{1. \underline{Software Engineering}}
+Engineering discipline concerned with all aspects of software production, initial conception to operation and maintenance. Multiperson development of multiversion programs. People at core, code is important but only small part of building product.
+\begin{itemize}
+\item \textbf{Engineering}: selectively using (general and ambiguous) theories, methods, tools where appropriate.
+\item \textbf{Software engineering}: \textit{practicalities} of developing, delivering useful software. Programming integrated over time. Software sustainability to keep software evolvable over time. (Time component)
+\item \textbf{People}'s characteristics as a first-order success driver.
+\item \textbf{Origins}: 1965s software crisis, Margaret Hamilton, Apollo team director, coins software eng. Cost of bugs today, (2022 US \$2.41 trillion), technical debt biggest obstacle to changes to existing codebases, est. \$1.52 trillion. E.g. crowdstrike 2024 outage, DBS 2023, carousell data leak, Java Log4J 2021 Log4Shell zero-day vulnerability. Fred Brooks SWE -- no silver bullet (Mythical Man Month). 
+\item \textbf{Complexity}: \textit{Essential complexity - inherent challenges}, e.g. communicating with stakeholders to determine product. \textit{Accidental complexity} - can be solved, e.g. buffer overflow exploitation protection. Hardest single part -- deciding what to build. 
+\item \textbf{Techniques to address key challenges}: Address users' needs with software, correctness and reliable, efficiency with limited resources.
+\end{itemize}
+
+\subsubsection{Central Software Engineering Activities}
+\textbf{Software Specification}: Define functionality, constraints on operation. \\
+\textbf{Software Development}: Implement to meet specification. \\
+\textbf{Software Validation}: Ensure performance \& requirements met. \\
+\textbf{Software Evolution}: Adapts the software to evolving customer needs. \\
+\smallskip
+“Shifting Left” - more costly to address a defect late in the process. SE processes have been “shifting left”.
+
+\subsubsection{SWE Qualities}
+\begin{itemize}
+\item \textit{Myths}: Genius Myth, 10x Dev. SWE is team activity. Working alone increases risks like design mistakes, irrelevance, and the "bus factor."
+\item \textbf{Personal Pinciples}: Humility (Recognize limitations, self-improvement), Respect, Trust. Thrive in ambiguity, value feedback, challenge status quo, put users first, cares about team. Improving, Passionate, Knowledge about People, Organization, Sees Forest and Trees, Create shared context, Creates safe haven. 
+\item \textbf{Software Product Attributes}: \textit{Elegant}: Simple, intuitive designs that are easy to understand and maintain. \textit{Anticipates Needs}: Build software that accommodates future requirements.
+\end{itemize}
+
+\subsection{2. \underline{Software Engineering Processes}}
+\textbf{Software process models}: Waterfall, incremental, integration \& configuration.  \textbf{Agile}: origins, scrum. Kanban. XP. \textbf{DevOps}.
+
+\subsubsection{Software Processes}
+Set of related activities leading to production of software system. \textbf{Software process model}: simplified rep. of software process (e.g., sequence of activities). Illustrates different approaches to developing software.
+\begin{itemize}
+	\item \textbf{Waterfall Model}:  Simple, linear plan-driven software process model. Output of one phase feeds into the next. Development starts only after req. eng and design. \textbf{Pros/Use Cases}: Embedded-hardware /Safety-critical /Large systems. Works well if requirements clear, large projects, or distributed teams. \textbf{Cons}: accommodate change difficult.
+	\item \textbf{Incremental Development}: Overlapping phases of specification, development, and validation. Built in increments, adding functionality. Can be plan-driven, agile, or mix. \textbf{Pros}: Lower cost of accommodating change, faster delivery. \textbf{Cons}: Harder to measure progress, may lead to system degradation (require refactoring).  
+	\item \textbf{Integration and Configuration}: Focuses on reusing existing components, frameworks, and libraries rather than build from scratch. AKA \textbf{reuse-based development}.  Req. may need to be redefined based on identified components. \textbf{Pros}: Reduce amt. of software to develop, lower costs, risks. \textbf{Cons}: Limited customization, dependency on third-party, integration complexity.  
+\end{itemize}
+
+
+\subsubsection{Agile Software Engineering}
+Agile software development frameworks typically not complete software process models (e.g., Scrum is not specific to developing software). Designed for changing, unclear requirements and developing software in increments, delivering value quickly.
+\begin{itemize}
+\item \textbf{Agile}: Both mindset and concrete mngmt engineering framework. Focus on deliver value, avoid waste. Feedback loops, customer involvement. Adaptive to change. Lightweight process, empower people, lean manufacturing, buzzword certifications.
+\item \textbf{Historical Development and Origins}: 1980-90s: Traditional planning, QA, structured development processes. Late 1990s: Dissatisfaction, rise of agile alternative to rigid waterfall models. 2001: Agile Manifesto created by representatives from frameworks like Scrum, XP, Feature-Driven Development (FDD). Influenced by \textit{lean manufacturing}, \textit{The New New Product Development Game (1986)} -- overlapping stages, built in instabilitym subtle control, self-organizing teams (autonomy, self-transcendence of teams, cross-fertilization, learning \& learning transfer cross teams).
+\item \textbf{Lean software development}: Limit waste (hardship in daily work) -- partially done work, non-value adding processes/features, task-switching, waiting for input, defects, handoff motion.
+\item \textbf{Manifesto Principles}:  Individuals \& interactions over processes, tools. Working software over compreh. documentation, deliver frequently. Customer collaboration over contract negotiation (work tgt daily), Responding to change over following plan (welcome changing req.). face-to-face conversation, working software as progress measure, promote sustainable development. technicaly excellence and good design enhances agility, simplicity is essential. regular reflection.
+\item \textbf{Agile Adoption }: Larger the org, more likely to use hybrid mode. Bigger teams likely still use waterfall. Agile has concrete benefits - better collaboration, alignment to business needs, better quality software. \textbf{Adoption Problems}: business side slow to embrace. Too many mixed systems, siloed teams cause delays. Incorrect practice of agile, managment buy-in, lack of documentation pain.
+\end{itemize}
+
+\subsubsection{Scrum}
+Often synonymous to agile approaches. General, lightweight framework for project management. 
+\begin{itemize}
+	\item \textbf{Core Principles}:  Empirical process control and lean thinking. Focuses on delivering value through increments in sprints.  
+	\item \textbf{Scrum Pillars}:  Transparency (work and process visibility), Inspection (frequent evaluation), and Adaptation (adjustments as needed).  
+	\item \textbf{Scrum Team}: Self-managing, no hierarchies, typically $\leq$ 10members. \textit{Scrum Master}: Facilitates Scrum process, removes impediments. \textit{Product Owner}: Maximizes product value, manages Product Backlog. \textit{Developers}: Responsible for creating Increment each Sprint.  
+	\item \textbf{Scrum Events}:  \textit{Sprint}: Timeboxed iteration ($\leq$ 1 month), deliver working Increment. \textit{Sprint Planning}: Defines Sprint Goal, selects backlog items. \textit{Daily Scrum}: 15-minute daily sync to track progress and adjust plan. \textit{Sprint Review}: Team present results, adjust Product Backlog. \textit{Sprint Retrospective}: Reflect on improvements for future Sprints.  
+    \item \textbf{Scrum Artifacts}:  \textit{Product Backlog}: Ordered list of work items aligned with the Product Goal. \textit{Sprint Backlog}: Selected items for Sprint with an actionable plan. \textit{Increment}: Deliverable output that meets the Definition of Done.  
+    \item \textbf{Timeboxing}:  Sprint(S): $\leq$ 1 mnth. S. Planning: $\leq$  8 hrs. Daily Scrum: 15 minutes.  S. Review:  $\leq$  4 hrs. S. Retrospective: $\leq$ 3 hrs.  
+    \item \textbf{Kanban Board}: Often used in Scrum to visualize workflow. It helps teams track progress, limit work in progress (WIP), and improve flow (movement of potential value through a system).
+    \item \textbf{Definition of Workflow (DoW)}: A shared understanding of how work items flow through the system. Includes \textit{Units of value} (work items or user stories), defined states (stages) work items flow through, policies for how items move through each state. WIP limit controls enforced. 
+\end{itemize}
+
+\subsubsection{Extreme Programming (XP)}
+Highly influential agile methodology (late 1990s). "extreme" approach to iterative development and best practices.
+\begin{itemize}
+\item New ver may be built several times/day, increments delivered every 2 weeks, All tests run successful for every accepted build.
+\item \textbf{Pair Programming}:  One dev programming, other reviewing, focus on big picture. (driver \& navigator). Both can think and interact at same level of 
+interaction (e.g., same level of expertise). If one greater expertise likely to dominate interaction. Switch roles after a time period, and switch partners frequently. \textit{Pros vs Cons}: Fewer bugs, better code understanding, peer learning, but lower cost / scheduling efficiency, personal clash.
+\item \textbf{Collective Ownership}:  Everyone responsible for all code, anyone can change any code. Pair prog facilitates this, as everyone better 
+understands larger system, contribute to different parts of code.
+\item \textbf{Test-driven development}: Unit tests written before code, test all potential fail cases. helps development, facilitates other practices of CI, refactoring etc.
+\item \textbf{Continuous Integration}: Dev team should always work on latest ver. Code integrated to main branch frequently. Facilitate using unit tests. (GH Actions, Jenkins).
+\item \textbf{Simple Design, Refactoring}: “simple is best”, refactoring as part of the lifecycle, keep it maintainable, easier to extend.
+\item Others: on-site customer for access system requirements, sustainable pace for net effect on code quality / long term productivity.
+\end{itemize}
+
+\subsubsection{DevOps}
+For incremental development, challenge in deploying software quickly and reliably. Involves collaboration btw. dev (Scrum teams) and operations teams.
+
+\begin{itemize}
+    \item \textbf{DORA (DevOps Research and Assessment)}: Framework for measuring and improving DevOps performance through key metrics like deployment frequency, lead time for changes, change failure rates, mean time to recovery. \textit{Observability and Monitoring} for measuring DevOps performance. Monitoring of running code and infrastructure provides insights to optimize the value stream.
+    \item \textbf{Silos}: Traditionally, dev and ops teams separated, conflicting goals. Developers focus on delivering features quickly, while operations prioritize stability and uptime. DevOps bridges gap by fostering collaboration.
+    \item \textbf{DevOps Overview}: Unified approach, emphasize automation, collaboration, and continuous delivery. Popularized around 2010, it aims to make deployments routine and predictable. \textit{DevOps vs. Agile}: Agile focus on iterative development, deliver value, DevOps extend by automating deployment pipeline. Emphasis on CI, delivery, feedback loops. ''Infinite loop'' of dev and ops.
+    \item \textbf{DevOps Principles}: \textit{Flow}: Reduce batch sizes and handoffs (pass of work across depts, teams) to streamline delivery. \textit{Feedback}: Implement fast feedback loops to detect and resolve issues early. \textit{Continuous Learning}: Promote experimentation and learning, with mechanisms to share knowledge across teams. Need safety culture.
+        \item \textbf{Learning from Incidents}: Encourages \textit{blameless postmortems} to investigate failures, implement preventive measures. Fosters culture of experimentation and learning.
+       \item \textbf{Value Stream Mapping}: Technique to visualize and analyze the flow of work, identifying inefficiencies and improving delivery processes. (E.g. develop unit test - code solution - PR reviews - QA - regression, performance test - deploy - smoke test - UAT test)
+    \item \textbf{Continuous Integration and Deployment (CI/CD)}: Automates the integration, testing, and deployment of code changes, enabling frequent and reliable releases (push to production). \textit{Infrastructure as Code}: Treats infrastructure configuration like code, using version control, automation to manage servers and environments.
+\end{itemize}
+
+\subsubsection{Software Requirements Engineering}
+\begin{itemize}
+\item \textbf{SRS: Software Requirements Specification}: 
+Central document: software requirements document (or 
+software requirements specification or SRS)
+ • An official statement of what the system developers should 
+implement
+ • It may include both the user requirements for a system and a 
+detailed specification of the system requirements
+ • Output of a requirements engineering phase
+ • Covered in the next lecture
+\end{itemize}•
+
+
+
+
+
+
+
+
+
+\end{multicols*}
+\end{document}
