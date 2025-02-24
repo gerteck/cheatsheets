@@ -43,7 +43,7 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{ \geometry{top=.4in,left=.4in,right=.4in,bottom=.4in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -94,7 +94,7 @@
 \setlength{\leftmargini}{0.5cm}
 \setlength{\leftmarginii}{0.5cm}
 \setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm}
-\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm}
+\setlist[itemize,2]{leftmargin=3mm,labelindent=0.5mm,labelsep=1mm, itemsep = 0mm}
 %\setlist{nosep}
 
 % -------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ Engineering discipline concerned with all aspects of software production, initia
 \item \textbf{Engineering}: selectively using (general and ambiguous) theories, methods, tools where appropriate.
 \item \textbf{Software engineering}: \textit{practicalities} of developing, delivering useful software. Programming integrated over time. Software sustainability to keep software evolvable over time. (Time component)
 \item \textbf{People}'s characteristics as a first-order success driver.
-\item \textbf{Origins}: 1965s software crisis, Margaret Hamilton, Apollo team director, coins software eng. Cost of bugs today, (2022 US \$2.41 trillion), technical debt biggest obstacle to changes to existing codebases, est. \$1.52 trillion. E.g. crowdstrike 2024 outage, DBS 2023, carousell data leak, Java Log4J 2021 Log4Shell zero-day vulnerability. Fred Brooks SWE -- no silver bullet (Mythical Man Month). 
+\item \textbf{Origins}: 1965s software crisis, Margaret Hamilton, Apollo team director, coins software eng. Cost of bugs today, (2022 US \$2.41 trillion), technical debt biggest obstacle to changes to existing codebases, est. \$1.52 trillion. E.g. crowdstrike 2024 outage, DBS 2023, Java Log4J 2021 Log4Shell zero-day vulnerability. Fred Brooks SWE -- no silver bullet (Mythical Man Month). 
 \item \textbf{Complexity}: \textit{Essential complexity - inherent challenges}, e.g. communicating with stakeholders to determine product. \textit{Accidental complexity} - can be solved, e.g. buffer overflow exploitation protection. Hardest single part -- deciding what to build. 
 \item \textbf{Techniques to address key challenges}: Address users' needs with software, correctness and reliable, efficiency with limited resources.
 \end{itemize}
@@ -148,24 +148,22 @@ Engineering discipline concerned with all aspects of software production, initia
 \end{itemize}
 
 \subsection{2. \underline{Software Engineering Processes}}
-\textbf{Software process models}: Waterfall, incremental, integration \& configuration.  \textbf{Agile}: origins, scrum. Kanban. XP. \textbf{DevOps}.
-
 \subsubsection{Software Processes}
-Set of related activities leading to production of software system. \textbf{Software process model}: simplified rep. of software process (e.g., sequence of activities). Illustrates different approaches to developing software.
+Set of related activities leading to production of software system. \textbf{Software process model}: rep. of software process (sequence of activities). Illustrates different approaches to developing software.
 \begin{itemize}
 	\item \textbf{Waterfall Model}:  Simple, linear plan-driven software process model. Output of one phase feeds into the next. Development starts only after req. eng and design. \textbf{Pros/Use Cases}: Embedded-hardware /Safety-critical /Large systems. Works well if requirements clear, large projects, or distributed teams. \textbf{Cons}: accommodate change difficult.
 	\item \textbf{Incremental Development}: Overlapping phases of specification, development, and validation. Built in increments, adding functionality. Can be plan-driven, agile, or mix. \textbf{Pros}: Lower cost of accommodating change, faster delivery. \textbf{Cons}: Harder to measure progress, may lead to system degradation (require refactoring).  
-	\item \textbf{Integration and Configuration}: Focuses on reusing existing components, frameworks, and libraries rather than build from scratch. AKA \textbf{reuse-based development}.  Req. may need to be redefined based on identified components. \textbf{Pros}: Reduce amt. of software to develop, lower costs, risks. \textbf{Cons}: Limited customization, dependency on third-party, integration complexity.  
+	\item \textbf{Integration and Configuration}: Focus on reuse existing components, frameworks, libraries over build from scratch. \textbf{Reuse-based dev.}.  May need redefine reqs. based on identified components. \textbf{Pros}: Reduce amt. of software to develop, lower costs, risks. \textbf{Cons}: Limit customizatn, dependency on third-party, integration complexity.  
 \end{itemize}
 
 
 \subsubsection{Agile Software Engineering}
-Agile software development frameworks typically not complete software process models (e.g., Scrum is not specific to developing software). Designed for changing, unclear requirements and developing software in increments, delivering value quickly.
+Agile software dev frameworks not complete software process models (e.g., Scrum is not specific to developing software). Designed for changing, unclear requirements and developing software in increments, delivering value quickly.
 \begin{itemize}
 \item \textbf{Agile}: Both mindset and concrete mngmt engineering framework. Focus on deliver value, avoid waste. Feedback loops, customer involvement. Adaptive to change. Lightweight process, empower people, lean manufacturing, buzzword certifications.
-\item \textbf{Historical Development and Origins}: 1980-90s: Traditional planning, QA, structured development processes. Late 1990s: Dissatisfaction, rise of agile alternative to rigid waterfall models. 2001: Agile Manifesto created by representatives from frameworks like Scrum, XP, Feature-Driven Development (FDD). Influenced by \textit{lean manufacturing}, \textit{The New New Product Development Game (1986)} -- overlapping stages, built in instabilitym subtle control, self-organizing teams (autonomy, self-transcendence of teams, cross-fertilization, learning \& learning transfer cross teams).
+\item \textbf{Historical Development and Origins}: 1980-90s: Trad. planning/dev processes. Late 1990s: Dissatisfaction, agile as alternative to rigid waterfall. 2001: Agile Manifesto by reps from frameworks like Scrum, XP, Feature-Driven Development (FDD). Influenced by \textit{lean manufacturing}, \textit{The New New Product Development Game (1986)} -- overlapping stages, built in instability, subtle control, self-organizing teams (autonomy, self-transcendence of teams, cross-fertilization, learning \& learning transfer cross teams).
 \item \textbf{Lean software development}: Limit waste (hardship in daily work) -- partially done work, non-value adding processes/features, task-switching, waiting for input, defects, handoff motion.
-\item \textbf{Manifesto Principles}:  Individuals \& interactions over processes, tools. Working software over compreh. documentation, deliver frequently. Customer collaboration over contract negotiation (work tgt daily), Responding to change over following plan (welcome changing req.). face-to-face conversation, working software as progress measure, promote sustainable development. technicaly excellence and good design enhances agility, simplicity is essential. regular reflection.
+\item \textbf{Manifesto Principles}:  Individuals \& interactions over processes. Working software over compreh. docs. deliver frequently. Customer collab over contract nego (comms daily), Respond to change over following plan (wlc. changing req.). Working software as progress measure, sustainable development. technical excellence and good design enhances agility, simplicity is essential. regular reflection.
 \item \textbf{Agile Adoption }: Larger the org, more likely to use hybrid mode. Bigger teams likely still use waterfall. Agile has concrete benefits - better collaboration, alignment to business needs, better quality software. \textbf{Adoption Problems}: business side slow to embrace. Too many mixed systems, siloed teams cause delays. Incorrect practice of agile, managment buy-in, lack of documentation pain.
 \end{itemize}
 
@@ -176,7 +174,7 @@ Often synonymous to agile approaches. General, lightweight framework for project
 	\item \textbf{Scrum Pillars}:  Transparency (work and process visibility), Inspection (frequent evaluation), and Adaptation (adjustments as needed).  
 	\item \textbf{Scrum Team}: Self-managing, no hierarchies, typically $\leq$ 10members. \textit{Scrum Master}: Facilitates Scrum process, removes impediments. \textit{Product Owner}: Maximizes product value, manages Product Backlog. \textit{Developers}: Responsible for creating Increment each Sprint.  
 	\item \textbf{Scrum Events}:  \textit{Sprint}: Timeboxed iteration ($\leq$ 1 month), deliver working Increment. \textit{Sprint Planning}: Defines Sprint Goal, selects backlog items. \textit{Daily Scrum}: 15-minute daily sync to track progress and adjust plan. \textit{Sprint Review}: Team present results, adjust Product Backlog. \textit{Sprint Retrospective}: Reflect on improvements for future Sprints.  
-    \item \textbf{Scrum Artifacts}:  \textit{Product Backlog}: Ordered list of work items aligned with the Product Goal. \textit{Sprint Backlog}: Selected items for Sprint with an actionable plan. \textit{Increment}: Deliverable output that meets the Definition of Done.  
+    \item \textbf{Scrum Artifacts}:  \textit{Product Backlog}: Ordered list of work items aligned with Product Goal. \textit{Sprint Backlog}: Selected items for Sprint w. actionable plan. \textit{Increment}: Deliverable output meeting defn. of Done.  
     \item \textbf{Timeboxing}:  Sprint(S): $\leq$ 1 mnth. S. Planning: $\leq$  8 hrs. Daily Scrum: 15 minutes.  S. Review:  $\leq$  4 hrs. S. Retrospective: $\leq$ 3 hrs.  
     \item \textbf{Kanban Board}: Often used in Scrum to visualize workflow. It helps teams track progress, limit work in progress (WIP), and improve flow (movement of potential value through a system).
     \item \textbf{Definition of Workflow (DoW)}: A shared understanding of how work items flow through the system. Includes \textit{Units of value} (work items or user stories), defined states (stages) work items flow through, policies for how items move through each state. WIP limit controls enforced. 
@@ -186,12 +184,12 @@ Often synonymous to agile approaches. General, lightweight framework for project
 Highly influential agile methodology (late 1990s). "extreme" approach to iterative development and best practices.
 \begin{itemize}
 \item New ver may be built several times/day, increments delivered every 2 weeks, All tests run successful for every accepted build.
-\item \textbf{Pair Programming}:  One dev programming, other reviewing, focus on big picture. (driver \& navigator). Both can think and interact at same level of 
-interaction (e.g., same level of expertise). If one greater expertise likely to dominate interaction. Switch roles after a time period, and switch partners frequently. \textit{Pros vs Cons}: Fewer bugs, better code understanding, peer learning, but lower cost / scheduling efficiency, personal clash.
+\item \textbf{Pair Programming}:  One dev programming, other review, focus on big picture. (driver \& navigator). Both can think and interact at same level of 
+interaction. If one greater expertise likely to dominate interaction. Switch roles after a time period, and switch partners frequently. \textit{Pros vs Cons}: Fewer bugs, better code understanding, peer learning, but lower cost / scheduling efficiency, personal clash.
 \item \textbf{Collective Ownership}:  Everyone responsible for all code, anyone can change any code. Pair prog facilitates this, as everyone better 
 understands larger system, contribute to different parts of code.
 \item \textbf{Test-driven development}: Unit tests written before code, test all potential fail cases. helps development, facilitates other practices of CI, refactoring etc.
-\item \textbf{Continuous Integration}: Dev team should always work on latest ver. Code integrated to main branch frequently. Facilitate using unit tests. (GH Actions, Jenkins).
+\item \textbf{Continuous Integration}: Dev team work on latest ver. Integrate code to main branch freq. Facilitate using unit tests. (GH Actions, Jenkins).
 \item \textbf{Simple Design, Refactoring}: “simple is best”, refactoring as part of the lifecycle, keep it maintainable, easier to extend.
 \item Others: on-site customer for access system requirements, sustainable pace for net effect on code quality / long term productivity.
 \end{itemize}
@@ -205,22 +203,248 @@ For incremental development, challenge in deploying software quickly and reliabl
     \item \textbf{DevOps Overview}: Unified approach, emphasize automation, collaboration, and continuous delivery. Popularized around 2010, it aims to make deployments routine and predictable. \textit{DevOps vs. Agile}: Agile focus on iterative development, deliver value, DevOps extend by automating deployment pipeline. Emphasis on CI, delivery, feedback loops. ''Infinite loop'' of dev and ops.
     \item \textbf{DevOps Principles}: \textit{Flow}: Reduce batch sizes and handoffs (pass of work across depts, teams) to streamline delivery. \textit{Feedback}: Implement fast feedback loops to detect and resolve issues early. \textit{Continuous Learning}: Promote experimentation and learning, with mechanisms to share knowledge across teams. Need safety culture.
         \item \textbf{Learning from Incidents}: Encourages \textit{blameless postmortems} to investigate failures, implement preventive measures. Fosters culture of experimentation and learning.
-       \item \textbf{Value Stream Mapping}: Technique to visualize and analyze the flow of work, identifying inefficiencies and improving delivery processes. (E.g. develop unit test - code solution - PR reviews - QA - regression, performance test - deploy - smoke test - UAT test)
+       \item \textbf{Value Stream Mapping}: Technique to visualize and analyze the flow of work, identifying inefficiencies and improving delivery processes. (E.g. develop unit test $\rightarrow$ code solution $\rightarrow$ PR reviews $\rightarrow$ QA $\rightarrow$ regression, performance test $\rightarrow$ deploy $\rightarrow$ smoke test $\rightarrow$ UAT test)
     \item \textbf{Continuous Integration and Deployment (CI/CD)}: Automates the integration, testing, and deployment of code changes, enabling frequent and reliable releases (push to production). \textit{Infrastructure as Code}: Treats infrastructure configuration like code, using version control, automation to manage servers and environments.
 \end{itemize}
 
-\subsubsection{Software Requirements Engineering}
+\subsection{3. \underline{Software Requirements Engineering}}
+Functional vs. Non func. Req. Quality Attribute Scenarios. Elicitation \& Analysis. Documentation. Validation. Process Models. Change Mngmt.
 \begin{itemize}
-\item \textbf{SRS: Software Requirements Specification}: 
-Central document: software requirements document (or 
-software requirements specification or SRS)
- • An official statement of what the system developers should 
-implement
- • It may include both the user requirements for a system and a 
-detailed specification of the system requirements
- • Output of a requirements engineering phase
- • Covered in the next lecture
-\end{itemize}•
+	\item \textbf{Requirements} describe services system should provide, constraints on its operation. Reflect customer needs for systems w certain purpose e.g. device control, order placement, or information retrieval.
+    \item \textbf{Requirements Engineering (RE)}: Process of discovering, analyzing, documenting, and validating these services and constraints. RE focus on problem space, not solution space.
+    \item \textbf{Wicked Problem}: No definitive formulation or stopping rule, solutions not true/false but better/worse, no immediate/ultimate test for solutions. Every solution is a "one-shot operation" with significant consequences. Each problem is unique, often a symptom of another problem. No exhaustive set of potential solutions or permissible operations. Social planners are accountable for the consequences of their actions.
+\end{itemize}	
+
+\subsubsection{Requirement Engineering (RE), Why \& Challenges}
+\begin{itemize}
+	\item \textbf{High Cost of Errors}: Scientific, anecdotal evidence shows errors during requirements phase are costly.
+    \item \textbf{Importance of RE}: Facilitates communication between stakeholders. (\textit{Customer Relations and Communication}). Provides the foundation for defining structure, behavior of software system. Serves as basis for testing, accepting final product. (\textit{QA, Acceptance}) Dictates quality of system, risks, and operational overhead. (\textit{Maintenance and Evolution})
+    \item \textbf{RE Challenges}: Difficult to determine if all relevant requirements are collected. Requirements engineering is resource-intensive, often one-shot effort. Requirements cannot be generalized.\\
+    • \textit{User-Related Challenges}: conflicting views, incomplete understanding of needs, tech. capabilities/limitations.\\
+    • \textit{Analyst-Related Challenges}: Poor knowledge of problem domain, omitting "obvious" information. \\
+    • \textit{Communication Challenges}: different languages, requirements evolve over time, Ill-defined system boundaries. Vague and untestable requirements (e.g., "user-friendly," "robust").
+    \item \textit{NaPiRE}: Incomplete/hidden req, comm. flaws, time-boxing (not enough time), moving targets, inconsistent/underspecified req...
+\end{itemize}
+
+\subsubsection{Functional vs. Non-Functional Requirements}
+\begin{itemize}
+	\item \textbf{Functional Requirements}: Describe what system should do. Stakeholders typically focus on functionality, not determine system architecture. (any functionality implementable using various designs.)
+    \item \textbf{Non-functional Requirements}: Define system qualities, not specific services (e.g., performance, security, usability). Often more critical than functional requirements, may involve implicit stakeholder expectations. Can conflict (e.g., security vs. usability). Influence architectural tradeoffs (e.g., \textit{quality attributes}).
+    \item Non-functional requirements should be quantitative to be testable. E.g. ("throughput suff. high." vs. "throughput to exceed 1,000 query/sec")
+    \item \textbf{Quality Attribute Scenarios}: framework to clarify and document non-functional requirements. Up to 6 elements: (\textit{Stimulus}: An event arriving at the system. \textit{Source}: Origin of stimulus (e.g., human, system), \textit{Artifact}: part of system affected by stimulus, \textit{Response}: system's reaction. \textit{Response Measure}: Quantifiable metrics for response. \textit{Environment}: scenario context).
+\end{itemize}
+
+\centerline{\includegraphics[width=0.8\linewidth]{QAScenarios}}
+
+\textbf{Other Non-Functional Requirements and Metrics}
+\begin{itemize}
+    \item \textbf{Usability}: How easily users accomplish tasks, support provided. \textit{Metrics}: Task time, errors no., learning time, satisfaction.
+    \item \textbf{Availability}: System readiness to perform tasks, including reliability and recoverability. \textit{Metrics}: Availability percentage, time to detect/repair faults, etc.
+    \item \textbf{Performance}: System responsiveness and throughput. \textit{Metrics}: Latency, throughput, jitter, resource usage, etc.
+    \item \textbf{Modifiability}: The cost and effort of making changes to the system. \textit{Metrics}: Effort, elapsed time, new defects introduced, etc.
+    \item \textbf{Deployability}: The ease of deploying and rolling back system changes. \textit{Metrics}: Cost, percentage of failed deployments, cycle time, etc.
+    \item \textbf{Energy Efficiency}: System efficiency in energy usage, increasingly important for IoT and AI.
+    \item \textbf{Security}: Protecting data and systems from unauthorized access. (CIA Triad) \textit{Metrics}: Accuracy of attack detection, size of trusted execution 
+    \item \textbf{Data Security and Privacy}: PDPA (Singapore), GDPR (EU).
+    \item \textbf{Safety}: Avoiding system states that cause harm or damage.  \textit{Metrics}: Percentage of unsafe states avoided, recovery time, etc.
+\end{itemize}
+
+
+\subsubsection{Stakeholders and Requirements Engineering (RE) Activities}
+ RE processes vary based on the organization and project type. \\
+ 3 Cs of user stories map to key activities:  Elicitation and analysis $\rightarrow$ Conversation, Specification $\rightarrow$ Card, Validation $\rightarrow$ Confirmation. \\
+\textbf{Agile vs. plan-driven approaches} overlap in elicitation but differ in emphasis: Agile focus on iterative feedback, collaboration. Plan-driven emphasize detailed specification and validation. \\
+\textbf{SRS: Software Requirements Specification}: Central document, official statement of what system developers should implement. May include user requirements, detailed specification of system requirements. Output of a requirements engineering phase. \\
+\textbf{Stakeholders}: person/org impacted / influencing system’s req. \textit{Identify stakeholders} as first step in RE, determines whose needs /desires addressed. Start with "baseline" stakeholders (e.g., users, decision-makers). Explore network to identify add. stakeholders.
+ 
+\begin{itemize}
+    \item \textbf{Elicitation and Analysis}: Work with stakeholders to get requirements. (Closed/Open Interviews -- ask aprop qns, Existing Docs Analysis -- prior research reduces interaction time, (user-story) workshops -- multiple stakeholders and resource intensive, FGs (users), prototyping, obsv -- discover implicit req. reflecting actual ways of work, personas) User stories supported by these req. elicitation techniques. 
+    \item \textbf{Specification}: Convert req. into standardized form (user-centric view). \\
+     \textit{User Stories}, repsnt. customer requirements (e.g As a `usertype', want `goal', to `reason'.) Contains three Cs - card (description), conversation (w. customer), confirmation (acceptance test by customer to determine complete). Epics -- too large user stories to be split later. Include notes, NFRs (constraints). \\
+    \textit{Use Cases}: interaction btwn actor \& system (e.g. check in flight). UML $\rightarrow$ use case diagram. May encompass multiple scenarios (single instance of usage e.g normal flow, crash, others etc). Natural Language -- use standard format, consistency, associate rationales, avoid jargon.
+    \item \textbf{Validation}: Ensuring requirements accurately define the desired system. (Agile: freq comm. w stakeholder, Plan: unclarities in req. document). \textbf	\textbf{Techniques}: \textit{Informal Reviews}: Peer review, colleague reviews requirements. Informal feedback collection (e.g., deskchecks, passarounds, walkthroughs). \textit{Formal Reviews/Inspections}: Systematic analysis by a team of reviewers, roles: Moderator, reader, inspectors. Techniques: Defect checklists, requirement-by-requirement reviews. 
+\\ \textbf{Requirement document checks}: \textit{Validity}: reflect real user current needs. \textit{Consistency}: Avoid contradictory req. \textit{Completeness}.  \textit{Realism}: feasible, within budget, tech constraints. \textit{Verifiability}: testable.
+\end{itemize}
+
+\subsubsection{Other Requirement Engineering Validations}
+\begin{itemize}
+    \item \textbf{Feasibility Study}: short study to assess: alignment with organizational objectives, budget and schedule, Integration with existing systems.
+    \item \textbf{Prototyping}: Develop quick version of the system to validate requirements and design decisions. Reduces post-delivery changes by allowing users to experiment early.
+    \item \textbf{Use Cases vs User Stories} (Use Cases -- Plan-Driven): Specify functional requirements and serve as test bases. (User Stories -- Agile): Act as placeholders for implementation, elaborated into acceptance tests.
+    \item \textbf{Requirements as a Basis for Testing}: Requirements should be testable and used to derive test cases. User stories, cases as foundations for acceptance tests.
+    \item \textbf{V-Model and Testing}: In plan-driven approaches, requirements validation aligns with testing phases in the V-Model.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{v-spiral-model}}
+
+\subsubsection{Requirement Engineering Process Models}
+\textbf{Agile Approaches}: Agile avoids detailed requirements documents due to rapid changes. Relies on user stories and frequent stakeholder feedback.
+Short supporting documents may still define business and dependability requirements. \\
+
+\textbf{Plan-Driven Approaches}: Follow a structured process model. RE phase is completed before implementation. Produces a requirements document, often part of the development contract.
+\begin{itemize}
+    \item \textbf{User vs. System Requirements}: UR: High-level, natural language descriptions of system services and constraints. SR: Detailed descriptions of functions, services, and operational constraints.
+    \item \textbf{RE Spiral Model}: iterative, plan-driven RE process model. Expands requirements incrementally, focusing on high-level business needs early and detailed system requirements later. Outputs SRS. Can incorporate agile development in later iterations.
+    \item \textbf{RE Elicitation and Analysis Model}: \\
+     \textit{Requirements Discovery} (Interact w. stakeholders to uncover needs) $\rightarrow$ 
+    \textit{Classification and Organization} (Group req. to coherent clusters) $\rightarrow$
+    \textit{Prioritization and Negotiation} (Resolve conflicts, prioritize req) $\rightarrow$
+    \textit{Documentation} (Record requirements for next iteration) $\rightarrow$ (repeat)
+    \item \textbf{Requirements Change Management}: \\
+    \textit{Established Plan for to manage evolving requirements.} \\
+    Unique identification of requirements (to cross-reference). \\
+    Established change management process to assess impact and cost. \\
+    Traceability policies to link requirements to design. \\
+    Tool support for managing requirements
+\end{itemize}
+
+
+\columnbreak
+
+\subsection{4. \underline{System Modeling and Software Architecture}}
+Abstractions. Modeling Perspectives. UML. C4. Different Architecture Structures, Drivers, Patterns, Tactics.
+
+\subsubsection{Systems Modeling}
+Develop abstract models of a system, usually some graphical notation based on diagram types in Unified Modeling Language (UML). \\
+Means to an end (developing software). 
+\begin{itemize}
+	\item Emphasized in plan-driven development, also used in agile in lightweight manner (“just enough” design).
+	\item Formal models (mathematical) can be developed for auto verification.
+       \item Models are created during requirements eng, system design, and post-implementation documentation.
+       \item \textbf{Abstraction vs Representation}: Abstraction simplifies systems, omits details. Representation maintains all system information.
+       \item \textbf{Different perspectives}: External, Interaction, Structural, Behavioral.
+\end{itemize}
+
+\subsubsection{Modeling Languages}
+Unified Modeling Language (UML, most known, rich tool support, stand. notn), C4, BPMN, SysML, etc.  \\ 
+\smallskip
+\textbf{UML Key Diagrams}:
+\begin{itemize}
+  	\setlength\itemsep{-0.1em}
+	\item Class Diagrams: Show object classes and associations.
+	\item Sequence Diagrams: Show interactions btw. actors \& components.
+	\item Activity Diagrams: Show process or data flow activities.
+	\item State Diagrams: Show system reactions to events.
+	\item Use Case Diagrams: Show interactions btwn system \& environm.
+\end{itemize}
+
+\smallskip
+\textbf{C4 Model}: Agile Architectural Modeling. For software architectures. Do "just enough" design / upfront thinking to put starting point, set general direction.
+\begin{itemize}
+	\item Hierarchical architectural modeling (4Cs): System Context, Containers, Components, Code. Notation Independent.
+\end{itemize}
+    
+\begin{itemize}
+  	\setlength\itemsep{0em}
+        \item \textit{System Context diagram} $\rightarrow$ starting point, how software fits into world. \\
+        \item  \textit{Container diagram} $\rightarrow$ software system, high level building blocks. \\
+        \item  \textit{Component diagram} $\rightarrow$ individual container, decomposes containers to identify major structural building blocks (i.e., components). Not 
+recommended unless level of detail adds value. \\
+       \item  \textit{Code diagram} (e.g. UML class) $\rightarrow$ indivdual component implementation. Not recommended for C4 / Agile context use.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{c4}}
+
+\columnbreak
+
+\subsubsection{Software Architecture}
+The overall structure of a system, including components, relationships, and properties.  How devs explain system at high level. 
+\begin{itemize}
+	\item S. Architecture vs S. Design: Software Architecture is part of design, focusing on high-level structures. Design (e.g. detailed class design)
+	\item Influences quality attributes, modifiability, and communication among stakeholders. Mitigate highest priority risks. Difficult to change later.
+      \item \textbf{Architectural Drivers}: Architecturally Significant Requirements (ASRs): Requirements that significantly impact architecture. Non-functional req. (e.g., availability, performance) are often ASRs. Functionality must have major influence on architecture. (E.g. the system should provide five nines (99.999 percent) availability). 
+\end{itemize}
+Often, system architec. modeled informally w. simple block diagrams.
+
+\subsubsection{Architectural Reasons and Consequences}
+\begin{itemize}
+    \item \textbf{Quality Attributes}: Architecture significantly influences whether system meets quality attributes (non-functional requirements). (E.g. \textit{High Performance} -- require managing time-based behavior and shared resource access, \textit{Safety and Security}... )
+    \item \textbf{Modifiability and Change}: Modifiability is a critical quality attribute. Requires assigning responsibilities to components to limit the impact of changes.
+    \textit{Categories of changes}: Local -- affect only single component, Non-local -- Affect multiple components (e.g. UI). Architectural Change -- Affects entire system (e.g., single-thread to multi-thread). Good architecture ensures most changes local or non-local.
+    \item \textbf{Communication Among Stakeholders}: Architecture as common abstraction for mutual understanding, negotiation, and consensus.
+    \item \textbf{Additional}: Enables reasoning of cost, schedule, basis for reusable models in product lines, focuses on component assembly, channels developer creativity by restricting design alternatives, foundation for training new team members, enable early prediction of system qualities, defines constraints for subsequent implementation, influences org structure (Conway’s Law), supports incremental dev.
+    \item \textbf{Conway’s Law}: Organizations design systems that mirror their communication structures -- Arch. often forms basis for work-breakdown structures.
+\end{itemize}
+
+\subsubsection{Architecture Patterns and Tatics}
+Design is complex activity, architecture is a tradeoff of attributes. \\
+\textit{Architectural tactic}: design decision that influences a quality attribute.
+\begin{itemize}
+\item \textbf{Attribute-Driven Design (ADD)}: Systematic approach to architecture design. Each design iteration, address an ASR. \\
+\textbf{Steps}: Identify ASRs $\rightarrow$ establish iteration goals (satisfy set of ASRs) $\rightarrow$ refine structure $\rightarrow$ select designs $\rightarrow$ instantiate patterns $\rightarrow$ record decisions $\rightarrow$ analyze designs.
+\end{itemize}
+
+\textbf{Architectural Patterns}
+\textit{Established architectural solution, may comprise multiple architectural tactics.} Often found useful over time/domains, documented and disseminated.
+\begin{itemize}
+\item \textbf{Antipattern -- Big Ball of Mud}: Common in practice. Lack of architectural design, Business pressure, Erosion of architecture over time. 
+Poor maintainability, extensibility (Quality Attributes)
+\end{itemize}
+
+\subsubsection{Common Architectural Patterns}
+\begin{itemize}
+	\item \textbf{Layered Architecture}: Structures systems into layers with defined interfaces. Layer only uses layer directly beneath, through public interface. (constraints may be violated e.g. for performance, layer bridging, upper layer use deeper lower layer). \\
+	 \textit{Pros}: portability (to diff env/OS), modifiability (lower layers changeable under hood, less interfaces to understand), reuse\\
+	 \textit{Cons}: Layering possible performance penalty. If not properly designed, can impede (missing nec. low level abstraction needed at higher level).
+	 
+      \item \textbf{Pipe-and-Filter}: Processes data through independent filters connected by pipes. \textit{Filters}: processing components, take input, produce output, no assumption on other filters, stateless. \textit{Pipes}: connect multiple filters with each other. (E.g. MailMan - add header, digest, archive, outgoing). \\
+      \textit{Pros}: modifiability (independent filters) and reconfigurability, evolution (add/combine filers differently) \\
+      \textit{Cons}: format data transfer must be set. performance as every filter must parse input convert to output format.
+      
+      \item \textbf{Model-Centered}: Independent components interact with a central model than each other. Repository style. (E.g. IDEs). \\
+      \textit{Pros}: components can be independent. highly modifiable. concurrency. State/data manged consistently (in one place).  \\
+      \textit{Cons}: model/repo is single point of failure. change to model $=$ many changes. Distributing repo can be difficult. \\
+      \textbf{MVC design pattern}: ''instantiation" of model-centered, goal of MVC to separate model (business logic) from UI (controller/view).
+      
+      \item \textbf{Microkernel (Plug-in)}: Base system with plug-in components (e.g., Eclipse SDK, web browsers). \\
+      \textit{Pros}: modifiability, extensibility, testability. Plugins can be developed, tested, evolved by diff. teams independently. \\
+      \textit{Cons}: can introduce security /privacy vulnerabilities \\
+      
+      \item \textbf{Client-Server}: central server, provide service to multiple distributed clients. Client request service, server cannot initiate. (E.g. web server) \textit{Discovery}: client use discovery service, server respond w. agreed protocol. \textit{Interaction}: client sends request, server process, respond.   \\
+      \textit{Pros}: Low coupling btwn server clients, no coupling among clients. Easily scale no. clients and server. Both can evolve indptly.
+
+      \item \textbf{Microservices}: Independently deployable services communicating via APIs. Typically stateless, small teams, small code bases. Service dependencies acyclic. Popularized by large companies. Goal - decoupling, microservices expected to be independent w own domain/workflow. typically smaller than services in SOA. \\
+      \textit{Pros}: quick time to market, indiv. deployability, test, scalability. \\
+      \textit{Cons}: network comm. overhead, complex transactions, challenge in design /maintain sea of microservices\\
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{architecture}}
+\smallskip
+\textbf{Monoliths vs. Service-Oriented Architecture (SOA)}: Monolith typically single deployable unit (diff. way of partition e.g. layered archi.). SOA for distributed-architecture styles, services separately deployed, only interact over interfaces, network. Related to microservices.
+
+\subsubsection{Architectural Tactics}
+Assign decision that influences a quality attribute. Tatics are design decisions that influence quality attributes. (modify existing patterns) E.g. 
+\begin{itemize}
+\item \textit{Availability}: Detect faults (monitoring, heartbeat), recover (redundant spare, rollback), prevent faults (ACID transactions, remove from service).
+\item \textit{Performance}: Manage work requests, limit event response, maintain multiple copies of data, schedule resources.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{tatics}}
+\smallskip
+\textbf{"20 minutes rule"}: Continuous learning essential for staying updated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
