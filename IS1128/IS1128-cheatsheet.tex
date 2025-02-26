@@ -1,4 +1,4 @@
-\documentclass[12pt, landscape]{article}
+\documentclass[10pt, landscape]{article}
 \usepackage[scaled=0.92]{helvet}
 \usepackage{multicol}
 \usepackage{calc}
@@ -43,7 +43,7 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -90,11 +90,13 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt plus 0.5ex}
 
+\usepackage[document]{ragged2e}
+
 %% this changes all items (enumerate and itemize, reduce margins)
 \setlength{\leftmargini}{0.5cm}
 \setlength{\leftmarginii}{0.5cm}
-\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm}
-\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm, before=\justifying}
+\setlist[itemize,2]{leftmargin=4mm,labelindent=1mm,labelsep=1mm, itemsep = 1mm, before=\justifying}
 \itemsep = 2mm
 %\setlist{nosep}
 
@@ -115,36 +117,34 @@
 \setlength{\multicolsep}{2pt}
 \setlength{\columnsep}{2pt}
 
-\section{IS1128 IT, Mangemnt, Organizatn}
+\section{IS1128 IT, Management, Organization}
 Module focuses on information technologies (IT) in organizations and the interplay between IT, work, management, and organizations. 
 \begin{itemize}
 \item Multifaceted roles of IT, support communication, collaboration, and organizational improvements in operations, planning, and decision making.
 \item Opportunities for IT-enabled innovations and issues involving information systems (IS) adoption and deployment.
-\item Impacts of modern IT and the related artificial intelligence (AI) technologies on knowledge workers, teamwork, work design, management practices, and the organization. 
+\item Impacts of modern IT and related artificial intelligence (AI) technologies on knowledge workers, teamwork, work design, management practices, and organization. 
 \end{itemize}
 
 
 \subsection{1. \underline{Impact of IT/IS on Businesses}}
-\begin{itemize}
-\item Global spending on information technology (IT) and IT services steadily increasing. Organizational, management, and cultural changes required for firms to derive full business value from IT investment. But does not guarantee good returns.
-\item Impacts on Organziations (structure, culture, team capability), Technology, Management. 
-\end{itemize}
+Global spending on information technology (IT) and IT services steadily increasing. Organizational, management, and cultural changes required for firms to derive full business value from IT investment. But does not guarantee good returns. Overall impacts on organization (structure, culture, team capability), technology, management. 
+
 
 \subsubsection{Strategic business objectives}
 \begin{itemize}
 \item \textbf{Survival}: Information technologies as necessity of business. \textit{Innovation Diffusion Model}: Roger’s bell curve adoption of technology (Innovators, early adopters, early/late majority, laggards).
 \item \textbf{Operational excellence}: Improvement of efficiency and effectiveness to attain higher profitability. (e.g. accounting systems, marketing forecasters, production management software). \textit{Automating (faster), Learning (better - exploitation and exploration), Strategizing (smarter than rivals)}. E.g. Walmart VMI Retail Link reduces bullwhip effect.
-\item \textbf{New products/service/business model}: E.g. sharing economy, Netflix, etc.
+\item \textbf{New products/service/business model}: E.g. sharing economy, Netflix.
 \item \textbf{Customer and supplier intimacy}:  Customers served well become repeat customers. Close relationships with suppliers result in lower costs. E.g. investment in CRM solutions.
-\item \textbf{Improved Decision Making}: Real-time and accurate information. Better forecasts, planning, response time. E.g. IJooz real time metrics, Starbucks GIS.
-\item \textbf{Competitive advantage}: Advantage over competitors. Better performance, price competitive. Sometimes, about creating brand image of innovation at a initial loss. 
+\item \textbf{Improved Decision Making}: Real-time, accurate information. Better forecasts, planning, response time. E.g. IJooz real time metrics, Starbucks GIS.
+\item \textbf{Competitive advantage}: Advantage over competitors. Better performance, price competitive. Sometimes, create brand image of innovation at initial loss. 
 \end{itemize}
 
 Overall, growing interdependence between information technology and implementing corporate strategies to achieve corporate goal. We assume a \textbf{sociotechnical view}, where optimal organizational performance achieved by jointly optimizing both social and 
 technical systems used in production. Helps avoid purely technological approach.
 
 \subsection{2. \underline{IS and Organizations}}
-Features of organizations relevant to build and use IT/IS successfully: Organizational structure, Business model, Business process, Business/IT alignment.
+Features of organizations relevant to build, use IT/IS successfully: Org. structure, Business model, Business process, Business/IT alignment.
 
 \subsubsection{Organization}
 \begin{itemize}
