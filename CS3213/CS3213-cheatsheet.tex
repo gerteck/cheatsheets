@@ -43,7 +43,7 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.4in,left=.4in,right=.4in,bottom=.4in} }
+	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -93,9 +93,11 @@
 %% this changes all items (enumerate and itemize, reduce margins)
 \setlength{\leftmargini}{0.5cm}
 \setlength{\leftmarginii}{0.5cm}
-\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm}
-\setlist[itemize,2]{leftmargin=3mm,labelindent=0.5mm,labelsep=1mm, itemsep = 0mm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm, before=\justifying}
+\setlist[itemize,2]{leftmargin=3mm,labelindent=0.5mm,labelsep=1mm, itemsep = 0mm, before=\justifying}
 %\setlist{nosep}
+
+\usepackage[document]{ragged2e}
 
 % -------------------------------------------------------------------------------
 
@@ -116,19 +118,16 @@
 
 \section{CS3213 Foundations of S. Engineering (FSE)}
 \centerline{AY24/25 Sem 2. github.com/gerteck}
-Software Engineering Foundations. Methodologies to develop working software, address customers’ needs efficiently. \\
 • Software development processes (agile vs. plan-driven) \\
 • Requirements engineering, Modeling, Software architectures \\ 
 • Software testing, Static analysis, Debugging, fault localization. 
 
 \subsection{1. \underline{Software Engineering}}
-Engineering discipline concerned with all aspects of software production, initial conception to operation and maintenance. Multiperson development of multiversion programs. People at core, code is important but only small part of building product.
+Concerned with all aspects of software production, initial conception to operation and maintenance. Team development of multiversion programs. People at core, code important but only small part of building product.
 \begin{itemize}
-\item \textbf{Engineering}: selectively using (general and ambiguous) theories, methods, tools where appropriate.
-\item \textbf{Software engineering}: \textit{practicalities} of developing, delivering useful software. Programming integrated over time. Software sustainability to keep software evolvable over time. (Time component)
-\item \textbf{People}'s characteristics as a first-order success driver.
-\item \textbf{Origins}: 1965s software crisis, Margaret Hamilton, Apollo team director, coins software eng. Cost of bugs today, (2022 US \$2.41 trillion), technical debt biggest obstacle to changes to existing codebases, est. \$1.52 trillion. E.g. crowdstrike 2024 outage, DBS 2023, Java Log4J 2021 Log4Shell zero-day vulnerability. Fred Brooks SWE -- no silver bullet (Mythical Man Month). 
-\item \textbf{Complexity}: \textit{Essential complexity - inherent challenges}, e.g. communicating with stakeholders to determine product. \textit{Accidental complexity} - can be solved, e.g. buffer overflow exploitation protection. Hardest single part -- deciding what to build. 
+\item \textbf{Software engineering}: \textit{practicalities} of developing, delivering useful software. Programming integrated over time. Software sustainability to keep software evolvable over time. People as first-order success driver.
+\item \textbf{Origins}: 1965s software crisis, Margaret Hamilton coins software eng. Bugs cost - 2022 US \$2.41 trillion, technical debt biggest obstacle to existing codebases. E.g. crowdstrike 2024 outage, DBS 2023, Java Log4J 2021 zero-day vulnerability. Fred B. -- no silver bullet (M. Man-Month). 
+\item \textbf{Complexity}: \textit{Essential complexity} - inherent, e.g. work w. stakeholders to determine product. \textit{Accidental complexity} - solvable, e.g. buffer overflow exploitation protection. Hardest single part -- deciding what to build. 
 \item \textbf{Techniques to address key challenges}: Address users' needs with software, correctness and reliable, efficiency with limited resources.
 \end{itemize}
 
@@ -142,33 +141,31 @@ Engineering discipline concerned with all aspects of software production, initia
 
 \subsubsection{SWE Qualities}
 \begin{itemize}
-\item \textit{Myths}: Genius Myth, 10x Dev. SWE is team activity. Working alone increases risks like design mistakes, irrelevance, and the "bus factor."
-\item \textbf{Personal Pinciples}: Humility (Recognize limitations, self-improvement), Respect, Trust. Thrive in ambiguity, value feedback, challenge status quo, put users first, cares about team. Improving, Passionate, Knowledge about People, Organization, Sees Forest and Trees, Create shared context, Creates safe haven. 
-\item \textbf{Software Product Attributes}: \textit{Elegant}: Simple, intuitive designs that are easy to understand and maintain. \textit{Anticipates Needs}: Build software that accommodates future requirements.
+\item \textbf{Personal Pinciples}: Humility (Recognize limitations, self-improvement), Respect, Trust. Thrive in ambiguity, value feedback, challenge status quo, users first. Improving, Passionate, Knowledge about People/Org, Sees Forest \& Trees, Create shared context, Creates safe haven. Working alone increases risks, design mistakes, irrelevance, and "bus factor."
+\item \textbf{Software Product Attributes}: \textit{Elegant}: Simple, intuitive designs: easy to understand, maintain. \textit{Anticipates Needs and future requirements}.
 \end{itemize}
 
 \subsection{2. \underline{Software Engineering Processes}}
-\subsubsection{Software Processes}
-Set of related activities leading to production of software system. \textbf{Software process model}: rep. of software process (sequence of activities). Illustrates different approaches to developing software.
+\textbf{Software process model}: rep. of software process (sequence of activities). Illustrates different approaches to developing software.
 \begin{itemize}
 	\item \textbf{Waterfall Model}:  Simple, linear plan-driven software process model. Output of one phase feeds into the next. Development starts only after req. eng and design. \textbf{Pros/Use Cases}: Embedded-hardware /Safety-critical /Large systems. Works well if requirements clear, large projects, or distributed teams. \textbf{Cons}: accommodate change difficult.
-	\item \textbf{Incremental Development}: Overlapping phases of specification, development, and validation. Built in increments, adding functionality. Can be plan-driven, agile, or mix. \textbf{Pros}: Lower cost of accommodating change, faster delivery. \textbf{Cons}: Harder to measure progress, may lead to system degradation (require refactoring).  
-	\item \textbf{Integration and Configuration}: Focus on reuse existing components, frameworks, libraries over build from scratch. \textbf{Reuse-based dev.}.  May need redefine reqs. based on identified components. \textbf{Pros}: Reduce amt. of software to develop, lower costs, risks. \textbf{Cons}: Limit customizatn, dependency on third-party, integration complexity.  
+	\item \textbf{Incremental Development}: Overlapping phases of specification, development, and validation. Built in increments, adding functionality. Can be plan-driven, agile, or mix. \textbf{Pros}: Lower cost of accommodating change, faster delivery. \textbf{Cons}: Harder to measure progress, may lead to system degradation (require refactoring). 
+	\item \textbf{Integration and Configuration / Reuse-based}: Reuse existing components/framework/library over from scratch. May need redefine reqs. based on identified components. \textbf{Pros}: Reduce amt. to develop, lower cost, risk. \textbf{Cons}: Limit customizatn, third-party dependency, integration complexity.  
 \end{itemize}
 
 
 \subsubsection{Agile Software Engineering}
-Agile software dev frameworks not complete software process models (e.g., Scrum is not specific to developing software). Designed for changing, unclear requirements and developing software in increments, delivering value quickly.
+Agile frameworks (e.g. scrum) not specific to software dev. Designed for changing, unclear requirements and incremental dev, deliver value quickly.
 \begin{itemize}
 \item \textbf{Agile}: Both mindset and concrete mngmt engineering framework. Focus on deliver value, avoid waste. Feedback loops, customer involvement. Adaptive to change. Lightweight process, empower people, lean manufacturing, buzzword certifications.
 \item \textbf{Historical Development and Origins}: 1980-90s: Trad. planning/dev processes. Late 1990s: Dissatisfaction, agile as alternative to rigid waterfall. 2001: Agile Manifesto by reps from frameworks like Scrum, XP, Feature-Driven Development (FDD). Influenced by \textit{lean manufacturing}, \textit{The New New Product Development Game (1986)} -- overlapping stages, built in instability, subtle control, self-organizing teams (autonomy, self-transcendence of teams, cross-fertilization, learning \& learning transfer cross teams).
 \item \textbf{Lean software development}: Limit waste (hardship in daily work) -- partially done work, non-value adding processes/features, task-switching, waiting for input, defects, handoff motion.
 \item \textbf{Manifesto Principles}:  Individuals \& interactions over processes. Working software over compreh. docs. deliver frequently. Customer collab over contract nego (comms daily), Respond to change over following plan (wlc. changing req.). Working software as progress measure, sustainable development. technical excellence and good design enhances agility, simplicity is essential. regular reflection.
-\item \textbf{Agile Adoption }: Larger the org, more likely to use hybrid mode. Bigger teams likely still use waterfall. Agile has concrete benefits - better collaboration, alignment to business needs, better quality software. \textbf{Adoption Problems}: business side slow to embrace. Too many mixed systems, siloed teams cause delays. Incorrect practice of agile, managment buy-in, lack of documentation pain.
+\item \textbf{Agile Adoption }: Larger the org, more likely to use hybrid mode. Bigger teams likely still use waterfall. Agile has concrete benefits - better collaboration, alignment to business needs, better quality software. \textbf{Problems}: business side slow to embrace. Too many mixed systems, siloed teams delays. Incorrect practice, managment buy-in, pain of lacking documentn.
 \end{itemize}
 
 \subsubsection{Scrum}
-Often synonymous to agile approaches. General, lightweight framework for project management. 
+'Agile synonym'. General, lightweight framework for project management. 
 \begin{itemize}
 	\item \textbf{Core Principles}:  Empirical process control and lean thinking. Focuses on delivering value through increments in sprints.  
 	\item \textbf{Scrum Pillars}:  Transparency (work and process visibility), Inspection (frequent evaluation), and Adaptation (adjustments as needed).  
@@ -181,27 +178,26 @@ Often synonymous to agile approaches. General, lightweight framework for project
 \end{itemize}
 
 \subsubsection{Extreme Programming (XP)}
-Highly influential agile methodology (late 1990s). "extreme" approach to iterative development and best practices.
+Highly influential agile methodology (late 1990s). "extreme" approach to iterative development and best practices. New ver may built several times/day, increments every 2 wks, All tests successful for accepted builds.
 \begin{itemize}
-\item New ver may be built several times/day, increments delivered every 2 weeks, All tests run successful for every accepted build.
 \item \textbf{Pair Programming}:  One dev programming, other review, focus on big picture. (driver \& navigator). Both can think and interact at same level of 
 interaction. If one greater expertise likely to dominate interaction. Switch roles after a time period, and switch partners frequently. \textit{Pros vs Cons}: Fewer bugs, better code understanding, peer learning, but lower cost / scheduling efficiency, personal clash.
 \item \textbf{Collective Ownership}:  Everyone responsible for all code, anyone can change any code. Pair prog facilitates this, as everyone better 
 understands larger system, contribute to different parts of code.
-\item \textbf{Test-driven development}: Unit tests written before code, test all potential fail cases. helps development, facilitates other practices of CI, refactoring etc.
+\item \textbf{Test-driven development}: Unit tests written before code, test all potential fail cases. helps development, facilitates other CI, refactoring etc.
 \item \textbf{Continuous Integration}: Dev team work on latest ver. Integrate code to main branch freq. Facilitate using unit tests. (GH Actions, Jenkins).
 \item \textbf{Simple Design, Refactoring}: “simple is best”, refactoring as part of the lifecycle, keep it maintainable, easier to extend.
 \item Others: on-site customer for access system requirements, sustainable pace for net effect on code quality / long term productivity.
 \end{itemize}
 
 \subsubsection{DevOps}
-For incremental development, challenge in deploying software quickly and reliably. Involves collaboration btw. dev (Scrum teams) and operations teams.
+In incremental development, challenge software deployment quickly \& reliably. Involves collaboration btw. dev (scrum teams) \& operations teams.
 
 \begin{itemize}
     \item \textbf{DORA (DevOps Research and Assessment)}: Framework for measuring and improving DevOps performance through key metrics like deployment frequency, lead time for changes, change failure rates, mean time to recovery. \textit{Observability and Monitoring} for measuring DevOps performance. Monitoring of running code and infrastructure provides insights to optimize the value stream.
     \item \textbf{Silos}: Traditionally, dev and ops teams separated, conflicting goals. Developers focus on delivering features quickly, while operations prioritize stability and uptime. DevOps bridges gap by fostering collaboration.
-    \item \textbf{DevOps Overview}: Unified approach, emphasize automation, collaboration, and continuous delivery. Popularized around 2010, it aims to make deployments routine and predictable. \textit{DevOps vs. Agile}: Agile focus on iterative development, deliver value, DevOps extend by automating deployment pipeline. Emphasis on CI, delivery, feedback loops. ''Infinite loop'' of dev and ops.
-    \item \textbf{DevOps Principles}: \textit{Flow}: Reduce batch sizes and handoffs (pass of work across depts, teams) to streamline delivery. \textit{Feedback}: Implement fast feedback loops to detect and resolve issues early. \textit{Continuous Learning}: Promote experimentation and learning, with mechanisms to share knowledge across teams. Need safety culture.
+    \item \textbf{DevOps Overview}: Unified approach, emphasize automation, collaboration, continuous delivery. Popularized $~$2010, aims for routine, predictable deployments. \textit{DevOps vs. Agile}: Agile focus on iterative dev, deliver value, DevOps extends by automating deployment pipeline. Emphasis on CI, delivery, feedback loops. ''Infinite loop'' of dev and ops.
+    \item \textbf{DevOps Principles}: \textit{Flow}: Reduce batch sizes \& handoffs (work passing across depts/teams) to streamline delivery. \textit{Feedback}: Fast feedback loops to detect, resolve issues early. \textit{Continuous Learning}: Promote experimentation, learning, mechanisms to share knowledge. Safety culture.
         \item \textbf{Learning from Incidents}: Encourages \textit{blameless postmortems} to investigate failures, implement preventive measures. Fosters culture of experimentation and learning.
        \item \textbf{Value Stream Mapping}: Technique to visualize and analyze the flow of work, identifying inefficiencies and improving delivery processes. (E.g. develop unit test $\rightarrow$ code solution $\rightarrow$ PR reviews $\rightarrow$ QA $\rightarrow$ regression, performance test $\rightarrow$ deploy $\rightarrow$ smoke test $\rightarrow$ UAT test)
     \item \textbf{Continuous Integration and Deployment (CI/CD)}: Automates the integration, testing, and deployment of code changes, enabling frequent and reliable releases (push to production). \textit{Infrastructure as Code}: Treats infrastructure configuration like code, using version control, automation to manage servers and environments.
@@ -217,33 +213,33 @@ Functional vs. Non func. Req. Quality Attribute Scenarios. Elicitation \& Analys
 
 \subsubsection{Requirement Engineering (RE), Why \& Challenges}
 \begin{itemize}
-	\item \textbf{High Cost of Errors}: Scientific, anecdotal evidence shows errors during requirements phase are costly.
+	\item \textbf{High Cost of Errors}: Errors during requirements phase costly.
     \item \textbf{Importance of RE}: Facilitates communication between stakeholders. (\textit{Customer Relations and Communication}). Provides the foundation for defining structure, behavior of software system. Serves as basis for testing, accepting final product. (\textit{QA, Acceptance}) Dictates quality of system, risks, and operational overhead. (\textit{Maintenance and Evolution})
     \item \textbf{RE Challenges}: Difficult to determine if all relevant requirements are collected. Requirements engineering is resource-intensive, often one-shot effort. Requirements cannot be generalized.\\
-    • \textit{User-Related Challenges}: conflicting views, incomplete understanding of needs, tech. capabilities/limitations.\\
-    • \textit{Analyst-Related Challenges}: Poor knowledge of problem domain, omitting "obvious" information. \\
-    • \textit{Communication Challenges}: different languages, requirements evolve over time, Ill-defined system boundaries. Vague and untestable requirements (e.g., "user-friendly," "robust").
-    \item \textit{NaPiRE}: Incomplete/hidden req, comm. flaws, time-boxing (not enough time), moving targets, inconsistent/underspecified req...
+    • \textit{User-Related}: conflicted views, incomplete understandg of needs, limits.\\
+    • \textit{Analyst-Related}: Poor problem domain knowledge, omit "obvious" info. \\
+    • \textit{Communication}: Requirements evolve w. time, Ill-defined system boundary. Vague, untestable requirements ("user-friendly," "robust").
+    \item \textit{NaPiRE} (RE pains): Incomplete/hidden req, comm. flaws, time-boxing (not enough time), moving targets, inconsistent/underspecified req...
 \end{itemize}
 
 \subsubsection{Functional vs. Non-Functional Requirements}
 \begin{itemize}
 	\item \textbf{Functional Requirements}: Describe what system should do. Stakeholders typically focus on functionality, not determine system architecture. (any functionality implementable using various designs.)
-    \item \textbf{Non-functional Requirements}: Define system qualities, not specific services (e.g., performance, security, usability). Often more critical than functional requirements, may involve implicit stakeholder expectations. Can conflict (e.g., security vs. usability). Influence architectural tradeoffs (e.g., \textit{quality attributes}).
+    \item \textbf{Non-functional Requirements}: Define system qualities, not specific services (e.g., performance, security, usability). Often more critical than FRs, may involve implicit stakeholder expectations. Can conflict (e.g., security vs. usability). Influence architectural tradeoffs (e.g., \textit{quality attributes}).
     \item Non-functional requirements should be quantitative to be testable. E.g. ("throughput suff. high." vs. "throughput to exceed 1,000 query/sec")
-    \item \textbf{Quality Attribute Scenarios}: framework to clarify and document non-functional requirements. Up to 6 elements: (\textit{Stimulus}: An event arriving at the system. \textit{Source}: Origin of stimulus (e.g., human, system), \textit{Artifact}: part of system affected by stimulus, \textit{Response}: system's reaction. \textit{Response Measure}: Quantifiable metrics for response. \textit{Environment}: scenario context).
+    \item \textbf{Quality Attribute Scenarios}: framework to clarify, document NFRs. Up to 6 elements: (\textit{Stimulus}: An event arriving at the system. \textit{Source}: Origin of stimulus (e.g., human, system), \textit{Artifact}: part of system affected by stimulus, \textit{Response}: system's reaction. \textit{Response Measure}: Quantifiable metrics for response. \textit{Environment}: scenario context).
 \end{itemize}
 
-\centerline{\includegraphics[width=0.8\linewidth]{QAScenarios}}
+\centerline{\includegraphics[width=1\linewidth]{QAScenarios}}
 
 \textbf{Other Non-Functional Requirements and Metrics}
 \begin{itemize}
     \item \textbf{Usability}: How easily users accomplish tasks, support provided. \textit{Metrics}: Task time, errors no., learning time, satisfaction.
-    \item \textbf{Availability}: System readiness to perform tasks, including reliability and recoverability. \textit{Metrics}: Availability percentage, time to detect/repair faults, etc.
+    \item \textbf{Availability}: System readiness to perform tasks, including reliability and recoverability. \textit{Metrics}: Availability \%, time to detect/repair faults, etc.
     \item \textbf{Performance}: System responsiveness and throughput. \textit{Metrics}: Latency, throughput, jitter, resource usage, etc.
     \item \textbf{Modifiability}: The cost and effort of making changes to the system. \textit{Metrics}: Effort, elapsed time, new defects introduced, etc.
     \item \textbf{Deployability}: The ease of deploying and rolling back system changes. \textit{Metrics}: Cost, percentage of failed deployments, cycle time, etc.
-    \item \textbf{Energy Efficiency}: System efficiency in energy usage, increasingly important for IoT and AI.
+    \item \textbf{Energy Efficiency}: System efficiency in energy usage (e.g IoT, AI).
     \item \textbf{Security}: Protecting data and systems from unauthorized access. (CIA Triad) \textit{Metrics}: Accuracy of attack detection, size of trusted execution 
     \item \textbf{Data Security and Privacy}: PDPA (Singapore), GDPR (EU).
     \item \textbf{Safety}: Avoiding system states that cause harm or damage.  \textit{Metrics}: Percentage of unsafe states avoided, recovery time, etc.
@@ -252,18 +248,21 @@ Functional vs. Non func. Req. Quality Attribute Scenarios. Elicitation \& Analys
 
 \subsubsection{Stakeholders and Requirements Engineering (RE) Activities}
  RE processes vary based on the organization and project type. \\
- 3 Cs of user stories map to key activities:  Elicitation and analysis $\rightarrow$ Conversation, Specification $\rightarrow$ Card, Validation $\rightarrow$ Confirmation. \\
-\textbf{Agile vs. plan-driven approaches} overlap in elicitation but differ in emphasis: Agile focus on iterative feedback, collaboration. Plan-driven emphasize detailed specification and validation. \\
-\textbf{SRS: Software Requirements Specification}: Central document, official statement of what system developers should implement. May include user requirements, detailed specification of system requirements. Output of a requirements engineering phase. \\
+3 Cs of user stories map to key activities:   \\
+\centerline{Elicitation and analysis $\rightarrow$ Conversation (w. client).} 
+\centerline{Specification $\rightarrow$ Card (description).}
+\centerline{Validation $\rightarrow$ Confirmation (acceptance tests to determine completeness).} \smallskip
+\textbf{Agile vs. plan-driven approaches} overlap in elicitation but differ in emphasis: Agile focus on iterative feedback, collaboration. Plan-driven emphasize detailed specification and validation. \\ \smallskip
+\textbf{SRS: Software Requirements Specification}: Central document, official statement of what should be implemented. May include user requirements, detailed specification of system requirements. Output of RE phase. \\ \smallskip
 \textbf{Stakeholders}: person/org impacted / influencing system’s req. \textit{Identify stakeholders} as first step in RE, determines whose needs /desires addressed. Start with "baseline" stakeholders (e.g., users, decision-makers). Explore network to identify add. stakeholders.
  
 \begin{itemize}
-    \item \textbf{Elicitation and Analysis}: Work with stakeholders to get requirements. (Closed/Open Interviews -- ask aprop qns, Existing Docs Analysis -- prior research reduces interaction time, (user-story) workshops -- multiple stakeholders and resource intensive, FGs (users), prototyping, obsv -- discover implicit req. reflecting actual ways of work, personas) User stories supported by these req. elicitation techniques. 
+    \item \textbf{Elicitation and Analysis}: Work w. stakeholders to get requirements. Elicitation techniques: (Closed/Open Interviews, Existing Docs Analysis -- prior research reduces interaction time, (user-story) workshops -- multiple stakeholders \& resource intensive, FGs (users), prototyping, observe -- discover implicit req. reflecting actual ways, personas). Supports user stories.
     \item \textbf{Specification}: Convert req. into standardized form (user-centric view). \\
-     \textit{User Stories}, repsnt. customer requirements (e.g As a `usertype', want `goal', to `reason'.) Contains three Cs - card (description), conversation (w. customer), confirmation (acceptance test by customer to determine complete). Epics -- too large user stories to be split later. Include notes, NFRs (constraints). \\
+     \textit{User Stories}: represent. customer requirements ($<$As `usertype', want `goal', to `reason'.$>$) Three Cs - card, convo, confirm. Epics -- too large user stories to be split later. Include notes, NFRs (constraints). \\
     \textit{Use Cases}: interaction btwn actor \& system (e.g. check in flight). UML $\rightarrow$ use case diagram. May encompass multiple scenarios (single instance of usage e.g normal flow, crash, others etc). Natural Language -- use standard format, consistency, associate rationales, avoid jargon.
     \item \textbf{Validation}: Ensuring requirements accurately define the desired system. (Agile: freq comm. w stakeholder, Plan: unclarities in req. document). \textbf	\textbf{Techniques}: \textit{Informal Reviews}: Peer review, colleague reviews requirements. Informal feedback collection (e.g., deskchecks, passarounds, walkthroughs). \textit{Formal Reviews/Inspections}: Systematic analysis by a team of reviewers, roles: Moderator, reader, inspectors. Techniques: Defect checklists, requirement-by-requirement reviews. 
-\\ \textbf{Requirement document checks}: \textit{Validity}: reflect real user current needs. \textit{Consistency}: Avoid contradictory req. \textit{Completeness}.  \textit{Realism}: feasible, within budget, tech constraints. \textit{Verifiability}: testable.
+    \item \textbf{Requirement document checks}: \textit{Validity}: reflect real user current needs. \textit{Consistency}: Avoid contradictory req. \textit{Completeness}.  \textit{Realism}: feasible, within budget, tech constraints. \textit{Verifiability}: testable.
 \end{itemize}
 
 \subsubsection{Other Requirement Engineering Validations}
@@ -298,7 +297,6 @@ Short supporting documents may still define business and dependability requireme
     Tool support for managing requirements
 \end{itemize}
 
-
 \columnbreak
 
 \subsection{4. \underline{System Modeling and Software Architecture}}
@@ -329,22 +327,20 @@ Unified Modeling Language (UML, most known, rich tool support, stand. notn), C4,
 \end{itemize}
 
 \smallskip
-\textbf{C4 Model}: Agile Architectural Modeling. For software architectures. Do "just enough" design / upfront thinking to put starting point, set general direction.
+\textbf{C4 Model}: Agile Architectural Modeling. For software architectures. Do "just enough" design / upfront thinking for starting point/ general direction.
 \begin{itemize}
 	\item Hierarchical architectural modeling (4Cs): System Context, Containers, Components, Code. Notation Independent.
 \end{itemize}
     
 \begin{itemize}
-  	\setlength\itemsep{0em}
-        \item \textit{System Context diagram} $\rightarrow$ starting point, how software fits into world. \\
-        \item  \textit{Container diagram} $\rightarrow$ software system, high level building blocks. \\
-        \item  \textit{Component diagram} $\rightarrow$ individual container, decomposes containers to identify major structural building blocks (i.e., components). Not 
-recommended unless level of detail adds value. \\
+        \item \textit{System Context diagram} $\rightarrow$ starting point, how software fits into world.
+        \item  \textit{Container diagram} $\rightarrow$ software system, high level building blocks.
+        \item  \textit{Component diagram} $\rightarrow$ individual container, decomposes containers to identify major structural building blocks (i.e., components). Not recommended unless level of detail adds value.
        \item  \textit{Code diagram} (e.g. UML class) $\rightarrow$ indivdual component implementation. Not recommended for C4 / Agile context use.
 \end{itemize}
+
 \centerline{\includegraphics[width=1\linewidth]{c4}}
 
-\columnbreak
 
 \subsubsection{Software Architecture}
 The overall structure of a system, including components, relationships, and properties.  How devs explain system at high level. 
@@ -392,7 +388,7 @@ Poor maintainability, extensibility (Quality Attributes)
       
       \item \textbf{Model-Centered}: Independent components interact with a central model than each other. Repository style. (E.g. IDEs). \\
       \textit{Pros}: components can be independent. highly modifiable. concurrency. State/data manged consistently (in one place).  \\
-      \textit{Cons}: model/repo is single point of failure. change to model $=$ many changes. Distributing repo can be difficult. \\
+      \textit{Cons}: model/repo is single point of failure. change to model $=$ many changes. Distributing repo can be difficult. \\  \\
       \textbf{MVC design pattern}: ''instantiation" of model-centered, goal of MVC to separate model (business logic) from UI (controller/view).
       
       \item \textbf{Microkernel (Plug-in)}: Base system with plug-in components (e.g., Eclipse SDK, web browsers). \\
@@ -414,29 +410,103 @@ Poor maintainability, extensibility (Quality Attributes)
 \subsubsection{Architectural Tactics}
 Assign decision that influences a quality attribute. Tatics are design decisions that influence quality attributes. (modify existing patterns) E.g. 
 \begin{itemize}
-\item \textit{Availability}: Detect faults (monitoring, heartbeat), recover (redundant spare, rollback), prevent faults (ACID transactions, remove from service).
-\item \textit{Performance}: Manage work requests, limit event response, maintain multiple copies of data, schedule resources.
+  	\setlength\itemsep{-0.2em}
+	\item \textit{Availability}: Detect faults (monitoring, heartbeat), recover (redundant spare, rollback), prevent faults (ACID transactions, remove from service).
+	\item \textit{Performance}: Manage work requests, limit event response, maintain multiple copies of data, schedule resources.
 \end{itemize}
 
 \centerline{\includegraphics[width=1\linewidth]{tatics}}
 \smallskip
 \textbf{"20 minutes rule"}: Continuous learning essential for staying updated.
 
+\subsection{5. \underline{Software Testing}}
+Test levels. Flaky tests. Specification-based/Structural/Mutation testing. \\
 
+\smallskip 
+ 
+\textbf{Purpose of Testing}: \textit{Defect Testing}: Find bugs in software. (Tests show presence, but never absence.) \textit{Validation Testing}: Ensure system meets user requirements.
 
+\begin{itemize}
+	\item \textbf{Verification vs. Validation}: 
+		\textit{Verify}: Build product right, conforms to specification. 
+	       \textit{Validate}: Build right product, software meets user needs.
+	\item \textbf{Test Case}: A test case consists of: 
+		\textit{Test Input}: Arguments, system state, or actions, \textit{Test Oracle}: Mechanism, determine test pass or fail.
+    \item \textbf{Test Oracle}: Can check functional properties (e.g., correctness) or non-functional properties (e.g., performance, security).
+    \item \textbf{Manual vs. Automated Testing}: \textit{Automated}: Use tools to auto generate inputs and apply oracles (e.g., JUnit). \textit{Manual}: Tester manually inputs test cases and acts as oracle. (`Traditional' -  auto as in test automation).
+    \item \textbf{Pesticide Paradox}: `Every method used to prevent/find bugs leaves residue of subtler bugs which those methods ineffectual'. Diff testing methods have pros, cons. Use many, similar to pests build immunity. (Law of diminishing return).
+    \end{itemize}
 
+\subsubsection{Testing Levels}
+\begin{itemize}
+    \item \textbf{Unit Tests}: Test indiv. components (e.g., single method or class, e.g. testing a method converting AST to string). 
+    	\textit{Pros}: Fast execution, easy control \& write (no additional setup  of (e.g., no DB, web services). \\
+    	\textit{Cons}: Lack realism, don’t represent real system execution. May miss integration bugs, often require mocks to simulate ext. dependencies.
 
+    \item \textbf{Integration Tests}: Test interactions btw. multiple compnt. Focus on integrating target cmpnt. w. external cmpnt. (e.g., ext DB, web service).
+    (e.g. SQLancer test query plan converted to expected internal repnstn.)
 
+    \item \textbf{System Tests}: Test entire system as whole. \textit{Pro}: realistic test env. \textit{Cons}: slower execution, harder to write  (complex setup), prone to flakiness (non-deterministic results). (e.g: Ensuring SQLancer compatibility with database system.)
 
+    \item \textbf{Test Flakiness}: Pass/fail non-deterministically. Low result confidence. \\
+    \textit{Causes}: Concurrency issue (e.g., race conditions), async waits (e.g., not properly waiting for server responses), test order dependencies (e.g., improper cleanup), test timeouts, resource leaks. (e.g, test fail from \texttt{ConcurrentModificationException} in multi-threaded code.)
 
+    \item \textbf{Test Pyramid}: strategy for balancing test granularity. Many small, fast unit tests. Fewer integration, system tests.
+	 \textit{Antipatterns}: Too many high-level tests, slow execution, maintenance challenges.
+\end{itemize}
+\centerline{\includegraphics[width=0.9\linewidth]{testPyramid}}
+\begin{itemize}
+    \item \textbf{Test Sizes at Google}: Tests classified by size to for efficiency, determinism. \\
+     \textit{Small}: Single process/thread, no I/O, fast, deterministic. \\
+      \textit{Medium}: Multiple processes, allow localhost network calls. \\
+      \textit{Large}: No restrictions, slower, less deterministic.
+\end{itemize}
 
+\subsubsection{Testing and Processes}
+\begin{itemize}
+    \item \textbf{V-Model}: extension of waterfall model. Testing is planned alongside RE, archi, design phases. (E.g. acceptance test derived during RE).
+    \item \textbf{User Accept Testing}: validate system meets user req, w customer participation. In \textit{plan driven}, explicit phase after system implementation. In \textit{agile}, UAT is interleaved (e.g., acceptance criteria in user stories).
 
+    \item \textbf{Test-Driven Development (TDD)}: Emphasized by XP. Use as design process, focus `happy path'. 
+    	\textit{Pros}: Focus on req, provide quick feedback. Encourages testable code, allows incremental exploration. 
+    	\\ \textit{Steps:} Write test $\rightarrow$ ensure fails $\rightarrow$ simplest code to pass $\rightarrow$ refactor.
+	\\ \textit{When to Use}: Useful for complex prob, unclear soln (incremental experimentation). Less useful if solution already clear. \\
+	Schools of thought: (Classicist/Detroit, Inside-out start e.g. business rules $\rightarrow$ UI). (London/Mockist Outside-In: Start outside, use mocks).
 
+    \item \textbf{Black-box vs. White-box Testing}: 
+    	\textit{Black-box `specification testing'}: No internal info, based on requirements or function documentation.
+	\textit{White-box `structural testing'}: Internal info, focus code structure, logic.
+\end{itemize}
 
+\subsubsection{Black-box Testing}
+\begin{itemize}
+    \item \textbf{Specification-based Testing}: Derive from requirements (e.g., user stories, use cases, docs). Functional \& non-functional requirements. \\
+	 \textit{Testing Workflow}: Understand requirements (inputs, outputs), explore program (functionality), identify partitions (eqv classes of input/output), analyze boundaries, devise and automate test cases, augment test suite with creativity, experience on common bugs.
+    \item \textbf{Equivalence Partitioning}: Divides inputs into equivalent classes (e.g., null, empty, single-char string). Output partn may help spot input partn.
+    \item \textbf{Boundary Value Analysis}: Tests edge cases (e.g., min/max).
+\end{itemize}
 
+\subsubsection{White-box Testing}
 
+\begin{itemize}
+    \item \textbf{Structural Testing}: use source code to guide testing. Catch requirement independent implementation aspect (e.g. cache, DSA). Focus coverage criteria.  (e.g. Jacoco basic Java line coverage.)
+    \item \textbf{Coverage Criteria}: \textit{Line Coverage} (percentage executed). \textit{Branch, Condition Coverage}: Percentage of branches (if [true/false], fors, whiles), ($a || b$) executed. Condition coverage does not imply branch coverage. \textit{Path Coverage}: Strongest criterion. Often impossible (e.g. loop).
+    
+    \item \textbf{Modified Condition/Decision Coverage (MC/DC)}: \\
+     Test impt combinaton of cond, less cost.= $\frac{\# \text{conditions independently affecting decisions}}{\text{total \#conditions}}$. \\ 
+      Every condition in a decision (e.g., if ($A \&\& B$)) takes every possible outcome ($T$ and $F$).
+      Ensures conditions independently affect decision outcome. Final set of tests, less than needed for path coverage. ($n+1$ test cases common lower bound for $n$ conditions).
+    \end{itemize}
 
+\centerline{\includegraphics[width=1\linewidth]{MCDC}}
 
+\begin{itemize}
+\item \textbf{Mutation Testing (White-box)}: Evaluate test suite quality by introducing bugs (mutants) and checking if tests detect them. (test case should 'kill' mutant - fail the test case). \% of bugs detected $=$ quality of test suite. \\
+\textbf{Steps}: Select statement in code, mutate code, run test suite, record outcome. Undo change, repeat. Calculate mutation score: \(\frac{\text{\#killed mutants}}{\text{\#mutants}} \times 100\). \\
+(e.g. Pitest: Mutation testing tool for Java.). \\
+	\textit{Pros}: Identify undertested code.\\
+	\textit{Cons}: Comptn expensive; equivalent mutants may not change behavior.
+\end{itemize}
 
 
 
