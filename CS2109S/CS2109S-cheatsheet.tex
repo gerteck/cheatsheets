@@ -300,25 +300,11 @@ Reduces number of nodes (computational overhead) evaluated in game tree without 
         \item $ \alpha $: Best value (highest) MAX can guarantee.
         \item $ \beta $: Best value (lowest) MIN can guarantee.
     \item \textbf{Algorithm}:
+    \begin{tiny}
     \begin{verbatim}
-def max_value(state, \alpha, \beta):
-    if is_terminal(state): return utility(state)
-    v = $-\inf$
-    for next_state in expand(state):
-        v = max(v, min_value(next_state, \alpha, \beta))
-        \alpha = max(\alpha, v)
-        if v >= \beta: return v
-    return v
-
-def min_value(state, \alpha, \beta):
-    if is_terminal(state): return utility(state)
-    v = $\inf$
-    for next_state in expand(state):
-        v = min(v, max_value(next_state, \alpha, \beta))
-        \beta = min(\beta, v)
-        if v <= \alpha: return v
-    return v
+Some alphabeta pruning notes
     \end{verbatim}
+    \end{tiny}
 \end{itemize}
 Good move ordering improves effectivness of pruning.
 
@@ -374,7 +360,10 @@ Assume unknown true relationship $y = f^*(x) + \epsilon$, $\epsilon$ noise error
             \item (Classification) Accuracy: $ \text{Accuracy} = \frac{1}{N} \sum_{i=1}^N \mathbf{1}(\hat{y}^{(i)} = y^{(i)}) $.
             \item (Classification) Confusion Matrix: e.g. Precision ($\frac{TP}{TP + FP}$ - maxm if FP costly), Recall ($\frac{TP}{TP + FN}$ - maxm if FN costly), F1 Score: $\frac{2}{\frac{1}{P} +\frac{1}{R}} $
         \end{itemize}
+        \item \textbf{Generalization}: How well model performs on unseen data. Affected by dataset quality/quantity (relevance, noise, balance), and Model Complexity. (size and expressiveness of hypothesis class - overfitting \& underfitting). Simple model - high bias, low variance. Complex - low bias, high var.
+        \item \textbf{Hyperparameter Tuning}: Adjust params (e.g. $\gamma$) to optimize performance. Set before training process begins (predefined, adj manually) - hyperparam search: grid (exhaustive), random, local, successive halving etc. 
 \end{itemize}
+
 
 \subsection{6. \underline{Decision Trees}}
 Function that takes as input a vector of attribute values and returns a decision (single output value). Perform sequence of tests from root node to leaf.
@@ -400,6 +389,66 @@ Choose attribute with max information gain. \\
 •  \textbf{max depth} (longest path from root to leaf) pruning. \\
 Smaller DT may higher accuracy as sample due to noise ignored. \\
 \textbf{Data Preprocessing}: Missing values (assign most common value, drop row/attribute etc.) Continuous values - partition to discrete set as attribute.
+
+
+
+\subsection{7. \underline{Linear Regression and Classification}}
+
+\textbf{Linear Model}: Input vector $x$ of dimension $d$, hypo class is set of linear fns:
+\[h_w(x) = w_0x_0 + w_1x_1 + w_2x_2 + \dots + w_dx_d\  = w^T x. \] 
+where $ w_0, w_1, \dots, w_d $ are weights, $ x_0 = 1 $ is dummy variable.
+\begin{itemize}
+\item \textbf{Feature Transformations}: modify features for better modeling. Feature Engineering (e.g. poly $ z = x^k $/ log $ z = \log(x) $/ exp). Feature scaling (e.g. min-max scaling $ z_i = \frac{x_i - \min(x_i)}{\max(x_i) - \min(x_i)} $, standardization $ z_i = \frac{x_i - \mu_i}{\sigma_i} $). 
+\item \textbf{Measure Fit}: Loss fn of weights $w$, find $w$ minimize loss. 
+\item \textbf{Loss Fn}: $J_{MSE}(w) = \frac{1}{2N} \sum_{i=1}^N (h_w(x^{(i)}) - y^{(i)})^2.$
+\item \textbf{Derivative}:$\frac{\partial J_{MSE}(w)}{\partial w_j} = \frac{1}{N} \sum_{i=1}^N \big(h_w(x^{(i)}) - y^{(i)}\big) x_j^{(i)}$
+\end{itemize}
+
+\textbf{Learning via Normal Equation}
+\begin{itemize}[itemsep=-2pt]
+    \item (MSE) Solve for $ w $ that minimizes $ J_{MSE} $:    $w = (X^T X)^{-1} X^T Y$
+    \item Problems: Computational cost: $ O(d^3) $ for matrix inversion. Non-linear models cannot be solved using normal equations.
+\end{itemize}
+
+\textbf{Learning via Gradient Descent}
+\begin{itemize}[itemsep=-2pt]
+    \item \textbf{Algorithm}: Initialize $ w $ randomly. Update weights iteratively. Repeat until convergence: $w_j \leftarrow w_j - \gamma \frac{\partial J(w_0, w_1, \dots)}{\partial w_j}.$
+    \item \textbf{Learning rate} $ \gamma > 0 $: Controls step size. (Hyperparameter).
+    \item \textbf{Variants}: Batch, use all data points. Mini-batch, use data subsets. Stochastic, uses one data point per iteration.
+    \item \textbf{Convex}: MSE loss fn. convex, single global min, for linear/poly regression. 
+\end{itemize}
+
+\subsection{8. \underline{Logistic Regression and Classification}}
+\textbf{Logistic Regression Model}: Hypo class: Set of "squashed" linear fns. 
+\begin{itemize}[itemsep=-2pt]
+    \item \textbf{Sigmoid function}: $\sigma(x) = \frac{1}{1 + e^{-x}}$ 
+    \item Logistic model: $h_w(x) = \sigma(w_0x_0 + w_1x_1 + \dots + w_dx_d) = \sigma(w^T x)$ \\
+    where $ w_0, w_1, \dots, w_d $ are weights, $ x_0 = 1 $ is a dummy variable.
+\end{itemize}
+\textbf{Classification with Logistic Regression}: Regression outputs value in $ [0, 1] $, treat as probability of class 1. (E.g. $ h_w(x) = 0.8 $ predicts 80\% chance of failure). Use \textbf{Decision threshold} (e.g. 0.5) for classification.  \\
+\textbf{Desn. Boundary}: surface (e.g. 2D line) separating classes in feature space.\\
+\textbf{Non-Linearly Separable Data}: Non-linearly separable if single linear decision boundary cannot separate classes. Solutions: Use non-linear models or apply non-linear feature transformations.
+
+\subsubsection{Loss Function - Logistic Regression}
+MSE not ok for logistic due to non-convexity. Use \textbf{Binary Cross Entropy}.
+\begin{itemize}[itemsep=-2pt]
+    \item $BCE(y, \hat{y}) = -y \log(\hat{y}) - (1 - y) \log(1 - \hat{y})$$ ,| $$y \in \{0, 1\} $ and $ \hat{y} \in [0, 1] $.
+    \item Small loss if $ y \approx \hat{y} $, large loss if $ y $ and $ \hat{y} $ differ - good loss function.
+    \item BCE loss is convex for logistic regression.
+    \item Derivative: $\frac{\partial J_{BCE}(w)}{\partial w_j} = \frac{1}{N} \sum_{i=1}^N (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}. $ (same-linear)
+    \item Weight update rule: $w_j \leftarrow w_j - \gamma \frac{\partial J_{BCE}(w)}{\partial w_j} $
+\end{itemize}
+
+\subsubsection{Multi-Class Classification}
+ Extends binary classification to multiple classes by breaking down into sets.\\
+ \textbf{One-vs-one}: Binary classifier for every pair of classes $total =\frac{C(C-1)}{2}$ classifiers. Class with most votes wins. \\
+ \textbf{One-vs-rest}: Binary classifier for each class, treat all other classes as combined class. $C$ classifiers. Class with highest probability output wins.
+
+
+
+
+
+
 
 
 
