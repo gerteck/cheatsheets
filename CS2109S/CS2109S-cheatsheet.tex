@@ -1,0 +1,431 @@
+\documentclass[9pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+%\usepackage{hyperref}
+
+\usepackage{newtxtext} 
+
+%for strikeout
+\usepackage{ulem}
+
+%For editing parbox
+\usepackage[table]{xcolor}
+%For editing itemise margins, reduce iterm separaion and list separation
+\usepackage{enumitem}
+% For math
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+
+%For pictures / figures
+\usepackage{color,graphicx,overpic}
+\graphicspath{ {./images/} }
+
+%\usepackage{newtxtext} 
+%\usepackage{amssymb}
+%\usepackage[table]{xcolor}
+%\usepackage{vwcol}
+%\usepackage{tikz}
+%\usepackage{wrapfig}
+%\usepackage{makecell}
+
+\pdfinfo{
+  /Title (CS2109S.pdf)
+  /Creator (Ger Teck)
+  /Author (Ger Teck)
+  /Subject ()
+  /Keywords (tex)}
+
+%% Margins for PAPER
+
+% This sets page margins to .5 inch if using letter paper, and to 1cm
+% if using A4 paper. (This probably isn't strictly necessary.)
+% If using another size paper, use default 1cm margins.
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+	{ \geometry{top=.25in,left=.25in,right=.25in,bottom=.25in} }
+	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+	}
+
+% Turn off header and footer
+\pagestyle{empty}
+
+% for tight centres (less spacing)
+\newenvironment{tightcenter}{%
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+}{%
+  \end{center}
+}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+% change font
+%\renewcommand{\familydefault}{\sfdefault}
+%\renewcommand\rmdefault{\sfdefault}
+\makeatother
+
+% Define BibTeX command
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+%% this changes all items (enumerate and itemize, reduce margins)
+\setlength{\leftmargini}{0.5cm}
+\setlength{\leftmarginii}{0.5cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm, before=\justifying}
+\setlist[itemize,2]{leftmargin=3mm,labelindent=0.5mm,labelsep=1mm, itemsep = 0mm, before=\justifying}
+%\setlist{nosep}
+
+\usepackage[document]{ragged2e}
+
+% -------------------------------------------------------------------------------
+
+% START OF DOCUMENT HERE
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{3}
+
+% multicol parameters
+% These lengths are set only within the two main columns
+\setlength{\columnseprule}{0pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{2pt}
+\setlength{\columnsep}{2pt}
+
+\section{CS2109S Introduction to AI. and ML}
+\centerline{AY24/25 Sem 2. github.com/gerteck}
+• \textbf{Search Algorithms} (Uninformed Search (BFS/DFS), Local Search (Hill Climbing), Informed Search (A*), Adversarial Search (Minimax)) \\
+• \textbf{"Classical" ML} (Decision Trees, Linear/Logistic Regression, Kernels and Support Vector Machines, "Classical" Unsupervised Learning) \\ 
+• \textbf{"Modern" ML} (Neural Networks, Deep Learning, Sequential Data)
+
+
+\subsection{1. \underline{Introduction to AI}}
+
+\subsubsection{Intelligent Agent and Environments}
+An agent perceives environment through sensors, act through actuators. \\
+\textit{Rational}: choose actions to maximize expected performance. 
+\begin{itemize}
+\item \textbf{Percept}: content agent’s sensors are perceiving. \textbf{Percept Sequence} complete history of things agent has perceived.
+\item \textbf{PEAS}: Performance Measure (definition of success), Environment (world agent operates in), Actuators (actions agent can perform), Sensors (Inputs agent gets from environment)\\
+(E.g. Chatbot: Sensor as text input/chat history, Actuators as output, Environment as chat interface, plugins, Perf. measure as correctness safety.)
+\item \textbf{Exploration vs. Exploitation}: Exploration: learn more about world. Exploitation: Maximize gain based on current knowledge.
+\end{itemize}
+
+\subsubsection{Properties of Task Environments}
+	\textbf{Observable}: Fully vs. Partially observable.\\
+	 \textbf{Deterministic vs. Stochastic}: Next state determined by current state and action. If environment also dependent on actions of other agents, also \textit{strategic}, unless other agents are predictable. \\
+	\textbf{Episodic vs. Sequential}: Single-step vs. multi-step tasks. (Next episode does/does not depend on actions taken in previous episode.)\\ 
+	\textbf{Static vs. Dynamic}: Environment changes while deliberating. - semi-dynamic (env no change, only change agent performance score) \\
+	\textbf{Discrete vs. Continuous}: Finite (distinct, clearly defined) vs. infinite (states/percepts)/actions. \\
+	\textbf{Single-agent vs. Multi-agent}: Operating alone or with others.
+
+\subsubsection*{Common Agent Structures}
+\textbf{Simple Reflex Agent}: Condition-action rules (e.g., "If up empty: up"). Based on current percept, ignore percept history.\\
+\textbf{Goal-Based Agent}: Acts to achieve goals. Tracks state of world, goals.\\
+\textbf{Utility-Based Agent}: Maximizes utility (e.g., rewards). Use utility function (perf. measure) to assign scores.\\
+\textbf{Learning Agent}: Adapts and improves over time, using performance element, critic and problem generator.
+
+\subsection{2. \underline{Problem Solving by Searching}}
+\subsubsection{Search Problem}
+Search problem defined where goal is to find state/(path to state) from a set of possible states. \\
+\textbf{State Space}. Set of possible states environment can be. \\
+\textbf{Representation Invariant}: Abstract states hv. mapped concrete states.
+\textbf{Initial State} where agent starts, \textbf{Goal State(s)}: can be $>$ 1, use goal test. \\
+\textbf{Actions}. Given state $s$, finite set of actions that can be executed. \\
+\textbf{Transition Model}. Describes what each action does. Returns state resulting from action $a$ in state $s$. \\
+\textbf{Action Cost Function}: Numeric cost of applying action to reach next state. \\
+\textbf{Search Algorithm}: Takes search problem as input, returns a solution / failure. Solution could be sequence of actions, or final state. Optimal solution is one with least cost.
+
+\subsubsection{Search Algorithms}
+Search algorithms explore the state space to find solution. Key operations: \\
+\textit{Frontier}: Set of nodes to explore next. \textit{Explored Set}: Nodes already visited. \textit{Node}: Contains state, parent node, action, path cost, and depth.
+ \\ \smallskip
+ \textbf{Performance/Evaluation} \\
+ \textit{Completeness}: Finds solution if exists / report failure for none. \\
+\textit{Optimality (Cost) }: If outputs solution, it is lowest path cost of all solutions. Algorithm can be both optimal and incomplete. \\
+\textit{Time, Space complexity}: How long, how much memory needed. 
+
+\subsubsection{Uninformed Search Algorithms}
+No information to guide search, aka blind search, no clue how good state is. \\
+\smallskip
+\textbf{Breadth-First Search (BFS)}
+\begin{itemize}
+    \item \textbf{Frontier}: Queue (FIFO). Explore all nodes at curr. depth, before deeper.
+    \item \textbf{Complete}: if branching factor $b$ finite. \textbf{Optimal}: if step cost uniform.
+    \item \textbf{Complexity}: Time: $O(b^d)$, $d$ is depth of shallowest sln. Space: $O(b^d)$.
+    \item \textit{Optimize}: track visited set, early goal test (check node soln once generated).
+\end{itemize}
+\smallskip
+\textbf{Uniform-Cost Search (UCS) (Dijkstra's SSSP 'equiv')}
+\begin{itemize}
+    \item \textbf{Frontier}: Priority queue by min total path cost. Expand least-cost first.
+    \item No-visited-mem ('tree-search', as if tree). Visited-mem ('graph-search').
+    \item Even if goal state in frontier, sorted, first g-state selected must be optimal.
+    \item \textbf{Complete}: if step costs are positive. \textbf{Optimal}: if step costs are positive.
+    \item \textbf{Complexity}: Time: $O(b^{C^*/\epsilon})$, $C^*$ is the optimal cost, $\epsilon$ is minimum step cost. Space: $O(b^{C^*/\epsilon})$. (w.r.t `tier' of optimal solution)
+\end{itemize}
+\smallskip
+\textbf{Depth-First Search (DFS)}
+\begin{itemize}
+    \item \textbf{Frontier}: Stack (LIFO). Explores as deep as possible before backtrack.
+    \item \textbf{Incomplete}: if search tree has infinite depth or loops. \\\
+     \textbf{Non-optimal}: No, may find suboptimal solutions.
+    \item \textbf{Complexity}: Time: $O(b^m)$, where $m$ is max depth. Space: $O(bm)$.
+\end{itemize}
+\smallskip
+\textbf{Depth-Limited Search (DLS)}
+\begin{itemize}
+    \item Limit search depth to $l$. Backtrack when limit hit. Good if opt. $d$ known.
+    \item \textbf{Incomplete}: if sln exists beyond depth $l$. \textbf{Non-optimal}: if used w. DFS.
+    \item \textbf{Complexity}: Time: $O(b^l)$. Space: $O(bl)$.
+\end{itemize}
+\smallskip
+\textbf{Iterative Deepening Search (IDS)}
+\begin{itemize}
+    \item Repeatedly applies DLS with increasing depth limits. Try all possible depth limits from 0 till sln found or failure value returned from DLS. Combines benefits of BFS and DFS.
+    \item \textbf{Complete}: If branching factor $b$ finite. \textbf{Optimal}: if step costs uniform.
+    \item \textbf{Complexity}: Time : $O(b^d)$. Space: $O(bd)$.
+\end{itemize}
+
+\subsubsection{Informed Search Algorithms}
+Guide search with extra info, aka heuristic function on how close to goal. \\
+\textbf{Heuristic} $h(n)$ estimates cost to reach goal from node $n$. $h^*(n)$: true cost.
+\begin{itemize}
+\item \textbf{Admissible}: Never overestimates cost ($h(n) \leq h^*(n)$). (e.g. $h(n)=0$) 
+\item \textbf{Consistent}: if for every node $n$, every successor $n'$ of $n$ generated by any action $a$:
+   $h(n) \leq c(n, a, n') + h(n')$ and $h(G) = 0$. $\Delta$ Inequality.
+\item \textit{Relaxed Problem}: Problem w. fewer restrictions. Cost of optimal solution to relaxed problem is admissible heuristic for original problem. (e.g. straight line distance for cities distances).
+\item \textit{Dominance}: If $h_1(n) \geq h_2(n)$ for all $n$, $h_1$ dominates $h_2$. Dominant heuristics better for search if admissible. (e.g. straight line distance, vs trivial heuristic $h = 0$.)
+\end{itemize}
+\columnbreak
+
+\textbf{Best-First Search}
+\begin{itemize}
+    \item \textbf{Frontier}: Priority queue ordered by evaluation function $f(n)$. Expands most promising node based on just $f(n)$ (no past cost).
+    \item Not complete, not cost-optimal.
+\end{itemize}
+
+\smallskip
+\textbf{A* Search}
+\begin{itemize}
+    \item \textbf{Frontier}: Priority queue. (Best-First Search considering path cost).
+    \item Use evaluation $f(n) = g(n) + h(n)$. $g(n)$ is cost to reach $n$ from start. $h(n)$ is estimated cost to reach goal from $n$.
+    \item \textbf{Complete}: if $h(n)$ is admissible, state space finite, step costs positive. \textbf{Optimal} if $h(n)$ is admissible.
+    \item \textbf{Complexity}: Time: Exponential but improved by good heuristics. Space: Exponential. (Both $O(b^d)$ for poor heuristic.)
+\end{itemize}
+If $h(n)$ admissible, A* search (w/o visited memory) is optimal. If $h(n)$ consistent, A* search (w. visited memory) is optimal.
+\\ \smallskip
+• A consistent heurisitic $\implies$ admissible (T2.QnC.1). Converse not true.\\
+• (Trivial $h=0$ consistent, admissible) \\
+• Triangle inequality: Sum of lengths of any two sides $\geq$ length of $3^{rd}$ side.
+
+
+\subsection{3. \underline{Local Search}}
+For (NP-hard) problems,  traverse state space in systematic manner not option, is intractable (unsolvable in time). \\ \smallskip
+\textbf{Local Search}: Explore state space considering only locally-reachable states ('search space').  Start random position, iterative move to neighboring states via perturbation or construction. Solution is final state, not path taken. \\
+(E.g. N-Queens Problem, minimize function value) 
+\begin{itemize}
+\item Typically incomplete and suboptimal. 
+\item \textit{Any-time property}: Longer runtime yields better solutions. Suitable for obtaining "good enough" solutions for difficult problems.
+\item \textbf{Types}: \textit{Perturbative} Search (search space is complete solutions, modify components of current solution). \textit{Constructive} Search (partial candidate solutions, extend by adding components).
+\end{itemize}
+\textbf{Problem Formulation in Local Search}: \\
+\textit{States}: Represent configurations/candidate sln within search space, but may not directly map to actual state. \textit{Goal Test} (Optional) checks if current state is desired solution. \textit{Successor Function}: Generates neighboring states by applying small modifications. \\
+\textbf{Evaluation/Objective Function}: assess quality of state, max/minimize based on problem. (E.g. N-Queen Maximize "safe" queens, min. y value.)
+
+\subsubsection{Hill-Climbing Algorithm}
+Find local maxima by travelling to neighbouring states with highest value, terminate when no neighbour has higher value. 
+One objective function is to negate heuristic function.
+\begin{verbatim}
+current_state = initial_state
+while True:
+    best_successor = highest-valued successor of curr_state
+    if eval(best_successor) <= eval(current_state):
+        return current_state
+    current_state = best_successor
+\end{verbatim}
+\textbf{Greedy local search}: gets stuck at local maxima, ridges, plateaus, shoulders (same values flat area). Some solutions include limited sideways move, stochastic (probability based on steepnes of move), first-choice, random-restart. Simulated Annealing - allow occasional 'bad moves' to escape local optima.
+
+
+%% CAN ADD SOME STUFF HERE %%
+
+\columnbreak
+
+\subsection{4. \underline{Adversarial Search and Games}}
+\textbf{`Classicial' Adversarial}: Agents/Player compete against each other. Look at deterministic, two player, turn-taking, perfect information, zero-sum games. Perfect information: fully observable. Zero sum: no “win-win”. 
+\begin{itemize}[itemsep=-2pt]
+\item \textit{States}: Configurations of game, initial state, terminal state (win/lose/draw). 
+\item \textit{Actions}: Possible moves by a player.
+\item \textit{Transition Model}: Defines how actions change the state. 
+\item \textit{Utility Function}: Assigns a value to terminal states from perspective of the agent. (E.g. Win: $ +1 $, Draw: $ 0 $, Loss: $ -1 $)
+\end{itemize}
+
+
+\subsubsection{Minimax Algorithm}
+Determine optimal move for Player A (MAX) assuming Player B (MIN) plays optimally. Work out minimax value of each state in tree.
+\begin{itemize}
+	\item \textbf{Complexity}: Time: Exponential w.r.t. max depth ($ O(b^m) $). Space: Poly.
+	\item \textbf{Complete}: If tree is finite. \textbf{Optimal} if against optimal opponent.
+\end{itemize}
+It is a recursive algo, backs up minimax values as recursion unwinds. Thus, similar to DFS, time c. $ O(b^m) $, space c. $O(bm)$. \\
+\textit{Note}: minimax not 'optimal' against non-optimal MIN player, as non-optimal p could choose higher value in path pruned as it had lower min value. But guarantees it never has lower utility than that of optimal opponent.
+
+\subsubsection{Alpha-Beta Pruning (Minimax)}
+Reduces number of nodes (computational overhead) evaluated in game tree without affecting final decision. Minimax explores full game tree, not needed. 
+\begin{itemize}[itemsep=-2pt]
+        \item $ \alpha $: Best value (highest) MAX can guarantee.
+        \item $ \beta $: Best value (lowest) MIN can guarantee.
+    \item \textbf{Algorithm}:
+    \begin{verbatim}
+def max_value(state, \alpha, \beta):
+    if is_terminal(state): return utility(state)
+    v = $-\inf$
+    for next_state in expand(state):
+        v = max(v, min_value(next_state, \alpha, \beta))
+        \alpha = max(\alpha, v)
+        if v >= \beta: return v
+    return v
+
+def min_value(state, \alpha, \beta):
+    if is_terminal(state): return utility(state)
+    v = $\inf$
+    for next_state in expand(state):
+        v = min(v, max_value(next_state, \alpha, \beta))
+        \beta = min(\beta, v)
+        if v <= \alpha: return v
+    return v
+    \end{verbatim}
+\end{itemize}
+Good move ordering improves effectivness of pruning.
+
+\subsubsection{Evaluation Function to Cutoff (Minimax)}
+Fully exploring game tree with Minimax may be computationally infeasible.
+\begin{itemize}[itemsep=-2pt]
+    \item Apply \textbf{cutoff strategy} to halt the search at predefined maximum depth. 
+    \item Use \textbf{heuristic function} to estimate the utility of mid-game (non-terminal) states. Heuristic must be some value between win and loss, and computationally efficient. Admissibility, consistency properties do not apply. Can use domain-specific features or some labeled dataset to train heuristics.
+\end{itemize}
+
+
+\subsection{5. \underline{Machine Learning}}
+Computers with ability to learn without explicit programming, through algorithms that learn from, and make predictions based on data. Goal is for performance to improve over time by identifying patterns in the data.
+\subsubsection{Problem Types}
+\begin{itemize}[itemsep=-2pt]
+\item \textbf{Classification}: Output category value in finite set. (Predict discrete label)
+\item \textbf{Regression}: Output is number. (Predict continuous num. value)
+\end{itemize}
+
+\subsubsection{Types of Machine Learning (Feedback difference)}
+\begin{enumerate}[itemsep=-2pt]
+    \item \textbf{Supervised Learning}: Learns from labeled data (input-output pairs) to map inputs to outputs. (E.g. classify pic banana or apple)
+    \item \textbf{Unsupervised Learning}: Learns from unlabeled data to find patterns or structure. (E.g. clustering, group based on features).
+    \item \textbf{Semi-Supervised Learning}: Use labeled, unlabeled data for learning.
+    \item \textbf{Reinforcement Learning}: Learns to make decisions by interacting with an environment, (rewards and penalties).
+\end{enumerate}
+
+\subsubsection{Supervised Learning}
+\begin{itemize}[itemsep=-2pt]
+    \item \textbf{Training Phase}: Learn to map inputs to outputs by minimizing difference btw. predictions and ground truth using a training set.\\
+     Result of training called a \textit{model / hypothesis}.
+    \item \textbf{Testing/Evaluation Phase}: Measures the model's performance on unseen data (test set) to evaluate generalization.
+    \item Supervised learning: dataset represented as set of pairs $(x^{(i)}, y^{(i)})$:
+    {
+	\setlength{\topsep}{0pt}
+	\setlength{\partopsep}{0pt}
+    \begin{itemize}[itemsep=-2pt]
+	    \item $ x^{(i)} \in \mathbb{R}^d $: Input vector of $ i $-th data point with $ d $ features.
+	    \item $ y^{(i)} $: Label (target) for the $ i $-th data point. $( y^{(i)} \in \mathbb{R} \text{ or} \in \{1, \dots, C\}) $
+	    \item Dataset $ D $ with $ n $ examples: $ D = \{(x^{(1)}, y^{(1)}) \dots, (x^{(n)}, y^{(n)})\} $.
+	\end{itemize}
+	}
+\end{itemize}
+Assume unknown true relationship $y = f^*(x) + \epsilon$, $\epsilon$ noise error term. Find hypothesis $h(x)$ that approximates true function $f^*$.
+\begin{itemize}[itemsep=-2pt]
+	\item \textbf{Hypothesis class $ \mathcal{H} $}: set of all possible learnable models or functions. \\
+	 Each $ h \in \mathcal{H} $ is a hypothesis or model. (Classes - e.g decision tree, linear model, neural networks).
+	 \item \textbf{Learning Algorithms $A$}: takes training set $ D_{\text{train}} $, find hypothesis $ h \in \mathcal{H} $. (E.g. Decision tree learning, gradient descent algorithms)
+	 \item \textbf{Performance Measure}: Test hypothesis on new set (test set). Metrics:
+        \begin{itemize}[itemsep=-1.5pt]
+            \item (Regression) Mean Squared Error (MSE): $ = \frac{1}{N} \sum_{i=1}^N (\hat{y}^{(i)} - y^{(i)})^2 $.
+            \item (Regression) Mean Absolute Error (MAE): $ = \frac{1}{N} \sum_{i=1}^N |\hat{y}^{(i)} - y^{(i)}| $.
+            \item (Classification) Accuracy: $ \text{Accuracy} = \frac{1}{N} \sum_{i=1}^N \mathbf{1}(\hat{y}^{(i)} = y^{(i)}) $.
+            \item (Classification) Confusion Matrix: e.g. Precision ($\frac{TP}{TP + FP}$ - maxm if FP costly), Recall ($\frac{TP}{TP + FN}$ - maxm if FN costly), F1 Score: $\frac{2}{\frac{1}{P} +\frac{1}{R}} $
+        \end{itemize}
+\end{itemize}
+
+\subsection{6. \underline{Decision Trees}}
+Function that takes as input a vector of attribute values and returns a decision (single output value). Perform sequence of tests from root node to leaf.
+\begin{itemize}
+\item \textbf{Expressiveness}: Can express any (propositional) fn of input attributes. 
+\item \textbf{Size of Hypothesis Class}: Distinct decision trees, $ n $ bool. attributes: $2^{2^n}$
+\item \textbf{Decision Tree Learning}: Greedy, top-down, recursive algorithm. Use information gain, choose best attribute to divide training set. For each value of chosen attr. use DTL again on corresponding subset of examples.
+\item \textbf{Entropy}: $I(P(v_1), P(v_2), ..., P(v_k)) = - \sum_{i=1}^{k} P(v_i) \log_2 P(v_i)$
+\item \textbf{Information Gain}: Initial Entropy $-$ avg. entropy after divide `remainder'. \\
+Entropy before dividing: $I(\frac{p}{p+n},\frac{n}{p+n})$, $p + n$ examples in subset $E_i$.
+\end{itemize}
+
+
+\subsection{Information Gain}
+Given \textit{attribute} $A$ with $v $ distinct values, the training set is split into subsets $ E_1, ..., E_v $, each with \( p_i \) positive and \( n_i \) negative examples.
+\begin{itemize}
+\item $\text{remainder}(A) = \sum_{i=1}^{v} \frac{p_i + n_i}{p+n} I\left(\frac{p_i}{p_i+n_i}, \frac{n_i}{p_i+n_i} \right)$
+\item $\text{Info Gain: } IG(A) = I(p_{\text{pos}}, p_{\text{neg}}) - \text{remainder}(A)$
+\end{itemize}
+Choose attribute with max information gain. \\
+\textbf{Generalisation/Overfitting}: \textbf{Prune}, reduce size of decision tree. \\
+• \textbf{min-sample leaf} (min threshold of sample count in leaf node) \\
+•  \textbf{max depth} (longest path from root to leaf) pruning. \\
+Smaller DT may higher accuracy as sample due to noise ignored. \\
+\textbf{Data Preprocessing}: Missing values (assign most common value, drop row/attribute etc.) Continuous values - partition to discrete set as attribute.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{multicols*}
+\end{document}
