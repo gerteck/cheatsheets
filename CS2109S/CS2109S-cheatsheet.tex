@@ -18,6 +18,11 @@
 % For math
 \usepackage{amsmath,amsthm,amsfonts,amssymb}
 
+% Verbatim
+\usepackage[utf8]{inputenc}
+\usepackage{alphabeta}
+
+
 %For pictures / figures
 \usepackage{color,graphicx,overpic}
 \graphicspath{ {./images/} }
@@ -43,7 +48,7 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.25in,left=.25in,right=.25in,bottom=.25in} }
+	{ \geometry{top=.2in,left=.2in,right=.2in,bottom=.2in} }
 	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
 		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
@@ -292,19 +297,16 @@ Determine optimal move for Player A (MAX) assuming Player B (MIN) plays optimall
 	\item \textbf{Complete}: If tree is finite. \textbf{Optimal} if against optimal opponent.
 \end{itemize}
 It is a recursive algo, backs up minimax values as recursion unwinds. Thus, similar to DFS, time c. $ O(b^m) $, space c. $O(bm)$. \\
-\textit{Note}: minimax not 'optimal' against non-optimal MIN player, as non-optimal p could choose higher value in path pruned as it had lower min value. But guarantees it never has lower utility than that of optimal opponent.
+\textit{Note}: minimax not 'optimal' against non-optimal MIN player, as non optimal player could choose higher value in unchosen path (which had lower min value). But guarantees it never lower utility than of optimal opponent.
 
 \subsubsection{Alpha-Beta Pruning (Minimax)}
-Reduces number of nodes (computational overhead) evaluated in game tree without affecting final decision. Minimax explores full game tree, not needed. 
+Reduces number of nodes (computational overhead) evaluated in game tree without affecting final decision. Minimax no need explore full tree. Good move ordering improves effectivness of pruning.
 \begin{itemize}[itemsep=-2pt]
-        \item $ \alpha $: Best value (highest) MAX can guarantee.
-        \item $ \beta $: Best value (lowest) MIN can guarantee.
-    \item \textbf{Algorithm}:
-    \begin{tiny}
-    \begin{verbatim}
-Some alphabeta pruning notes
-    \end{verbatim}
-    \end{tiny}
+        \item $ \alpha $: MAX's highest guaranteed so far. MAX updates α. 
+        \item $ \beta $: MIN's lowest guarantee so far. MIN updates β. 
+	\item At MAX node, prune (stop) if α $\geq$ β. At MIN node, prune (stop) if β $\leq$ α. 
+	\item Values of α, β passed down tree as explore nodes. \\
+	When backtracking, values passed up to update α, β if applicable.
 \end{itemize}
 Good move ordering improves effectivness of pruning.
 
@@ -396,10 +398,13 @@ Smaller DT may higher accuracy as sample due to noise ignored. \\
 
 \textbf{Linear Model}: Input vector $x$ of dimension $d$, hypo class is set of linear fns:
 \[h_w(x) = w_0x_0 + w_1x_1 + w_2x_2 + \dots + w_dx_d\  = w^T x. \] 
-where $ w_0, w_1, \dots, w_d $ are weights, $ x_0 = 1 $ is dummy variable.
+where $ w_0, w_1, \dots, w_d $ are weights, $ x_0 = 1 $ is dummy variable (rmb to add)
+
+\centerline{\includegraphics[width=1\linewidth]{matrix}}
+• $X \in \mathbb{R}^{N \times (d+1)} | w \in \mathbb{R}^{d+1} | Y, \hat{Y} \in \mathbb{R}^N $ (target, predicted values).
 \begin{itemize}
 \item \textbf{Feature Transformations}: modify features for better modeling. Feature Engineering (e.g. poly $ z = x^k $/ log $ z = \log(x) $/ exp). Feature scaling (e.g. min-max scaling $ z_i = \frac{x_i - \min(x_i)}{\max(x_i) - \min(x_i)} $, standardization $ z_i = \frac{x_i - \mu_i}{\sigma_i} $). 
-\item \textbf{Measure Fit}: Loss fn of weights $w$, find $w$ minimize loss. 
+\item \textbf{Measure Fit}: Loss fn of weights $w$, find $w$ to min. loss. ($N: \#$ train pts)
 \item \textbf{Loss Fn}: $J_{MSE}(w) = \frac{1}{2N} \sum_{i=1}^N (h_w(x^{(i)}) - y^{(i)})^2.$
 \item \textbf{Derivative}:$\frac{\partial J_{MSE}(w)}{\partial w_j} = \frac{1}{N} \sum_{i=1}^N \big(h_w(x^{(i)}) - y^{(i)}\big) x_j^{(i)}$
 \end{itemize}
@@ -413,7 +418,7 @@ where $ w_0, w_1, \dots, w_d $ are weights, $ x_0 = 1 $ is dummy variable.
 \textbf{Learning via Gradient Descent}
 \begin{itemize}[itemsep=-2pt]
     \item \textbf{Algorithm}: Initialize $ w $ randomly. Update weights iteratively. Repeat until convergence: $w_j \leftarrow w_j - \gamma \frac{\partial J(w_0, w_1, \dots)}{\partial w_j}.$
-    \item \textbf{Learning rate} $ \gamma > 0 $: Controls step size. (Hyperparameter).
+    \item \textbf{Learning rate} $ \gamma > 0 $: Controls step size. (Hyperparameter). can $\downarrow$ w time.
     \item \textbf{Variants}: Batch, use all data points. Mini-batch, use data subsets. Stochastic, uses one data point per iteration.
     \item \textbf{Convex}: MSE loss fn. convex, single global min, for linear/poly regression. 
 \end{itemize}
