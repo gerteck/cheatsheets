@@ -25,3 +25,8 @@ Do drop me a message if there are any errors or mistakes. Additionally, do perus
     - CS2106 Introduction to Operating Systems
     - CS2107 Introudction to Information Security
     - CS3223 Database Systems Implementation
+
+- AY24/25 S2
+    - IS1128 IT, Management and Organisation
+    - CS2109S Introduction to AI and Machine Learning
+    - CS3213 Foundations of Software Engineering
