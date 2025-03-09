@@ -1,9 +1,9 @@
-\documentclass[12pt, landscape]{article}
+\documentclass[8pt, a4paper, landscape]{article}
 \usepackage[scaled=0.92]{helvet}
 \usepackage{multicol}
 \usepackage{calc}
 \usepackage{ifthen}
-\usepackage[landscape]{geometry}
+\usepackage[a4paper, landscape]{geometry}
 %\usepackage{hyperref}
 
 \usepackage{newtxtext} 
@@ -72,12 +72,12 @@
 % This sets page margins to .5 inch if using letter paper, and to 1cm
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
-\ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
-	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-	}
+\ifthenelse{\lengthtest{\paperwidth = 11in}}
+    {\geometry{top=.5in, left=.5in, right=.5in, bottom=.5in}}
+    {\ifthenelse{\lengthtest{\paperwidth = 297mm}}
+        {\geometry{top=0.5cm, left=0.5cm, right=0.5cm, bottom=0.5cm}}
+        {\geometry{top=1cm, left=1cm, right=1cm, bottom=1cm}}
+    }
 
 % Turn off header and footer
 \pagestyle{empty}
@@ -175,7 +175,7 @@ AY23/24 Sem 1. github.com/gerteck
 \item Such devices are known as hosts or end systems. Hosts run network applications (e.g. Tele, browser, Zoom)
 \item Packet switching network, users' packets share network resources that are used on demand. Excessive congestion is possible.
 \item \textbf{Network of networks} Hosts connect to Internet via access ISPs (Internet Service Providers), which themselves are interconnected. 
-\centerline{\includegraphics[width=0.6\linewidth]{internetstructure}}
+\centerline{\includegraphics[width=0.4\linewidth]{internetstructure}}
 \end{itemize}
 
 
@@ -194,8 +194,6 @@ from that end system to any distant end system.
 \item \textbf{Circuit switching:} dedicated circuit per call
 \item \textbf{Packet switching:} data sent through net in discrete “chunks"
 \end{itemize}
-  
- \columnbreak
   
 \subsubsection{Circuit Switching}
 \begin{itemize}
@@ -241,10 +239,6 @@ Examples: TCP, UDP
 Example: Ethernet, WiFi
 \item \textbf{Physical}: Moves individual bits within link-layer frame from one node to another. Link and transmission medium dependent.
 \end{itemize}
-
-\vfill \null
-\columnbreak
-%                              -----------------------------------------------------
 
 \section{2. Application Layer}
 \subsubsection{Principles of Network Applications}
@@ -374,11 +368,8 @@ Receiver extracts sender IP + port number from packet.
 \item \textbf{TCP Socket:} Attempts to establish TCP connection to server first. Server TCP contacted creates new socket to communicate with client, allows server to talk with multiple clients individually.
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{socket}}
-
-\columnbreak
-
-\subsubsection{TCP vs. UDP Differences}
 \begin{itemize}
+\item \textbf{TCP vs. UDP Differences}
 \item In TCP, two processes communicate as if pipe between them. The pipe remains in place until one of two processes closes it. Sending process doesn’t need to attach a destination IP 
 / port number to the bytes in sending attempt as the logical pipe has been established
 \item In UDP, programmers need to form UDP datagram packets explicitly and attach destination IP address / port number to every packet.
@@ -417,7 +408,7 @@ logical communication between \textbf{hosts}. (best-effort, unreliable)
 \item \textbf{Multiplexing at sender}: UDP gathers data, forms packets, passes to IP.
 \item \textbf{De-multiplexing at receiver}: UDP receives packets from lower layer, checks dest port, and dispatches them to right processes.
 \item \textbf{Unreliable}: UDP transmission used by loss tolerant and rate sensitive apps.
-\centerline{\includegraphics[width=1\linewidth]{udpheader}}
+\centerline{\includegraphics[width=0.8\linewidth]{udpheader}}
 \end{itemize}
 
 \subsubsection{UDP Checksum}
@@ -430,15 +421,11 @@ logical communication between \textbf{hosts}. (best-effort, unreliable)
 \end{itemize}
 
 \subsubsection{Principles of Reliable Data Transfer (rdt)}
-We need to build a reliable transport layer protocol
-on top of unreliable communication.
+Build reliable transport layer protocol on top of unreliable communication.
 \begin{itemize}
 \item Factors: \textbf{Packet corruption, Packet loss, Packet reordering, Packet (Long) Delay.}
 \item Finite State Machines to describe protocol.
 \end{itemize}
-\medskip
-Reliable Data Transfer: \textbf{Service Model}
-\centerline{\includegraphics[width=0.8\linewidth]{rdtmodel}}
 
 \subsubsection{rdt 1.0 (Perfectly Reliable)}
 \begin{itemize}
@@ -507,7 +494,7 @@ Reliable Data Transfer: \textbf{Service Model}
 \smallskip
 \centerline{\includegraphics[width=1\linewidth]{selectiver}}
 
-
+\columnbreak
 
 \section{TCP: Connection-oriented Transport}
 \begin{itemize}
@@ -526,7 +513,7 @@ Reliable Data Transfer: \textbf{Service Model}
 \item TCP Ack. no is "seq no." of next b expected by receiver.
 \item Checksum computation uses 1s complement (UDP same)
 \smallskip
-\centerline{\includegraphics[width=0.9\linewidth]{tcpheader}}
+\centerline{\includegraphics[width=1\linewidth]{tcpheader}}
 \medskip
 \centerline{\includegraphics[width=1\linewidth]{TCPACKgen}}
 \item Random initial sequence number: Minimise probability of some segment from previous connection mistaken as from current connection
@@ -560,8 +547,8 @@ Reliable Data Transfer: \textbf{Service Model}
 \smallskip
 \centerline{\includegraphics[width=1\linewidth]{tcpconnection}}
 
- \vfill \null
- \columnbreak
+% \vfill \null
+% \columnbreak
 
 \section{4. Network}
 \subsubsection{Network Layer Services}
@@ -570,6 +557,8 @@ Reliable Data Transfer: \textbf{Service Model}
 \item Routers examine header fields of IP datagrams passing it.
 \item \textbf{Forwarding}: Moving of incoming packet to appropriate output link.
 \item \textbf{Routing}: Calculation of path taken by packets from sender to receiver.
+
+
 \end{itemize}
 
 \subsubsection{IP Address}
@@ -617,8 +606,6 @@ Reliable Data Transfer: \textbf{Service Model}
 \item \textbf{Longest Prefix Match}: Choose one with longer match. If IP addrr matches all 23 bits for org, packet forwarded, else forwarded to latter.
 \end{itemize}
 
-\columnbreak
-
 \subsubsection{Network Address Translation (NAT)}
 \begin{itemize}
 \item Map IP addr space by modifying network addr info in packets IP header through traffic routing device. NAT Routers must:
@@ -626,19 +613,17 @@ Reliable Data Transfer: \textbf{Service Model}
 \item \textbf{Benefits}: Single public IP for NAT router allows multiple private IP address. Change (private IP) addr of hosts in local network without notifying outside world.
 \item ISP change w/o changing local host addresses in local network.
 \item Hosts inside local network not explicitly addressable or visible by outside world (security plus).
-\end{itemize}
 \medskip
-\centerline{\includegraphics[width=1\linewidth]{nat}}
+\centerline{\includegraphics[width=0.85\linewidth]{nat}}
+\end{itemize}
 
 \subsubsection{Routing Algorithms}
 \begin{itemize}
-\item The Internet as \textbf{“network-of-networks”}, hierarchy of \textbf{Autonomous Systems} (AS), e.g., ISPs, each owns routers and links.
-\item Due to size and decentralized administration of Internet, routing is done hierarchically.
+\item Internet: \textbf{“network-of-networks”}, hierarchy of \textbf{Autonomous Systems} (AS), e.g., ISPs, each owns routers and links. Decentralized administration, so routing done hierarchically.
 \item \textbf{Intra-AS routing}: Finds good path btwn two routers within AS. Commonly used protocols: RIP, OSPF
 \item \textbf{Inter-AS routing (not covered)} Handles the interfaces between ASs, standard protocol: BGP.
 \end{itemize}
 
-\columnbreak
 
 \subsubsection{Intra-AS Routing}
 \begin{itemize}
@@ -672,26 +657,19 @@ Reliable Data Transfer: \textbf{Service Model}
 \subsubsection{Internet Protocol (IP): IPv4}
 \begin{itemize}
 \medskip
-\centerline{\includegraphics[width=0.9\linewidth]{ipv4datagram}}
+\centerline{\includegraphics[width=0.6\linewidth]{ipv4datagram}}
 \item Length: of IP datagram + 20b header. Identifier, flags, fragment offset: support fragmentation \& reassembly
 \item TTL: Prevent infinite circulation. Upper layer protocol: Only used at final dest, determine if UDP/TCP (for Internet). Checksum also uses 1s complement.
 \item \textbf{IPv6}: 40b header with 128b IP addr.
 \end{itemize}
 
-\null \null \null \null \null \null
-\null \null \null \null \null \null
-\columnbreak
-
 \subsubsection{IP Fragmentation \& Reassembly}
 \begin{itemize}
-\item Different links, different MTU (Max Transfer Unit, max amt of data link-level frame can carry).
-\item “Too large” IP datagrams may be fragmented by routers. \\
+\item Different links, different MTU (Max Transfer Unit, max amt of data link-level frame can carry). “Too large” IP datagrams may be fragmented by routers.
 \centerline{\includegraphics[width=0.9\linewidth]{ipfragmentation}}
 \medskip
-\item \textbf{Flag}(frag flag) is set to 1 if next fragment from same segment, 0 if this is the last fragment.
-\item \textbf{Offset} is in expressed in unit of 8-bytes
+\item \textbf{Flag}(frag flag) is set to 1 if next fragment from same segment, 0 if this is the last fragment. \textbf{Offset} is in expressed in unit of 8-bytes.
 \end{itemize}
-
 
 \subsubsection{Internet Control Message Protocol}
 \begin{itemize}
@@ -700,8 +678,9 @@ Reliable Data Transfer: \textbf{Service Model}
 \item Echo request/reply (used by ping).
 \item ICMP messages carried in IP datagrams, ICMP header starts after IP header.
 \medskip
-\centerline{\includegraphics[width=1\linewidth]{icmp}}
+\centerline{\includegraphics[width=0.7\linewidth]{icmp}}
 \end{itemize}
+
 
 % \vfill 
 \null
@@ -717,8 +696,8 @@ Reliable Data Transfer: \textbf{Service Model}
 
 \subsection{Link Layer}
 \begin{itemize}
-\item  \textbf{Link layer} sends datagram between adjacent nodes (hosts or routers) over a single link. Responsible for transfer of datagram from one node to \underline{physically} \underline{adjacent} node over link. 
-\item \textbf{Frames (layer 2 packet)}: IP datagrams are encapsulated in link-layer \textbf{frames} for transmission.
+\item  \textbf{Link layer} sends datagram between adjacent nodes (hosts or routers) over a single link. Responsible for transfer of datagram from node to \underline{physically} \underline{adjacent} node over link. 
+\item \textbf{Frames (layer 2 packet)}: IP datagrams encapsulated in link-layer \textbf{frames} for transmission.
 \item \textbf{Protocols}: Different link-layer protocols may be used on different links, each protocol may provide a different set of services.
 \end{itemize}
 
@@ -738,15 +717,13 @@ Reliable Data Transfer: \textbf{Service Model}
 \item Semi-autonomous, implementing both link \& physical layers. Many services implemented in hardware.
 \end{itemize}
 
-\columnbreak
-
 \subsection{Error Detection and Correction Techniques}
 \begin{itemize}
 \item \textbf{EDC}: Error Detection and Correction Bits.
 \item \textbf{D}: Data protected by error checking, may include header.
 \item Larger EDC fields added to link layer frame yields better detection (and correction), but larger overhead.
 \item \textbf{Common error detection schemes}: Checksum (used in TCP/UDP/IP), Parity checking, CRC (link layer). 
-\item \textbf{Checksum Recap}: treate segment contents as 16 bit int sequences, get 1s complement of sum of segment contents.
+\item \textbf{Checksum Recap}: treat segment contents as 16 bit int sequences, get 1s complement of sum of segment contents.
 \end{itemize}
 
 \subsubsection{Parity Checking}
@@ -794,15 +771,13 @@ have parity bits for each column and each row. \\
 \item Protocol: Framing, Link Access Control. Errors: Detection, Reliability.
 \end{itemize}
 \smallskip
-\centerline{\includegraphics[width=1\linewidth]{interconnectNodes}}
+\centerline{\includegraphics[width=0.8\linewidth]{interconnectNodes}}
 
 \subsubsection{Types of Network Links (2)}
 \begin{itemize}
 \item \textbf{Point-to-point link}: Sender and receiver connected by a dedicated link. No need for multiple access control.
 \item \textbf{Broadcast link:} Multiple nodes connected to same shared broadcast channel. When any one node transmits a frame, all other nodes in the channel receives a copy. We need a Multiple Access Protocol to prevent frame collisions.
 \end{itemize}
-
-\columnbreak
 
 \subsubsection{Multiple Access Protocols}
 
@@ -880,13 +855,12 @@ Thus, no need for centralised coordination, thus no single point of failure.
 
 \subsubsection{Minimum Frame Size}
 \begin{itemize}
-\item For CSMA and CSMA/CD above, need minimum frame size so that collisions can always be detected. 
-\item Ethernet has a minimum size of 64 bytes.
+\item For CSMA and CSMA/CD above, need minimum frame size so that collisions can always be detected. Ethernet has min size of 64 bytes.
 \end{itemize}
 
 \subsubsection{CSMA / Collision Avoidance (CSMA/CA)}
 \begin{itemize}
-\item Collision detection can be hard for wireless LANs, as energy levels drop too quickly.
+\item Collision detection hard for wireless LANs, as energy levels drop too quickly.
 \item Hidden Node Problem: When two nodes cannot detect each other but a node in-between encounters a collision.
 \item As such, an ACK is required from the receiver as well.
 \end{itemize}
@@ -897,9 +871,8 @@ Thus, no need for centralised coordination, thus no single point of failure.
 \begin{itemize}
 \item Every adapter (NIC) has a unique MAC address (aka physical or LAN address).
 \item \textbf{MAC}: Media Access Control.
-\item Used to send and receive link layer frames, when adapter receives a frame, it checks if the destination MAC address of the frame matches its own MAC address.
-\item If yes, adapter extracts enclosed datagram and passes it to the protocol stack.
-\item If no, adapter discards the frame w/o interrupting host.
+\item Used to send, receive link layer frames, when adapter receives frame, check if destination MAC address of frame matches own MAC address.
+\item If yes, adapter extracts enclosed datagram and passes it to the protocol stack. Else if no, adapter discards frame w/o interrupting host.
 	\begin{itemize}
 	\item  \textbf{48 bits:} Burned in NIC ROM (read-only memory).
 	\item \textbf{IEEE}: Administers the MAC address allocation. First three bytes of MAC identifies the vendor of adapter.
@@ -907,7 +880,7 @@ Thus, no need for centralised coordination, thus no single point of failure.
 	\end{itemize}
 \end{itemize}
 \smallskip
-\centerline{\includegraphics[width=0.9\linewidth]{mac}}
+\centerline{\includegraphics[width=0.8\linewidth]{mac}}
 
 \subsubsection{Local Area Network (LAN)}
 \begin{itemize}
@@ -917,9 +890,9 @@ office building or university campus.
 \end{itemize}
 \smallskip
 
-\centerline{\includegraphics[width=0.3\linewidth]{Lan}}
+\centerline{\includegraphics[width=0.7\linewidth]{Lan}}
 \subsubsection{Ethernet}
-\centerline{\includegraphics[width=1\linewidth]{ethernet2}}
+\centerline{\includegraphics[width=0.8\linewidth]{ethernet2}}
 
 \subsubsection{Ethernet}
 \begin{itemize}
@@ -928,8 +901,7 @@ office building or university campus.
 \item MAC protocol, frame format remain unchanged over years.
 \end{itemize}
 
-\subsubsection{Ethernet Frame Structure Breakdown}
-\centerline{\includegraphics[width=1\linewidth]{ethernetframe}}
+\centerline{\includegraphics[width=0.8\linewidth]{ethernetframe}}
 \begin{itemize}
 \item \textbf{MTU}: Maximum Transmission Unit.
 \item Sending NIC (adapter) encapsulates IP datagram in Ethernet frame.
@@ -945,16 +917,14 @@ office building or university campus.
 \item \textbf{Type}: Higher level protocol used, usually IP. (others e.g. ARP, AppleTalk), permits Ethernet to multiplex network-layer protocols.
 \end{itemize}
 
-\columnbreak
-
 \subsubsection{Ethernet Topology}
 \begin{itemize}
-\item \textbf{Bus Topology}: (broadcast LAN) All nodes are connected and can collide with each other.
-\item \textbf{Star Topology}: Switch / Hub in the centre and nodes are connected to that switch. Do not collide with each other.
+\item \textbf{Bus Topology}: (broadcast LAN) All nodes connected, can collide with each other.
+\item \textbf{Star Topology}: Switch / Hub in centre, nodes connected to switch. Do not collide with each other.
 \end{itemize}
 
 \smallskip
-\centerline{\includegraphics[width=1\linewidth]{topo}}
+\centerline{\includegraphics[width=0.7\linewidth]{topo}}
 
 \subsubsection{Ethernet Delivery}
 \begin{itemize}
@@ -974,9 +944,7 @@ a collision has been detected and NIC will be retransmitting.
 \end{enumerate}
 
 \medskip
-\centerline{\includegraphics[width=0.8\linewidth]{ethernetCSMACD}}
-
-\columnbreak
+\centerline{\includegraphics[width=0.7\linewidth]{ethernetCSMACD}}
 
 \subsubsection{Ethernet Hub}
 \begin{itemize}
@@ -986,7 +954,7 @@ a collision has been detected and NIC will be retransmitting.
 \item \textbf{Disadv:} Slow, not ideal for larger networks (collisions).
 \end{itemize}
 \medskip
-\centerline{\includegraphics[width=0.8\linewidth]{ethernethubswitch}}
+\centerline{\includegraphics[width=0.5\linewidth]{ethernethubswitch}}
 
 
 \subsubsection{Ethernet Switch}
@@ -1006,9 +974,6 @@ destination.
 \item \textbf{Switches}: Check MAC address, Store-and-forward, Forward frame to outgoing link or broadcast
 \end{itemize}
 
-\null \null \null \null
-\columnbreak
-
 \subsubsection{Switch Forwarding Tables}
 \begin{itemize}
 \item A switch has multiple interfaces, needs to know which nodes are reachable via which interface.
@@ -1018,7 +983,7 @@ destination.
 \item \textbf{Broadcast}: If destination host not found in the switch forwarding table, the switch will broadcast the frame to all outgoing links.
 \end{itemize}
 \medskip
-\centerline{\includegraphics[width=1\linewidth]{switchforwardingtable}}
+\centerline{\includegraphics[width=0.9\linewidth]{switchforwardingtable}}
 
 \subsubsection{Address Resolution Protocol (ARP)}
 How to know MAC address of receiving host, knowing its IP address? Use ARP [RFC 826].
@@ -1032,10 +997,6 @@ nodes in the same subnet.
 \end{itemize}
 \medskip
 \centerline{\includegraphics[width=1\linewidth]{ARP}}
-
-\null \null  \null  
-
-\columnbreak
 
 \subsubsection{ARP: Sending Frame in Same / Another Subnet}
 \begin{enumerate}
@@ -1080,39 +1041,34 @@ nodes in the same subnet.
 
 \subsection{Properties of Security}
 \begin{itemize}
-\item \textbf{Confidentiality}: Only sender \& receiver should be able to understand message contents.
-\item \textbf{Authentication}: Ability of sender and receiver to confirm the identity of each other.
+\item \textbf{Confidentiality}: Only sender \& receiver should understand message contents.
+\item \textbf{Authentication}: Ability of sender, receiver to confirm identity of each other.
 \item \textbf{Message Integrity}: Ensuring messages are not altered without detection.
 \item \textbf{Access and Availability}: Services must be accessible and available to users.
 \end{itemize}
 
 \subsubsection{Potential Issues}
 \begin{itemize}
-\item Alice, Bob and Trudy (Intruder).
-\item Eavesdrop, Insert or delete messages.
+\item Alice, Bob and Trudy (Intruder). Eavesdrop, Insert or delete messages.
 \item Impersonation or spoofing (fake) source address
-\item Hijacking connection
-\item Denial of service
+\item Hijacking connection, Denial of service.
 \end{itemize}
 
 \subsection{Principles of Cryptography}
 \subsubsection{Terminology}
 \begin{itemize}
-\item \textbf{Plaintext}: The original message
-\item \textbf{Ciphertext}: The encrypted message
+\item \textbf{Plaintext}: The original message, \textbf{Ciphertext}: The encrypted message
 \item \textbf{Encryption Key}: Used to encrypt messages
 \item \textbf{Ciphertext Only Attack}: Crack the encryption using only the encrypted text. Generally through
 brute force or frequency analysis.
-\item \textbf{Known Plaintext Attack}: When you have the ciphertext and the corresponding plaintext.
-\item \textbf{Chosen Plaintext Attack}: Presumes that the attacker can obtain ciphertexts for arbitrary plain texts
+\item \textbf{Known Plaintext Attack}: When have ciphertext and corresponding plaintext.
+\item \textbf{Chosen Plaintext Attack}: Presumes attacker can obtain ciphertext for arbitrary plain text
 \end{itemize}
 
 
 \subsection{Symmetric Key Cryptograpy}
 Both sender and receiver share the same key $K_a = K_b = K_s$ Issue lies in initial secure communication of shared key.
 \centerline{\includegraphics[width=0.8\linewidth]{symmetric}}
-
-\columnbreak
 
 \subsection{Symmetric Key Cryptograpy}
 \begin{itemize}
@@ -1137,7 +1093,7 @@ only to receiver. Diffie and Hellman (1978).
 \item Public-key cryptography has enabled effective encryption in the SSL
 (Secure Socket Layer) of the HTTPS protocol.
 \end{itemize}
-\centerline{\includegraphics[width=0.8\linewidth]{asymmetric}}
+\centerline{\includegraphics[width=0.7\linewidth]{asymmetric}}
 
 
 \subsection{Asymmetric Key Cryptography}
@@ -1176,8 +1132,7 @@ only to receiver. Diffie and Hellman (1978).
 \item Choose two large prime numbers $p, q$.
 \item Compute $n = pq$, $\phi(n) = z = (p-1)(q-1)$.
 \item Choose $e$ (with $e < n$) that has no common factors with $z$ ($e$ and $z$ are relatively prime.)
-\item Choose $d$ such that $ed -1$ is exactly divisible by $z$. \\ 
-($ed$ mod $z = 1$).
+\item Choose $d$ such that $ed -1$ is exactly divisible by $z$. ($ed$ mod $z = 1$).
 \item \textbf{public key} is ($n, e$) $= K_B^+$.  \textbf{private key} is ($n, d$) $ = K_B^-$.
 \end{enumerate}
 
@@ -1216,14 +1171,8 @@ Sender, receiver ensure message \textbf{not altered without detection}.
 \item \textbf{CRC}: Better than checksum, but poor as output is biased to input, minor changes in input produce minor changes in output. Easy to find messages of same CRC.
 \end{itemize}
 
-\null \null
-
 \subsubsection{Password Hashing}
 Passwords are not stored in plaintext but hashed and stored. To make it hard to find similar plaintexts by simply checking the hashes, a salt i.e. random string of characters is added to the front of the password before being hashed.
-
-
-\vfill \null
-\columnbreak
 
 \subsection{Cryptographic Hash Function}
 \begin{itemize}
@@ -1266,29 +1215,25 @@ certificate is digitally signed by the CA.
 \centerline{\includegraphics[width=0.8\linewidth]{CA}}
 
 \subsection{Network Access \& Availability}
-Ensure services \textbf{accessible \& available} to users.
 
 \subsubsection{Firewalls}
 \begin{itemize}
 \item \textbf	{Firewalls}: combination of hardware and software, isolates organisation’s internal network from larger Internet, allowing some packets to pass, blocking others.
 \item \textbf{Prevents denial of service (DoS) attacks:} e.g. SYN flooding, attacker establishes many bogus TCP connections, no resources left for legit. connections
 \item \textbf{Prevents illegal modification/access of internal data.}
-\item \textbf{Allow only authorized access to inside network:} set of authenticated users/hosts.
+\item \textbf{Only authorized access inside network:} authenticated users/hosts.
 \item UDP: generally firewall either filters all or no UDP.
-\item \textbf{Tradeoff}: between security and degree of communcation with outside outer Internet.
-\item \textbf{Limitation}: IP spoofing, router cannot really know if data comes from claimed source.
+\item \textbf{Tradeoff}: between security, degree of communcation with outside Internet.
+\item \textbf{Limitation}: IP spoofing, router cant verify data if comes from claimed source.
 \item \textbf{Three types of Firewalls}: stateless packet filters, stateful packet filters, application gateways.
 \end{itemize}
 
-\columnbreak	
 
 \subsubsection{Stateless (Traditional) Packet Filtering}
 \begin{itemize}
 \item Internal network connected to Internet via router firewall. Router \textbf{filters packet by packet}, based on policy and firewall settings. Decision to forward/drop packet typically based on:
-\item source IP address, destination IP address'
-\item  TCP/UDP source and destination port numbers
-\item ICMP message type
-\item TCP SYN and ACK bits
+\item source IP addr, destination IP addr, TCP/UDP source, destination port numbers
+\item ICMP message type, TCP SYN and ACK bits
 \end{itemize}
 \smallskip
 \textbf{Examples:}
@@ -1299,38 +1244,26 @@ Ensure services \textbf{accessible \& available} to users.
 \centerline{\includegraphics[width=0.8\linewidth]{statelesspacketfilter}}
 
 \subsubsection{Stateful Packet Filtering}
-Stateful firewalls filter packets based on full context of connection, tracks status of every TCP connection, such asconnection setup, teardown, etc. Uses concept of state table that stores state of legitimate connections.
-\\ If inactive connections timeout at firewall, incoming packets will be rejected. 
-\\
-\textbf{Access Control List (ACL)}:
-\centerline{\includegraphics[width=0.8\linewidth]{ACL}}
+Stateful firewalls filter packets based on full context of connection, track status of every TCP connection, e.g. connection setup, teardown, etc. Use concept of state table that stores state of legitimate connections. If inactive connections timeout at firewall, incoming packets rejected. 
+\\ \textbf{Access Control List (ACL)}:
+\centerline{\includegraphics[width=0.7\linewidth]{ACL}}
 
 \subsubsection{Application Gateways}
 \begin{itemize}
-\item \textbf{Application gateways} are more intelligent firewall systems that know details of applications that generate the packets. Also work as proxy servers between client computer and real server.
-\item Different gateway is needed for each application.
+\item \textbf{Application gateways}: more intelligent firewall systems, know details of apps that generate packets. Also work as proxy servers between client computer and real server. (Different gateway needed for each application.)
 \item Slows down network performance due to detailed checking of packets, more expensive than packet filters.
 \end{itemize}
 
 \subsubsection{Secure e-mail}
-\null \null
-\centerline{\includegraphics[width=1\linewidth]{secureemail1}}
-\null \null
-\centerline{\includegraphics[width=0.95\linewidth]{secureemail2}}
-\null \null \null \null
-\columnbreak
-
-\vfill \null
-\columnbreak
+\centerline{\includegraphics[width=0.9\linewidth]{secureemail1}}
+\smallskip
+\centerline{\includegraphics[width=0.7\linewidth]{secureemail2}}
 
 \section{7. Multimedia Networking}
-\textbf{Multimedia network application} defined as any network application that employs \textbf{audio or video}. 
+\textbf{Multimedia network application}: any network app that employs \textbf{audio or video}. 
 \begin{itemize}
 \item Videos are often delivered Over-the-Top (OTT), i.e. streaming media services offered directly to viewers via the Internet, bypassing cable, broadcast etc.
-\end{itemize}
- \textbf{Few main application types}
-\begin{itemize}
-\item \textbf{Streaming} stored audio, video: can begin playout before downloading entire fire, storing / buffering at client.
+\item \textbf{Streaming} stored audio, video: can begin playout before downloading entire file.
 \item \textbf{Conversational (two-way live)} voice/video over IP: interactive nature limits delay tolerance, delay more than 400 milliseconds intolerable.
 \item \textbf{Streaming live (one-way live)} audio, video: done with CDNs (Content distrib. network) e.g. live sporting events, higher delay allowable. 
 \end{itemize}
@@ -1345,7 +1278,7 @@ greater than that of photo or music applications.
 \item Spatial Redundancy (within image): Instead of sending same value N times, send value number of repeats, N.
 \item Temporal Redundancy: Only send differences between two consecutive images.
 \end{itemize}
-\centerline{\includegraphics[width=0.8\linewidth]{vidcompress}}
+\centerline{\includegraphics[width=0.75\linewidth]{vidcompress}}
 
 \begin{itemize}
 \item \textbf{Constant Bit Rate (CBR)}: video encoding rate fixed. Not responsive to complexity of video, need to set bitrate high to handle complex segments of video. Consistency well suits real-time encoding.
@@ -1357,7 +1290,7 @@ greater than that of photo or music applications.
 \item \textbf{Sampling}: Sample audio analog signal at fixed rate to real number value to obtain digital signal. Telephone: 8,000 samples/sec, CD: 44,100 samples/sec.
 \item \textbf{Quantisation}: Each sample rounded to one of finite number of values. The number of quantisation
 values is typically a power of two, e.g. 256.
-\item \textbf{Concatenation \& Decoding}: All values represented as bits, and samples are concatenated. To decode, we convert it back to analog signal, which is an approximate of original (quality reduction), as certain sounds lost in sample and encode.
+\item \textbf{Concatenation \& Decoding}: All values represented as bits, samples are concatenated. To decode, convert back to analog signal, which is approximate of original (quality reduction), as certain sounds lost in sample and encode.
 \end{itemize}
 
 \textbf{Compression Ratio} of media codec: bitrate of uncompressed media stream divided by bitrate of same compressed media stream.
@@ -1379,14 +1312,14 @@ Compensates for network-added delay, delay jitter.
 \item If $\bar{x} < r$, buffer eventually empties, video playout freezes until buffer fills again. If $\bar{x} > r$, buffer will not empty if initial playout delay enough to absorb variability in $x(t)$.
 \item \underline{If buffer filled, fill rate will be capped at playout rate.}
 \item \textbf{Client side buffer absorbs variation in delay \& bandwidth}, for long as buffer is not drained.
-\item \textbf{Initial playout delay tradeoff} between likelihood of buffer starvation and initial delay.
+\item \textbf{Initial playout delay tradeoff} btw likelihood of buffer starvation \& initial delay.
 \end{itemize}
 \centerline{\includegraphics[width=0.75\linewidth]{clientbuffer}}
 
 \subsection{UDP Streaming}
 \begin{itemize}
-\item \textbf	{Push-based Streaming}: Server sends at rate matching client’s consumption rate. As UDP has no congestion control mechanism, server transmits w/o rate-control restrictions of TCP.
-\item E.g. video consumption rate $=$ 2Mbps, each UDP packet carries 8,000 bits of video. Server needs to transmit one UDP packet into socket every $\frac{(8000 bits)}{(2 Mbps)} = 4 msec.$
+\item \textbf	{Push-based Streaming}: Server transmit client’s consumption rate. UDP has no congestion control mechanism, transmit w/o rate-control restrictions of TCP.
+\item E.g. video consumption rate $=$ 2Mbps, each UDP packet carry 8,000 video bits. Server must transmit one UDP packet into socket every $\frac{(8000 bits)}{(2 Mbps)} = 4$ msec.
 \item \textbf{Short playout delay}: (2-5 seconds) to remove network jitter. Small buffer, susceptible to bandwidth changes, video may freeze or skip frames.
 \item \textbf{Error recovery}: Application level, if time permits.
 \item \textbf{RTP}: Video chunks encapsulated using Real-Time Transport Protocol, control connection maintained separatedly using RTSP (RT stream protocol), used for establishing and controlling media sessions, and allowing issuing of commands e.g. play, record, pause.
@@ -1401,19 +1334,13 @@ Compensates for network-added delay, delay jitter.
 \end{itemize}
 \centerline{\includegraphics[width=0.8\linewidth]{httpstream}}
 \begin{itemize}
-\item If application buffer is full, send rate reduced to consumption rate. If video paused, sending and buffering continues till buffer full. Then sending will block until video resumed. 
+\item If application buffer full, send rate reduced to consumption rate. If video paused, sending, buffering continues till buffer full till video resumed.
 \item Repositioning: If user skips forward in video, all buffered frames wasted. Medium sized client application buffer reduce wastage.
-\end{itemize}
-
-\columnbreak
-
-\subsection{HTTP Streaming cont.}
-\begin{itemize}
 \item \textbf{Advantage}: HTTP/TCP passes more easily through firewalls, network infrastructure (CDNs, routers) more fine tuned for HTTP/TCP.
-\item \textbf{Drawback}: Fill rate fluctuates due to TCP congestion control and retransmissions (in-order delivery). Also, larger playout delay than push-based UDP.
+\item \textbf{Drawback}: Fill rate fluctuates due to TCP congestion control \& retransmissions (in-order delivery). Larger playout delay than push-based UDP.
 \end{itemize}
 \medskip
-\centerline{\includegraphics[width=0.9\linewidth]{TCPcongestion}}
+\centerline{\includegraphics[width=0.85\linewidth]{TCPcongestion}}
 
 \subsection{DASH (Dynamic, Adaptive Streaming, HTTP)}
 \begin{itemize}
@@ -1421,7 +1348,7 @@ Compensates for network-added delay, delay jitter.
 \item \textbf{Issue}: All clients receive same encoding (resolution) of video, despite variation in device/network bandwidth.
 \item \textbf{DASH: Dynamic, Adaptive} Streaming over HTTP.
 \end{itemize}
-\centerline{\includegraphics[width=0.9\linewidth]{DASH}}
+\centerline{\includegraphics[width=0.85\linewidth]{DASH}}
 
 \subsubsection{DASH Server, Client}
 \begin{itemize}
@@ -1429,16 +1356,10 @@ Compensates for network-added delay, delay jitter.
 \item \textbf{Manifest and Byte Range}: HTTP server stores a .m3u8/.mpd manifest file, providing URL for each version, along with bit rate. Client first requests for the manifest file to know the various versions.
 \item \textbf{Pull-based Streaming}: client periodically measures bandwidth, dynamically request sustainable versions of chunks of video segments of 2-10 seconds in length, that current bandwidth can support.
 \item \textbf{Adaptive Bitrate Algorithm: (ABR)} Client runs algorithm to decide which quality next chunk should be.
-\end{itemize}
-\columnbreak
-
-\begin{itemize}
-\item \textbf{Streamlets or Byte Range}: Thereafter, client either GET request for specific streamlet, if 
-server had split the video into streamlets during pre-processing, or use GET requests with specified byte range in header to get the right chunk.
+\item \textbf{Streamlets or Byte Range}: Client either GET request for specific streamlet, (if server split video into streamlets during pre-processing), or use GET requests with specified byte range in header to get right chunk.
 \item \textbf{Advantage}: Works with Web Caching: DASH works well with existing web caching infrastructure of ISPs and Content Delivery Networks (CDN). Server is simple, no firewall problems.
 \item \textbf{Disadvantage}:  DASH based on media segment transmissions, (2-10 sec in length typically). By buffering a few segments at client side, DASH does not provide low latency for interactive, two-way applications (e.g., video conferencing).
 \end{itemize}
-
 
 
 \subsection{Voice-over-IP}
@@ -1446,7 +1367,6 @@ server had split the video into streamlets during pre-processing, or use GET req
 \item \textbf{VoIP end-end-delay requirement}: needed to maintain `conversational' aspect. $<$ 150 msecs not perceived by human listener, delays $>$ 400 msecs impair interactivity, in between acceptable but not ideal.
 \item \textbf{Talk Spurts}: Periods of silence during conversation, nothing is sent. When speaking: $8,000$ samples/sec, of 8 bits each, 256 quantization levels. Data $= 64kbps$. $20 msec$ chunks, hence 160 bytes per chunk.
 \item \textbf{App-layer header}: Header added to each chunk, then encapsulated into (generally) UDP segment. Send segment into socket every 20 msec during talk spurt.
-
 \item \textbf{Challenge:} Internet (IP layer) best effort service, no upper bound on delay or packet loss.
 \item \textbf{Packet Loss}: UDP segments containing a chunk and special header may be lost in transit. TCP unusable as retransmission mechanisms delay unacceptable. 
 \item \textbf{Loss tolerance}: depending on voice encoding, loss concealment, loss rates between 1\% - 10\% tolerable. Receivers generally disregard packets beyond certain delay threshold (delay loss).
@@ -1479,7 +1399,6 @@ with time $t$ will be played at time $t + q$.)
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{EWMA}}
 
-\columnbreak
 \subsection{VoIP: Packet Loss Recovery}
 Recovering from Packet Loss given small tolerable delay between transmission and playout.
 
@@ -1503,19 +1422,13 @@ Recovering from Packet Loss given small tolerable delay between transmission and
 \begin{itemize}
 \item \textbf{Challenge}: Stream content (selected from millions of videos) to multitude of simultaneous users.
 \item \textbf{Unoptimal}: Using single, large mega server: single point of failure, point of network congestion, long path to distant clients,  multiple copies of video sent over outgoing link, solution does not scale.
-\end{itemize}
-
-\columnbreak
-
-\subsubsection{Content Distribution Networks cont.}
-\begin{itemize}
 \item \textbf{Multiple Sites}: store/serve multiple copies of videos at multiple geographically distributed sites (CDN).
 \item \textbf{enter deep}: push CDN servers deep into many access networks, Usually at ISP, close to users. (e.g. Akamai, 1700+ locations)
 \item \textbf{bring home}: smaller number (10’s) of larger clusters in IXPs (I. exchange point) near (but not within) access networks. (e.g. used by Limelight)
 \item Hence, CDN stores copies of content at \textbf{CDN nodes}, client requests content, service provide returns manifest, and using manifest client retrieves content at highest supportable rate.
 \item Client may choose different rate or copy (from different CDN node) automatically if network path congested.
 \end{itemize}
-\centerline{\includegraphics[width=1\linewidth]{CDN}}
+\centerline{\includegraphics[width=0.8\linewidth]{CDN}}
 
 \subsection{Internet Protocols: Real-Time Multimedia Communication}
 With growth of multimedia traffic, developed family of protocols, \textbf{Real-Time Transport Protocol (RTP)}, its control part \textbf{Real-Time Control Protocol (RTCP)}, and \textbf{Real-Time Streaming Protocol (RTSP)}. \\
@@ -1543,16 +1456,13 @@ RTSP (RFC 2326) is application level $r$ protocol that enables control over deli
 \item Like HTTP, RTSP uses TCP to maintain an end-to-end connection and, while most RTSP control messages are
 sent by the client to the server, some commands travel in the other direction (i.e. from server to client).
 \end{itemize}
-
 \vfill \null
-\columnbreak
+
+\centerline{\includegraphics[width=0.85\linewidth]{command3}}
 
 \centerline{\includegraphics[width=0.90\linewidth]{command1}}
 \centerline{\includegraphics[width=0.90\linewidth]{command2}}
-\centerline{\includegraphics[width=0.90\linewidth]{command3}}
 
-
-\columnbreak
 
 \section{Sample Questions}
 
@@ -1602,7 +1512,6 @@ as routers have to remember routing for every single MAC address
 \item \textbf{CSMA-CD (Carrier Sense Multiple Access with Collision Detection) vs. CSMA}: CSMA-CD Advantage: CSMA-CD includes collision detection, continues to listen to the channel while transmitting, if collision detected, stops transmission immediately, reducing the time wasted on unsuccessful transmissions. 
 \end{itemize}
 
-\columnbreak
 
 \centerline{\includegraphics[width=0.9\linewidth]{q4}}
 \begin{itemize}
@@ -1627,7 +1536,7 @@ share the session key with Bob
 
 \subsubsection{ Public key cryptography uses both public and private keys. Let Alice’s public 
 key and private key, and let Bob’s public and private key be. Alice sends  message m to Bob. Describe how to ensure message confidentiality and integrity using only these 4 keys}
-\centerline{\includegraphics[width=0.9\linewidth]{q4b}}
+\centerline{\includegraphics[width=0.85\linewidth]{q4b}}
 
 
 \subsubsection{Port Numbers}

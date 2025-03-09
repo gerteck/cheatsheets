@@ -1,9 +1,9 @@
-\documentclass[12pt, landscape]{article}
+\documentclass[8pt, a4paper, landscape]{article}
 \usepackage[scaled=0.92]{helvet}
 \usepackage{multicol}
 \usepackage{calc}
 \usepackage{ifthen}
-\usepackage[landscape]{geometry}
+\usepackage[a4paper, landscape]{geometry}
 %\usepackage{hyperref}
 
 \usepackage{newtxtext} 
@@ -72,12 +72,12 @@
 % This sets page margins to .5 inch if using letter paper, and to 1cm
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
-\ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
-	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-	}
+\ifthenelse{\lengthtest{\paperwidth = 11in}}
+    {\geometry{top=.5in, left=.5in, right=.5in, bottom=.5in}}
+    {\ifthenelse{\lengthtest{\paperwidth = 297mm}}
+        {\geometry{top=0.5cm, left=0.5cm, right=0.5cm, bottom=0.5cm}}
+        {\geometry{top=1cm, left=1cm, right=1cm, bottom=1cm}}
+    }
 
 % Turn off header and footer
 \pagestyle{empty}
@@ -175,7 +175,7 @@ AY23/24 Sem 1. github.com/gerteck
 \item Such devices are known as hosts or end systems. Hosts run network applications (e.g. Tele, browser, Zoom)
 \item Packet switching network, users' packets share network resources that are used on demand. Excessive congestion is possible.
 \item \textbf{Network of networks} Hosts connect to Internet via access ISPs (Internet Service Providers), which themselves are interconnected. 
-\centerline{\includegraphics[width=0.6\linewidth]{internetstructure}}
+\centerline{\includegraphics[width=0.4\linewidth]{internetstructure}}
 \end{itemize}
 
 
@@ -239,10 +239,6 @@ Examples: TCP, UDP
 Example: Ethernet, WiFi
 \item \textbf{Physical}: Moves individual bits within link-layer frame from one node to another. Link and transmission medium dependent.
 \end{itemize}
-
-\vfill \null
-\columnbreak
-%                              -----------------------------------------------------
 
 \section{2. Application Layer}
 \subsubsection{Principles of Network Applications}
@@ -425,15 +421,11 @@ logical communication between \textbf{hosts}. (best-effort, unreliable)
 \end{itemize}
 
 \subsubsection{Principles of Reliable Data Transfer (rdt)}
-We need to build a reliable transport layer protocol
-on top of unreliable communication.
+Build reliable transport layer protocol on top of unreliable communication.
 \begin{itemize}
 \item Factors: \textbf{Packet corruption, Packet loss, Packet reordering, Packet (Long) Delay.}
 \item Finite State Machines to describe protocol.
 \end{itemize}
-\medskip
-Reliable Data Transfer: \textbf{Service Model}
-\centerline{\includegraphics[width=0.8\linewidth]{rdtmodel}}
 
 \subsubsection{rdt 1.0 (Perfectly Reliable)}
 \begin{itemize}
@@ -502,7 +494,7 @@ Reliable Data Transfer: \textbf{Service Model}
 \smallskip
 \centerline{\includegraphics[width=1\linewidth]{selectiver}}
 
-
+\columnbreak
 
 \section{TCP: Connection-oriented Transport}
 \begin{itemize}
@@ -606,8 +598,6 @@ Reliable Data Transfer: \textbf{Service Model}
 \medskip
 \centerline{\includegraphics[width=1\linewidth]{ipsubnet}}
 
-\vfill \null
-
 \subsubsection{IP Address Allocation}
 \begin{itemize}
 \item Organization can buy from registry / rent from ISP’s addr space to obtain block of IP addr.
@@ -629,8 +619,7 @@ Reliable Data Transfer: \textbf{Service Model}
 
 \subsubsection{Routing Algorithms}
 \begin{itemize}
-\item The Internet as \textbf{“network-of-networks”}, hierarchy of \textbf{Autonomous Systems} (AS), e.g., ISPs, each owns routers and links.
-\item Due to size and decentralized administration of Internet, routing is done hierarchically.
+\item Internet: \textbf{“network-of-networks”}, hierarchy of \textbf{Autonomous Systems} (AS), e.g., ISPs, each owns routers and links. Decentralized administration, so routing done hierarchically.
 \item \textbf{Intra-AS routing}: Finds good path btwn two routers within AS. Commonly used protocols: RIP, OSPF
 \item \textbf{Inter-AS routing (not covered)} Handles the interfaces between ASs, standard protocol: BGP.
 \end{itemize}
@@ -668,7 +657,7 @@ Reliable Data Transfer: \textbf{Service Model}
 \subsubsection{Internet Protocol (IP): IPv4}
 \begin{itemize}
 \medskip
-\centerline{\includegraphics[width=0.9\linewidth]{ipv4datagram}}
+\centerline{\includegraphics[width=0.6\linewidth]{ipv4datagram}}
 \item Length: of IP datagram + 20b header. Identifier, flags, fragment offset: support fragmentation \& reassembly
 \item TTL: Prevent infinite circulation. Upper layer protocol: Only used at final dest, determine if UDP/TCP (for Internet). Checksum also uses 1s complement.
 \item \textbf{IPv6}: 40b header with 128b IP addr.
@@ -676,12 +665,10 @@ Reliable Data Transfer: \textbf{Service Model}
 
 \subsubsection{IP Fragmentation \& Reassembly}
 \begin{itemize}
-\item Different links, different MTU (Max Transfer Unit, max amt of data link-level frame can carry).
-\item “Too large” IP datagrams may be fragmented by routers. \\
+\item Different links, different MTU (Max Transfer Unit, max amt of data link-level frame can carry). “Too large” IP datagrams may be fragmented by routers.
 \centerline{\includegraphics[width=0.9\linewidth]{ipfragmentation}}
 \medskip
-\item \textbf{Flag}(frag flag) is set to 1 if next fragment from same segment, 0 if this is the last fragment.
-\item \textbf{Offset} is in expressed in unit of 8-bytes
+\item \textbf{Flag}(frag flag) is set to 1 if next fragment from same segment, 0 if this is the last fragment. \textbf{Offset} is in expressed in unit of 8-bytes.
 \end{itemize}
 
 \subsubsection{Internet Control Message Protocol}
