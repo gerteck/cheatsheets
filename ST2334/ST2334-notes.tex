@@ -1,10 +1,11 @@
-\documentclass[12pt, landscape]{article}
+\documentclass[8pt, a4paper, landscape]{article}
 \usepackage[scaled=0.92]{helvet}
 \usepackage{multicol}
 \usepackage{calc}
 \usepackage{ifthen}
-\usepackage[landscape]{geometry}
+\usepackage[a4paper, landscape]{geometry}
 %\usepackage{hyperref}
+
 
 \usepackage{newtxtext} 
 
@@ -49,12 +50,12 @@
 % This sets page margins to .5 inch if using letter paper, and to 1cm
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
-\ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
-	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-	}
+\ifthenelse{\lengthtest{\paperwidth = 11in}}
+    {\geometry{top=.5in, left=.5in, right=.5in, bottom=.5in}}
+    {\ifthenelse{\lengthtest{\paperwidth = 297mm}}
+        {\geometry{top=0.5cm, left=0.5cm, right=0.5cm, bottom=0.5cm}}
+        {\geometry{top=1cm, left=1cm, right=1cm, bottom=1cm}}
+    }
 
 % Turn off header and footer
 \pagestyle{empty}
@@ -176,10 +177,6 @@ Mutually Exclusive: {$A \cap B = \emptyset$}.
 $A \perp B \leftrightarrow P(A \cap B) = P(A)P(B)$ \\
 $A \perp B \leftrightarrow P(A|B) = P(A)$
 
-% \vfill \null
-\columnbreak
-
-
 \subsubsection{Law of Total Probability}
 \begin{itemize}
 \item \textbf{Partition: }{If $A_1, \cdots, A_n$ mutually exclusive, $\bigcup _{i=1} ^{n} A_i = S$, then $A_1, \cdots, A_n$ are partitions.}
@@ -194,8 +191,7 @@ For when $n = 2$, $\{A, A' \}$ becomes a partition of $S$.
 \[P(A|B) = \frac{P(A)P(B|A))}{P(A)P(B|A) + P(A')P(B|A')}\] 
 
 \section{2. Random Variables}
-A function X, which assigns a real number to every s $\in$ S is
-called a random variable. \\
+\textbf{Random variable}: A function X, which assigns a real number to every s $\in$ S. \\
 • \textbf{Range space}: $Rx = \{x|x = X(s), s \in S\}$ \\
 • Likewise, the set X $\in$ A, for A being a subset of R, is also a subset of $S: {s \in S : X(s) \in A}$.
 
@@ -249,7 +245,7 @@ Describes distribution of a RV $X$: cumulative distribution function (cdf), appl
 \subsubsection{CDF Discrete RV: Step Function $F(x)$}
 
     \[F(x) = \sum _{t \in R_x; t \leq x} f(t)\]
-	\centerline{\includegraphics[width=0.5\linewidth]{cdfstep}}
+	\centerline{\includegraphics[width=0.6\linewidth]{cdfstep}}
     \begin{itemize}
        \item $P(a \leq X \leq b)=P(X \leq b)-P(X < a)$
        \item $P(a \leq X \leq b)=F(b)-F(a-)$
@@ -258,13 +254,8 @@ Describes distribution of a RV $X$: cumulative distribution function (cdf), appl
        \item  c.d.f has to be \textbf{right continuous} (• ---)
     \end{itemize}
 
-%\vfill \null
-\columnbreak
-
 \subsubsection{CDF Continuous RV: $F(x)$}
-    \[F(x) = \int _{-\infty} ^{x} f(t) dt\]
-    \[impt: f(x) = \frac{d(F(x))}{dx}\]
-    \centerline{\includegraphics[width=0.5\linewidth]{cdfcontinuous}}
+    \centerline{\includegraphics[width=0.90\linewidth]{cdfcontinuous}}
     \begin{itemize}
         \item $P(a \leq X \leq b) = P(a < X < b) = F(b) - F(a)$
         \item $0 \leq f(x)$. \\
@@ -292,8 +283,6 @@ Describes distribution of a RV $X$: cumulative distribution function (cdf), appl
     \item Linearity of expectation: $E(X + Y) = E(X) + E(Y)$
 \end{itemize}
 
-\columnbreak
-
 \subsubsection{Variance of Random Variable: $\sigma$}
 
 \[\sigma_X^2 = V(X) = E[(X - \mu_X)^2]\]
@@ -319,14 +308,13 @@ Describes distribution of a RV $X$: cumulative distribution function (cdf), appl
 
 \section{3. Joint Distributions}
 \begin{itemize}
-    \item Consider more than 1 RV simultaneously, 
-    \item Given sample space $S$. Let $X$ and $Y$ be functions mapping $s \in S \to \mathbb{R}$: $(X, Y)$ is 2D random vector.
-    \[\text{\textbf{Range spc:}} R_{X, Y} = \{(x,y) | x = X(s), y=Y(s), s \in S\}\]
+    \item Consider more than 1 RV simultaneously. Given sample space $S$. Let $X$ and $Y$ be functions mapping $s \in S \to \mathbb{R}$: $(X, Y)$ is 2D random vector.
+    \[\text{\textbf{Range:}} R_{X, Y} = \{(x,y) | x = X(s), y=Y(s), s \in S\}\]
     \item \textbf{Discrete 2D RV:} \\
     {\# of possible values of $(X(s), Y(s))$ finite / countable}
     \item \textbf{Continuous 2D RV}:  \\
     	{\# of possible values of $(X(s), Y(s))$ assume any value in some region of the Euclidean space $\mathbb{R}^2$}
-    \item If both $X$ and $Y$ are discrete/continuous, then $(X, Y)$ is discrete/continuous respectively.
+    \item If both $X$ and $Y$ are discrete/continuous, then $(X, Y)$ is discrete/continuous.
 \end{itemize}
 
 \subsection{Joint Probability Function}
@@ -385,8 +373,6 @@ Then $\forall x$ s.t. $f_X(x) > 0$: ($X$ marg prob fn.) \\
     \item $P(Y \leq y | X = x) = \int _{-\infty} ^y f_{Y|X} (y|x)dy$
     \item $E(Y|X=x) = \int _{-\infty} ^{\infty} y f_{Y|X} (y|x)dy$
 \end{itemize} 
-  
-\columnbreak
 
 % INDEPENDENT RANDOM VARIABLES ===========================
 \subsection{Independent Random Variables}
@@ -424,8 +410,6 @@ Then $\forall x$ s.t. $f_X(x) > 0$: ($X$ marg prob fn.) \\
     	\item For continuous: $f_X (x) = \frac{g_1(x)}{\int _{t \in R_X} g_1 (t)dt}$
 \end{itemize}
 
-\columnbreak
-
 % EXPECTATION & COVARIANCE ==============
 
 \subsection{Expectation of a Random Vector}
@@ -458,16 +442,10 @@ Given \textbf{2 variable function $g(x,y)$:}
     \item $X \perp Y \to V(X \pm Y) = V(X) + V(Y)$ 
 \end{itemize}
 
-\columnbreak
- \vfill \null
- \columnbreak
-
 % CHAPTER 4: Probability Distributions ==================================
 % DISCRETE ==============
 \section{4.1 Special Probability Distributions}
-\begin{itemize}
-\item \textbf{Discrete Distributions}: Study whole classes of discrete RVs that arise frequently in applications.
-\end{itemize}
+\textbf{Discrete Distributions}: Whole classes of discrete RVs that arise frequently.
 
 \subsection{Discrete Uniform Distribution}
 \begin{itemize}
@@ -488,7 +466,7 @@ f(x)
 \subsection{Bernoulli, $Ber(p)$}
 
 \begin{itemize}
-    \item \textbf{Bernoulli Trial}: Random experiment has 2 possible outcomes (success and failure).
+    \item \textbf{Bernoulli Trial}: Random experiment w 2 possible outcomes (success or fail).
     \item \textbf{Bernoulli Random Variable}: $X$ represents number of success in a single Bernoulli Trial. X has only two possible values: 1, or 0.
     \item \textbf{Probability mass function:} Let $0 \leq p \leq 1$ be the probability of success in Bernoulli trial
     \[ f_X (x) = P(X = x) = 
@@ -505,11 +483,10 @@ f(x)
     \item \textbf{Expectation:} $\mu_X = E(X) = p$ 
     \item \textbf{Variance:} $\sigma_X^2 = V(X) = p(1-p)$
     
-    \item \textbf{Bernoulli Process}: Sequence of repeatedly performed \underline{independent and identical} Ber. trials.
+    \item \textbf{Bernoulli Process}: Sequence of repeat \underline{independent, identical} B. trials.
     \item Generates sequence of \textbf{independent and identically distributed (i.i.d.)} Ber. RVs: $X_1, X_2, \cdots$
 \end{itemize}
 
-\columnbreak
 
 \subsection{Binomial Distribution, $B(n, p)$}
 \begin{itemize}
@@ -539,8 +516,6 @@ f(x)
     \item $E(X) = \frac{1}{p}$ and $V(X) = \frac{1-p}{p^2}$
 \end{itemize}
 
-\columnbreak
-
 \subsection{Poisson Distribution}
 \begin{itemize}
     \item \textbf{Poisson RV}: Denotes number of events occuring in \textbf{fixed period of time or fixed region}, $k$ = no. of occurences.
@@ -549,7 +524,7 @@ f(x)
     \item $E(X) = \lambda$ and $V(X) = \lambda$
 \end{itemize}
 \centerline{\includegraphics[width=0.9\linewidth]{poisson}}
-\centerline{\includegraphics[width=0.8\linewidth]{poissonex}}
+\centerline{\includegraphics[width=0.9\linewidth]{poissonex}}
 \subsubsection{Poisson Process}
 \begin{itemize}
     \item Continuous time process, count number of occurrences within some interval of time. (given \textbf{rate} $\alpha$)
@@ -601,6 +576,7 @@ RV X follows uniform distribution over interval $(a,b)$ if $p.d.f.$ given by:
 \centerline{\includegraphics[width=1\linewidth]{uniformcd}}
 \end{itemize}
 
+\columnbreak
 
 \subsection{Exponential Distribution, $Exp(\lambda)$}
 \begin{itemize}
@@ -645,7 +621,7 @@ X said to follow normal distribution with mean $\mu$ and variance $\sigma^2$ if 
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{normal}}
 
-% \columnbreak
+\columnbreak
 
 
 \subsubsection{Standardized Normal Distribution, $Z = N(0, 1)$}
@@ -734,9 +710,6 @@ Let $X \sim B(n, p)$, then as $n \to \infty$:
     \end{itemize}
 \end{itemize}
 
-\vfill \null
-\columnbreak
-
 \subsection{Sample Distribution of Sample Mean}
 
 \begin{itemize}
@@ -792,12 +765,10 @@ $\bar{X}$, \textbf{mean of random sample of size $n$} from population with mean 
 \subsubsection{Sampling Distribution of $\frac{(n-1)S^2}{\sigma^2}$}
 If $S^2$ is variance of random sample of size $n$ from normal population of variance $\sigma^2$, then:
 \[\frac{(n-1)S^2}{\sigma^2} = \frac{\sum _{i=1} ^{n} (X_i - \bar{X})^2}{\sigma^2}\]
-\textbf{has $\chi^2 (n-1)$ distribution} \\
-\bigskip
-\centerline{\includegraphics[width=1\linewidth]{s2}}
-\null \null
+\textbf{has $\chi^2 (n-1)$ distribution} 
+\medskip
+\centerline{\includegraphics[width=0.95\linewidth]{s2}}
 
-\columnbreak
 \subsubsection{t-Distribution $t(n)$}
 Suppose $Z \sim N(0, 1)$, $U \sim \chi^2 (n)$. If $Z$, $U$ independent:
 \[T = \frac{Z}{\sqrt{U/n}} \sim t(n)\]
@@ -814,7 +785,11 @@ where $t(n)$ is t-distribution with $n$ degrees of freedom
     i.e. follows \textbf{t distribution} with \textbf{n-1 degrees of freedom}.
 \end{itemize}
 
-\centerline{\includegraphics[width=0.9\linewidth]{tdist2}}
+\bigskip
+
+\centerline{\includegraphics[width=1\linewidth]{tdist2}}
+\vfill \null
+\columnbreak
 
 \subsubsection{F-Distribution $F(m,n)$}
 Suppose $U \sim \chi^2 (m)$ and $V \sim \chi^2 (n)$ independent:
@@ -832,8 +807,6 @@ i.e. \textbf{F-distribution with $(m,n)$ degrees of freedom}
 \bigskip
 \centerline{\includegraphics[width=1\linewidth]{fdist2}}
 
-
-\columnbreak
 \vfill \null
 \columnbreak
 
@@ -848,7 +821,7 @@ Two types of estimation (of population parameters):
 \item  \textbf{Point estimation}: single number calculated to estimate, called point estimator)
 \item \textbf{Interval Estimation}: two numbers calculated to form an interval which the parameter is expected to lie.
 \end{itemize}
-\centerline{\includegraphics[width=0.5\linewidth]{pointintervalestimate}}
+\centerline{\includegraphics[width=0.6\linewidth]{pointintervalestimate}}
 
 \subsubsection{Notation}
 \begin{itemize}
@@ -866,7 +839,7 @@ Let $\hat{\theta}$ be an estimator of $\theta$. Then $\hat{\theta}$ is unbiased 
 \item This means, unbiased estimator has mean value equals to the true value of the parameter.
 \end{itemize}
 \smallskip
-\centerline{\includegraphics[width=0.5\linewidth]{unbiasedestimator}}
+\centerline{\includegraphics[width=0.6\linewidth]{unbiasedestimator}}
 \textbf{Example}
 \begin{itemize}
 \item Let $X_1, ..., X_n$ be random sample from same population with mean $\mu$ and variance $\sigma^2$. Then, $S^2$ (sample variance, see formula in sampling), is an \textbf{unbiased estimator} of $\sigma^2$ as $E(S^2) = \sigma^2$. 
@@ -875,8 +848,12 @@ Let $\hat{\theta}$ be an estimator of $\theta$. Then $\hat{\theta}$ is unbiased 
 
 \subsubsection{Error of Estimate}
 As typically $\bar{X} \neq \mu$ (estimator $\neq$ true value). We make use of $\bar{X} - \mu$ to measure difference between estimator and true value of parameter.
-\\
-Recall if population normal or sufficiently large, $\frac{\bar{X} - \mu}{\sigma / \sqrt{n}}$ follows (approx) standard normal distribution. \\ \medskip
+\begin{itemize}
+\item Recall if population normal or sufficiently large, $\frac{\bar{X} - \mu}{\sigma / \sqrt{n}}$ follows (approx) standard normal distribution. 
+\end{itemize}
+
+
+\columnbreak
 
 \textbf{Let $\bar{X}$ follow Std. Normal Distribution:}
 \begin{itemize}
@@ -950,9 +927,6 @@ To compare, we need to take a number of observations from each population. Exp. 
     \item \textbf{Matched Pairs Samples:} {Randomization btwn. matched pairs}
 \end{itemize}
 
-\null \null \null \null \null \null \null \null
-\columnbreak
-
 \subsubsection{Independent Samples (Known, Unequal Variance)}
 \textbf{For}: Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$. We define 
 $\delta = \mu_1 - \mu_2$. \\
@@ -989,9 +963,6 @@ Thus, the $100(1-\alpha)\%$ \textbf{confidence interval} for $\mu_1 - \mu_2$ is:
 \[(\bar{X} - \bar{Y}) \pm z_{\alpha/2} \sqrt{\frac{S_1^2}{n_1} + \frac{S_2^2}{n_2}}\]
 
 
-
-
-
 \subsubsection{Indpt. Samples (Small $n$, Equal Unknown Variance)}
 \textbf{For:} Random sample of size $n_1$ from population 1 with $\mu_1$ and $\sigma^2$ and random sample of size $n_2$ from population 2 with $\mu_2$ and $\sigma^2$. \\ \smallskip
 \textbf{where:}
@@ -1021,11 +992,6 @@ Since $n$ is large, we can replace $ t_{n_1 + n_2 - 2; \alpha/2}$ with $z_{
 By applying CLT on large $n$, replace $t_{n_1 + n_2 - 2; \alpha/2}$ with $z_{\alpha/2}$. \\
 Thus, the $100(1-\alpha)\%$ \textbf{confidence interval} for ($\mu_1 - \mu_2$) is:
 \[(\bar{X} - \bar{Y}) \pm z_{\alpha/2} S_p \sqrt{\frac{1}{n_1} + \frac{1}{n_2}}\]
-
-
-\null \null
-\columnbreak
-
 
 \subsection{Paired Data}
 In cases where it makes sense to take matched data instead of independent samples (e.g. couple income, each couple independent of other couples).
@@ -1062,10 +1028,6 @@ Thus, if $n < 30$ and the population is normally distributed, the \textbf{$100(1
 \[T \sim N(0,1)\]
 Thus, if $n \geq 30$, the $100(1-\alpha)\%$ \textbf{confidence interval} for $\mu_D$ is:
 \[\bar{d} \pm z_{\alpha/2} \frac{S_D}{\sqrt{n}}\]
-
-
-\vfill \null
-\columnbreak
 
 
 % HYPOTHESIS TESTING ======================================
@@ -1166,13 +1128,14 @@ Given that:
     \item When $n \geq 30$, we can replace $t_{n-1}$ by $Z$
 \end{itemize}
 
+\columnbreak
+
 \subsection{Two-sided Tests \& Confidence Intervals}
-The \textbf{two-sided hypothesis test} procedure is equivalent to finding a \textbf{$100(1 - \alpha) \%$ confidence interval} for $\mu$. 
+\textbf{Two-sided hypothesis test} procedure equivalent to finding \textbf{$100(1 - \alpha) \%$ confidence interval} for $\mu$. 
 \begin{itemize}
 \item When confidence interval contains $\mu_0$, $H_0$ will not be rejected at level $\alpha$.
 \item Similarly, when confidence interval does not contain $\mu$, then $t$ falls within rejection region and so $H_0$ will be rejected.
 \end{itemize}
-
 
 
 \subsection{Comparing Means: Independent Samples}
@@ -1185,9 +1148,7 @@ The \textbf{two-sided hypothesis test} procedure is equivalent to finding a \tex
 \end{itemize}
 
 \subsubsection{Rejection Regions and p-Values}
-\includegraphics[scale=0.4]{comparing-means}
-
-\columnbreak
+    \centerline{\includegraphics[scale=0.25]{comparing-means}}
 
 \subsubsection{Case 1: Known Variance}
 Consider case where:
@@ -1241,7 +1202,6 @@ Consider case where:
     \end{itemize}
 \end{itemize}
 
-\vfill \null
 \columnbreak
 
 \section{08. Additional Formulae \& Misc}
@@ -1254,32 +1214,24 @@ Consider case where:
 \end{itemize}
 
 \subsubsection{Geometric Series}
-\centerline{\includegraphics[width=0.8\linewidth]{geometricseries}}
-
-\vfill \null
+\centerline{\includegraphics[width=0.75\linewidth]{geometricseries}}
+\centerline{\includegraphics[width=0.98\linewidth]{criticals}} 
 \columnbreak
 
-\centerline{\includegraphics[width=0.98\linewidth]{criticals}} 
-\textbf{Let $\bar{X}$ follow Std. Normal Distribution:} \\
+\textbf{Let $\bar{X}$ follow Std. Normal Distribution:} 
 \begin{itemize}
     \item Let $z_\alpha$ be $\alpha$th upper quantile of standard normal distribution 
     $Z$. i.e. $P(Z > z_\alpha) = \alpha$.
 \end{itemize}  
-\smallskip
-\centerline{\includegraphics[width=0.6\linewidth]{Za}}
+
+\centerline{\includegraphics[width=0.8\linewidth]{Za}}
 \centerline{\includegraphics[width=0.5\linewidth]{criticalvalues}}
-\centerline{\includegraphics[width=0.8\linewidth]{criticalvalues2}}
-
-\null
-\columnbreak
-
-\smallskip
-\centerline{\includegraphics[width=1\linewidth]{criticals2}}
-
-\smallskip
-\centerline{\includegraphics[width=0.7\linewidth]{chitable}}
+\centerline{\includegraphics[width=0.9\linewidth]{criticalvalues2}}
+\centerline{\includegraphics[width=0.9\linewidth]{criticals2}}
 
 \columnbreak
+
+\centerline{\includegraphics[width=0.8\linewidth]{chitable}}
 
 \subsection{Properties of P.d.f. \& C.d.f}
 \smallskip
@@ -1287,7 +1239,7 @@ Consider case where:
 \smallskip
 \centerline{\includegraphics[width=1\linewidth]{pdfcdf2}}
 \smallskip
-\centerline{\includegraphics[width=0.85\linewidth]{tDistTable}}
+\centerline{\includegraphics[width=1\linewidth]{tDistTable}}
 
 
 
