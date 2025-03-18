@@ -94,7 +94,7 @@
 \setlength{\leftmargini}{0.5cm}
 \setlength{\leftmarginii}{0.5cm}
 \setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm, before=\justifying}
-\setlist[itemize,2]{leftmargin=3mm,labelindent=0.5mm,labelsep=1mm, itemsep = 0mm, before=\justifying}
+\setlist[itemize,2]{leftmargin=3mm,labelindent=0.2mm,labelsep=1mm, itemsep = 0mm, topsep=0pt, before=\justifying}
 %\setlist{nosep}
 
 \usepackage[document]{ragged2e}
@@ -507,6 +507,107 @@ Test levels. Flaky tests. Specification-based/Structural/Mutation testing. \\
 	\textit{Pros}: Identify undertested code.\\
 	\textit{Cons}: Comptn expensive; equivalent mutants may not change behavior.
 \end{itemize}
+
+% -------------------------------------------------------------------------------------------------------------%
+
+\subsection{6. \underline{Debugging and Fault Localization}}
+Scientific Method to Debugging (Systematic Approach). Statistical Fault 
+Localization. Input Reduction. Isolating Bug inducing Changes. \\
+\textit{Mainly, build mental model to approach debug from different angles, and some techniques useful as tools (e.g. reduction tools).}
+
+\subsubsection{Debugging}
+Software developers spend 35–50\% of time validating, debugging software. Est. cost of debug, test, verification up to 50–75\% project budget. Identify systematic, effective approaches, enhance productivity. 
+\begin{itemize}[itemsep=-1pt]
+\item \textbf{Shifting Left}: Debug during software development (e.g., due to failing tests or static analysis reports), but also after deployment (user reports).
+\item \textbf{How NOT to approach debugging}: Can change code and try until works. But if don't understand underlying cause, may not fix bug’s root cause.
+\item \textbf{Typical strategy to debug?}:
+\begin{itemize}[itemsep=-1pt]
+	\item \textbf{Printf debugging}: Simple, intuitive, language tool agnostic. But can quickly be confusing, forget to remove print, may require recompilation.
+	\item \textbf{Logging}: More systematic alternative to print statements. Multiple debugging levels supported (E.g. INFO, WARN, ERROR, FATAL).
+	\item \textbf{Debugger}: Language-specific debugger. Set breakpoints, stepping in/over/out methods, stepwise execution, inspect program state (variables, stack trace.) Can be more systematic, display more info, set breakpoints properly. However, still require strategy with debuggers.
+\end{itemize}
+\item Challenges: Program states very large, challenging to search all manually. Not clear if (intermediate) states correct or not. Execution could have millions of steps. Hence, need good debug strategy to focus search.
+\end{itemize}
+
+\textbf{Fault vs. Defect vs. Failure}:
+\begin{itemize}[itemsep=-1pt]
+\item \textbf{Fault}: Location of flaw in code, causes incorrect behavior/unwanted state.
+\item \textbf{Defect (Bug)}: Manifestation of fault in software. (Error in program code)
+\item \textbf{Failure}: Deviation of behavior from expected output. (Externally visible)
+\end{itemize}
+Through unit test, observed a failure. In order to debug the failure, we need to trace it back to the defect that caused the first fault.
+
+
+\subsubsection{Scientific Method to Debugging}
+Systematic process of identifying faults. Basically, observe failure, generate hypotheses on cause, test hypotheses by experiment (e.g., add debug , assert statements). Refine or confirm hypotheses based on results.
+\begin{enumerate}[itemsep=-1.5pt]
+\item Formulate a question.
+\item Come up w. hypothesis based on knowledge obtained while formulating question, that may explain observed behavior.
+\item Determine logical consequences hypothesis, formulate prediction that can support or refute hypothesis. Ideally, prediction would distinguish hypothesis from likely alternatives.
+\item Test prediction (and thus hypothesis) in experiment. If prediction holds, confidence in the hypothesis increases; 
+otherwise, it decreases.
+\item Repeat Steps 2–4 until no discrepancies between hypothesis and predictions and/or observations.
+\end{enumerate}
+\begin{itemize}
+\item \textbf{Scientific process Theory}: a hypothesis that is consistent with earlier observations, predict future obsv (program behavior). $\rightarrow$ Diagnosis.
+\item \textbf{Diagnosis} (Debugging): explains both causality, (how failure came to be), and incorrectness (how to correct the code accordingly), then it is time to actually fix the code accordingly.
+\end{itemize}
+For complex issues, might have days/weeks to debug, systematic debugging strategy is useful. Also helps to systematically log and create a table etc.  \\ \smallskip
+\textbf{Rubberducking}: Explaining code line-by-line to an inanimate object (or another person) to identify logical errors or misunderstandings.
+
+\subsubsection{Program Slicing}
+Identifying parts of the program (slice) that influence/ are influenced by specific variable/ statement. Automatically determine which earlier variables influenced the current erroneous state.
+\begin{itemize}[itemsep=-1pt]
+\item \textbf{Definition}: Slicing extracts a subset of program that potentially affects variables/ values at specific program location. A slice identifies the subset of the program that could have influenced the variable/returned value.
+\item \textbf{Tracking Origins}: Start with faulty state (failure), trace origins to earlier states. Identify if origins faulty or correct. Continue tracing till faulty state with only correct origins found, indicating the defect.
+\item \textbf{Advantages}: Narrows scope of debugging, rule out locations that cannot have effect on failure. Bring together possible origins that may be scattered across code. AKA helps consolidate scattered dependencies into a single, manageable view.
+\item \textbf{Types of Dependencies}: \textit{Data Dependency}: Variable's value depends on prior variable. (e.g. fn params). \textit{Control Dependency}: Execution of statement depends on condition. Can reason using program dependence graph.
+\item \textbf{Static vs. Dynamic Slicing}: \textit{Static Slicing}: Considers all possible executions of the program. (e.g. include whole method, both if and else branch). \textit{Dynamic Slicing}: Focuses on a specific execution path based on concrete inputs. (e.g. only consider if branch, as else branch not executed).
+\item \textbf{Forward vs. Backward Slicing}: \textit{Backward Slicing}: Identifies what influenced a particular value. \textit{Forward Slicing}: Identifies what statements are influenced by a particular value.
+\end{itemize}
+Slicing applications: As mental model, some support in IDEs, papers published, program understanding, maintenance, security analysis.
+
+\subsubsection{Statistical Fault Localization}
+Automatically localize faults using statistical reasoning.
+\begin{itemize}
+\item \textbf{Observation}: Program failures correlate with events that precede them. (Correlation does not imply causation, but can help find faults.)
+\item \textbf{Tarantula Algorithm}: Assigns suspiciousness scores to program elements based on involvement in failing and passing test cases.
+	\begin{itemize}[itemsep=-1pt]
+	\item Formula:	[\text{Suspiciousness}(line) = $\frac{\%failed(line)}{\%failed(line) + \%passed(line)}$	]
+	\item Visualize using color coding (red: suspicious, green: safe).
+	\end{itemize}
+\item \textbf{Limitations}: Provides no direct information about root cause beyond identifying suspicious lines. Effectiveness depends on complexity of bug. Limited tool support in IDE integrations. Research shows such approaches provide only limited support to experts.
+\end{itemize}
+
+\subsubsection{Test-Case Reduction}
+Reduce large failure-inducing inputs to minimal reproducible test cases. E.g. Mozilla BugAThon to simplify bug reports.
+\begin{itemize}[itemsep=-1pt]
+\item \textbf{Small Scope Hypothesis}:  “A high proportion of errors can be found by testing a program for all test inputs within some small scope''. Most bugs triggerable w. small, simple inputs. Can reduce the bug-inducing input.
+\item \textbf{Test-case reduction tools}: reduce input element, apply (user-supplied) test oracle, check whether the bug is still being triggered
+ If so, continue applying another reduction. If not, undoes change, attempts another reduction. \textbf{E.g.}: Using C-Reduce to minimize SQL queries that expose bugs in SQLite.
+\item \textbf{Delta Debugging}:
+	\begin{itemize}
+	\item Systematically removes elements from the input while ensuring the bug is still triggered. Behaves like binary search but explores combinations of smaller blocks when binary search fails. Iteratively increases granularity if neither partitions nor complements trigger the bug.
+	\item Simply: start reducing, consider granularity of n=2 (two halves). Consider partitions of input, and then complements (Whole input minus the specific partition). If any of partitions cause test to fail, continue reducing partition. Otherwise, reduce complement. If both do not work, increase granularity (create more partitions).
+	\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{deltaDebugging}}
+Finding the global minimum would have an exponential complexity $(2^{|c \chi|})$, which is why Delta Debugging only
+ gives us a local minimum: no subset of the reduced test case the test to fail, which is called 1-minimality.
+\item \textbf{Reducer Characteristics}: Advantages: Simplifies debugging (easier to debug, analyze reason), aids in identifying duplicate bugs, and improves communication of bug. Challenges: Interestingness tests can be complex; inefficient for highly structured languages without hierarchical reduction techniques.
+\end{itemize}
+
+\subsubsection{Isolating Failure-Inducing Changes}
+\begin{itemize}[itemsep=-1pt]
+\item \textbf{Regression Bugs}: Features work in previous versions, fail in newer ones.
+\item \textbf{Git Bisect}: Automates the process of identifying the commit that introduced a regression bug using binary search.
+	\begin{itemize}
+		\item Steps: Mark a known good version (\texttt{git bisect good}) and a bad version (\texttt{git bisect bad}). Test intermediate versions until the first bad commit is identified. Can be automated using scripts that build and test the program for each version.
+	\end{itemize}
+\item \textbf{Delta Debugging on Changes}: Applies delta debugging to individual patches within a commit. Granularities include hunks (consecutive differing lines) or entire changesets.
+\end{itemize}
+
+
+
 
 
 
