@@ -571,9 +571,9 @@ Slicing applications: As mental model, some support in IDEs, papers published, p
 Automatically localize faults using statistical reasoning.
 \begin{itemize}
 \item \textbf{Observation}: Program failures correlate with events that precede them. (Correlation does not imply causation, but can help find faults.)
-\item \textbf{Tarantula Algorithm}: Assigns suspiciousness scores to program elements based on involvement in failing and passing test cases.
+\item \textbf{Tarantula Algorithm}: Assigns suspiciousness scores to program elements based on involvement in failing and passing test cases. Hue $= [0,1]$
 	\begin{itemize}[itemsep=-1pt]
-	\item Formula:	[\text{Suspiciousness}(line) = $\frac{\%failed(line)}{\%failed(line) + \%passed(line)}$	]
+	\item Formula:	[\text{Suspiciousness}(line) = $\frac{  \frac{failed(line)}{total failed}  }{\frac{failed(line)}{total failed} + \frac{passed(line)}{total passed}}$	]
 	\item Visualize using color coding (red: suspicious, green: safe).
 	\end{itemize}
 \item \textbf{Limitations}: Provides no direct information about root cause beyond identifying suspicious lines. Effectiveness depends on complexity of bug. Limited tool support in IDE integrations. Research shows such approaches provide only limited support to experts.
@@ -605,6 +605,166 @@ Finding the global minimum would have an exponential complexity $(2^{|c \chi|})$
 	\end{itemize}
 \item \textbf{Delta Debugging on Changes}: Applies delta debugging to individual patches within a commit. Granularities include hunks (consecutive differing lines) or entire changesets.
 \end{itemize}
+
+
+\subsection{7. \underline{Software Development Practices}}
+\textbf{Development Practices}: Architecture/SWE: `What', Practices: `How'. Between code and practices, need for agreements, no silver bullets, change over time, but there are generally good practices. What questions should we be asking? • Credits: Guest Lecturer Kareem Shehata.
+
+\subsubsection{Source Control (SCM)}
+Primary output of a SWE is code! But source control $\neq$ git. 
+\begin{itemize}[itemsep=-1pt]
+\item \textbf{Questions to ask}: Who is allowed to view / change code? How are changes managed? dependencies managed? How does source control integrate with your tools? Branches, tags, merges, etc.
+\item \textbf{SCM Tool Considerations}:
+	\begin{itemize}
+	\item \textbf{Centralized vs Decentralized}: Centralized systems have single repository, decentralized allow multiple repositories w. synchronization.
+	\item \textbf{Dependency Management}: Tools (Maven, Gradle) help manage deps.
+	\item \textbf{Scalability}: Ensure SCM tool can handle large repositories and teams.
+	\item \textbf{Development Tool Support}: Integration with IDEs like VS, XCode.
+	\item \textbf{Expertise/opinions in team}: Choose tools that align with whole team's expertise, preferences.
+	\end{itemize}
+\item \textbf{Good SCM Practices}:
+	\begin{itemize}
+	\item \textbf{Single Source of Truth}: Maintain single authoritative repository.
+	\item \textbf{Consistency}: Consistent naming conventions (branches, tags, commits).
+	\item \textbf{Small, Focused Changes}: Commit small, independent changes that are easier to review and revert if necessary.
+	\item \textbf{Clarity}: Clear commit messages explaining what was changed and why.
+	\item \textbf{Use Branches and Tags Appropriately}: Use branches for feature development and tags for releases.
+	\item \textbf{Avoid Long-Lived Branches}: Merge branches frequently to reduce integration challenges.
+	\item \textbf{Use Toolset for Managing Dependencies}: Leverage dependency management tools to handle external libraries.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Coding Style}
+Consistent coding style improves readability, maintainability, collaboration. Also, probably need to revisit, read own code in the future.
+
+\begin{itemize}
+\item \textbf{Why Care About Style?}:
+	\begin{itemize}
+	\item Unnecessary changes in SCM due to formatting differences.
+	\item Inconsistencies make code harder to read and understand.
+	\item Differences in style can lead to confusion and inefficiency.
+	\end{itemize}
+\item \textbf{Key Elements of a Style Guide}:
+	\begin{itemize}
+	\item \textbf{Consistency $>>$ Optimality}: Consistent code is more important than "clever" or overly optimized code.
+	\item \textbf{Focus on Clarity}: Code should be clear and unsurprising to readers.
+	\item \textbf{Practicality $>>$ Clever/Pretty}: Practical solutions are preferred over clever or aesthetically pleasing ones.
+	\item \textbf{Idioms and Practices}: Include guidelines on how tasks should be approached, not just formatting rules.
+	\item \textbf{Autoformatters}: Use tools like Prettier, clang-format, or Black to automate formatting.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Versioning and Releases}
+Depends on deploy method. Web services w. rolling releases, app stores, binaries, embed systems will be diff. in deployment, releases.
+
+\subsubsection{Software Versioning}
+Process of assigning unique identifiers to bundles of software. Identifiers help track, manage diff releases of software over time. Primary goals: 
+\begin{itemize}[itemsep=-1pt]
+\item Allow users to know which version of the software using, enable developers to identify version customers are using. 
+\item Managing dependencies between software components.
+\end{itemize}
+
+\subsubsection{Semantic Versioning (SemVer)}
+Semantic Versioning is a widely adopted versioning scheme, particularly for software with public APIs. It uses a three-part version number: \textbf{MAJOR.MINOR.PATCH}.
+\begin{itemize}[itemsep=-1pt]
+    \item \textbf{MAJOR version}: Increment: incompatible API changes are made.
+    \item \textbf{MINOR version}: Increment: backward-compatible functionality is added.
+    \item \textbf{PATCH version}: Increment: backward-compatible bug fixes.
+    \item \textbf{Hyrum's Law}: With a sufficient number of users of an API, it does not matter what you promise in the contract: all observable behaviours of your system will be depended on by somebody. 
+\end{itemize}
+This system ensures clarity and consistency in communicating changes to users and developers.  However, these labels are slapped on by a human - no perfect guarantee it will not break your system!!
+
+\subsubsection{Versioning Schemes}
+\begin{itemize}
+    \item \textbf{Commits as Identifiers}: Source control systems like Git assign unique hashes to commits (e.g., \texttt{2d54f09b}). \textbf{Pros}: Automatic, no additional effort required; useful for internal tracking. \textbf{Cons}: Not all commits correspond to release versions; difficult to remember and interpret.
+    \item \textbf{Assigned Identifiers}: Includes code names (e.g., Android's "Lollipop," "Marshmallow") or version increments (e.g., v1, v2, v3).
+ Can be combined with tags indicating release stages (e.g., alpha, beta, rc for release candidate). \textbf{Pros}: Easier to remember; code names aid branding and communication. \textbf{Cons}: Requires manual assignment and management.
+ 	\item \textbf{E.g. Versioning in Practice}: \textbf{Android}: Uses both numeric versions and dessert-themed code names (e.g., Android 9: Pie). Code names follow alphabetical order, aiding in identifying newer versions. \textbf{macOS}: Combines numeric versions with thematic names (e.g., macOS Big Sur, macOS Monterey). \textbf{Ubuntu}: Uses calendar-based versioning (YY.MM) and distinguishes Long-Term Support (LTS) releases.
+	\item \textbf{Choosing Versioning Scheme}: The choice of versioning scheme depends on organizational needs, deployment strategies, release frequency, and user expectations. For example: web services with rolling releases may prefer frequent, small increments. Embedded systems/ safety-critical software may strict versioning/ long-term support. (Needs of marketing / users?)
+	\item \textbf{Best branching strategy?}: Anything that gives a single source of truth, consistent, depends on your organization, deployment strategy, etc!
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{gitTrunk}}
+\centerline{\includegraphics[width=0.5\linewidth]{gitFlow}}
+
+\subsubsection{Dependencies}
+Probably most important, most difficult part of SWE. Dependencies: external components for software to function correctly, but not directly controlled by development team. Modern software: lot of dependencies! \\ \smallskip
+\centerline{\includegraphics[width=0.9\linewidth]{dependencies}}
+\begin{itemize}
+    \item \textbf{Examples}: Libraries (e.g., React, TensorFlow), Build tools (e.g., Maven, Gradle), External services (e.g., APIs, cloud platforms).
+    \item \textbf{Dependency Hell}: when multiple dependencies conflict, when outdated libraries cause integration issues. Modern software numerous dependencies, increasing complexity of dependency management.
+    \item \textbf{Managing Dependencies} Strategies include: Embedding small or critical libraries directly into project, hosting medium-sized libraries in a private repository, using submodules or package managers for large, well-established libraries. Employing lockfiles and containers to ensure consistent runtime environments.
+\end{itemize}
+
+\subsubsection{Deprecation}
+Process of orderly migration away from, eventual removal of obsolete systems. Planning, executing a transition strategy to minimize disruption.
+\begin{itemize}
+    \item \textbf{Why Deprecate?} Code / Dependencies are liability, not an asset. Maintaining outdated systems incurs operational costs. Legacy systems hinder the evolution of newer systems due to compatibility requirements. Deprecation allows organizations to focus resources, maintain and improve current systems. (Google: having multiple systems performing same function impedes evolution of newer system as still expected to maintain compatibility with old one).
+	\item \textbf{Challenges}: Emotional attach. old systems. Difficulty in funding, executing deprecation efforts. High costs migrating to entirely new systems.
+	\item \textbf{Types of Deprecation}: \textbf{Advisory Dep}: Informing users about deprecated features without enforcing immediate action. \textbf{Compulsory Dep}: Setting deadlines for removal and ensuring compliance through enforcement.
+	\item \textbf{Deprecation During Design}: Designing systems with deprecation in mind can simplify future decommissioning. For example:
+Planning for incremental replacement of components. Ensuring clear documentation and migration paths for users (give alternative).
+\end{itemize}
+
+\subsubsection{Code Review}
+Before deploying new code, critical to ensure quality, correctness. Unreviewed code: lead to bugs, poor design decisions, maintainability issues. Mitigate risks by involving others in process of inspecting, improving code.
+\begin{itemize}[itemsep=-1pt]
+    \item \textbf{Risk Mitigation}: Code reviews catch defects early, formal reviews identifying up to 60\% of defects (comparatively - 30\% for testing).
+    \item \textbf{Maintainability}: Studies: up to 75\% of code review comments address evolvability, maintainability, not just functionality.
+    \item \textbf{Other Benefits}: Solicit feedback on code design, practices. Teaching, demonstrating coding methods. Raising awareness of product's state. Highlighting potential future problems.
+  	\item \textbf{Challenges}: \textit{Speed vs. Thoroughness}: Review time increases exponentially with the size of the change, leading to diminishing returns on thoroughness. \textit{Balancing Priorities}: if speed or depth of review more important.
+\end{itemize}
+
+\subsubsection{Good Practices for Code Reviews}
+To ensure effective code reviews, \textbf{authors} should:
+\begin{itemize}[itemsep=-1pt]
+    \item Keep reviews small and focused. Clear desc, annotate to guide reviewers.
+    \item Choose appropriate reviewers, balance feedback quality w. team awareness.
+    \item Open to feedback, implement suggested changes unless strong reason not.
+    \item Reflect on feedback to improve future work.
+\end{itemize}
+\textbf{Reviewers} should:
+\begin{itemize}[itemsep=-1pt]
+    \item Push back on overly broad or poorly described changes.
+    \item Focus on code, not person. Ask qns, point out problems, suggest solutions.
+    \item Consider edge cases, failure scenarios, and future maintainability.
+    \item Be responsive while balancing the severity and importance of changes.
+\end{itemize}
+
+\subsubsection{Software Quality Assurance (SQA)}
+Software Quality Assurance (SQA) encompasses all activities aimed at ensuring product quality before reach customers. Unlike testing, which focuses on finding bugs, SQA addresses broader aspects of quality, including usability, performance, and maintainability.
+\begin{itemize}
+    \item \textbf{Key Principle}: Just as physical products quality checks, software products to meet high-quality standards before release.
+    \item \textbf{SQA Scope}: test, docs, process adherence, customer UX validation.
+    \item \textbf{Best Practices}: Simulate real-world customer usage to identify gaps between product, expectations. Ensure QA performed by someone other than developer to avoid biases. Focus on entire customer experience, not just crashes, functional bugs. (E.g. QA engineer tests edge cases (e.g., ordering -1 beers) and unexpected inputs (e.g., "ueicbksjdhd",''where is toilet'').)
+\end{itemize}
+
+\subsubsection{Deployment}
+Deployment strategy impacts SWE practices. Method of deployment depends on factors e.g. update frequency, scalability, risk tolerance.
+\begin{itemize}[itemsep=-1pt]
+    \item \textbf{Examples of Deployment Methods}: Zip files on a server, Web apps w. continuous deployment ("DevOps"). App stores (mobile), Physical media (e.g. games), Pre-installed software on devices.
+    \item \textbf{Considerations}: Speed, friction for releases/updates. Scalability to handle large user bases. Risks associated with deployment failures. Costs of maintaining infrastructure.
+	\item \textbf{Deployment Strategy Examples}: \textit{NASA}: Rigorous testing, version control, minimal runtime dependencies due to limited update opportunities. \textit{Web App}: Allows instant updates, frequent releases, enabling rapid iteration.
+\end{itemize}
+
+\subsubsection{Key Takeaways}
+\begin{itemize}[itemsep=-1pt]
+    \item Learn best practices but adapt them to your organization's needs.
+    \item There are no universal solutions; context matters.
+    \item Teamwork, collaboration, and consistency outperform individual heroics.
+    \item Think critically about organizational priorities when choosing practices.
+\end{itemize}
+
+\subsubsection{Differences Between Junior and Senior Developers}
+\begin{itemize}
+    \item \textbf{Junior Devs}: Hide code until "ready." Provide inaccurate estimates, deliver inconsistently. Use long-lived branches, big merges. Large, unstructured commits w. unclear messages. View code review feedback as criticism.
+    \item \textbf{Senior Devs}: Share code, ideas during dev. Provide accurate estimates, deliver on time. Use short-lived branches w. smaller merges. Make small, focused commits w. clear reasoning. View code review feedback as opportunity to improve.
+    \item \textbf{Agility in Software Engineering}: "Solutions to common software engineering problems not always obvious. Agility - both technical and organizational - is essential to identify solutions that work for current challenges and remain resilient to future changes." - Asim Husain, VP Eng, Google.
+\end{itemize}
+
+
+
+
+
 
 
 
