@@ -99,7 +99,7 @@
 \setlength{\leftmargini}{0.5cm}
 \setlength{\leftmarginii}{0.5cm}
 \setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm, before=\justifying}
-\setlist[itemize,2]{leftmargin=3mm,labelindent=0.5mm,labelsep=1mm, itemsep = 0mm, before=\justifying}
+\setlist[itemize,2]{leftmargin=3mm,labelindent=0.5mm,labelsep=1mm, itemsep = 0mm, topsep=0mm, before=\justifying}
 %\setlist{nosep}
 
 \usepackage[document]{ragged2e}
@@ -447,19 +447,152 @@ MSE not ok for logistic due to non-convexity. Use \textbf{Binary Cross Entropy}.
 \subsubsection{Multi-Class Classification}
  Extends binary classification to multiple classes by breaking down into sets.\\
  \textbf{One-vs-one}: Binary classifier for every pair of classes $total =\frac{C(C-1)}{2}$ classifiers. Class with most votes wins. \\
- \textbf{One-vs-rest}: Binary classifier for each class, treat all other classes as combined class. $C$ classifiers. Class with highest probability output wins.
+ \textbf{One-vs-rest}: Binary classifier for each class, treat all other classes as combined class. \textbf{$C$ classifiers.} Class with highest probability output wins.
 
+\columnbreak
 
+\subsection{7. \underline{Regularization, Kernels, Support Vector Machines}}
+\subsection{Regularization}
+Technique to $\downarrow$ overfitting, by \textbf{penalizing large weights in model}. 
+\begin{itemize}[itemsep=-1pt]
+\item Overfitting when model too complex, capturing training data noise over underlying pattern, leads to poor generalization on unseen data.
+\item Overfitting often associated w. models w. large weights. E.g.:
+	\begin{itemize}[itemsep=-2pt]
+	    \item Complex polynomial model $ h(x) = w x^3 - w x $ fits train data perfect, fail to generalize to new data. 
+	    Large oscillations in model can occur as weights $ w $ increase, even while fitting the same set of points.
+	\end{itemize}
+\end{itemize}
+Regularization: \textbf{penalty term} to loss function, discourage large weights.
 
+\begin{itemize}[itemsep=-1pt, topsep=0.5pt]
+\item Given a loss function $ J(w) $ (e.g., MSE or BCE), add penalty function $ P(w) $ scaled by a hyperparameter $ \lambda \geq 0 $, where \textbf{optimization goal} becomes:
+\[J_{\text{reg}}(w) = J(w) + \lambda P(w), \text{where we want:} \min_w J_{\text{reg}}(w). \text{(by varying $w$)}\]
+\item Perform feature scaling before regularization. (Same effect on all variables).
+\end{itemize}
+\textbf{Common Penalty Functions}
+\begin{itemize}[itemsep=-2pt]
+    \item \textbf{L2 penalty/regularizer (Ridge Regression)}: Penalizes square of weights, encourage smaller weights, smooths model.
+    {\scriptsize
+    \[P_{\text{square}}(w) = \frac{1}{2} \sum_{j=0}^d w_j^2, \quad P_{\text{abs}}(w) = \sum_{j=0}^d |w_j|, \quad P_{\text{max}}(w) = \max(|w_0| ... |w_d|) \]
+	}
+    \item \textbf{L1 Regularizer (Lasso Regression)}: Penalizes absolute weight values, encourage sparsity, effectively feature selection by driving some weights to 0.
+    \item \textbf{Max-Norm Penalty}: Constraint max weight, prevent extreme values.
+\end{itemize}
 
+\textbf{Effect of Regularization on Learning Algorithms}
+\begin{itemize}[itemsep=-2pt]
+    \item \textbf{Gradient Descent}: The gradient of the regularized loss function includes both the original loss gradient and the gradient of the penalty term:
+    \[\frac{\partial J_{\text{reg}}(w)}{\partial w_j} = \frac{\partial J(w)}{\partial w_j} + \lambda \frac{\partial P(w)}{\partial w_j}.    \]
 
+    \item \textbf{Normal Equation}: For linear regression with L2 regularization, the closed-form solution becomes:
+    \[
+    w = (X^T X + \lambda I)^{-1} X^T Y,
+    \]
+    where $ I $ is the identity matrix. This ensures invertibility of $ X^T X + \lambda I $, even in cases of multicollinearity or insufficient data.
+\end{itemize}
 
+\textbf{Trade-Off w. Regularization Strength $ \lambda $}: Hyperparam (penalty strength) $ \lambda $ controls trade-off between fitting training data and keeping weights small:
+\begin{itemize}[itemsep=-2pt]
+    \item Small $ \lambda $: Emphasizes fitting the data, potentially leading to overfitting.
+    \item Large $ \lambda $: Emphasizes smaller weights, potentially leading to underfitting.
+\end{itemize}
 
+\subsection{Kernel Method}
+\textbf{Linear Combination of Vectors, Linear Model Weights \& Training Data}: \\
+A linear combination of vectors is sum of scalar multiples of those vectors.
+vector {\tiny $\begin{bmatrix} 2 \\ 3 \end{bmatrix} = 2 \begin{bmatrix} 1 \\ 0 \end{bmatrix} + 3 \begin{bmatrix} 0 \\ 1 \end{bmatrix}$}. 
+In linear regression, weight vector $ w $ can express as linear combo of training data points $ x^{(j)} $, where coefficients $ \alpha_j $ are real. Normal equation, {\scriptsize $ w = (X^T X)^{-1} X^T Y $ } rewritten as  {\scriptsize $ w = \sum_{j=1}^N \alpha_j x^{(j)} $ }.
+(The weights are derived from a weighted combination of training data.)
 
+\begin{itemize}
+\item \textbf{Dual Formulation of Linear Regression:} Hence, linear model $ h_w(x) = w^T x $ can be rewritten in its dual form, 
+where $ \alpha_j $ are the new parameters (weights), and $ x^{(j)} $ are training data points. This expresses predictions as weighted sum of dot products between training data $ x^{(j)} $ and input $ x $.
+\[h_\alpha(x) = \sum_{j=1}^N \alpha_j (x^{(j)})^T x\]
+\item \textbf{Dot Product and Similarity}: Dot product $ u \cdot v = u^T v $ measures similarity between 2 vectors. E.g. orthogonal vectors dot product of zero: {\tiny$\begin{bmatrix} 1 \\ 1 \end{bmatrix} \cdot \begin{bmatrix} 1 \\ -1 \end{bmatrix} = 0 $}
+\end{itemize}
 
+\subsubsection{Dual Formulation with Kernel: Kernel Trick}
+Dual hypothesis dot product $ (x^{(j)})^T x $ replace by kernel function $\mathbf{k(x^{(j)}, x)}$:
+\vspace{-0.5em}
+\[h_\alpha(x) = \sum_{j=1}^N \alpha_j k(x^{(j)}, x).\]
+\centerline{\includegraphics[width=1\linewidth]{kernel}}
+Kernel function $ k(u, v) $ generalizes dot product to measure similarity in potentially higher-dimensional space w/o explicit computing transformation.
+\begin{itemize}[itemsep=-1.5pt]
+\item \textbf{Kernel Trick}: Replaces dot product with similarity function $ k(u, v) $, enabling efficient computation of complex relationships in data. Valid kernel functions must satisfy conditions like symmetry and positive definiteness. 
+\item A model that uses the kernel trick is called a \textbf{kernel machine}, which allows for implicit computation of high-dimensional feature transformations.
+\item \textbf{Examples of Kernels}:
+	\begin{itemize}[itemsep=-1.5pt]
+	    \item \textbf{Polynomial Kernel}: {\scriptsize $k(u, v) = (u^T v)^s$ } where $ s $ is degree of polynomial.
+	    \item \textbf{Gaussian (RBF) Kernel}:  $k(u, v) = \exp\left(-\frac{\|u - v\|^2}{2 \sigma^2}\right)$ \\
+	    where $ \sigma^2 $ controls width of Gaussian ($\downarrow \sigma = $ narrower, $\uparrow$ = wider).
+	    \item \textbf{String Kernel}: Measures similarity between strings.
+	    \item \textbf{Chi-Squared Kernel}: Useful for histograms.
+	    \item \textbf{Tanh Kernel}: Similar to neural network activation functions.
+	\end{itemize}
+\item \textbf{Transformed Features and Kernels}: Deep connection between kernels and feature transformations (Can be single variable, multi-variable transformations to create new features). Specifically:
+	\begin{itemize}[itemsep=-2pt]
+	    \item Any valid kernel $ k(u, v) $ corresponds to a feature map (transform) $ \phi $ s.t.:
+	    \[
+	    k(u, v) = \phi(u)^T \phi(v).
+	    \]
+	    \item Conversely, any feature transformation $ \phi $ induces a valid kernel.
+	\end{itemize}
+\item \textbf{Implicit, efficient} computation by Kernels of feature transformations, even when transformed feature space is infinite-dimensional. E.g.
+	\begin{itemize}[itemsep=-2pt]
+	    \item The RBF kernel corresponds to an infinite-dimensional feature map.
+	    \item Compute $ \phi(x) $ explicitly maybe infeasible, evaluating $ k(u, v) $ efficient.
+	\end{itemize}
+\item \textbf{E.g. Polynomial Feature Transform}: to all monomials of degree up to 2:
+\vspace{-0.5em}
+\[x = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} \to \phi(x) = \begin{bmatrix} x_1 \\ x_2 \\ x_1^2 \\ x_2^2 \\ x_1 x_2 \end{bmatrix}
+\text{, corresponding kernel:} \hspace{0.5em} k(u, v) = (u^T v)^2. \]
+\end{itemize}
+Dual formulation of linear models expresses predictions as weighted sum of kernel evaluations. Kernels generalize dot product, enabling implicit computation of high/ infinite-dimensional feature transformations. The kernel trick is powerful for handling non-linear data efficiently.
 
+\subsection{Support Vector Machine (SVM)}
+SVM is a powerful classifier with several key aspects:
+\begin{itemize}[itemsep=-2pt]
+    \item \textbf{Optimal Decision Boundary}: SVM constructs an optimal separating decision boundary based on training data.
+    \item \textbf{Fat Margin Classifier}: Maximizes the margin, which improves performance on unseen data and enhances robustness to noise.
+    \item \textbf{Non-linear Decision Boundaries}: The kernel trick allows SVM to handle non-linear decision boundaries naturally.
+    \item \textbf{Kernel Machine}: SVM is one of the most famous kernel machines.
+\end{itemize}
 
+\subsubsection{Hyperplanes}
+The zero-offset hyperplane is defined by normal vector $ w $ and contains all vectors $ u $ s.t.: $w^T u = 0$.
+\begin{itemize}
+\item \textbf{Side}: Sign of $ w^T u $ determines which side of hyperplane a point $ u $ lies:
+	\[
+	\text{Sign}(w^T u) =
+	\begin{cases}
+	    > 0 & \text{if } u \text{ is on one side}, \\
+	    < 0 & \text{if } u \text{ is on the other side}.
+	\end{cases}
+	\]
+\item \textbf{Distance to Hyperplane:} Distance of a point $ u $ to hyperplane given by: $\text{Distance} = \frac{|w^T u|}{\|w\|}$ where $ \|w\| $ is the length of the normal vector $ w $.
+\end{itemize}
 
+\subsubsection{SVM: Maximizing the Margin}
+\begin{itemize}[itemsep=-2pt]
+\item \textbf{Decision boundary} in SVM defined by hyperplane separating data points of different classes. The \textbf{margin} is distance between hyperplane and closest data points from each class. \textbf{Width of margin} proportional to 2×margin.
+\item \textbf{Optimization objective} is to maximize margin while ensuring all data points are correctly classified according to respective class.
+\item Data points that lie exactly on boundary of margin called \textbf{support vectors}. These points define position and orientation of hyperplane.
+\end{itemize}
+
+\subsubsection{SVM: Data, Model, Objective, Sparsity}
+\begin{itemize}[itemsep=-2pt]
+    \item Given $ N $ data points, described by features $ x^{(i)} $, target $ y^{(i)} \in \{-1, 1\} $.
+    \item The SVM classifier in dual formulation depends on parameters $ \alpha_i $:
+    \[
+    \text{SVM}_{\alpha}(x) = \text{sign} \left( \sum_{i=1}^N \alpha_i k(x^{(i)}, x) \right),
+    \]
+    where $ k(x^{(i)}, x) $ is the kernel function.
+    \item The model is optimized by maximizing the margin subject to constraints that data points are on the correct side of the decision boundary.
+    \item Learning algorithm: Quadratic programming.
+    \item \textbf{Sparsity}: Many $ \alpha_1, \alpha_2, \dots, \alpha_N $ will be zero. Only support vectors contribute to classifier. Non-support vectors discarded without affecting model.
+    \[    \text{SVM}_{\alpha}(x) = \text{sign} \left( \sum_{i \in \text{Support Vectors}} \alpha_i k(x^{(i)}, x) \right).    \]
+    \item \textbf{Implementation}: libraries e.g. \texttt{scikit-learn} to simplify implementation.
+\end{itemize}
 
 
 
