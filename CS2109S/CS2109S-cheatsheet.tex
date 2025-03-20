@@ -451,7 +451,7 @@ MSE not ok for logistic due to non-convexity. Use \textbf{Binary Cross Entropy}.
 
 \columnbreak
 
-\subsection{7. \underline{Regularization, Kernels, Support Vector Machines}}
+\subsection{9. \underline{Regularization, Kernels, Support Vector Machines}}
 \subsection{Regularization}
 Technique to $\downarrow$ overfitting, by \textbf{penalizing large weights in model}. 
 \begin{itemize}[itemsep=-1pt]
@@ -595,9 +595,115 @@ The zero-offset hyperplane is defined by normal vector $ w $ and contains all ve
 \end{itemize}
 
 
+% --------------------------------------------------------------------------------------------------------------- %
 
 
+\subsection{10. \underline{Unsupervised Learning, Cluster, Dimensionality Redn}}
 
+\subsection{Unsupervised Learning}
+\begin{itemize}[itemsep=-2pt]
+    \item \textbf{Datasets w/o ground truth output}. (Unlike supervised - pairs of data point to target). Obtain ground truth expensive/ infeasible. E.g. images, videos w/o predefined categories of health, finance, preventative med w/o label.
+    \item \textbf{Applications}: Clustering, dimensionality reduction, image segmentation, GPT (unsupervised learning component), anomaly detection etc.
+    \item Given \textbf{set of $ N $ data points} $\{x_1, \dots, x_N\}$, goal to learn patterns in data.
+\end{itemize}
+
+\subsection{Clustering}
+Unsupervised machine learning technique to group similar data points into clusters/ groups. Goal to organize objects so those within same group more similar to each other than to in other groups.
+
+\begin{itemize}[itemsep=-2pt]
+    \item \textbf{Number of clusters} not defined by data.
+    \item \textbf{Common applications:} Data segmentation, Anomaly detection
+    \item \textbf{Approaches}: Partitioning-based clustering (K-means, K-Medoids (use actual data points - medoids - instead of centroids as cluster centers) ), Hierarchical (agglomerative / divisive), Density-based Clustering (DBSCAN), Distribution-based, Spectral, Grid-based, Model based, Fuzzy etc.
+\end{itemize}
+
+\subsubsection{K-Means Clustering}
+K-Means clustering - unsupervised learning algorithm to partition $ N $ data points into $ K $ distinct clusters. Each cluster represented by centroid, the mean of all points in the cluster. \\ \smallskip
+
+\textbf{ K-Means Algorithm}: 
+\begin{enumerate}[itemsep=-2pt]
+    \item \textbf{Initialize}: Randomly initialize $ K $ centroids $ \mu_1, \dots, \mu_K $.
+    \begin{enumerate}[itemsep=-1pt, leftmargin=1mm, topsep=0.5mm]
+        \item \textbf{Assign each Point to Cluster}: $\forall  x^{(i)} $, assign to nearest centroid: 
+        $c^{(i)} = \arg\min_{k} \|x^{(i)} - \mu_k\|^2$ \\
+         {\scriptsize ($ c^{(i)} $ is cluster assignment for $ x^{(i)} $)}
+        \item \textbf{Update Centroids}: \textit{Re}-compute centroids as mean of all points assigned to cluster: 
+        $\mu_k = \frac{1}{N_k} \sum_{i \in C_k} x^{(i)}$ \\
+         {\scriptsize ($ C_k $ is set of points in cluster $ k $, $ N_k $ is number of points in $ C_k $)}
+    \end{enumerate}
+    \item \textbf{Convergence}: The algorithm terminates when the assignments no longer change or the centroids stabilize.
+\end{enumerate}
+
+\begin{itemize}
+\item \textbf{Measuring the Quality of Clusters}: \\
+The quality of the clusters can measure w. distortion function, computes average squared distance of each point to its assigned centroid:
+\[
+J(c^{(1)}, c^{(2)}, \dots, c^{(N)}, \mu_1, \mu_2, \dots, \mu_K) = \frac{1}{N} \sum_{i=1}^N \|x^{(i)} - \mu_{c^{(i)}}\|^2.
+\]
+\item Each K-means step never increases distortion. (Convergence guaranteed).
+\item \textbf{Mean normalization, Feature Scaling} important to perform k-means clustering meaningfully (else cost function $J$ dominated by certain feature.)
+\item \textbf{Local Optima}: K-Means prone to local opt. Use multiple random restarts.
+\item \textbf{Picking Clusters Count ($ K $)}: $ K $ user-defined. Use \textbf{Elbow Method}, plot distortion $ J $ against $ K $, "elbow" point where adding more clusters yields diminishing returns.
+\item \textbf{K-Means Variants}: \textit{K-Medoids}: Actual data points as cluster reps (medoids). \textit{Snap to Nearest Data Point}: Centroids "snapped" to nearest data points.
+\item  \textbf{Distance-based Model}: Rely only on distance btwn points (vs. e.g. model).
+\item \textbf{Clustering vs. Classification}: Feedback (input/output): Unsupervised (clustering - distance based) vs. Supervised (classification - hyperplane based (e.g. SVM), probability based (logisitic reg)). Grouping/clustering for K-Means vs. a predictive model for classification. No .of classes defined by dataset (classification), no. of clusters defined by user (clustering).
+\end{itemize}
+
+%% -------------
+
+\subsection{Dimensionality Reduction}
+Technique to reduce number of features (variables or dimensions) in dataset while retaining as much relevant information as possible.
+\begin{itemize}[itemsep=-1.5pt]
+\item \textbf{Curse of Dimensionality}: High-dimensional data (e.g. HD images - $ 1280 \times 720 = 921,600 $ features) challenge in ML. Curse refers to exponential increase in sample complexity with the number of features: $ N = O(2^d) $, $ d $ is no. of features, $ N $ is no. of samples required for effective learning.
+\item \textbf{Remove Redundant Features}: identified, removed by changing basis.
+\end{itemize}
+
+\subsubsection{Singular Value Decomposition (SVD)}
+Matrix factorization technique / tool used in linear algebra, machine learning. Any real-valued matrix $ A \in \mathbb{R}^{d \times N} $ decomposable into 3 components:
+\[
+A = U \Sigma V^T,
+\]
+\begin{itemize}[itemsep=-2pt]
+    \item $ U \in \mathbb{R}^{d \times d} $: Matrix of left singular vectors (new basis) w. orthonormal cols.
+    \item $ \Sigma  \in \mathbb{R}^{d \times N} $: Diagonal matrix of singular values (importance of each basis vector). Singular values are ordered such that: $\sigma_1 \geq ... \geq \sigma_r \geq 0$.
+    \item $ V \in \mathbb{R}^{N \times N} $: Matrix of right singular vectors (coefficients for linear combinations) with orthonormal columns and rows.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{SVD}}
+
+\begin{itemize}[itemsep=-1pt]
+\item \textbf{Existence of SVD}: wlog, let $d > N$: for any $ d \times N $ real-valued matrix $ A $, there exists a factorization $ A = U \Sigma V^T $.
+\item \textbf{Interpretation of SVD}: SVD provides new basis for data:
+	\begin{itemize}[itemsep=-2pt, topsep=-2pt]
+	    \item Columns of $ U $ form an orthonormal basis for the row space of $ A $.
+	    \item Columns of $ V $ form an orthonormal basis for the column space of $ A $.
+	    \item Singular values $ \sigma_j $: importance of basis vector in capturing data variance.
+	\end{itemize}
+\item \textbf{Dimensionality Reduction via SVD}: As singular values $ \sigma_j $ indicate importance of corresponding basis vectors, to reduce dimensionality, retain only the top $ r $ singular values ($ \sigma_1, \sigma_2, \dots, \sigma_r $). Truncate $ \Sigma $ to $ \tilde{\Sigma} $, keep only first $ r $ rows, columns. Use reduced basis matrix $ \tilde{U} $ (first $ r $ columns of $ U $) to project data into a lower-dimensional space.
+
+\item \textbf{Compression}: Original data matrix $ X^T $ approximated using truncated SVD:
+\[ \text{original: } X^T = U\Sigma V^T, \hspace{3pt} \text{ so approx: } \tilde{X}^T = \tilde{U} \tilde{\Sigma} \tilde{V}^T\]
+\[ \tilde{X}^T = \tilde{U} Z = \tilde{U} \tilde{U}^T X^T \approx X^T. \quad (\tilde{U} \tilde{U}^T \approx I) \]
+where $ \tilde{U} \in \mathbb{R}^{d \times r} $, $ \tilde{\Sigma} \in \mathbb{R}^{r \times r} $, 
+and $ \tilde{V} \in \mathbb{R}^{N \times r}, (X^T / \tilde{X}^T\in \mathbb{R}^{d \times N}) $.
+\\ 
+where $\tilde{U}$: reduced left singular vectors, $Z$: compressed rep of data.
+
+\item \textbf{Example: Data Compression}: Hence, given data matrix $ X^T $, we can compress data by projecting it onto new reduced (lower-dimensional) basis $\tilde{U}$:
+\[Z = \tilde{U}^T X^T, \quad Z \in \mathbb{R}^{r \times N} \]
+\textbf{Intuition:} Project data points $x^{(i)}$. Instead of explicitly working w. $\tilde{\Sigma}, \tilde{V}^T$, project data onto reduced basis $\tilde{U}$. $ Z$ contains all projection coefficients.
+
+\item \textbf{Assumption of Mean-Centered Data}: Data matrix $ X^T $ assumed to be mean-centered (each feature has zero mean). Ensure singular values $ \sigma_j^2 $ directly represent variances along principal directions (axes) defined by singular vectors $ u^{(j)} $, simplify interpretation of SVD results.
+
+\item \textbf{Reconstruction Error}: Error depends on retained singular values. To retain at least 99\% of variance, choose smallest $ r $ such that:
+\[\text{Retained Variance} = \frac{\sum_{i=1}^r \sigma_i^2}{\sum_{i=1}^N \sigma_i^2} \geq 0.99.\]
+
+\item \textbf{Applications of SVD}: Dimensionality reduction while retain variance. Noise reduction, remove less impt singular values, filter out noise. Data visualization: Projecting data into 2D or 3D for visualization. Recommendation systems: use SVD to uncover latent factors in user-item interaction matrices.
+
+\item \textbf{Practical implementation}: SVD available using popular numerical computing libraries (\textit{Numpy}: \texttt{numpy.linalg.svd}, \textit{Matlab}: \texttt{svd})
+\end{itemize}
+
+\subsubsection{Principal Component Analysis (PCA)}
+PCA is a statistical application of SVD. PCA identifies directions (principal components) that capture maximum variance in data. Principal components correspond to largest singular values in SVD. By projecting data onto top $ r $ principal components, PCA achieves dimensionality reduction while retaining most important information.
 
 
 
