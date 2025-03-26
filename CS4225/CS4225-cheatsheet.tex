@@ -211,22 +211,57 @@ Data flow paths depend on the location of the source and destination. Data acces
     \item \textbf{Synchronization}: Difficult due to unknown order of worker execution, interruptions, and shared data access. Tools like semaphores, conditional variables, and barriers are used to address synchronization issues.
     \item \textbf{Programming Difficulty}: Concurrency hard to reason about, especially at scale. Debugging and managing failures add complexity.
 \end{enumerate}
-\textbf{API for Data Centers}: Given challenges, "API" of data center abstracts system-level details from developers. Devs specifies computation needed performed, execution framework (“runtime”) handles actual execution. (Race condition, fault tolerance etc. handled by runtime.)
+\textbf{API for Data Centers}: Given challenges, "API" of data center abstracts system-level details from developers. Execution frameworks (e.g., Hadoop, Spark) handle task assignment, replication, synchronization, etc.
+
 
 \subsection{3. \underline{MapReduce}}
-
+\textbf{MapReduce}: prog. model, associated runtime system to process large datasets in parallel across distributed cluster. (Parallelization, Divide Conquer Paradigm). Provide functional abstractions for two operations.
 \begin{itemize}
-    \item The "API" of the data center abstracts system-level details from developers.
-    \item Key operations:
-    \begin{itemize}
-        \item \textbf{Map}: Perform an operation on each item.
-        \item \textbf{Reduce}: Aggregate intermediate results.
-        \item Execution frameworks (e.g., Hadoop, Spark) handle task assignment, replication, synchronization, etc.
-    \end{itemize}
+    \item \textbf{Map function}:  \texttt{(k1, v1) → List(k2, v2)}. Processes each input key-value pair and emits intermediate key-value pairs. 
+    \item \textbf{Reduce}: Aggregate intermediate results to generate the final output.  \texttt{reduce(k2, List(v2)) → List(k3, v3)}. All values with same key sent to same reducer.
+	\item \textbf{Typical Workflow of MapReduce}: \\
+	Iterate over a large number of records. \\
+	Extract relevant information from each (\textbf{Map}). \\
+	Shuffle and sort intermediate results by key (\textbf{Shuffle}). \\
+	Aggregate intermediate results (\textbf{Reduce}). Generate the final output.
 \end{itemize}
 
+\centerline{\includegraphics[width=1\linewidth]{mapReduce}} 
 
+\begin{itemize}
+    \item \textbf{Worker}: single component of cluster, performs storage, processing tasks.
+    \item \textbf{Map Task}: A unit of work, processing one input split (e.g., 128 MB).
+    \item \textbf{Map Function}: A call to user-defined map function, for each input split k-v pair.
+    \item \textbf{Reduce Task}: A unit of work processing a subset of intermediate keys.
+    \item \textbf{Barrier}: barrier between map and reduce phases. Else, reduce phase may compute wrong answer. Shuffle phase can begin copying intermediate data earlier. 
+\end{itemize}
 
+\subsubsection{Partition and Combiner}
+Additionally, can optionally specify \textbf{partition and combine} functions as optimization to reduce network traffic.
+\begin{itemize}
+    \item \textbf{Partition Step}: By default, keys assigned to reducers using hash function (e.g., \texttt{hash(key) \% num\_reducers}). Can implement custom partitioner to balance load among reducers. (E.g. if some keys much more values than others).
+    \item Partitioner runs in local write phase, knowledge of which keys to which reducer.
+    \item \textbf{Combiner Step}: Combiners locally aggregate map outputs to reduce disk and network I/O. ('mini-reducers') (E.g. Sum counts for each key before write to disk). \textit{Correctness}: Must not affect correctness of final output, regardless of how many times it runs (incld. 0 times). E.g. \texttt{sum}, \texttt{max} ok, but \texttt{mean}, \texttt{minus} not ok.
+    	\item Combiner runs after map phase, done during local write phase, before actual disk write to save disk I/O.
+\end{itemize}
+
+\textbf{Notes}
+\begin{itemize}
+    \item If reduce task handles multiple keys, will process keys in sorted order.
+    \item If size of split too big or small: Limited parallelism vs. high overhead.
+    \item \#map fn calls = \# input key-value pairs. \# map tasks = \# input splits.
+    \item Reduce function calls = no. of distinct intermediate keys.
+    \item \textbf{Preserving State in Map / Reduce Tasks}: In MapReduce, state variables can be used to store information that persists across multiple calls to map() or reduce() functions within same task. Sharing data or resources between function calls. 
+\end{itemize}
+
+\subsubsection{General Performance Guidelines (Basic Algorithm Design)}
+\begin{itemize}
+    \item \textbf{Linear Scalability}: More nodes should enable more work done in same time.
+    \item \textbf{Minimize Disk and Network I/O}: Sequential access over random access. Send data in bulk over small chunks.
+    \item \textbf{Reduce Memory Working Set}: Avoid large in-memory data structures to prevent out-of-memory errors.
+\end{itemize}
+
+Big data requires new programming abstractions and runtime systems (e.g., MapReduce). Hadoop MapReduce is widely used for efficiently processing large datasets in applications like databases and data mining.
 
 
 
