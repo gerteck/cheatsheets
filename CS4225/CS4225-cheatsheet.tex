@@ -1,4 +1,4 @@
-\documentclass[10pt, landscape]{article}
+\documentclass[a4paper, 9pt, landscape]{article}
 \usepackage[scaled=0.92]{helvet}
 \usepackage{multicol}
 \usepackage{calc}
@@ -42,12 +42,15 @@
 % This sets page margins to .5 inch if using letter paper, and to 1cm
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
-\ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
-	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-	}
+% \ifthenelse{\lengthtest { \paperwidth = 11in}}
+%	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
+%	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+%		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+%		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+%	}
+
+%% Margins for A4 PAPER
+\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm}
 
 % Turn off header and footer
 \pagestyle{empty}
@@ -93,8 +96,8 @@
 %% this changes all items (enumerate and itemize, reduce margins)
 \setlength{\leftmargini}{0.5cm}
 \setlength{\leftmarginii}{0.5cm}
-\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm, before=\justifying}
-\setlist[itemize,2]{leftmargin=3mm,labelindent=0.5mm,labelsep=1mm, itemsep = 0mm, before=\justifying}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0mm, before=\justifying}
+\setlist[itemize,2]{leftmargin=2mm,labelindent=0.5mm,labelsep=0.5mm, itemsep = -0.2mm, topsep=-0.2mm, before=\justifying}
 %\setlist{nosep}
 
 \usepackage[document]{ragged2e}
@@ -119,24 +122,108 @@
 \section{CS4225/5425 Big Data Systems, Data Science}
 \centerline{AY24/25 Sem 2. github.com/gerteck}
 
-Something something
-
-
-\subsection{1. \underline{Topic 1}}
-
+(Big) Data science. Interdisciplinary field about processes and systems 
+to extract knowledge or insights from data in various forms.
 \begin{itemize}
-\item \textbf{Big Data}: Something
+\item \textbf{Processing} diff. types of data (large data volume, graph data, stream data).
+\item \textbf{Models of Computation}: MapReduce/Spark, Large graph processing engines, Streams and online algorithms.
 \end{itemize}
 
-\subsubsection{SubTopic1}
-Something something
+\subsection{1. \underline{Introduction}}
+\begin{itemize}
+\item \textbf{Big Data (4 `V's)}: \textit{Volume}: (Scale of data). \textit{Velocity}: (Speed of new (streaming) data).
+	\textit{Variety}: (Different types).  \textit{Veracity}: (Accuracy, trustworthiness of data).
+\item \textbf{Challenges of 4 `V's}: Performance, Cost, Reliability, Algorithm design complexity. Data integration challenges, multi-modal learning (Variety). Dirty and noisy data, data provenance, uncertainty (Veracity).
+\item Big data - Virtuous Product Cycle, where useful service $\rightarrow$ data to analyze $\rightarrow$ insightful action  $\rightarrow$ useful service.
+\end{itemize}	
 
 
+\subsubsection{Utility Computing (Cloud Computing Infrastructure)}
+Cloud computing - scalable, elastic infrastructure for big data systems.
+
+\begin{itemize}
+    \item \textbf{Utility Computing}: Computing resources as a metered service ("pay as you go"). Ability to dynamically provision virtual machines.
+    \item \textbf{Scalable}: ("Infinite" capacity). \textbf{Elastic}: (Scale up or down on demand).
+    \centerline{\includegraphics[width=0.5\linewidth]{containers}}
+    \item \textbf{How}: \textbf{Virtual Machines (VMs)}: Enable sharing of hardware resources, run each app in isolated virtual machine. High overhead as each VM has its own OS. 
+    \\ \textbf{Containers}: Lightweight sharing of resources. Apps run in isolation but share same OS. Container encapsulates an app and environment.
+    \item \textbf{Everything as a Service}:
+    	\begin{itemize}
+	  \item \textit{Infrastructure (IaaS)}: User rents a virtual machine. (e.g. Amazon EC2).
+	  \item \textit{Platform (PaaS)}: Provide hosting web apps. Cover hardware maintain, upgrade.
+	  \item \textit{Software (SaaS)}:  Pre-built apps. (e.g., Gmail). Covers entire stack.	
+	\end{itemize}
+\end{itemize}
+Data science, cross-disciplinary, emerging research area w. applications in engineering, commerce, etc. Clouds as natural infrastructures for data science.
 
 % \centerline{\includegraphics[width=1\linewidth]{QAScenarios}}
 
+\subsection{2. \underline{Principles of Big Data Systems}}
+
+\begin{itemize}
+\item \textbf{Data Center Infrastructure}
+	\begin{itemize}
+	    \item \textbf{Single Server}: A commodity hardware unit.
+	    \item \textbf{Rack}: Dozens of servers, connect to rack switch (top-of-rack switch).
+	    \item \textbf{Data Center}: Hundreds of racks, connect to data center switch (core switch).
+	\end{itemize}
+\item \textbf{Bandwidth vs. Latency}
+	\begin{itemize}
+	    \item \textbf{Bandwidth}: Max amt of data transmittable per unit time (e.g., in GB/s). Calculate as minimum bandwidth among all components in the data access path.
+	    \item \textbf{Latency}: Time taken one packet travel src to dest (one-way) / round-trip (in ms). Sum of the latency caused by all components in the data access path.
+	    \item \textbf{Throughput}: Rate data is actually transmitted in network in given time period.
+	\end{itemize}
+\item When transmitting \textit{(large/small)} amount of data, \textit{(bandwidth/latency)} - roughly how long transmission will take (bottleneck variable).
+\item \textbf{Storage Hierarchy in Data Centers}: based on capacity, latency, bandwidth. 
+	\begin{itemize}
+	    \item \textbf{DRAM}: Fast but limited capacity. \textbf{Flash}: Intermediate btw. DRAM and disk.
+	    \item \textbf{Disk}: Slow but large capacity. Disk reads more expensive than DRAM (higher latency, lower bandwidth).
+	\end{itemize}
+\end{itemize}
 
 
+\subsubsection{Data Flow Paths}
+Data flow paths depend on the location of the source and destination. Data access may cross several components, e.g. hard disk, DRAM, rack switch, cluster switch.
+\begin{itemize}[itemsep = -2pt]
+\item E.g. Local DRAM $\rightarrow$ Local Disk in same server.
+\item Server A DRAM to server B DRAM in same rack (i.e.  Local DRAM  $\rightarrow$ Rack Switch  $\rightarrow$ Server B’s DRAM)
+\item Transfer across different rack, same cluster etc. (i.e. Local DRAM $\rightarrow$ Rack Switch  $\rightarrow$ Datacenter Switch  $\rightarrow$ Server C’s Rack Switch $\rightarrow$ Server C’s DRAM).
+\item To load from disk, usually need to load into DRAM first. (i.e. Local Disk $\rightarrow$ Local DRAM $\rightarrow$ Rack Switch etc.)
+\end{itemize}
+\textbf{Calculate latency, bandwidth based on data flow path}. Approximate order of magnitude, for simplify, assume one-way communication, no failures.
+
+\centerline{\includegraphics[width=1\linewidth]{storageHierarchy}} \smallskip
+
+\textbf{Capacity} increases, \textbf{Costs} (Latency increase, bandwidth decrease) increases from local to rack to data center, along storage hierarchy.
+
+
+\subsubsection{Building Efficient Big Data Systems}
+\begin{enumerate}
+    \item \textbf{Scale "Out", Not "Up"}: Horizontal Scaling over vertical scaling. Combine many cheaper machines (out) over increase power of individual machine (up).
+    \item \textbf{Seamless Scalability}: Ideal (linear) scalability, performance increases proportionally to added resources. 
+    \item \textbf{Move Processing to the Data}: As clusters limited bandwidth; move tasks to machine where data is stored.
+    \item \textbf{Process Data Sequentially, Avoid Random Access}: Disk seeks expensive; sequential access provides better throughput.
+\end{enumerate}
+
+\subsubsection{Challenges in Big Data Systems}
+\begin{enumerate}
+    \item \textbf{Machine Failures}: With enough scale, expect daily server machine failure.
+    \item \textbf{Synchronization}: Difficult due to unknown order of worker execution, interruptions, and shared data access. Tools like semaphores, conditional variables, and barriers are used to address synchronization issues.
+    \item \textbf{Programming Difficulty}: Concurrency hard to reason about, especially at scale. Debugging and managing failures add complexity.
+\end{enumerate}
+\textbf{API for Data Centers}: Given challenges, "API" of data center abstracts system-level details from developers. Devs specifies computation needed performed, execution framework (“runtime”) handles actual execution. (Race condition, fault tolerance etc. handled by runtime.)
+
+\subsection{3. \underline{MapReduce}}
+
+\begin{itemize}
+    \item The "API" of the data center abstracts system-level details from developers.
+    \item Key operations:
+    \begin{itemize}
+        \item \textbf{Map}: Perform an operation on each item.
+        \item \textbf{Reduce}: Aggregate intermediate results.
+        \item Execution frameworks (e.g., Hadoop, Spark) handle task assignment, replication, synchronization, etc.
+    \end{itemize}
+\end{itemize}
 
 
 
