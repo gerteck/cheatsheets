@@ -334,6 +334,113 @@ The Star Schema is a common database schema for data warehousing. Organizes data
 \item Performance analysis, algorithm design crucial for efficient, effective applications.
 \end{itemize}
 
+\columnbreak
+
+\subsection{5. \underline{MapReduce \& Data Mining}}
+
+\subsection{Similarity Search}
+Similarity search is a fundamental problem in data mining and machine learning, often used to find objects "similar" to each other. Real-world applications e.g.:
+\begin{itemize}
+	\item Finding documents with similar words for duplicate detection, topic classification. Clustering similar news articles, research papers.
+	\item Identifying customers purchasing similar products for recommendation systems.
+	\item Grouping users with similar browsing behaviors for targeted advertising.
+\end{itemize}
+
+\subsubsection{Distance and Similarity Measures}
+Between objects $x$ and $y$, use \textbf{distance measure} $d(x, y)$ or \textbf{similarity measure} (opposite). 'Near Neighbours' are points small distance apart. Common metrics:
+\begin{itemize}
+	\item \textbf{Euclidean Distance}: Straight-line distance btw two points in space.
+	\item \textbf{Manhattan Distance}: Sum of absolute differences along axes.
+	\item \textbf{Cosine Similarity}: Measures the cosine of the angle between two vectors, focusing only on direction (ignoring magnitude).
+	\item \textbf{Jaccard Similarity}: Similarity between sets $A$, $B$: $s_{\text{Jaccard}}(A, B) = \frac{|A \cap B|}{|A \cup B|}$
+	\item \textbf{Jaccard Distance}: Complement $s_{\text{Jaccard}}$: $d_{\text{Jaccard}}(A, B) = 1 - s_{\text{Jaccard}}(A, B)$
+\end{itemize}
+    
+\subsubsection{Case Study: Finding Similar Documents}
+
+\textbf{Problem Definition}: Given a large collection of $N$ documents: 
+\begin{itemize}
+\item \textbf{All-Pairs Similarity}: Find all pairs of docs w. Jaccard similarity above threshold.
+\item \textbf{Similarity Search}: Given a query document, find all documents similar to it.
+\end{itemize}
+
+\textbf{Approach:} To efficiently find similar documents, we do shingling and min-hash.
+\centerline{\includegraphics[width=0.8\linewidth]{similarDocuments}} 
+
+\subsubsection{Shingling}
+\begin{itemize}
+\item A \textbf{k-shingle} (or k-gram) is sequence of $k$ tokens (words / chars) that appears in document.
+E.g. 'the cat is glad' $\rightarrow$ set of 2-shingles: $\{\text{'the cat'}, \text{'cat is'}, \text{'is glad'}\}$ 
+\item \textbf{Similarity Metric for Shingles}: Each document $D_i$ represented as set of shingles $C_i$. Similarity of ($D_1$, $D_2$):
+$\text{s}_{Jaccard}(D_1, D_2) = \frac{|C_1 \cap C_2|}{|C_1 \cup C_2|}$
+\item \textbf{Challenge}: For large datasets, comparing all pairs directly computationally expensive ($O(N^2)$ comparison). To address this, use \textbf{Min-Hashing}.
+\end{itemize}
+
+\subsubsection{Min-Hashing \textnormal{\scriptsize(Each shingle hashes to a int, get min int value of all shingles)}}
+Convert large sets of shingles into short signatures while preserving similarity. Highly similar $=$ high probability of same signature. Dissimilar docs low prob.
+
+\begin{enumerate}[itemsep =0pt]
+	\item Define a hash function $h$ that maps each shingle to an integer.
+	\item For each document, compute min hash value across all shingles $\rightarrow$ 'signature'.
+	\item Use \textit{multiple} independent hash functions to generate \textit{multiple} signatures.
+\end{enumerate}
+\begin{itemize}
+\item \textbf{Key Property of Min-Hashing}: probability two documents have same MinHash signature is equal to Jaccard similarity.
+\item \textbf{Candidate Pairs}: Compare signatures (e.g. $> k$ matching signatures). Pairs either directly used as output or further compared to confirm similarity.
+\end{itemize}
+
+\subsubsection{MapReduce Implementation}
+\begin{itemize}
+\item \textbf{Map Phase}: Read each document, extract shingles. Hash each shingle, compute MinHash signature. Emit $\langle \text{signature}, \text{document\_id} \rangle$. (Either run multiple times for diff hash, or use signature\_vector, custom partitioner to send same reducer.)
+\item \textbf{Reduce Phase} Receive all documents with the same MinHash signature. Generate candidate pairs from these documents. (Optional, confirm pair further similarity).
+\item \textbf{Parallelism}: \# map node $\rightarrow$ \# docs chunks. \# reduce node $\rightarrow$ \# keys (signature).
+\end{itemize}
+
+\columnbreak
+
+\subsection{Clustering}
+\begin{itemize}
+\item \textbf{Clustering}: Fundamental technique in data mining, machine learning to group unlabeled data points into clusters of similar items. Ideally, points have high intra-cluster similarity, low inter-cluster similarity.
+\item \textbf{Applications of Clustering}: Microbiology gene/protein identification, recommendation systems, social networks, information retrieval.
+\end{itemize}
+
+\subsubsection{K-Means Algorithm}
+Clustering technique. Separates data points into $K$ clusters by iteratively optimizing positions of cluster centers.
+\begin{enumerate}[itemsep=-0.2pt, topsep=0.5pt]
+    \item \textbf{Initialization}: Randomly select $K$ points as initial cluster centers.
+    \item \textbf{Repeat until convergence}:
+    \begin{enumerate}[itemsep=0pt, topsep=0pt]
+        \item \textbf{Assignment Step}: Assign each data point to nearest cluster center based on distance metric (e.g., Euclidean distance).
+        \item \textbf{Update Step}: Move each cluster center to average (mean) position of all points assigned to it.
+    \end{enumerate}
+    \item \textbf{Stopping Condition}: Stop when no assignments change between iterations (i.e., the algorithm converges).
+\end{enumerate}
+
+\textbf{Challenge with K-Means}: Iterative algorithms like K-Means are not inherently optimized for distributed systems like MapReduce!
+
+\subsubsection{MapReduce Implementation of K-Means}
+
+\centerline{\includegraphics[width=1\linewidth]{cluster}} 
+
+\begin{itemize}
+\item MapReduce still needs to iteratively run till convergence.
+\item Iiterative algorithms like K-Means maybe not ideal for MapReduce, high network, disk I/O overhead (input disk read for every iteration). 
+\item Optimizations such as in-mapper combiners can reduce computational cost, but not fully address inefficiencies of iterative algorithms in MapReduce.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \end{multicols*}
