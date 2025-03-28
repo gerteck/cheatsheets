@@ -215,13 +215,13 @@ Data flow paths depend on the location of the source and destination. Data acces
 
 
 \subsection{3. \underline{MapReduce}}
-\textbf{MapReduce}: prog. model, associated runtime system to process large datasets in parallel across distributed cluster. (Parallelization, Divide Conquer Paradigm). Provide functional abstractions for two operations.
+Big data requires new prog. abstractions, runtime systems. Hadoop MapReduce widely used for efficient, process large datasets in e.g. databases, data mining. \\
+\textbf{MapReduce}: prog. model \& associated runtime system to process large datasets in parallel across distributed cluster. (Parallel $+$ Divide \& Conquer Paradigm). MapReduce provides functional abstractions for two operations.
 \begin{itemize}
     \item \textbf{Map function}:  \texttt{(k1, v1) → List(k2, v2)}. Processes each input key-value pair and emits intermediate key-value pairs. 
     \item \textbf{Reduce}: Aggregate intermediate results to generate the final output.  \texttt{reduce(k2, List(v2)) → List(k3, v3)}. All values with same key sent to same reducer.
 	\item \textbf{Typical Workflow of MapReduce}: \\
-	Iterate over a large number of records. \\
-	Extract relevant information from each (\textbf{Map}). \\
+	Iterate over a large number of records. Extract relevant info from each. (\textbf{Map}) \\
 	Shuffle and sort intermediate results by key (\textbf{Shuffle}). \\
 	Aggregate intermediate results (\textbf{Reduce}). Generate the final output.
 \end{itemize}
@@ -237,7 +237,7 @@ Data flow paths depend on the location of the source and destination. Data acces
 \end{itemize}
 
 \subsubsection{Partition and Combiner}
-Additionally, can optionally specify \textbf{partition and combine} functions as optimization to reduce network traffic.
+Optionally specify \textbf{partition, combine} functions, optimize, reduce network traffic.
 \begin{itemize}
     \item \textbf{Partition Step}: By default, keys assigned to reducers using hash function (e.g., \texttt{hash(key) \% num\_reducers}). Can implement custom partitioner to balance load among reducers. (E.g. if some keys much more values than others).
     \item Partitioner runs in local write phase, knowledge of which keys to which reducer.
@@ -245,10 +245,11 @@ Additionally, can optionally specify \textbf{partition and combine} functions as
     	\item Combiner runs after map phase, done during local write phase, before actual disk write to save disk I/O.
 \end{itemize}
 
-\textbf{Notes}
+\textbf{Notes and Other Optimizations}
 \begin{itemize}
     \item If reduce task handles multiple keys, will process keys in sorted order.
-    \item If size of split too big or small: Limited parallelism vs. high overhead.
+    \item \textbf{Secondary Sort}: Use this property to sort values associated with key. (reduce work done in reducer by using inbuild distributed sorting process of Hadoop). Combine key and value into composite key e.g. (UserID $\rightarrow$ [UserID-Timestamp]), define custom comparator (sort by ID then timestamp) \& partitioner (group by ID only).
+    \item Size of split too big or small:  $\rightarrow$  Limited parallelism vs. high overhead.
     \item \#map fn calls = \# input key-value pairs. \# map tasks = \# input splits.
     \item Reduce function calls = no. of distinct intermediate keys.
     \item \textbf{Preserving State in Map / Reduce Tasks}: In MapReduce, state variables can be used to store information that persists across multiple calls to map() or reduce() functions within same task. Sharing data or resources between function calls. 
@@ -261,14 +262,77 @@ Additionally, can optionally specify \textbf{partition and combine} functions as
     \item \textbf{Reduce Memory Working Set}: Avoid large in-memory data structures to prevent out-of-memory errors.
 \end{itemize}
 
-Big data requires new programming abstractions and runtime systems (e.g., MapReduce). Hadoop MapReduce is widely used for efficiently processing large datasets in applications like databases and data mining.
+\columnbreak
+
+\subsection{4. \underline{MapReduce \& Databases}}
+\subsection{HDFS: Hadoop Distributed File System}
+Distributed file system designed to store, manage large datasets across multiple machines in a cluster. Core component of Apache Hadoop ecosystem (open source), optimized for high-throughput access to big data.
+
+\begin{itemize}
+	\item \textbf{Purpose}: handle massive datasets (tb/pb), scalable, fault-tolerant storage.
+    \item E.g. MapReduce input, output stored in HDFS (3 copies etc.) Intermediate files on hard disk on local machine though (local fs).
+    \item \textbf{Architecture}: \textit{Master-Slave Model}.
+    \\ \textbf{NameNode}: Master node, manage file system metadata (e.g., dir structure, file locations, rebalance, heartbeat) - No data moved through NN. If NN data lost, cannot reconstruct files from raw block data. Hadoop has NN backup, checkpointing.
+    \\ \textbf{DataNodes}: Worker nodes, store the actual data blocks. \\
+    
+    \centerline{\includegraphics[width=0.9\linewidth]{HDFSHadoop}} 
+    	\item \textbf{Data Locality}: Move computation to data, over other way round. Minimize network traffic, improve performance. Same set of nodes used for both HDFS, Hadoop. Hadoop tries to schedule map tasks run on machines containing data.
+    	\item \textbf{Fault Tolerance}: Each block replicated (default: 3 copy) across different DataNodes to ensure reliability. If node fails, HDFS retrieves data from another replica.
+    \item \textbf{Rack Awareness}: Aware of physical location of nodes (e.g., which rack). Replicas placed on diff rack, balance fault tolerance, network efficiency. 
+	\item \textbf{Block Size}: Files divide to large chunks (default: 128 or 256 MB), reduce overhead. Large block sizes improve sequential read/write perform. ($\uparrow$ throughput).
+	\item \textbf{Scalability}: Scales horizontally by adding more machines to the cluster. Supports thousands of nodes and handles large datasets efficiently.
+	\item \textbf{Write Once, Read Many}: Files written once, can be read multiple times. Files cannot be modified after written (append-only in some cases).
+    \item \textbf{Use Cases}: Store log files, web server data, social media data, etc. Support big data processing frameworks like MapReduce, Spark, Hive, and Pig.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{HDFSArchitecture}} 
+   
+\textbf{Disadvantages of HDFS}: Not suited for small files, inefficient for large no. of small files, due to metadata overhead. High latency, not ideal for real-time or low-latency applications. Limited Random Access: design for seq access, not random reads/writes.
+
+\columnbreak
+
+\subsection{Relational Databases DB}
+Relational database comprised of tables, each table represents a relation, which is a collection of tuples (rows). Each tuple consists of multiple fields. Develop large-scale relational database using Hadoop / MapReduce.
 
 
+\subsubsection{Star Schema and SQL Queries}
+The Star Schema is a common database schema for data warehousing. Organizes data into single (central) fact table and dimension tables. Fact table linked via foreign key r/s to PK of each dimension. Faster query and simpler queries.
 
+\centerline{\includegraphics[width=1\linewidth]{starSchema}} 
 
+\subsubsection{SQL (Relational) Operations in MapReduce}
+\begin{itemize}[itemsep = 0.5pt]
+\item \textbf{Projection in SQL/MapReduce}: Projection selects specific columns from table. \\
+ (E.g. \texttt{SELECT <columns> FROM Sales}). Only selected columns returned.
+	\begin{itemize}
+	\item \textbf{Map Phase}: Input: Tuples (t. ID as key), emit tuples (w. only select attributes).
+	\item \textbf{No Reducer Needed}: "map-only" job, no need for shuffling or reducing.
+	\end{itemize}
+\item \textbf{Selection in SQL/MapReduce}: Selection filters rows based on condition. (E.g.  \texttt{SELECT * FROM Sales WHERE price > 10}). Only rows satisfying the predicate (condition) are returned.  MapReduce implementation:
+	\begin{itemize}
+	\item \textbf{Map Phase}: Input: Tuples (tuple ID as key) emit tuples satisfying predicate.
+	\item \textbf{No Reducer Needed}: Similar to projection, this is a map-only job.
+	\end{itemize}
+\item \textbf{Group By and Aggregation}: Aggregation operations. Shuffle phase is the 'group by'. Framework auto groups tuples by key.
+(E.g. \texttt{SELECT product\_id, AVG(price) FROM sales GROUP BY product\_id}). Output avg per product.
+	\begin{itemize}
+	\item \textbf{Map Phase}: Emit key-value pairs: $\langle \text{product\_id}, \text{price} \rangle$.
+	\item \textbf{Shuffle Phase}: Framework groups tuples by key (\texttt{product\_id}).
+    \item \textbf{Reduce Phase}: Compute average price for each \texttt{product\_id}. (Same Reducer). Optimize using combiners to reduce network traffic.
+	\end{itemize}
+\item \textbf{Relational Joins (Inner Join)}: Joins combine data from two tables based on a common key. (E.g. \texttt{SELECT A.Id, A.attr1, B.attr2 FROM A JOIN B ON A.bID = B.bID}) Many-to-many r/s (can appear multiple times in both tables).  
+	\begin{enumerate}[itemsep=0pt, topsep=0pt]
+		\item \textbf{Broadcast (Map) Join}: Requires the smaller table to fit in memory. Mappers store copy of small table as hash table. Iterate over large table, perform join. (Hash Join. Smaller table 'broadcasted' to all mappers/processing nodes.)
+	    \item \textbf{Reduce-side (Common) Join}: Mappers emit records with join key as primary key. Reducers group records by join key. Can use secondary sorting to ensure all keys from one table arrive before the other. Hold keys from first table in memory, cross them with records from second table (to do join).
+	\end{enumerate}
+\end{itemize}
 
+\centerline{\includegraphics[width=1\linewidth]{join}} 
 
-
+\begin{itemize}
+\item Big data systems do not automatically guarantee performance benefits.
+\item Performance analysis, algorithm design crucial for efficient, effective applications.
+\end{itemize}
 
 
 
