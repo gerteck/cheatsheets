@@ -422,10 +422,130 @@ Clustering technique. Separates data points into $K$ clusters by iteratively opt
 
 \centerline{\includegraphics[width=1\linewidth]{cluster}} 
 
+\textbf{MapReduce Usage in Data Mining, Machine Learning}
 \begin{itemize}
 \item MapReduce still needs to iteratively run till convergence.
 \item Iiterative algorithms like K-Means maybe not ideal for MapReduce, high network, disk I/O overhead (input disk read for every iteration). 
-\item Optimizations such as in-mapper combiners can reduce computational cost, but not fully address inefficiencies of iterative algorithms in MapReduce.
+\item \textbf{In-mapper combiner}: aggregate values directly in mapper using in-memory structures to emit fewer k-v pairs, reducing number of combiner calls. Reduce disk I/O since fewer intermediate records, but hgiher memory usage in mapper. 
+\item \textbf{System Combiner}: Use dedicated combiner function (run after map phase before data sent to reducer), run by system. More suitable when memory is limited.
+\item \textbf{Secondary Sort} - No aggregation, records (same key) go reducer in specific order.
+\item While optimizations such as in-mapper combiners can reduce computational cost, but not fully address inefficiencies of iterative algorithms in MapReduce. (Other frameworks e.g. Spark can overcome instead by using caching, in memory)
+\end{itemize}
+
+\bigskip \bigskip
+
+\centerline{\includegraphics[width=1\linewidth]{dbTypes}} 
+
+\vfill \null
+
+
+% -----------------------------------------------------------------
+\columnbreak
+
+\subsection{6. \underline{NoSQL \& Distributed Databases}}
+
+NoSQL: non-relational databases, store data in formats other than relational tables. 
+\begin{itemize}
+\item "SQL" here refers to traditional relational DBMS (relation databases, not querying language). NoSQL systems often involve SQL-like querying languages.
+\item "NoSQL" originally "Not SQL," but evolved to mean "Not Only SQL".
+\item \textbf{Coexistence} of relational \& relational databases in modern systems, each for tasks they are suited for, e.g. graph, vector databases.
+\item \textbf{Key Motivations}: Growth in web apps, big data, distributed systems. 
+	\begin{itemize}
+	\item \textbf{Volume and Velocity}: Handling large-scale data and high-speed data ingestion.
+	\item \textbf{Scalability}: Horizontal scalability to distribute data across multiple servers.
+	\item \textbf{Flexibility}: Support for unstructured/ semi-structured data w. flexible schemas.
+	\item \textbf{Performance}: Optimize specific use case, e.g. fast read/write, efficient storage.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Major Types of NoSQL Databases}
+NoSQL databases categorizable into several types, based on their data models:
+\begin{enumerate}[itemsep=0pt]
+    \item \textbf{Key-Value Stores}: Store data as key-value pairs (e.g., Redis, DynamoDB).
+    \item \textbf{Wide Column Databases}: Store data in tables with rows and columns, but allow flexible schemas (e.g. Cassandra, HBase).
+    \item \textbf{Document Stores}: Store as documents, JSON-like (e.g. Mongo, CouchDB).
+    \item \textbf{Graph Databases}: Data as nodes, edges to model relationships (e.g. Neo4j).
+    \item \textbf{Vector Databases}: Store high-D vectors for similarity search (e.g., Milvus).
+\end{enumerate}
+
+\subsubsection{Key-Value Stores}
+\begin{itemize}
+\item \textbf{Data Model}: Key-value stores associate keys with values. 
+\item \textbf{Keys:} Unique identifiers. Primitives e.g. ints, strings, raw bytes, queryable. 
+\item \textbf{Values}: can be simple or complex data types, e.g. primitives, lists, JSON objects, or binary large objects (BLOBs). Usually cannot be queried.
+\item \textbf{Operations}: simple API, \texttt{Get} (fetch value of key), \texttt{Put} (set value associated w. key). Optional operations include Multi-get, multi-put, range queries.
+\item \textbf{Use Cases}: Optimized for fast reads \& writes, caching, session storage, small-continuous read/write, uses w. simple query patterns (e.g., Redis, DynamoDB).
+\item \textbf{Persistence}: \textbf{Non-persistent} (just big in-memory hashtable, but back up data to disk periodically) e.g. Memcached, Redis. 
+	\textbf{Persistent}: Data stored persistently to disk. E.g. RocksDB, Dynamo, Riak
+\end{itemize}
+
+
+\subsubsection{Document Stores}
+\begin{itemize}
+\item \textbf{Data Model}: Organize data into collections of documents. 
+\begin{itemize}
+\item \textbf{Database} contains multiple collections. A \textbf{collection} contains multiple documents. A \textbf{document} is a JSON-like object with fields and values.
+\item Documents can be nested (JSON objects as values), varying fields, flexibility for unstructured / semi-structured data.
+\end{itemize}
+\item \textbf{Querying}: Unlike basic k-v stores, document stores support querying based on document content. Common operations: CRUD (create, read, update, delete).
+\item \textbf{Example: MongoDB Architecture}: MongoDB uses a distributed architecture.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{mongoDB}} 
+
+\subsubsection{Wide Column Databases}
+ Store data in tables w. rows \& columns, like relational DB, allow flexible schemas.
+ \begin{itemize}
+\item Each row can have different columns, data partitioned by partition key column.
+\item \textbf{Column Stores}: 'Mix between relational database and document store'.
+\item Ideal for large-scale, distributed datasets (e.g., Cassandra, HBase, open source).
+\end{itemize}
+
+
+\subsubsection{Graph Databases}
+\begin{itemize}
+\item Represent data as nodes (entities) and edges (relationships), enabling efficient traversal and querying of relationships.
+\item These databases are particularly useful for applications like social networks, recommendation engines, and fraud detection, where relationships between entities are critical (e.g., Neo4j).
+\end{itemize}
+
+
+\subsubsection{Vector Databases}
+\begin{itemize}
+	\item \textbf{Vector Databases}: Each row represent point in $d$-dimensional space.
+    \item Vectors typically represent embeddings from machine learning models. These databases enable fast similarity searches, such as finding nearest neighbors, and are widely used in AI/ML workflows for tasks like recommendation systems, image search, and clustering (e.g., Milvus, Pinecone).
+    \item Algorithms like Locality-Sensitive Hashing (LSH) enable fast similarity search.
+    \item \textbf{Examples}: Milvus, Redis, Weaviate, MongoDB Atlas
+\end{itemize}
+
+
+\subsubsection{Pros and Cons of NoSQL Systems}
+\begin{itemize}
+\item \textbf{Advantages}: Flexible schemas for semi/unstructured data. Horizontally scalable. High performance and availability due to relaxed consistency models. 
+\item \textbf{Disadvantages}: Lack of declarative query languages (e.g., SQL). Weaker consistency guarantees, which may require application-level handling. Challenges with schema evolution and data duplication.
+\item Choice between NoSQL and relational databases depends on: \textit{app requirements} (e.g., consistency vs. availability), query complexity (e.g., joins vs. simple read/writes), data volume and scalability needs.
+\end{itemize}
+
+\subsubsection{Key Concepts in NoSQL / Distributed Databases}
+\begin{itemize}
+\item \textbf{ Brewer's / CAP theorem}: Any distributed system/ data store can simultaneously provide only 2 of 3 guarantees: consistency, availability, partition tolerance (CAP).
+\item \textbf{BASE}: Basically Available, Soft state, and Eventually consistent.
+	\begin{itemize}
+	\item \textbf{ACID} databases prioritize consistency (correctness) over availability—the whole transaction fails if an error occurs in any step within the transaction.
+	\item \textbf{BASE } databases prioritize availability over consistency. Basic read write available most of time. Instead of fail, users access inconsistent data temporarily (\textit{soft state}, no guarantees). Data consistency is achieved eventually.
+	\end{itemize}
+
+\item \textbf{Consistency Models} {\scriptsize Different from ACID consistency - data integrity.}
+	\begin{itemize}
+	\item \textbf{Strong Consistency}: Any reads after update give same result on all observers. 
+	\item \textbf{Eventual Consistency}: Updates propagate over time, and readers may see stale data temporarily. Offers higher availability but weaker guarantees.
+	\end{itemize}
+\item \textbf{Denormalization}: (duplication of data across tables) - tradeoff between query efficiency and propogation of data updates. Design around queries expected.
+\item \textbf{Partitioning} across distributed databases: (e.g. by Range / specific column) - Related queries efficent, (entries co-located, no need scan entire database). However, may have imbalanced partitions, maintenance (shift from one partition to another on change), inefficency of incompatible queries - need scan multiple partitions.
+\end{itemize}
+
+\textbf{NoSQL Overall}: {\scriptsize Evaluate pros cons, select right DB system for app use case}
+\begin{itemize}
+\item NoSQL DB good for modern apps, flexible dynamic schema, (horizontal) scalability, performance \& availability (due to sacrificing strong consistency, removing need for locks, concurrency mechanisms).
+\item  Trade-offs in consistency guarantees (outdated data, additional work to handle on app side), and query capabilities (e.g. no joins).
 \end{itemize}
 
 
