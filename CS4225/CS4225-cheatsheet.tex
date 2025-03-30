@@ -549,6 +549,218 @@ NoSQL databases categorizable into several types, based on their data models:
 \end{itemize}
 
 
+% -----------------------------------------------------------------
+\columnbreak
+
+\subsection{7. \underline{Spark}}
+\begin{itemize}
+\item \textbf{Apache Spark}: fast, distributed computing framework, large-scale data processing. Leverage in-memory computation. Outperforms Hadoop MapReduce, especially iterative, interactive workloads, reduced latency, improved throughput.
+\item \textbf{Addresses Limitation}: issue w. Hadoop MapReduce of high network, disk I/O costs as write intermediate data to local disk, shuffle across machines. Not ideal for iterative process (e.g. ML / graph algo), each step a separate MapReduce job.
+\item \textbf{Advantages of Spark}: Store intermediate results in memory, speed up iterative processing. Falls back to disk I/O when memory insufficient.
+\item \textbf{Ease of Programmability}: Simpler, more intuitive API compared to Hadoop MapReduce. E.g. implement WordCount in Spark concise \& expressive:
+	\begin{verbatim}
+	val file = sc.textFile("hdfs://...")
+	val counts = file.flatMap(line => line.split(" "))
+	                .map(word => (word, 1))
+	                .reduceByKey(_ + _)
+	counts.save("...")
+	\end{verbatim}
+\end{itemize}
+
+\subsection{Spark Architecture}
+\begin{itemize}
+\item \textbf{Driver Process}: Manages Spark application, responds to user input, and distributes work to executors.
+\item \textbf{Executors}: Run the assigned tasks by driver, sends results back to driver.
+\item \textbf{Cluster Manager}: Allocates resources (e.g., Spark's standalone cluster manager, YARN, Mesos, or Kubernetes).
+\item \textbf{Local Mode}: All processes run on a single machine for testing and development.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{SparkArchitecture}} 
+\begin{itemize}
+\item Spark achieves simplicity by providing fundamental abstraction of simple logical data structure called Resilient Distributed Dataset (RDD) upon which all other
+higher-level structured data abstractions, DataFrames and Datasets, constructed.
+\item Through set of transformations and actions as operations, Spark offers simple programming model to build big data applications in familiar languages.
+\end{itemize}
+
+\subsection{Resilient Distributed Datasets (RDDs) {\scriptsize  (Foundational abstraction)}}
+\begin{itemize}
+\item \textbf{RDDs}: A distributed collection of objects that can be processed in parallel.
+\item \textbf{Immutable}: Once created, RDDs cannot be modified.
+\item \textbf{(R) Fault Tolerance}: Achieved through lineage, which allows Spark to recompute lost partitions using the DAG (Directed Acyclic Graph).
+\item \textbf{(DD) Partitioned}: Data divided into partitions distributed across worker nodes.
+\end{itemize}
+
+\subsection{Transformations and Actions}
+\begin{itemize}
+\item \textbf{Transformations}: Lazy operations, create new RDDs from existing RDD (e.g., \texttt{map}, \texttt{filter}, \texttt{join}, \texttt{groupBy}, \texttt{select}). Lazy - nothing happens till action.
+\item \textbf{Actions}: Trigger computations, return results to driver (e.g., \texttt{count}, \texttt{save}). 
+\item Read, transforms, actions execute in parallel, results sent only in final step.
+\end{itemize}
+
+\begin{verbatim}
+# Create an RDD of names, distributed over 3 partitions
+dataRDD = sc.parallelize(["Alice", "Bob", "Carol", "Daniel"], 3)
+nameLen = dataRDD.map(lambda s: len(s)) # Transform
+nameLen.collect()  # Action Output: [5, 3, 5, 6]
+\end{verbatim}
+
+
+\subsection{Caching}
+\begin{itemize}
+\item Caching: Improve performance by storing frequently used RDDs in memory.
+\item \textbf{When}: Cacje expensive to compute RDD that will be reused multiple times.
+\item \textbf{Methods}: \texttt{cache()}: Saves RDD in memory. \texttt{persist(options)}: Allows caching in memory, disk, or off-heap memory.
+\item \textbf{Memory Management}: If memory is insufficient, evict LRU RDDs.
+\end{itemize}
+
+\subsection{Spark Directed Acyclic Graph (DAG)}
+\begin{itemize}
+\item Spark constructs DAG to represent RDD transformations and dependencies.
+	\begin{itemize}
+	\item  \textbf{Narrow dependencies}: where each partition of parent RDD used by at most 1 partition of child RDD (e.g. \texttt{map}, \texttt{contains})
+	\item \textbf{Wide dependencies}: opposite - each partition of parent RDD used by multiple partitions of child RDD (e.g. \texttt{reduceByKey}, \texttt{groupBy})
+	\end{itemize}
+\item \textbf{Stages}: In DAG, consecutive narrow dependencies grouped into “stages”. Within stages, perform consecutive transforms on same machines.
+\item \textbf{Across Stages}: Wide dependencies trigger \textit{shuffling} (exchange across partitions like mapreduce), which involves write intermediate results to \textit{disk}. Minimize shuffling to improve performance (due to disk I/O not in memory).
+\item \textbf{Fault Tolerance}: Spark uses lineage to recompute lost partitions instead of relying on replication (costly as in-memory). If worker node goes down, replace with new worker, use DAG recompute only RDDs from lost partition.
+\end{itemize}
+ 
+
+\subsection{DataFrames}
+\begin{itemize}
+\item \textbf{Dataframe}: Represent tabular data like SQL tables / pandas DataFrames.
+\item Provide higher-level interface w. SQL-like operations (e.g. \texttt{groupBy}, \texttt{orderBy}).
+	\begin{verbatim}
+flightData2015 = spark.read.option("inferSchema", "true")
+                         .option("header", "true")
+                         .csv("/path/to/data.csv")
+flightData2015.sort("count").take(3)
+    \end{verbatim} \vspace{-1.5em}
+\item Generally, transform functions (groupBy, sort) take strings or “column objects”.
+\item Can use SQL queries to transform DataFrames (returns output DataFrame).
+\end{itemize}
+
+\subsection{Datasets}
+\begin{itemize}
+\item DataFrames, but type-safe. (Spark (Scala) - DataFrame alias of Dataset[Row].)
+\item Available in static typed languages - Scala, but not Python or R. (Dynamic typed)
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{SparkMisc}} 
+
+\begin{itemize}
+\item RDDs provide low-level control, while DataFrames and Datasets offer ease of use and performance optimizations.
+\item No matter which abstraction (Df, Ds) used, internally final compute done on RDDs. 
+\item Caching and DAGs are essential for optimizing Spark applications.
+\end{itemize}
+
+% Spark Advanced Topics ---------------
+\subsection{Spark Design Philosophy}
+Design philosophy and architecture. Guided by four core principles.
+\begin{itemize}
+\item \textbf{Speed}: In-memory processing, optimized execution (Catalyst Opt, Tungsten).
+\item \textbf{Ease of Use}: Unified, intuitive API across languages. High-level abstractions.
+\item \textbf{Modularity}: Modular system, with core enginer supporting libraries and modules. (Spark SQL for structured data, Spark Streaming, MLlib for ML, GraphX). Extensible Ecosystem to build custom libraries.
+\item \textbf{Extensibility}: Support for multiple languages, integration w. existing systems.
+\end{itemize}
+
+
+\subsection{Spark SQL}
+Spark SQL is a module in Spark, provides unified interface for structured and semi-structured data processing. Integrates seamlessly w. Spark's core engine and supports DataFrames and Datasets in Java, Scala, Python, and R.
+\begin{itemize}
+\item \textbf{Schema Awareness}: Track schema of data, enable optimized relation operation.
+\item \textbf{Unified API}: Provides a consistent API across multiple programming languages.
+\item \textbf{Optimization}: Leverages the Catalyst Optimizer and Project Tungsten for efficient query execution.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{SparkSQL1}} 
+
+\subsubsection{RDD vs DataFrame on Execution Efficiency}
+\begin{itemize}
+\item \textbf{RDD}: Instructs Spark \textit{how} to compute query, intention opaque to Spark. (no understanding of structure of data, semantics of user-defined functions).
+\item \textbf{DataFrame}: Tells Spark \textit{what} to do, using domain-specific language (DSL) similar to Python pandas. Spark can inspect, optimize query, more efficient execution.
+\end{itemize}
+
+\subsubsection{Catalyst Optimizer}
+Catalyst Opt. transforms computational queries into execution plans, four phases:
+\begin{enumerate}[itemsep=0pt, topsep=0pt]
+    \item \textbf{Analysis}: Resolves references and validates the query.
+    \item \textbf{Logical Optimization}: Apply rule-based optimizatn (e.g. pred pushdown).
+    \item \textbf{Physical Planning}: Generates execution plan tailored to underlying hardware.
+    \item \textbf{Code Generation}: Compile optimal plan to low-level code (Proj Tungsten).
+\end{enumerate}
+
+\subsubsection{Project Tungsten}
+Proj. Tungsten focuses on improving memory, CPU efficiency by:
+\begin{itemize}
+\item \textbf{Memory Management}: Efficiently managing memory usage for large datasets.
+\item \textbf{Binary Processing}: Operating directly on binary data formats.
+\item \textbf{Cache-Aware Computation}: Optimizing for CPU cache utilization.
+\item \textbf{Code Generation}: Generating highly optimized machine code for execution.
+\end{itemize}
+
+
+\centerline{\includegraphics[width=1\linewidth]{SparkSQL2}} 
+
+\columnbreak
+
+\subsection{Spark ML: Machine Learning}
+Spark ML provides tools to build scalable, complex machine learning pipelines using simple building blocks. Pipelines streamline the process of data preprocessing, feature engineering, model training, and evaluation. Supports various stages of ML workflow, from data preprocessing to model evaluation. \\
+\smallskip
+\textbf{Typical Machine Learning Pipeline}: 
+\begin{enumerate}[itemsep=0pt, topsep=0pt]
+    \item \textbf{Preprocessing}: Cleaning and transforming raw data (e.g., handling missing values, encoding categorical features).
+    \item \textbf{Training}: Fitting a model to the training data.
+    \item \textbf{Testing}: Evaluating the model on unseen data.
+    \item \textbf{Evaluation}: Measure model performance, metrics e.g. precision, recall, F1.
+\end{enumerate}
+
+\subsubsection{Data Preprocessing}
+\textbf{Data preprocessing} \textit{crucial for high-quality input} to machine learning models.
+\begin{itemize}
+\item \textbf{Handling Missing Values}: Imputation (e.g., median) / create dummy variables.
+\item \textbf{Categorical Encoding}: Converting categorical features into numerical representations (e.g. one-hot encoding).
+\item \textbf{Normalization}: Scale features to standard range (e.g. min-max norm, log).
+\end{itemize}
+
+
+\textbf{Logistic Regression}: {\scriptsize widely used classification algorithm. \textbf{Key concepts}:}
+\begin{itemize}
+\item \textbf{Sigmoid Function}: Maps predictions to probabilities between 0 and 1.
+\item \textbf{Cost Function}: Minimizes cross-entropy loss to fit the model parameters.
+\item \textbf{Gradient Descent}: Iterative update model params, minimize cost function.
+\end{itemize}
+
+\subsubsection{Parallel Gradient Descent {\scriptsize In distributed systems like Spark}}
+\begin{itemize}
+\item Broadcast weights to all worker nodes. Cache training data locally on each worker. (Used to calculate gradients for each iteration). Compute gradients in parallel, aggregate results to update model.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{SparkML2}} 
+    
+\subsubsection{Pipelines in Spark ML}
+Spark ML pipelines chains multiple stages of data processing and modeling:
+\begin{itemize}
+\item \textbf{Why}: Pipelines allow better code reuse, and easier to perform cross validation, hyperparameter tuning (easier to treat as encapsulated).
+\item \textbf{Transformers}: Map DataFrames to DataFrames (e.g. use during one-hot encoding, normalization, model predictions).
+\item \textbf{Estimators}: Algorithm that produces a fitted model (a transformer) (e.g., logistic regression, k-means clustering). \texttt{fit()} method that trains model on input data.
+\item \textbf{Pipeline}: Combines transformers and estimators into a single workflow.
+\item Pipeline chains multiple Transformers and Estimator to form ML workflow. 
+\end{itemize}
+   
+\subsubsection{Pipeline Execution}
+\begin{itemize}
+\item \textbf{Training Time}: \texttt{Pipeline.fit()} called: 
+\begin{itemize}
+\item Transformers execute their \texttt{transform()} methods.
+\item Estimators execute their \texttt{fit()} methods to produce fitted models.
+\end{itemize}
+\item \textbf{Test Time}: Output of \texttt{Pipeline.fit()} is a \texttt{PipelineModel}, which is a Transformer. Calling \texttt{PipelineModel.transform()} applies the transformations and predictions to new data.
+\end{itemize}
+
+
+
+
 
 
 
