@@ -759,6 +759,359 @@ Spark ML pipelines chains multiple stages of data processing and modeling:
 \end{itemize}
 
 
+% -----------------------------------------------------------------
+\columnbreak
+
+\subsection{8. \underline{Stream Processing}}
+\begin{itemize}
+\item Scenario where data arrives continuously over time rather than received all at once.
+\item Streaming / online approaches process input as it is received, compared to offline /batch processing which operate on full dataset at once.
+\end{itemize}
+
+
+\subsection{Streaming Data Characteristics}
+\begin{itemize}
+\item Input elements (\textit{tuples}) enter rapidly from sources e.g. sensors, TCP connections, file streams, or message queues.
+\item Streams potentially infinite, cannot be fully stored due to memory limitations.
+\item Data high volume, constantly arriving over time. Applications:
+	\begin{itemize}
+	\item \textbf{Sensor Data}: Industrial IoT, environmental monitoring, medical devices.
+	\item \textbf{Online User Activity}: Clickstreams, user interactions, social media feeds.
+	\item \textbf{Financial Transactions}: Credit card fraud detection, stock trades analysis.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Stateful Stream Processing}
+\begin{itemize}
+\item \textbf{Stream processing systems} not limited to trivial record-at-a-time transformations. 
+	\begin{itemize}
+	\item Store and access intermediate data. (Local state, periodic checkpoint)
+	\item Maintain state in prog variables, local files, embedded DBs, external systems.
+	\end{itemize}
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{streamProcessing}}     
+
+\subsection{Spark Structured Streaming}
+\begin{itemize}
+\item \textbf{Stream processing pipelines} should be as easy as writing batch pipelines.
+\item Unified programming model and interface for both batch and stream processing.
+\item Broader definition stream processing: data stream as an unbounded table.
+\end{itemize}
+
+\subsection{Micro-Batch Stream Processing}
+\begin{itemize}
+\item \textbf{Micro-Batch processing model} of Spark Structured Streaming.
+	\begin{itemize}
+	\item Divide input stream into small batches.
+	\item Process each batch in Spark cluster in a distributed manner.
+	\item Generate output in micro-batches using deterministic tasks.
+	\end{itemize}
+\item \textbf{Advantages} of Micro-Batch:
+	\begin{itemize}
+	\item Efficient recovery from failures.
+	\item Ensures end-to-end exactly-once processing guarantees.
+	\end{itemize}
+\item \textbf{Disadvantages} of Micro-Batch:
+	\begin{itemize}
+	\item Latencies of a few seconds, which may be acceptable for many applications.
+	\item Applications may incur additional delays in other parts of the pipeline.
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{Structured Streaming Processing Model}
+Structured Streaming processes data streams in five steps:
+
+\begin{enumerate}[itemsep=0pt, topsep=0pt]
+    \item \textbf{Define Input Sources}: Specify where the data is coming from.
+    \item \textbf{Transform Data}: Apply transformations to the data.
+    \item \textbf{Define Output Sink and Output Mode}: Where, how to write output.
+    \item \textbf{Specify Processing Details}: 
+    \begin{itemize}[itemsep=0pt, topsep=0pt]
+	\item \textbf{Triggering details}: When to trigger results, process new stream data.
+        \item \textbf{Checkpoint location}: Store stream query process information (fail recovery).
+    \end{itemize}
+    \item \textbf{Start the Query}: Begin processing the stream.
+\end{enumerate}
+
+\centerline{\includegraphics[width=1\linewidth]{streamProcessing2}}     
+
+\subsection{Data Transformation (Streaming Data)}
+\subsubsection{Stateless Transformations}
+\begin{itemize}
+\item Process each row independently without relying on previous rows. E.g.
+\item Projection operations: \texttt{select()}, \texttt{explode()}, \texttt{map()}, \texttt{flatMap()}.
+\item Selection operations: \texttt{filter()}, \texttt{where()}.
+\end{itemize}
+
+\subsubsection{Stateful Transformations}
+\begin{itemize}
+\item Maintain intermediate state across records for computations.
+\item E.g. Aggregations: \texttt{DataFrame.groupBy().count()}.
+\item Every micro-batch, incremental plan adds count of new records to previous count.
+\item Partial count communicated between plans is the state, maintained in Spark executor memory and checkpointed for fault tolerance.
+\end{itemize}
+
+\subsection{Distributed State Management}
+\begin{itemize}
+\item \textbf{Stateful streaming aggregations} include:
+\begin{itemize}
+\item Global aggregations (E.g. \texttt{groupBy().count()})
+\item Grouped aggregations. (E.g. \texttt{groupBy('sensorId').mean('value')}
+\item Event-Time window Aggregations (E.g. \texttt{window('eventTime', '5 min')})
+\end{itemize}
+\item All built-in aggregation functions in DataFrames supported, \texttt{sum()}, \texttt{mean()}, \texttt{stddev()}, \texttt{countDistinct()}, \texttt{collect\_set()}, \texttt{approx\_count\_distinct()}.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{distributedStateManagement}}     
+
+
+\subsection{Time Semantics}
+\begin{itemize}
+\item \textbf{Processing Time}: Time at which stream processing machine processes event.
+\item \textbf{Event Time}: The time when the event actually occurred.
+\item \textbf{Benefits of Event Time}: Decouples processing speed from results.
+	\begin{itemize}
+	\item Operations based on event time are \textbf{predictable, deterministic}.
+	\item Event time window computation yields same result regardless processing speed or event arrival order (out-of-order data arrival).
+	\end{itemize}
+\item \textbf{Watermarks}: mechanism handling late-arriving data, state of streaming queries. 
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{trigger}}     
+
+\subsubsection{Trigger in Spark Structured Streaming}
+\begin{itemize}
+\item \textbf{Trigger} define how often and when streaming query process new available data.
+\item \textbf{Default} (Micro-batch Processing): process data ASAP without waiting.
+\item \textbf{Fixed Interval Trigger}: process data at fixed interval (e.g. 5 sec). 
+\item Manage execution of stream query, control latency, throughput, resource usage.
+\end{itemize}
+
+\subsubsection{Watermarking in Spark Structured Streaming}
+\begin{itemize}
+\item \textbf{Defines threshold} for how late data can arrive before considered irrelevant. 
+\begin{itemize}
+\item \textbf{Watermark: timestamp}, point in time up to which all data has been processed.
+\item Any data arriving w. event time earlier than watermark is "too late", discarded.
+\end{itemize}
+\item Watermark \textbf{dynamically updated} based on maximum observed event time in stream minus a user-specified delay threshold.
+\item \textbf{Watermark Delay Threshold}: user-defined parameter, specify how long Spark waits for late data. E.g. if delay threshold 10 min, Spark assume any data arriving more than 10 minutes after latest observed event time is irrelevant. $(\mathrm{Watermark} = \mathrm{Max Observed Event Time} - \mathrm{Delay Threshold})$
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{watermark}}     
+
+\subsubsection{Performance Tuning}
+Besides tuning Spark SQL engine, consider following:
+\begin{itemize}
+\item Appropriate cluster resource provisioning for 24/7 operation.
+\item Setting number of partitions for shuffles lower than batch queries.
+\item Limiting source rates for stability.
+\item Running multiple streaming queries in same Spark application.
+\end{itemize}
+
+\subsection{Flink}
+\begin{itemize}
+\item \textbf{Apache Flink}: distributed system for stateful parallel data stream processing.
+\item Low-latency, high-throughput, fault-tolerant stream processing capabilities.
+\item Unlike Spark's micro-batch approach, Flink processes events in real-time. (latencies in order of milliseconds).
+\end{itemize}
+
+\subsection{Event-Driven Streaming Applications}
+\begin{itemize}
+\item \textbf{Event logs} are ordered, immutable sequences of events (or records) that represent changes or actions in a system.
+Each event typically includes metadata such as a timestamp, key, and payload (the actual data).
+\item Logs decouple senders \& receivers, enable async, non-blocking event transfer.
+\item Stateful applications maintain and process state as events are ingested.
+\item Systems e.g. \textbf{Kafka} commonly used as message queues, store, manage event logs.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{streamingApplication}}   
+
+\subsubsection{Comparison with Traditional Data Warehousing}
+\begin{itemize}
+\item \textbf{Traditional data warehousing architectures}: involve multiple components, ETL (Extract, Transform, Load) pipeline, storage system, batch processing frameworks. 
+\item \textbf{Flink's streaming analytics applications}:
+	\begin{itemize}
+	\item Handle event ingestion, continuous computation, state maintenance, and result updates within a single framework.
+	\item Reduce time required for an event to be incorporated into analytics results.
+	\end{itemize} 
+\end{itemize}
+
+
+
+\subsection{Dataflow Model}
+\begin{itemize}
+\item \textbf{Logical Dataflow Graph}: operators as nodes and data dependencies as edges.
+\item \textbf{Physical Dataflow Plan}: maps logical operators to tasks for execution. Nodes represents tasks.
+\end{itemize}
+
+\centerline{\includegraphics[width=0.7\linewidth]{dataflow}}   
+
+
+\vfill \null
+\columnbreak
+
+\subsection{Overview of Apache Kafka}
+\centerline{\includegraphics[width=1\linewidth]{kafka}}     
+\smallskip
+\begin{itemize}
+\item \textbf{Apache Kafka}: distributed event streaming platform for high-throughput, fault-tolerant, real-time data processing. Build real-time data pipelines, streaming apps.
+	\begin{itemize}
+	\item \textbf{Event Logs}: Kafka stores streams of records (events) in categories called topics.
+	\item \textbf{Decoupling}: Kafka decouples data producers (senders) and consumers (receivers), enabling asynchronous, non-blocking event transfer.
+	\item \textbf{Scalable}: Supports large volumes of data across multiple nodes in a cluster.
+	\item \textbf{Durable}: Data persist on disk, replicate across multiple brokers, fault tolerance.
+	\end{itemize}
+\item \textbf{Key Concepts in Kafka}
+	\begin{itemize}
+	\item \textbf{Topics}: A topic is a category or feed name to which records are published. Topics partitioned, replicated across multiple brokers.
+	\item \textbf{Partitions}: Each topic divided into partitions, allow horizontal scaling. Each partition is ordered, immutable sequence of records.
+	\item \textbf{Producers}: Producers publish data to Kafka topics.
+	\item \textbf{Consumers}: Consumers subscribe to topics and process the data.
+	\item \textbf{Brokers}: Kafka runs as a cluster of brokers. Each broker manages a subset of the partitions for the topics.
+	\item \textbf{Offsets}: Each record in a partition has a unique offset, which acts as an identifier for the record's position in the partition.
+	\end{itemize}
+\item \textbf{Partitioning}: partitioning mechanism, distribute data across multiple brokers:
+	\begin{itemize}
+	\item \textbf{Partition Key}: Messages assigned to partitions based on a key. If no key is provided, messages are distributed in a round-robin fashion.
+	\item \textbf{Hash Function}: Partition number determine using hash function: 
+	$\text{Partition Number} = \text{hash(key)} \% \text{number of partitions}$. Ensures all messages with same key sent to the same partition, preserving order within partition.
+	\end{itemize}
+\item \textbf{Data Retention}: configurable period or size limit or log compaction (retain only the latest value for each key, reducing storage requirements).
+\item \textbf{Consumer Groups}: allow multiple consumer read from same topic in parallel. 
+	\begin{itemize}
+	\item \textbf{Load Balancing}: Each partition consume by only one consumer within group.
+	\item \textbf{Fault Tolerance}: If consumer fail, partition reassign to other consumer in group.
+	\end{itemize}
+\item \textbf{Use Cases of Kafka}: Real-time analytics, event sourcing, microservice comm.
+\item \textbf{Kafka vs Traditional Message Queues}: Data persistence on disk, scalability, order guarantee, replayability.
+\item \textbf{Example: Kafka in Photos Synchronization System}: (e.g. iCloud, GPhotos). 
+	\begin{itemize}
+	\item \textbf{Producer}: Photos uploaded from a phone or laptop are sent to Kafka as events.
+	\item \textbf{Topic}: Events are stored in a Kafka topic, such as "photo-uploads."
+	\item \textbf{Consumer}: Servers subscribe topic, process events, synchronize device photos.
+	\item \textbf{Fault Tolerance}: Photo uploads not lost even if some server fail.
+	\end{itemize}
+\item \textbf{Advantages of Kafka}: High Throughput, Low Latency, Durability, Scalability.
+\item \textbf{Challenges with Kafka}: Complexity, Resource Intensive, Latency for small mesages.
+\end{itemize}
+
+
+
+\subsection{Flink System Architecture}
+\begin{itemize}
+\item Flink as distributed system for stateful parallel data stream processing. 
+\item \textbf{TaskManager}: Executes tasks and manages data transfer between tasks. A TaskManager can execute multiple tasks concurrently:
+\begin{itemize}
+\item Tasks of the same operator (data parallelism).
+\item Tasks of different operators (task parallelism).
+\item Tasks from different applications (job parallelism).
+\end{itemize}
+\item \textbf{JobManager}: Coordinates task execution and initiates checkpoints.
+\end{itemize}
+    
+\centerline{\includegraphics[width=1\linewidth]{flinkArchitecture}}     
+    
+\begin{itemize}
+\item \textbf{Each TaskManager}: fixed number of processing slots to control concurrency.
+\item \textbf{A processing slot} can execute one parallel task slice of an application.
+\end{itemize}
+
+
+\subsubsection{Data Transfer in Flink}
+\begin{itemize}[itemsep=-0.5pt]
+\item Tasks in a running application continuously exchange data.
+\item TaskManagers handle data shipping from sending tasks to receiving tasks.
+\item Records collected in buffers (buffered) before shipping, optimize network utilize.
+\end{itemize}
+    
+\centerline{\includegraphics[width=1\linewidth]{flinkEvent}}     
+
+\subsubsection{Flink Event-Time Processing}
+\begin{itemize}
+\item \textbf{Timestamps}: Every record will include an \textbf{event} timestamp (when they occured, vs. using process / ingestion-time timestamps).
+\item \textbf{Watermarks}: Special records indicating progress of event time. Flow alongside regular records, \textbf{triggers (event-time-related) computations}. Specified by user!
+	\begin{itemize}
+	\item \textbf{Periodic Watermarks}: Generated at fixed intervals.
+	\item \textbf{Punctuated Watermarks}: Generate based on specific events in stream.
+	\end{itemize}
+\item \textbf{Allowed Lateness}: specifies how much event delay tolerated. Signals: "All events with timestamps earlier than this watermark have been received."
+\item Event arriving after watermark's timestamp considered "late", handled accordingly (e.g., dropped, sent to a side output).
+\item \textbf{Watermarks} implemented as records holding a timestamp (Long value). Tells Flink when to finalize results for given time window. (E.g. watermark at 10:00 indicates Flink can now process all events with timestamps before 10:00). 
+\end{itemize}
+        
+
+\subsubsection{Flink State Management}
+\begin{itemize}[itemsep=0pt]
+\item Robust state management for stateful stream processing. \textbf{State Backend}:
+\item \textbf{Local State Management}: 
+	\begin{itemize}[itemsep=0pt]
+	\item \textbf{Task of a stateful operator} reads, updates its state for each incoming record.
+	\item \textbf{Each parallel task} maintains its state locally in memory for fast access.
+	\end{itemize}
+\item \textbf{Checkpointing}:
+	\begin{itemize}[itemsep=0pt]
+	\item \textbf{A TaskManager} process may fail at any point, hence storage considered volatile
+	\item \textbf{Checkpoints persist state} to remote, persistent storage (e.g., distributed filesystems or database system), for fault tolerance to recover from failure.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Checkpoints}
+Flink's checkpointing mechanism ensures \textbf{consistent} state across distributed tasks: (similar to Spark micro-batch \textbf{consistent} checkpoints).
+\begin{itemize}
+\item \textbf{Spark (micro-batch) Checkpointing}: Pause ingestion of all input streams, process all in-flight data of all tasks, take checkpoint by copying state of all tasks to remote persistent storage. Resume ingestion of all streams. (`stop-the-world')
+\item \textbf{Failure Recovery} (from a consistent checkpoint): Restart entire application, Reset states of all stateful tasks to latest checkpoint. Resume processing from the point of failure.  - costly delays.
+\end{itemize}
+
+\subsubsection{Flink's Checkpointing Algorithm}
+\begin{itemize}
+\item \textbf{Checkpoint algorithm}: based on \textbf{Chandy-Lamport} distributed snapshot algo.
+\item \textbf{Checkpoint barriers} inject into stream, cannot overtake or pass by other records.
+\item Barriers logically split the stream into two parts:
+	\begin{itemize}
+	\item State modifications due to records preceding barrier included in checkpoint.
+	\item Modifications due to subsequent records included in later checkpoint.
+	\end{itemize}
+\item Checkpointing is async, allow tasks to continue process, while others persist state.
+\end{itemize}
+\textbf{Checkpointing Algorithm}:
+\begin{enumerate}[itemsep=0pt]
+    \item JobManager initiates checkpoint, send a message to all source operators.
+    \item Source operators checkpoint their state and emit a \textbf{checkpoint barrier}.
+    \item Tasks buffer records until \textbf{all checkpoint barriers received}.
+    \item Once all barriers are received, tasks checkpoint state, \textbf{forward the barrier}.
+    \item Sinks acknowledge receipt of the checkpoint barrier to the JobManager.
+    \item A checkpoint is complete when all tasks have acknowledged their state.
+\end{enumerate}
+\centerline{\includegraphics[width=1\linewidth]{flinkCheckpointing}}     
+
+\subsection{Comparison: Spark vs. Flink}
+\begin{itemize}
+\item \textbf{Spark}: Micro-batch streaming processing with latencies of a few seconds. 
+	\begin{itemize}
+	\item Checkpoints are synchronous ("stop the world"). 
+	\item Watermarks are configured to determine when to drop late events.
+	\end{itemize}
+\item \textbf{Flink}:  Real-time streaming processing with latencies in milliseconds. 
+	\begin{itemize}
+	\item Checkpoints are asynchronous and distributed, enabling lower latency.
+	\item Watermarks are special records that trigger event-time-related computations. 
+	\item Late events are handled using watermark-related functions.
+	\end{itemize}
+\end{itemize}
+    
+
+
+
+
+
+
+
+
+
+
 
 
 
