@@ -708,6 +708,141 @@ PCA is a statistical application of SVD. PCA identifies directions (principal co
 
 
 
+\columnbreak
+
+
+\subsection{11. \underline{Neural Networks}}
+
+\subsection{Perceptron}
+
+The perceptron is a fundamental building block of neural networks, inspired by biological neurons in the brain. It serves as a binary classifier, capable of learning to separate data into two classes based on input features. Structure and function of biological neurons:
+\begin{itemize}
+\item A neuron receives inputs (dendrites), processes, produces an output (axon).
+\item A perceptron takes input features, applies weights to them, sums them up, and passes the result through an activation function to produce an output.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{perceptron}}
+
+\subsubsection{Perceptron Model}
+Given an input vector $\mathbf{x}$ of dimension $d$, the perceptron model is defined as:
+\[
+h_w(x) = \hat{y} = g(\mathbf{w}^T \mathbf{x}) = g\left(\sum_{j=0}^d w_j x_j\right), \quad g(z) =
+\begin{cases}
++1 & \text{if } z \geq 0, \\
+-1 & \text{if } z < 0.
+\end{cases}
+\]
+\begin{itemize}[itemsep=0pt]
+\item $h_w(x) = g(w_0x_0 + w_1x_1 + ... + w_dx_d)$
+\item $\mathbf{w} = [w_0, w_1, \dots, w_d]$ are the weights (parameters) of the perceptron.
+\item $x_0 = 1$ is a dummy variable (bias term).
+\item $g(z)$ is the activation function, typically a step function.
+\item $N$ \textbf{data points}, each has \textbf{Features}: $x^{(i)} \in \mathbb{R}^d$ \quad \textbf{Target}: $y^{(i)} \in {-1, 1}$
+\item Features are described by a vector of real numbers in dimension $d$ (i.e. $x$)
+\end{itemize}
+
+\subsubsection{Perceptron Learning Algorithm}
+The perceptron learning algorithm is used to train the model by iteratively updating the weights to minimize misclassifications:
+\begin{enumerate}[itemsep=0pt]
+    \item Initialize the weights $\mathbf{w}$ (e.g., to zero or small random values).
+    \item For each training instance $(\mathbf{x}^{(i)}, y^{(i)})$: 
+    \begin{itemize}[topsep=0pt]
+		\item Compute predicted output $\hat{y}^{(i)} = g(\mathbf{w}^T \mathbf{x}^{(i)})$
+		\item If prediction incorrect ($\hat{y}^{(i)} \neq y^{(i)}$), i.e. misclassified, update weights:\\
+		$[\mathbf{w} \leftarrow \mathbf{w} + \gamma \cdot (y^{(i)} - \hat{y}^{(i)}) \cdot \mathbf{x}^{(i)}]$, 
+		        where $\gamma$ is the learning rate.
+	\end{itemize}
+    \item Repeat until convergence or a maximum number of iterations is reached.
+\end{enumerate}
+\textbf{Example: Cancer Prediction}: Binary classification problem, goal to predict whether tumor benign ($-1$) or malignant ($+1$) based on size. 
+
+\centerline{\includegraphics[width=0.9\linewidth]{perceptronLearning}}
+
+\subsubsection{Limitations of the Perceptron}
+\begin{itemize}
+\item It can only solve linearly separable problems.
+\item It does not handle non-linear relationships between features.
+\item To address these limitations, multi-layer neural networks are used, which stack multiple perceptrons (neurons) with non-linear activation functions.
+\end{itemize}
+
+% ---------- 
+
+\subsection{Neural Network}
+A neural network is composed of multiple layers of interconnected neurons, enabling it to learn complex patterns in data.
+
+\subsubsection{Neuron}
+An artificial neuron generalizes perceptron using diff. activation functions: \\
+
+\centerline{\includegraphics[width=0.9\linewidth]{neuronFormula}}
+%\[
+%\hat{y} = h_w(x) = g\left(\sum_{j=0}^d w_j x_j\right)
+%\]
+(activation function $g(z)$ e.g. ReLu, sigmoid function: $g(z) = \frac{1}{1 + e^{-z}}$)
+\begin{itemize}[itemsep=0pt]
+\item A neuron w. linear activation function equivalent to linear regression model.
+\item A neuron w. sigmoid activation function eqv to logistic regression model.
+	\begin{itemize}[itemsep=0pt, topsep=0pt]
+	\item Identity/Linear activation fn: $g(z) = z \implies h_w(x) = \sum_{j=0}^d w_j x_j$
+	\item Sigmoid function: $g(z) = \sigma(z) \implies h_w(x) = \sigma(\sum_{j=0}^d w_j x_j)$
+	\end{itemize}
+\end{itemize}
+
+\subsection{Feature Engineering for Non-Linear Problems}
+To model non-linearly separable problems (e.g., XNOR gate), feature engineering is essential. Two approaches are commonly used:
+\begin{itemize}
+\item \textbf{Manual Feature Engineering}: Manual transform existing features to capture non-linear relationships, e.g. polynomial features: $x_1^2, x_2^2, x_1x_2$, apply exponential or logarithmic transformations: $e^{x_1}, \log(x_2)$, combine features multiplicatively: $x_1x_2$. 
+\item \textbf{Using Neurons for Feature Transformation}: Instead of manual transforms, use neurons in neural network to automatically learn new features. Hidden layers apply non-linear activation functions (e.g., sigmoid, ReLU). Weights of neurons effectively create new features making it linearly separable.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{XNOR}}
+\begin{itemize}
+\item Linear Regression and Logisitic Regression relies on manual feature engineering to capture complex patterns, while a multi-layer neural network learns its own feature representations through its layers with activation functions.
+\end{itemize}
+
+\subsubsection{Multi-layer Neural Networks}
+
+Multi-layer neural networks consist of an \textbf{input layer} (receives raw features), \textbf{hidden layers} (transform features using learned weights and activation functions), an \textbf{output layer} (produces final predictions).
+
+\centerline{\includegraphics[width=1\linewidth]{multiLayerNeuralNetworks}}
+
+The forward propagation process computes the output as:
+\[
+\hat{\mathbf{y}} = g^{[L]} \left( W^{[L]} \cdot g^{[L-1]} \left( W^{[L-1]} \cdot \dots g^{[1]} \left( W^{[1]} \cdot \mathbf{x} \right) \dots \right) \right),
+\]
+where $W^{[l]}$ are the weights for layer $l$, and $g^{[l]}$ is the activation function.
+
+\subsubsection{Softmax Activation for Multi-class Classification}
+For multi-class classification, the softmax function is used in the output layer to convert raw scores into probabilities:
+\[
+g(z_i) = \frac{e^{z_i}}{\sum_{j=1}^c e^{z_j}},
+\]
+where $c$ is the number of classes, and $g(z_1) + g(z_2) + \dots + g(z_c) = 1$.
+
+\smallskip
+
+\centerline{\includegraphics[width=1\linewidth]{neuralMulticlass}}
+
+\subsubsection{Summary}
+\begin{itemize}
+\item \textbf{Applications}: Neural networks widely used for image classification, (identifying objects in images), natural language processing (sentiment analysis), multi-class classification (predicting one of several categories).
+\item \textbf{Perceptron} is a single-layer binary classifier.
+\item Neural networks generalize the perceptron by stacking multiple layers and using non-linear activation functions.
+\item Multi-layer neural networks can model complex, non-linear relationships in data.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
