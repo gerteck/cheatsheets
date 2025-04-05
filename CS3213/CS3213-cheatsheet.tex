@@ -1,4 +1,4 @@
-\documentclass[10pt, landscape]{article}
+\documentclass[a4paper, 10pt, landscape]{article}
 \usepackage[scaled=0.92]{helvet}
 \usepackage{multicol}
 \usepackage{calc}
@@ -17,6 +17,8 @@
 \usepackage{enumitem}
 % For math
 \usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{mathtools}
+
 
 %For pictures / figures
 \usepackage{color,graphicx,overpic}
@@ -38,16 +40,8 @@
   /Keywords (tex)}
 
 %% Margins for PAPER
-
-% This sets page margins to .5 inch if using letter paper, and to 1cm
-% if using A4 paper. (This probably isn't strictly necessary.)
-% If using another size paper, use default 1cm margins.
-\ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
-	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-	}
+% A4 paper. 
+{\geometry{top=0.4cm,left=0.4cm,right=0.4cm,bottom=0.4cm} 
 
 % Turn off header and footer
 \pagestyle{empty}
@@ -93,7 +87,7 @@
 %% this changes all items (enumerate and itemize, reduce margins)
 \setlength{\leftmargini}{0.5cm}
 \setlength{\leftmarginii}{0.5cm}
-\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0.5mm, before=\justifying}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0pt, before=\justifying}
 \setlist[itemize,2]{leftmargin=3mm,labelindent=0.2mm,labelsep=1mm, itemsep = 0mm, topsep=0pt, before=\justifying}
 %\setlist{nosep}
 
@@ -763,15 +757,380 @@ Deployment strategy impacts SWE practices. Method of deployment depends on facto
 
 
 
+\subsection{8. \underline{Static Analysis and Type System}}
+
+
+\subsubsection{Limitations of Testing}
+\begin{itemize}
+\item \textbf{Testing} widely used to identify bugs, but has significant limitations. Demonstrates presence of bugs but cannot guarantee their absence. Often time-consuming and resource-intensive. Edge cases and rare conditions may remain untested.
+\item \textbf{Historical Context of Software Failures}: significant financial losses and even endangerment of human lives. E.g. Mars Climate Orbiter (1998), Knight Capital Group (2012) trading glitch loss \$440 million. Wannacry Ransomware Attack (2017). Boeing 737 MAX Crisis (2019).
+\item \textbf{Static analysis, type systems} can help play a crucial role in improving software reliability and reducing the incidence of costly bugs (Fewer runtime errors).
+\end{itemize}
+
+\subsubsection{Static Analysis}
+\begin{itemize}
+\item \textbf{Static analysis}: examination of code without executing it. 
+\item \textbf{Primary goals}: identifying potential errors, adherence to coding standards, optimizing performance.
+\item \textbf{Why Static Analysis}: Early detection of bugs, reduce fix cost later in dev process. Improved code quality by enforcing best practices.
+	Reduced debugging time through automated checks. Enhanced maintainability by ensuring consistent coding styles and fewer runtime errors.
+\item \textbf{Types of Static Analysis}:
+	\begin{itemize}
+	\item \textbf{Linters and Style Checkers}: Focus on formatting and adherence to coding conventions without deeper semantic analysis.
+	\item \textbf{Data-Flow Analysis}: Tracks the flow of data through a program to determine possible values at different points in the execution.
+	\item \textbf{Control-Flow Analysis}: Analyze order of statement/function execution.
+	\item \textbf{Type Checking}: Verifies that variables and expressions are used consistently according to their declared types. (Focus on this)
+	\end{itemize}
+\end{itemize}
+
+\textbf{The Problem with Unsafe Languages}: E.g. Python, C, C++, and JavaScript, are inherently unsafe. These languages attempt to execute programs that may fail at runtime due to type mismatches or other errors.
+\begin{itemize}
+\item Python evaluates unsafe programs, throw runtime error when issues arise.
+\item C and C++ place the burden of writing safe programs entirely on the programmer, often leading to manual errors.
+\item Relying on manual approach to avoid errors proven unsuccessful.
+\end{itemize}
+
+
+\subsubsection{Type System, Role in Static Analysis}
+\begin{itemize}
+\item \textbf{A type system}: tractable syntactic method for proving absence of certain prog. behaviors by classifying phrases according to kinds of values they compute. (Benjamin Pierce, Types and Programming Languages)
+\item Type systems serve as critical component of static analysis, detect type-related errors before runtime. A type system acts as a filter.
+\item\textbf{Well-Typed Programs}: Adhere to type rules, allowed to execute. (e.g. $0 + 1$)
+\item \textbf{Ill-Typed Programs}: Prog w. Type mismatch reject before execution (e.g. $false \; 0$ - cannot apply boolean to integer).
+\item \textbf{Benefits of Type Systems}: 
+	\begin{itemize}
+	\item \textbf{Safety}: Prevents runtime errors caused by type mismatches.
+	\item \textbf{Early Error Detection}: Identifies errors during the development phase rather than at runtime.
+	\item \textbf{Improved Readability and Maintainability}: Clear type annotations make code easier to understand and modify.
+	\end{itemize}
+\end{itemize}
+
+\subsection{$\lambda$-Calculus}
+\begin{itemize}
+\item \textbf{Prog. language} invented in 1930s by Alonzo Church and Stephen Cole Kleene.
+\item "Core language" w. essential features to express all computation. (Lambda calculus is Turing complete). No redundancy, encode extra features as `syntactic sugar.'
+\item Foundations of functional programming (e.g., Lisp, ML, Haskell).
+\item Often used as a core language to study language theories. (Type systems, Scope and binding, Higher-order functions, Denotational semantics, Program equivalence)
+\end{itemize}
+    
+
+\subsection{Overview: $\lambda$-Calculus as a Language}
+\begin{itemize}
+\item \textbf{Syntax} (How to write program): Keyword "$\lambda$" for defining functions.
+\item \textbf{Semantics} (How to describe execution): \textit{reduction} as calculation rules.
+\item Type system, Model theory (not covered)
+\end{itemize}
+    
+\subsubsection{Syntax}
+\begin{itemize}
+\item $\lambda$-terms or $\lambda$-expressions: $ \text{(Terms)} \quad M, N ::= x \mid \lambda x. M \mid M N $
+\item Lambda abstraction ($\lambda x.M$): Anonymous functions.
+\item  Lambda application ($M N$). Examples:
+	\begin{itemize}
+	\item $ \texttt{int f(int x) \{ return x; \}} \Leftrightarrow \lambda x. x $
+	\item $\texttt{f(3);} \Leftrightarrow (\lambda x. x) 3$
+	\end{itemize}
+\item \textbf{Pure/Extended $\lambda$-Calculus}: Pure $\lambda$-calculus only has $\lambda$-terms. Extended has added extra operations and data types. (E.g. $\lambda x. (x + 1), \quad \lambda z. (x + 2y + z)$)
+\item \textbf{Conventions (Associativity)}
+	\begin{itemize}
+	\item \textbf{Body of $\lambda$ extends as far to the right as possible}: \\
+	$\lambda x. M N \quad \text{means} \quad \lambda x. (M N), \quad \text{not} \quad (\lambda x. M) N$
+	\item \textbf{Function applications are left-associative}: \\
+	$M N P \quad \text{means} \quad (M N) P, \quad \text{not} \quad M (N P) $
+	\item Examples: \\
+	$(\lambda x. \lambda y. x - y) 5 3 \quad = \quad ((\lambda x. \lambda y. x - y) 5) 3$ \\
+	$(\lambda f. \lambda x. f x) (\lambda x. x + 1) 2 \quad = \quad ((\lambda f. \lambda x. f x) (\lambda x. x + 1)) 2$
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Higher-Order Functions}
+\begin{itemize}
+\item Functions as \textbf{return values}: $\lambda x. \lambda y. x - y$
+\item Functions as \textbf{arguments}: $(\lambda f. \lambda x. f x) (\lambda x. x + 1) 2$
+\item \textbf{Example}: Function Composition: \\
+Given function $f$, return function $f \circ f: \quad \lambda f. \lambda x. f (f x)$
+\end{itemize}
+\centerline{\includegraphics[width=0.7\linewidth]{HOF}}
+
+\subsubsection{Curried Functions}
+\begin{itemize}
+\item $\lambda$ abstraction is a function of one parameter.
+\item $\lambda x. \lambda y. x - y \quad \leftrightarrow \texttt{int f(int x, int y) \{ return x - y; \}}$: \\
+Computationally equivalent (can be transformed into each other).
+\item \textbf{Curry}: Transform $(\lambda (x, y). x - y)$ to $(\lambda x. \lambda y. x - y)$. Uncurry: Reverse of Curry.
+\end{itemize}
+
+\subsubsection{Free and Bound Variables}
+\begin{itemize}
+\item E.g. $\lambda x. x + y$. $x$: Bound variable. $y$: Free variable.
+\item Bound variables renameable ($\alpha$-equivalence): $\lambda x. (x + y) \Leftrightarrow  \lambda z. (z + y)$
+\item Name of free variables matters: $\lambda x. (x + y) \neq \lambda x. (x + z)$
+\item \textbf{Occurrences}: $ (\lambda \underline{x. x} + y) (x + 1):$ $x$ has both free and \underline{bound} occurrence.
+\end{itemize}
+    
+\subsection{Processes in Lambda Calculus}
+\begin{enumerate}
+\item \textbf{Alpha Conversion}: If are applying two lambda expressions w. same variable name inside, change one of them to a new variable name. E.g. 
+$(\lambda x.xx)(\lambda x.x) \rightarrow  (\lambda x.xx)(\lambda y.y)$
+\item \textbf{Beta Reduction}: Basically just substitution. Process of calling lambda expression with input, and getting output. E.g. $(\lambda x.xy)z \implies zy$.
+Substitution: $(\lambda x. M) N \to M[N/x] $. (`N replaces x in M'). Repeatedly apply the reduction rule to any sub-term. 
+\item \textbf{Eta Conversion/Eta Reduction}: Special case reduction. Converts between $\lambda x.(f x)$ and $f$ whenever $x$ does not appear free in $f$. Basically means $\lambda x.(f x) = f$ if $f$ does not make use of $x$. E.g. $(\lambda x.(\lambda y.yy)x) = (\lambda y.yy)$
+\end{enumerate}
+
+
+\subsection{Formal Definitions}
+\textbf{Terms}:
+    \[
+    M, N ::= x \mid \lambda x. M \mid M N
+    \]
+\begin{itemize}
+\item \textbf{Set of free variables} in $M$: $fv(M)$
+    \[
+    fv(x) \coloneqq \{x\}, \quad fv(\lambda x. M) \coloneqq fv(M) \setminus \{x\}, \quad fv(M N) \coloneqq fv(M) \cup fv(N)
+    \]
+E.g.: $fv((\lambda x. x) x) = \{x\}, \quad fv((\lambda x. x + y) x) = \{x, y\}$
+
+\item \textbf{Substitution}: 
+\[ M[N/x]: N \text{ replaces } x \text{ in } M \]
+- Defined by induction on terms:
+    \[
+    x[N/x] \coloneqq N, \quad y[N/x] \coloneqq y \quad \text{(if $y \neq x$)}
+    \]
+    \[
+    (M P)[N/x] \coloneqq (M[N/x]) (P[N/x])
+    \]
+    \[
+    (\lambda x. M)[N/x] \coloneqq \lambda x. M \quad \text{(Only replace free variables!)}
+    \]
+Substitution – Avoid Name Capture. Rename bound variables before substitution:
+        \[
+        (\lambda x. x - y)[x/y] = (\lambda z. z - y)[x/y] = \lambda z. z - x
+        \]
+\item \textbf{Alpha-equivalence}: $\lambda x. M = \lambda y. M[y/x], \quad \text{where } y \text{ is fresh.}$. Two terms are $\alpha$-equivalent iff one convertable to other purely by renaming bound variables.
+\item \textbf{Beta-reduction} (substitution): $(\lambda x. M) N \to M[N/x] $. (`N replaces x in M'). \\
+Repeatedly apply the reduction rule to any sub-term.
+\end{itemize}
+
+\subsubsection{Normal Form}
+\begin{itemize}
+\item \textbf{\underline{Red}ucible \underline{Ex}pression} ($\beta$-redex): A term of the form $(\lambda x. M) N$.
+\item $\beta$-normal form: A term containing no $\beta$-redex. 
+\item Stopping point: Cannot further apply $\beta$-reduction rules. \\
+\centerline{ E.g. $(\lambda f. \lambda x. f (f x)) (\lambda y. y + 1) 2 \to 2 + 1 + 1 \quad (\beta\text{-normal form})$}
+ Can further reduce to $4$ if reduction rules for $+$ are defined.
+ \item E.g.: $\lambda x. \lambda y. x$ (normal), $(\lambda x. \lambda y. x) (\lambda z. z)$ and $\lambda x. (\lambda y. x) (\lambda z. z)$ (not normal)
+\end{itemize}
+
+\subsubsection{Confluence (Church-Rosser Property)}
+\begin{itemize}
+\item Terms can be evaluated in any order. Final result (if exists) is uniquely determined.
+\item `When applying reduction rules to terms, the ordering in which the reductions are chosen does not make a difference to the eventual result.'
+\item \textbf{Confluence Theorem}: $\text{For all } M, M_1, M_2, \text{ if } M \to^* M_1 \text{ and } M \to^* M_2, \text{ then } \exists M' \text{ such that } M_1 \to^* M' \text{ and } M_2 \to^* M'.$
+\end{itemize}
+
+\subsubsection{Non-Terminating Reduction}
+\begin{itemize}
+\item Some terms have no normal forms. 
+\item E.g. $(\lambda x. x x) (\lambda x. x x) \to (\lambda x. x x) (\lambda x. x x) \to \dots$
+\item Term may have both terminating and non terminating reduction sequences. E.g.
+\end{itemize}
+    \[
+    (\lambda u. \lambda v. v) ((\lambda x. x x)(\lambda x. x x))
+    \]
+    \[
+    \to \lambda v. v \quad \text{(Terminating)}
+    \]
+    \[
+    \to (\lambda u. \lambda v. v) ((\lambda x. x x)(\lambda x. x x)) \to \dots \quad \text{(Non-terminating)}
+    \]
+
+
+\subsection{Reduction Strategies}
+\begin{itemize}
+\item \textbf{Normal-order reduction}: Choose the left-most, outer-most redex first.
+    \[
+    (\lambda u. \lambda v. v) ((\lambda x. x x)(\lambda x. x x)) \to \lambda v. v
+    \]
+\item Normal-order reduction will find a normal form if it exists.
+\item \textbf{Applicative-order reduction}: Choose the left-most, inner-most redex first.
+\[
+    (\lambda u. \lambda v. v) ((\lambda x. x x)(\lambda x. x x)) \to (\lambda u. \lambda v. v) ((\lambda x. x x)(\lambda x. x x)) \to \dots
+    \]
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{reductionStrategies}}
+
+\subsection{Programming in $\lambda$-Calculus}
+\begin{itemize}
+\item \textbf{Encoding Boolean Values and Logical Operators}
+	\[
+    \text{True} \coloneqq \lambda x. \lambda y. x, \quad \text{False} \coloneqq \lambda x. \lambda y. y
+    \]
+        \[
+        \text{Negation: not} \coloneqq \lambda b. b \, \text{False} \, \text{True}
+        \]
+        \[
+        \text{Conjunction: and} \coloneqq \lambda b. \lambda b'. b \, b' \, \text{False}
+        \]
+        \[
+        \text{Disjunction: or} \coloneqq \lambda b. \lambda b'. b \, \text{True} \, b'
+        \]
+        \[
+        \text{Conditional: if b then M else N} \coloneqq b \, M \, N
+        \]
+        \[
+        \text{Alternative negation: not'} \coloneqq \lambda b. \lambda x. \lambda y. b \, y \, x
+        \]
+\item \textbf{Church Numerals}:
+- Encoding natural numbers:
+    \[
+    0 \coloneqq \lambda f. \lambda x. x, \quad 1 \coloneqq \lambda f. \lambda x. f \, x, \quad 2 \coloneqq \lambda f. \lambda x. f \, (f \, x)
+    \]
+    \[
+    \text{General form: } n \coloneqq \lambda f. \lambda x. f^n \, x
+    \]
+    \[
+    \text{Successor function: succ} \coloneqq \lambda n. \lambda f. \lambda x. f \, (n \, f \, x)
+    \]
+    \[
+    \text{Example: succ n} \to \lambda f. \lambda x. f \, (n \, f \, x) = \lambda f. \lambda x. f^{n+1} \, x = n+1
+    \]
+    \[
+    \text{Zero-check function: iszero} \coloneqq \lambda n. \lambda x. \lambda y. n \, (\lambda z. y) \, x
+    \]
+        \[
+        \text{Addition: add} \coloneqq \lambda n. \lambda m. \lambda f. \lambda x. n \, f \, (m \, f \, x)
+        \]
+        \[
+        \text{Multiplication: mult} \coloneqq \lambda n. \lambda m. \lambda f. n \, (m \, f)
+        \]
+\item \textbf{Pairs and Tuples}:
+    \[
+    \text{Pair encoding: } (M, N) \coloneqq \lambda f. f \, M \, N
+    \]
+    \[
+    \text{Projection functions:} \pi_0 \coloneqq \lambda p. p \, (\lambda x. \lambda y. x), \quad \pi_1 \coloneqq \lambda p. p \, (\lambda x. \lambda y. y)
+    \]
+    \[
+    \text{Tuple encoding: } (M_1, \dots, M_n) \coloneqq \lambda f. f \, M_1 \, \dots \, M_n
+    \]
+    \[
+    \text{Projection functions:} \pi_i \coloneqq \lambda p. p \, (\lambda x_1. \dots \lambda x_n. x_i)
+    \]
+\item \textbf{Lists}: can be encoded using pairs. Operations on lists (e.g., head, tail, length) can be defined similarly. \textbf{Others}: Trees, Recursive functions etc.
+\item \textbf{Main Points About $\lambda$-Calculus}: Succinct function expressions using $\lambda$.Bound variables can be renamed ($\alpha$-equivalence). Reduction via substitution ($\beta$-reduction). Can be extended with: Types (e.g., simply-typed $\lambda$-calculus), and side-effects (not covered here).
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{untypedLambdaCalculus}}
+
+\columnbreak
+
+\subsection{Typed Lambda Calculus}
+\begin{itemize}
+\item Untyped $\lambda$-calculus is powerful but lacks safety guarantees.
+\item Add type system ensures correctn, prevent certain errors (e.g., apply non-functions).
+\item Provides formal framework for reasoning about programs. \textbf{type safety}:'Well-typed programs cannot go wrong.' Enables static analysis and optimization. 
+\item \textbf{Type System}: Typing rules (assign types to terms), and Type safety (soundness of rules). Well-typed terms cannot go 
+wrong.
+\end{itemize}
+    
+\subsection{Simply-Typed Lambda Calculus (STLC)}
+\begin{itemize}
+\item Extends untyped $\lambda$-calculus with a simple type system. \textbf{Syntax}:
+    \[
+    \text{(Types)} \quad \tau, \sigma ::= T \mid \sigma \to \tau
+    \]
+    \[
+    \text{(Terms)} \quad M, N ::= x \mid \lambda x : \tau. M \mid M \, N
+    \]
+\item Functions classified using argument and result types. $(\sigma \to \tau)$
+\item $\to$ is right-associative: $\tau \to \tau \to \tau \text{ is } \tau \to (\tau \to \tau)$
+\item \textbf{Typing Context ($\Gamma$)}: a set of typing assumptions  (to assign types to terms):
+\begin{itemize}
+\item  $[\Gamma \vdash M : \tau ]$ means `Under typing context $\Gamma$, term M is well-typed, has type $\tau$.'
+\item Typing context $[\hspace{0.2em} \Gamma \hspace{0.2em} ::=\boldsymbol{\cdot} \mid \hspace{0.2em} \Gamma , x : \tau \hspace{0.5em}]$ (Empty context + extended context)
+\item $\vdash$ (pronounced `turnstile'), also means `proves / entails'. (e.g. $\Gamma$ proves $x : \tau$).
+
+\end{itemize}
+\item \textbf{Typing (inference) rules} (to derive the typing judgement):
+	\begin{itemize}
+	\item \textit{Variable rule}: ($x$ is type $\tau$ under context where it is defined as $\tau$)
+			\centerline{\includegraphics[width=0.5\linewidth]{variableRule}}
+	\item \textit{Application rule}: (Type of fn. application determined by type of fn, and param).
+        \[
+        \frac{\Gamma \vdash M : T_1 \to T_2 \quad \Gamma \vdash N : T_1}{\Gamma \vdash M \, N : T_2}
+        \]
+	\item \textit{Abstraction rule}:
+        \[
+        \frac{\Gamma, x : T_1 \vdash M : T_2}{\Gamma \vdash \lambda x : T_1. M : T_1 \to T_2}
+        \]
+	\end{itemize}
+\item \textbf{Typing Judgement}: a formal statement in type theory that asserts that a term (or expression) in a programming language has a specific type, under a given set of assumptions about the types of variables.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{typingDerivations}}
+
+\subsubsection{Soundness and Completeness}
+\begin{itemize}
+\item \textbf{Soundness}: A sound type system never accepts a program that can `go wrong.' No false negatives: The language is type-safe. Ensures execution never reaches a "meaningless" state.
+\item \textbf{Completeness}: A complete type system never rejects a program that cannot go wrong. No false positives.
+\item For any Turing-complete programming language, the set of programs that may "go wrong" is undecidable. Type systems cannot be both sound and complete.
+\item In practice, we prioritize soundness and try to minimize false positives.
+\end{itemize}
+  
+
+
+\subsubsection{Soundness in STLC}
+\begin{itemize}
+\item \textbf{Type Safety Theorem}: (Reduction of a well-typed term either diverges, or terminates in a value of the expected type.) Follows from two key lemmas.
+    \[
+    \text{For any } M, M' \text{ and } \tau, \text{ if } \cdot \vdash M : \tau \text{ and } M \to^* M', \text{ then:}
+    \]
+    \[
+    \cdot \vdash M' : \tau, \quad \text{and either } M' \in \text{Values or } \exists M''. M' \to M''.
+    \]
+\item \textbf{Preservation (Subject Reduction)}: well-typed terms reduce only to well-typed terms of same type. ($\to$ means reduces to)
+        \[
+        \text{If } \cdot \vdash M : \tau \text{ and } M \to M', \text{ then } \cdot \vdash M' : \tau.
+        \]
+\item \textbf{Progress}: a well-typed term is either a value or can be reduced.
+        \[
+        \text{If } \cdot \vdash M : \tau, \text{ then either } M \in \text{Values or } \exists M'. M \to M'.
+        \]
+\end{itemize}
+
+\subsubsection{Properties of STLC}
+\begin{itemize}
+\item \textbf{Strong Normalization Theorem}: Well-typed terms in STLC always terminate. 
+E.g. $(\lambda x. x x) (\lambda x. x x) \text{ cannot be assigned a type.}$
+\item \textbf{Limitation: Not Complete}: Some valid programs may be rejected by type system.
+    \[
+    (\lambda x. (x (\lambda y. y)) (x 3)) (\lambda z. z)
+    \]
+- Cannot find types $\sigma, \tau$ such that: $[ x : \sigma \vdash (x (\lambda y. y)) (x 3) : \tau ]$
+ 
+- However, reduces successfully: $[ ((\lambda z. z) (\lambda y. y)) ((\lambda z. z) 3) \to (\lambda y. y) 3 \to 3 ] $
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{STLC}}
 
 
 
-
-
-
-
-
-
+\subsubsection{Extending STLC}
+Use STLC as a foundation for understanding other common language constructs.  
+\begin{itemize}[itemsep=0pt]
+\item Extend the syntax (types \& terms), operational semantics (reduction rules)
+\item Extend the type system (typing rules), soundness proof (new proof cases)
+\item \textbf{Adding Product Types ($\sigma \times \tau$)}:
+	\begin{itemize}
+	\item Represent structured data, combining two values into a pair. Logical intuition: To make a $\sigma \times \tau$, we need both a $\sigma$ and a $\tau$. Operations: Construct pairs, Extract components using projections, E.g.: Swapping components of a pair.
+	\end{itemize}
+\item \textbf{Sum Types ($\sigma + \tau$)}: 
+	\begin{itemize}
+	\item Represent choices between alternatives. Logical intuition: To make a $\sigma + \tau$, we need either a $\sigma$ or a $\tau$. Operations: Inject values into the sum type (left or right). Handle alternatives using case analysis. Example: Encoding booleans as $ \text{true} + \text{false} $.
+	\end{itemize}
+\item  Extended STLC includes functions, products, and sums.
+\item Products ($\sigma \times \tau$) and sums ($\sigma + \tau$) are logical duals.
+\item These constructs model common programming patterns like structs, unions, and enums.
+\end{itemize}
 
 
 
