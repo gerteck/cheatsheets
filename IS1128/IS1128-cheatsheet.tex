@@ -764,16 +764,20 @@ Defining these responsibilities is critical to reducing risks in public, hybrid,
 
 \subsubsection{Cybersecurity Legal Framework}
 Key legislations governing cybersecurity in Singapore:
-\begin{itemize}[itemsep=0pt]
-\item \textbf{Cybersecurity Act 2018}: Regulates critical information infrastructure (CII) and cybersecurity service providers. (E.g. CII - Energy, Water, Banking, Healthcare, Aviation, Media, Govt, Transport)
+\begin{itemize}[itemsep=0pt, topsep=0pt]
+\item \textbf{Critical information infrastructure}: (CII). Computer or comp. system located wholly or partly in 
+Singapore, necessary for continuous delivery of essential service, loss /compromise hv debilitating effect on availability of essential service.
+\item (E.g. CII - Energy, Water, Banking, Healthcare, Aviation, Media, Govt, Transport - Does not mean if part of this industry it is considered. Must be of certain size / critical mass)
+\item \textbf{Cybersecurity Act 2018}: Regulates critical information infrastructure (CII) and cybersecurity service providers. 
 \item \textbf{Personal Data Protection Act (PDPA) 2012}: Governs the collection, use, and disclosure of personal data. Key provisions include:
 	\begin{itemize}[itemsep=0pt, topsep=0pt]
 	\item Ensure accuracy, completeness of personal data.
 	\item Reasonable security arrangements to prevent unauthorized access.
 	\item Retain personal data only as long as necessary for intended purpose.
-	\item Restrict transfer of personal data outside Singapore unless adequate protection ensured.
-	\item \textbf{Right to Delete}: PDPA allows individuals to request deletion of personal data under certain conditions, but not absolute right.
-	\item PDPA applies to private sector organizations. Public sector agencies like IRAS governed by Public Sector (Governance) Act (PSGA) instead.
+	\item Restrict transfer of personal data outside Singapore unless adequate protection ensured. (Allowed to as long as justify protected).
+	\item \textbf{Right to Delete}: PDPA allows individuals to request deletion of personal data under certain conditions, but not absolute right. (SG - If org. can justify purpose, they may keep record forever, no right to delete).
+	\item \textbf{Liability}: Even if company is data owner, if company has done due diligence, they may not be fined. (Data breach through third party app, zero-day vulnerability, not in their control etc.)
+	\item \textbf{PDPA} applies to only private sector organizations. Public sector agencies (IRAS) by \textbf{Public Sector (Governance) Act (PSGA)} instead. Scope of company - e.g. SingHealth, NUS - PDPA, not PSGA.
 	\end{itemize}
 \item \textbf{Computer Misuse Act (CMA) 1993}: Criminalizes unauthorized access, modification, or misuse of computer systems. Including:
 	\begin{itemize}[itemsep=0pt, topsep=0pt]
@@ -785,8 +789,89 @@ Key legislations governing cybersecurity in Singapore:
 
 
 
+\vfill
+\null 
+
+% -------------------------------------------------------------
+\columnbreak
+
+\subsection{9. \underline{IT/AI Governance}}
+
+\begin{itemize}[itemsep=0pt]
+\item \textbf{Governance}: "The set of responsibilities, practices exercised by the board and executive management with goal of providing strategic direction, ensuring objectives are achieved, ascertaining that risks are managed appropriately, and verifying enterprise’s resources are used responsibly." 
+\item \textbf{GRC} (Governance, Risk Management, Compliance) reflect principles.
+\item \textbf{AI Governance}: ability to \textbf{direct, manage, monitor} AI activities of org.
+\item \textbf{Objective} to deliver transparent and ethical AI to establish accountability, responsibility, and oversight.
+\end{itemize}
+
+\subsubsection{AI Governance Framework}
+\begin{itemize}[itemsep=0pt]
+\item Developed by IMDA and PDPC, Singapore's AI governance framework includes 11 AI ethical principles.
+\item \textbf{Key Dimensions of AI Governance include}:
+	\begin{enumerate}[itemsep=0pt, topsep=0pt]
+	\item \textbf{Internal Governance Structures and Measures}: Clear roles, responsibilities for ethical AI deployment (e.g., governance boards including CTO, CDO, CPO). Risk management and internal controls (e.g., MasterCard’s AI governance council and risk scoring mechanisms).
+	\item \textbf{Human Involvement in AI-Augmented Decision Making}: \textbf{Human-in-the-loop}: Humans retain full control; AI provides recommendations. \textbf{Human-out-of-the-loop}: No human oversight; AI systems have full control. \textbf{Human-over/on-the-loop}: Humans monitor AI systems and can intervene when necessary.
+	\item \textbf{Operations Management}: Data preparation: Ensuring data quality, minimizing bias, and understanding data lineage. Good dataa accountability practices. Different datasets for train, test, validate. Periodic reviewing and updating of dataset. Algorithms: Explainability, repeatability, robustness, regular tuning, and \textit{traceability, auditability}.
+	\item \textbf{Stakeholder Interaction and Communication}: General disclosure: Informing stakeholders about AI use and its impacts. (E.g. know if you are chatting with AI chatbot. Option to opt-out: Allowing individuals to avoid AI-driven decisions under certain conditions (degree of harm, reversibility, availability of alternatives etc - (IMDA: Not necessary if justified/not feasible. Recommended but not mandatory)). Communication channels and acceptable user policies (AUPs).
+	\end{enumerate}
+\end{itemize}
+\smallskip
+\centerline{\includegraphics[width=0.95\linewidth]{AIRules}}    
+\begin{itemize}[itemsep=0pt]
+\item \textbf{Overall Guiding Principles}: Decisions made by AI should be explainable, transparent and fair. AI systems should be human-centric.
+	\begin{itemize}[itemsep=0pt, topsep=0pt]
+	\item \textbf{Explainable}: Explain what AI system is doing.
+	\item \textbf{Transparent}: Right to be informed (AI is being used). Appropriate info is provided to individuals impacted by AI systems.
+	\item \textbf{Fairness}: Ensure algorithms do not create discrimination, unjust impacts. Develop monitoring, accounting mechanisms to avoid disrimination, consult diversity of voices, demographic when develop systems.
+	\end{itemize}
+\end{itemize}
+        
+
+\subsubsection{Human Involvement in AI-Augmented Decision Making}
+\begin{itemize}
+\item At this stage, many AI-augmented decision-making scenarios should still be \textbf{Human-over/on-the-loop}. CANNOT be \textbf{Human-out of-the-loop}, e.g. (AI-based disease diagnosis in healthcare, high speed financial trading, autonomous car driving).
+\end{itemize}
+
+\subsubsection{Case Studies}
+\begin{itemize}[itemsep=0pt]
+\item \textbf{Facial recognition bias}: Asylum applicants to US, cannot utilize app to accept photos, fail to register darker skin tones. - Training Selection bias.
+\item \textbf{Racial bias in health algorithms}: U.S. healthcare systems use of commerical algorithms, evidence of racial bias in widely used algorithms, where Black patients assigned same level of risk are sicker than White patients, reducing extra care discriminatively.
+\item \textbf{Gender gap in hiring}: Experimental hiring engine found to penalize resumes including the word "women's" - historical bias (real data).
+\item \textbf{HSBC}: AI Governance in All Facets of Loan Applications. Model Risk Management (MRM) framework. Follow mandatory training, keep to principles, vendor management, auditability, keep customers in loop. 
+\item \textbf{Standard Chartered}: Standard Chartered Responsible Artificial Intelligence (RAI). Inhouse Framework Responsible for Intelligence Data and Algorithm Yield (FRIDAY). Own RAI council. 5 Main engines: Explainable AI, Data Suitability, Robustness, Model monitoring and stability, Model review and validation.
+\end{itemize}
+
+\subsubsection{Automation Paradox}
+The more efficient automated systems become, the more crucial human contributions become. Humans are less involved but their involvement becomes more critical in addressing failures or unexpected events.
 
 
+\subsubsection{Other Country's AI Governance Studies}
+\begin{itemize}[itemsep=0pt]
+\item \textbf{EU AI Governance}:  EU AI Act, world’s first horizontal and standalone law governing AI. Three risk categories:
+	\begin{itemize}[itemsep=0pt]
+	\item Unacceptable risk: Banned applications (e.g., social scoring, cognitive behavioral manipulation).
+	\item High-risk: Applications subject to specific legal requirements (e.g., biometric identification, CII, cars, medical devices, lifts, toys).
+	\item Minimal risk: Not explictly banned or labelled high risk, applications left unregulated.
+	\end{itemize}
+\item \textbf{US AI Governance}: National AI Initiative Act of 2020.
+	\begin{itemize}[itemsep=0pt]
+	\item Provides a coordinated program across Federal government to accelerate AI research and application.
+	\item Focuses on advancing U.S. leadership in AI R\&D, developing trustworthy AI systems, and preparing the workforce for AI integration
+	\item NIST AI Risk Management Framework (AI RMF 1.0): Principles include valid, reliabile, safety, security, accountability, transparency, explainability, privacy enhancement, and fairness
+	\end{itemize}
+\item \textbf{California AI Governance}:  Safe and Secure Innovation for Frontier Artificial Intelligence Models Act, SB (Senate Bill) 104. 
+	\begin{itemize}[itemsep=0pt]
+	\item Intended to "mitigate the risk of catastrophic harms from AI models so advanced that they are not yet known to exist
+	\item  Expansive definitions of “covered models”, “covered model derivatives” likely to capture many frontier AI models and subsequent modifications. SB 1047 broadly applies to “covered models,” which are AI models either cost over 100 million to develop, based on covered models, fine tuned to certain extent etc.
+	\item  Apply only to companies that develop or provide compute power to train covered models or covered model derivatives, not to companies that merely use covered models.
+	\item Before training a covered model, developers are required to implement technical and organization controls designed to prevent covered models from causing “critical harms.” (e.g. kill switch, cybersecurity etc.)
+	\item Proposed bill may be lacking as it is classified only based on scale of economy. They should look at the nature of the AI, like the EU bill.
+	\item \textbf{SB 53}: Focuses on whistleblower rights for employees working on foundation models.
+	\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{USAI}}    
+\item \textbf{International Standards}: ISO/IEC JTC 1/SC 42. A joint technical committee of the International Organization for Standardization (ISO) and International Electrotechnical Commission (IEC) focused on artificial intelligence standards.
+\end{itemize}
+    
 
 
 
