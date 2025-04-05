@@ -827,13 +827,220 @@ where $c$ is the number of classes, and $g(z_1) + g(z_2) + \dots + g(z_c) = 1$.
 \item \textbf{Applications}: Neural networks widely used for image classification, (identifying objects in images), natural language processing (sentiment analysis), multi-class classification (predicting one of several categories).
 \item \textbf{Perceptron} is a single-layer binary classifier.
 \item Neural networks generalize the perceptron by stacking multiple layers and using non-linear activation functions.
-\item Multi-layer neural networks can model complex, non-linear relationships in data.
+\item Multi-layer neural networks models complex, non-linear data relationships.
+\end{itemize}
+
+\subsection{Neural Networks Training}
+
+Training a neural network involves adjusting its weights to minimize loss function, measures difference between predicted output and true target values. Gradient descent usable to update weights in neural network. 
+
+\centerline{\includegraphics[width=1\linewidth]{multiLayer2}}
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{multiLayer3}}
+
+\subsubsection{Forward Propagation}
+During forward propagation, input data is passed through the network layer by layer to compute the predicted output:
+\begin{itemize}[itemsep=0pt]
+\item $\hat{y} = g(W^{[L]} \cdot g(W^{[L-1]} \cdot \dots g(W^{[1]} \cdot x) \dots ))$
+\item $ W^{[l]} $: Weight matrix for layer $ l $, $ x $: Input features.
+\item $ g(\cdot) $: Activation function (e.g., ReLU, sigmoid, softmax).
+\item For example, in a simple multi-layer neural network:
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{forwardPropagation}}
+
+
+\textbf{Loss Function}: quantifies error between predicted output $ \hat{y} $ and the true target $ y $. Common loss functions include Mean Squared Error (MSE) 
+($L = \frac{1}{2} (\hat{y} - y)^2$), Cross-Entropy Loss (for classification tasks).
+
+
+\subsubsection{Backpropagation}
+Compute gradients of loss function w.r.t weight w. chain rule (MSE Loss):
+$$
+\frac{\partial L}{\partial w_j} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w_j}.
+\quad \leftrightarrow \frac{\partial L}{\partial \hat{y}} = \hat{y} - y. \quad \frac{\partial \hat{y}}{\partial z} = g'(z).  \quad \frac{\partial z}{\partial w_j} = x_j.
+$$
+\begin{itemize}[itemsep=0pt]
+\item $L = \frac{1}{2} (\hat{y} - y)^2$, so $\frac{\partial L}{\partial \hat{y}} = \hat{y} - y$, and $\quad$ $\hat{y} = g(z)$, so $\frac{\partial \hat{y}}{\partial z} = g'(z).$
+\item e.g. $z_1 = w_1x_1 + w_3x_2$, so: $\frac{\partial z_1}{\partial w_i} = x_j$
+\end{itemize}
+\textbf{Key steps in backpropagation}: Compute derivative of loss wrt. output y. Compute derivative of activation function. Propagate error backward through layers, compute respective derivatives. Then compute gradients $\forall$ weights. \\
+\smallskip
+\centerline{\includegraphics[width=1\linewidth]{backPropagation}}
+\subsubsection{Gradient Computation}
+\centerline{\includegraphics[width=1\linewidth]{gradientComputation}}
+E.g. gradient of loss w.r.t $ w_3 $ in the above simple network: 
+$\frac{\partial L}{\partial w_3} =  \frac{\partial L}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_3} = [ (\hat{y} - y) \cdot g'(z_3) \cdot w_5 \cdot g'(z_1) ] \cdot [ x_2 ]$
+
+\columnbreak
+
+\subsubsection{Gradient Descent}
+ Once gradients are computed, weights updated using gradient descent:
+$$
+w_j \leftarrow w_j - \gamma \frac{\partial L}{\partial w_j}, \quad \gamma : \text{ learning rate.}
+$$
+
+
+\subsubsection{Iterative Optimization}
+The forward propagation, loss computation, backpropagation, and weight update steps are repeated iteratively until convergence / stopping criterion.
+
+\subsection{Neural Network with One Neuron}
+A single neuron is the simplest form of a neural network. It performs the following operations:
+\begin{enumerate}[itemsep=0pt, topsep=0pt]
+    \item \textbf{Weighted Sum}: $z = \sum_{j=0}^d w_j x_j = w^T x$, ($ w_0 $: bias term).
+    \item \textbf{Activation Function}: $\hat{y} = g(z)$, e.g. sigmoid fn: $g(z) = \frac{1}{1 + e^{-z}}$
+\end{enumerate}
+\begin{itemize}[itemsep=0pt, topsep=0pt]
+\item For binary classification, activation function is typically sigmoid function.
+\item The loss function for a single neuron is often the binary cross-entropy loss: $L = -y \log(\hat{y}) - (1-y) \log(1-\hat{y}).$
+\end{itemize}
+\subsection{Multi-layer Neural Network}
+A multi-layer neural network consists of multiple layers of neurons, enabling it to model complex, non-linear relationships. Key components include:
+
+
+
+
+%% ADD TUTORIAL NOTES HERE %
+\subsubsection{Hidden Layers}
+Hidden layers transform the input features into higher-level representations:
+$$
+a^{[l]} = g(W^{[l]} a^{[l-1]} + b^{[l]}),
+$$
+where $ a^{[l]} $ is the activation of layer $ l $.
+
+\subsubsection{Activation Functions}
+Common activation functions include:
+
+    
+- ReLU (Rectified Linear Unit): $ g(z) = \max(0, z) $.
+    
+- Sigmoid: $ g(z) = \frac{1}{1 + e^{-z}} $.
+    
+- Softmax (for multi-class classification):
+    $$
+    g(z_i) = \frac{e^{z_i}}{\sum_{j=1}^c e^{z_j}}.
+    $$
+
+
+\subsubsection{Output Layer}
+The output layer produces the final prediction. For regression tasks, it uses a linear activation function. For classification tasks, it uses softmax or sigmoid.
+
+
+%% UP TILL HERE
+\vfill \null
+\columnbreak
+
+
+\subsection{Introduction to PyTorch}
+PyTorch: popular deep learning library, simplifies implementation of neural networks. Flexible, efficient framework for building, training models.
+
+\subsubsection{Modules and Functions API}
+PyTorch organizes neural network components into modular containers and layers. Key components include:
+\begin{itemize}
+\item \textbf{Containers}:
+\begin{itemize}
+\item \texttt{torch.nn.Module}: Base class for all neural network modules.
+\item \texttt{torch.nn.Sequential}: A container for stacking layers sequentially.
+\end{itemize}
+\item \textbf{Linear Layers}:
+	\begin{itemize}
+	\item \texttt{torch.nn.Linear}: A fully connected layer without activation.
+	\end{itemize}
+\item \textbf{Non-linear Activation Functions}:
+	\begin{itemize}
+	\item \texttt{torch.nn.ReLU}: Rectified Linear Unit.
+	\item \texttt{torch.nn.Sigmoid}: Sigmoid activation function.
+	\item \texttt{torch.nn.Softmax}: Softmax activation function (commonly used for multi-class classification).
+	\end{itemize}
+\item \textbf{Loss Functions}: Various for diff. tasks:
+	\begin{itemize}
+	\item \texttt{torch.nn.MSELoss}: Mean Squared Error (MSE) for regression tasks.
+	\item \texttt{torch.nn.BCELoss}: Binary Cross Entropy Loss, binary classification.
+	\item \texttt{torch.nn.CrossEntropyLoss}: Cross-Entropy Loss, multi-class classification.
+	\end{itemize}
+\item \textbf{Optimizers}: (update weights during training)
+	\begin{itemize}
+	\item Stochastic Gradient Descent (SGD): \texttt{torch.optim.SGD}.
+	\item Adam: \texttt{torch.optim.Adam}.
+	\item \textbf{Important optimizer functions}: \\
+	 \texttt{optimizer.zero\_grad()}: Resets gradients to zero before computing new gradients.\\
+	  \texttt{optimizer.step()}: Updates the weights after backpropagation.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Building a Neural Network Example}
+\centerline{\includegraphics[width=1\linewidth]{pytorch}}
+\subsubsection{Training a Neural Network Example}
+\centerline{\includegraphics[width=1\linewidth]{pytorch2}}
+
+\columnbreak
+
+\subsection{Convolutional Neural Networks (CNNs)}
+CNNs: specialized neural networks for process grid-like data (e.g. image).
+\begin{itemize}
+\item Leverage convolution operations to extract spatial features efficiently.
+\item \textbf{Convolution} is a mathematical operation that combines two functions to produce a third function. In context of CNNs:
+	\begin{itemize}
+	\item One function represents the input data (e.g., an image).
+	\item Other function represents a small matrix called a filter or kernel
+	\item The convolution operation involves sliding the filter over the input and computing the weighted sum at each position. This process extracts spatial features from the input, such as edges, textures, or patterns.
+	\end{itemize}
 \end{itemize}
 
 
+\subsubsection{Convolution Layer}
+Applies filters to extract spatial features: $\text{Output} = \text{Input} * \text{Filter} + \text{Bias}.$
+\begin{itemize}
+\item \textbf{PyTorch}: {\tiny \texttt{conv\_layer = nn.Conv2d(in\_channels, out\_channels, kernel\_size, stride, padding)}}
+\end{itemize}
+\centerline{\includegraphics[width=0.8\linewidth]{convoLayer}}
 
+\textbf{Example of Convolution Operation}: Consider 2D input $ X $, kernel $ W $:
+$$
+X = 
+\begin{bmatrix}
+0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0 \\
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1
+\end{bmatrix}, \quad
+W = 
+\begin{bmatrix}
+0 & -1 & -1 \\
+0 & -1 & 5 \\
+0 & -1 & 0
+\end{bmatrix}. \quad 
+\text{FM} = 
+\begin{bmatrix}
+9 & 8 \\
+6 & 5
+\end{bmatrix}.
+$$
 
+The convolution operation involves sliding the kernel over the input and computing the weighted sum at each position, obtaining Feature Map (FM).
+\begin{itemize}
+\item \textbf{Padding}: Adds zeros around the input to control the size of the output.
+\item \textbf{Stride}: Controls the step size of the kernel as it slides over the input.
+\end{itemize}
 
+\subsubsection{Pooling Layer}
+Pooling layers \textbf{downsample} feature maps to reduce dimensionality. Common pooling / Aggregation methods:
+\begin{itemize}
+\item \textbf{Max-Pooling}: Takes the maximum value in a window.
+\item \textbf{Average-Pooling}: Computes the average value in a window.
+\item \textbf{Sum-Pooling}: Sums values in a window.
+\end{itemize}
+
+\centerline{\includegraphics[width=0.8\linewidth]{CNN}}
+
+\subsubsection{Popular CNN Architectures {\scriptsize \text{widely used CNN architectures include:}}}
+\begin{itemize}[itemsep=0pt]
+\item \textbf{VGG}: Deep networks with small $ 3 \times 3 $ filters.
+\item \textbf{Inception}: Parallel convolution operations with different filter sizes.
+\item \textbf{DenseNet}: Dense connections between layers.
+\item \textbf{ResNet}: Residual connections to address vanishing gradients.
+\end{itemize}
+
+\textbf{CNN Applications}: \textit{Image Classification}: Identify objects in images (e.g. face emotion). \textit{Image Segmentation}: Detect regions of interest (e.g. cancer cell). \textbf{Object Detection}: Locate / classify objects (e.g. self-drive cars).
 
 
 
