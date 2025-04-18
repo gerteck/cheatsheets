@@ -1106,16 +1106,268 @@ Flink's checkpointing mechanism ensures \textbf{consistent} state across distrib
 
 
 
+% -----------------------------------------------------------------
+\columnbreak
+
+\subsection{9. \underline{Graphs, Graph Data, PageRank}}
+
+Graph data is a fundamental structure used to represent relationships between entities. Consists of two primary components:
+\begin{itemize}
+\item \textbf{Nodes (Vertices)}: Represent objects or entities (e.g., people, journals, cities).
+\item \textbf{Edges}: Relationships between nodes. Undirected (bidirectional) or directed.
+\end{itemize}
+
+Graphs used in various domains, e.g. \textit{Information Networks} (journals, citations), \textit{Traffic , Social Networks, Web Graphs} (webpages, hyperlinks between pages).
+
+\subsubsection{Graph Processing}
+
+Graph processing involves analyzing, extracting meaningful insights from graph data. Tasks include finding patterns, measuring centrality, identifying communities. Key operations in graph processing include:
+\begin{itemize}
+\item Traversal: Exploring the graph by visiting nodes and edges.
+\item Search: Finding specific nodes or paths that satisfy certain conditions.
+\item Aggregation: Metrics e.g. degree distribution, clustering coefficients. 
+\end{itemize}
+
+Graph processing computationally intensive, (interconnected nature of graphs, large-scale datasets). Distributed systems (Apache Spark, specialized graph processing frameworks (e.g., GraphX, Neo4j)) used to handle tasks efficiently.
+
+\subsection{PageRank Algorithm}
+
+PageRank graph algorithm, originally developed by Google to rank importance of webpages in a network, based on link structure. Can be formulated in two primary ways: \textbf{Flow Formulation} and \textbf{Random Walk Formulation}. Additionally, the introduction of teleports addresses issues of dead ends, spider traps.
+
+\subsubsection{Flow Formulation}
+In flow formulation, PageRank models distribution of "importance" across nodes (web pages) in a graph. Each page distributes its importance equally among its outgoing links, and the importance of a page is determined by the sum of the importance it receives from other pages.
+\begin{itemize}
+\item \textbf{Votes}: Links as `votes'. Higher importance page contribute more weight. 
+\item \textbf{Recursive}: Importance of page depends on importance of upstream pages.
+\item \textbf{Flow Equations}: For a page $ j $, its rank $ r_j $ is given by $r_j = \sum_{i \to j} \frac{r_i}{d_i}$, \\
+where $ d_i $ is the out-degree of node $ i $ (number of outgoing links).
+\item Example: small web graph with three pages $ y, a, m $:
+  \[
+  r_y = \frac{r_y}{2} + \frac{r_a}{2}, \quad r_a = \frac{r_y}{2} + r_m, \quad r_m = \frac{r_a}{2}
+  \]
+  Solving simultaneous equations yields relative importance scores of each page.
+\item \textbf{Challenges:} \textbf{Dead Ends}: Pages with no outgoing links cause importance to "leak out." \textbf{Spider Traps}: Pages only linking to self or small group absorb all importance.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{simplifiedPageRank}}
+
+\subsubsection{Random Walk Formulation/Interpretation}
+PageRank as probability distribution of \textit{random surfer} visiting pages over time. Each step, surfer follows outgoing link uniformly at random with probability $ \beta $ (typically $ 0.8 $ to $ 0.9 $). Teleports to a random page with probability $ 1 - \beta $. (with teleports enabled). As $ t \to \infty $, the probability distribution of the surfer converges to a steady state, corresponds to PageRank scores. \textit{(Stationary Distribution)}.
+\begin{itemize}
+\item Random walk form mathematically eqv. to flow form. Both define rank vector $ r $ recursively: $r = M \cdot r$,  $ M $ is stochastic adjacency matrix of graph (column-stochastic, all columns sum to one).
+\item Teleports ensure convergence, allow surfer to escape dead ends and spider traps.
+	\begin{itemize}
+	\item \textbf{Dead Ends}: importance leaks out, as matrix is not column stochastic. Make matrix column stochastic by always teleporting when at a dead end.
+	\item \textbf{Spider-traps}: importance gets trapped. With teleport, not trapped, as teleport out in finite number of steps.
+	\end{itemize}
+\end{itemize}
+
+\subsection{PageRank with Teleports}
+To address dead ends and spider traps, algorithm incorporates teleports. Ensures random walk always converges to a meaningful, unique stationary distribution, ensuring robust and reliable rankings.
+
+\begin{itemize}
+\item \textbf{Modified Equation}: include teleportation term:
+  \[
+  r_j = \sum_{i \to j} \beta \frac{r_i}{d_i} + (1 - \beta) \frac{1}{N}
+  \]
+ $ N $: total no. of pages, $ \beta $ controls probability of following links vs. teleporting.
+\item \textbf{Google Matrix}: Expressible in matrix form $A$:
+  \[
+  A = \beta M + (1 - \beta) \frac{1}{N} \mathbf{1}
+  \]
+  where $ M $ is the column-stochastic adjacency matrix, and $ \mathbf{1} $ is a matrix of ones.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{PageRank}}
+
+
+\subsubsection{Power Iteration Method}
+To compute PageRank efficiently for large graphs, power iteration method used:
+\begin{enumerate}[itemsep=0pt]
+\item \textbf{Initialization}: Start with uniform rank vector $ r^{(0)} = [1/N, \dots, 1/N]^T $.
+\item \textbf{Iteration}: Update rank vector iteratively: $r^{(t+1)} = A \cdot r^{(t)}$
+\item \textbf{Stopping Criterion}: Change falls below threshold. $\|r^{(t+1)} - r^{(t)} \|_1 < \epsilon$
+\end{enumerate}
+
+\subsubsection{Problems \& Extensions of PageRank}
+While powerful, PageRank has certain limitations, and extensions.
+\begin{itemize}
+	\item \textbf{Generic Popularity}: Measures overall importance, but does not account for topic-specific relevance. Use \textbf{Topic-Specific PageRank}, incorporates topic relevance into ranking process.
+	\item \textbf{Susceptibility to Spam}: Artificial link structures / topography can manipulate rankings. Use \textbf{TrustRank}, combines PageRank w. trust signals to combat spam.
+	\item \textbf{Single Metric}: Relies on a single measure of importance, ignoring other factors like content quality. Use \textbf{Hubs and Authorities}, distinguish pages linking to many important pages (hubs) and pages linked by many important pages (authorities).
+\end{itemize}
+
+\columnbreak
+
+\subsection{Topic-Specific PageRank}
+
+Evaluate web pages by popularity and how related to particular topic. Enable personalized search results based on user preferences / query context.
+
+\subsubsection{Key Idea: Biasing the Random Walk}
+Topic-Specific PageRank: random walk biased to favor pages related to topic:
+\begin{itemize}
+\item Teleportation is restricted to a \textbf{topic-specific set of relevant pages (teleport set)}. The teleport set $ S $ contains only pages relevant to topic, e.g. pages from Open Directory Project (DMOZ) for a given topic or query.
+\item \textbf{Teleports}: When random walker teleports, picks page from set $ S $. For each teleport set $ S $, a different rank vector $ r_S $ is computed, reflecting the importance of pages within that topic.
+\item \textbf{Matrix Formulation}: (modify teleportation)
+\[
+A_{ij} = 
+\begin{cases} 
+\beta M_{ij} + (1-\beta)/|S| & \text{if } i \in S \\
+\beta M_{ij} + 0 & \text{otherwise}
+\end{cases}
+\]
+- $ A $: updated stochastic matrix, $M$: original column-stochastic adjacency matrix.
+- $ \beta $: probability of following a link, $|S|$: size of teleport set $ S $.
+\item Pages in the teleport set $ S $ are usually weighted equally, but we could also assign different weights to pages in $ S $.
+\item As $ \beta $ decreases, influence of teleportation increases, biasing ranks further toward teleport set. Larger teleport sets distribute importance more evenly across the included pages.
+\end{itemize}
+
+\subsubsection{Discovering the Topic Vector $ S $}
+How do we know teleport set $ S $ in the first place?
+\begin{itemize}
+\item To create different PageRanks for different topics approach includes using predefined categories e.g. 16 DMOZ top-level categories (e.g., arts, business, sports). 
+\item To determine topic ranking to use, base on query or user context: (E.g. user selection, query classification, contextual clues, user context).
+\end{itemize}
+ 
+\subsection{PageRank Implementation}
+Implementation can be approached through various frameworks, such as Pregel and Spark GraphX, which leverage vertex-centric computation and message passing to process large-scale graphs efficiently. Abstract away complexities of distributed computing, enable focus on algorithm design while ensuring scalability and fault tolerance.
+
+\subsubsection{Characteristics of Graph Algorithms}
+\begin{itemize}
+\item \textbf{Local Computations}: Each vertex performs computations based on its local state and messages from neighboring vertices. (Distributed computation).
+\item \textbf{Message Passing}: Vertices communicate by sending messages to one another. 
+\item \textbf{Vertex-Centric Design}: Algorithms implement from vertex perspective, user defines behavior of a vertex in each iteration using a function like \texttt{compute()}.
+\item \textbf{Framework Abstraction}: Underlying framework handles scheduling, communication, fault tolerance. Allow users to focus on logic of algorithm.
+\end{itemize}
+
+\subsubsection{Pregel: Computational Model}
+Pregel is a system for large-scale graph processing that introduces a vertex-centric computational model. 
+Key characteristics: 
+\begin{itemize}
+\item \textbf{Supersteps}: Computation proceeds in a series of supersteps. In each superstep, the \texttt{compute()} function is invoked for every active vertex.
+\item \textbf{Behavior of \texttt{compute()}}: Reads messages sent to vertex in previous superstep. Sends messages to other vertices to be processed in next superstep. Updates vertex's value or modifies its edges.
+\item \textbf{Termination}: Vertices deactivate themselves by voting to halt. Halted vertex reactivated if receives new messages. Computation halts when all vertices inactive.
+\end{itemize}
+
+\subsubsection{E.g.: Compute Max Value {\scriptsize (Across vertices in graph with Pregel)}}
+\begin{verbatim}
+Compute(v, messages):
+  changed = False
+  for m in messages:
+    if v.getValue() < m:
+      v.setValue(m)
+      changed = True
+  if changed:
+    for each outneighbor w:
+      sendMessage(w, v.getValue())
+  else:
+    voteToHalt()
+\end{verbatim}
+
+Each vertex compares its current value with incoming messages and updates its value to the maximum. If the value changes, the vertex sends its updated value to its neighbors. If no change occurs, the vertex votes to halt.
+
+\subsubsection{Pregel: Implementation Details}
+Pregel's architecture and fault-tolerance mechanisms include:
+\begin{itemize}
+\item \textbf{Master-Worker Architecture}: Vertices are hash-partitioned across workers. (edge cut).  Each worker maintains the state of its portion of the graph in memory. Each worker maintains the state of its portion of the graph in memory. Messages are buffered locally and sent in batches to reduce network traffic.
+\item \textbf{Fault Tolerance}: Periodic checkpointing ensures recovery from failures. Worker failures are detected through heartbeats and recovered by reloading from checkpoints.
+\end{itemize}
+
+\subsubsection{PageRank Implementation in Pregel (Pseudocode)}
+\begin{verbatim}
+Compute(v, messages):
+  if getSuperStep() == 0:
+    v.setValue(1 / getNumVertices())
+  if getSuperStep() >= 1:
+    sum =0
+    for m in messages:
+      sum += m
+    v.setValue(0.15 / getNumVertices() + 0.85 * sum)
+  if getSuperStep() < 30:
+    sendMsgToAllEdges(v.getValue() / len(getOutEdgeIterator()))
+  else:
+    voteToHalt()
+\end{verbatim}
+
+Compute the sum of incoming messages and update the vertex's PageRank value. Send outgoing messages to neighbors by dividing the vertex's value equally among its out-neighbors. Terminate after a fixed number of iterations (e.g., 30).
+
+
+\subsubsection{Frameworks for Graph Processing}
+Several frameworks are designed to handle graph processing efficiently:
+\begin{itemize}
+\item \textbf{Apache Spark GraphX}: A distributed graph processing framework built on top of Spark. It provides APIs for graph creation, transformation, and analysis. Extends RDDs to support property graphs, provides map-like operations and Pregel-like aggregations. Achieves performance parity with specialized graph systems while integrating seamlessly with Spark's dataflow model.
+\item \textbf{Neo4j}: A popular graph database that supports querying and analyzing graph data using the Cypher query language.
+\item \textbf{Giraph}: A distributed graph processing system inspired by Google's Pregel, developed by Facebook, designed for large-scale graphs. Can efficiently handle trillion-scale graphs.
+\item \textbf{NetworkX}: A Python library for creating, manipulating, and studying the structure of complex networks.
+\end{itemize}
 
 
 
 
+% -----------------------------------------------------------------
+\columnbreak
 
+\subsection{10. \underline{Delta Lake (Big Data Storage Layer)}}
 
+Delta Lake is an open-source storage layer (Lakehouse) that sits on top of existing distributed file systems like HDFS or cloud storage (e.g., AWS S3). It brings reliability and performance optimizations to data lakes. It addresses the limitations of traditional data lakes by introducing features such as ACID transactions, schema enforcement, and unified batch and streaming processing.
 
+\centerline{\includegraphics[width=1\linewidth]{dataLake}}
+\begin{itemize}
+\item \textbf{Transactional ACID Guarantees}: Ensures atomicity, consistency, isolation, and durability for read/write operations.
+\item \textbf{Full DML Support}: Supports Data Manipulation Language (DML) operations like `INSERT`, `UPDATE`, `DELETE`, and `MERGE`.
+\item \textbf{Audit History}: Maintains a log of all changes made to the dataset, enabling time travel and reproducibility.
+ \item \textbf{Schema Enforcement and Evolution}: Enforces schema constraints while allowing schema evolution over time.
+ \item \textbf{Unification of Batch and Streaming}: Combines batch and streaming workloads into a single processing model.
+ \item \textbf{Rich Metadata Support}: Provides detailed metadata for efficient querying and indexing.
+\end{itemize}
 
+\subsubsection{Data Lakehouse Architecture}
+Delta Lake serves as the foundation for building a \textit{data lakehouse}, combines best features of data lakes and data warehouses:
+\begin{itemize}
+\item \textbf{Data Lake Benefits}: Cost-effective storage for large-scale data. Flexibility in choosing storage systems, file formats, and processing engines. Support for structured, semi-structured, and unstructured data.
+\item \textbf{Data Warehouse Benefits}: Strong ACID guarantees for transactional integrity. (Relational DB). Optimized query performance using metadata and indexing. Schema enforcement for improved data quality.
+\end{itemize}
 
+\subsubsection{Layered architecture of data lakehouse {\scriptsize (typically includes:)}}
+\begin{enumerate}
+\item \textbf{Storage Layer}: Distributed file systems like HDFS or cloud storage (e.g., AWS S3).
+\item \textbf{Metadata Layer}: Delta Lake manages metadata, caching, and indexing.
+\item \textbf{Processing Layer}: Batch and streaming engines like Apache Spark, Presto, or Flink.
+\end{enumerate}
 
+\centerline{\includegraphics[width=1\linewidth]{lakeHouse}}
+
+\subsubsection{Delta Lake Format}
+Delta Lake stores data in the **Parquet format** with additional metadata to support advanced features:
+\begin{itemize}
+\item \textbf{Parquet Files}: Column-oriented storage for efficient compression and query performance.  Open-source and self-describing, containing both data and metadata (schema and file structure).
+\item \textbf{Delta Log}: Transaction log (`DeltaLog`) is a critical component of Delta Lake. It records every transaction made against a Delta table, acting as the "single source of truth." Enables features like ACID transactions, scalable metadata handling, and time travel.
+	\begin{itemize}
+	\item Transaction Log ensures consistency and reliability in distributed environments. Tracks all changes to a Delta table since its creation, and allows multiple readers, writers to operate on same dataset simultaneously without conflicts.
+	\item ACID Transactions: Each operation is recorded in the transaction log. If an operation is not logged, it is considered invalid.
+	\item Scalable Metadata Handling: Efficiently manages metadata for large datasets.
+	\item Time Travel: Enables querying previous versions of the dataset for auditing or reproducibility.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Breaking Down Transactions into Atomic Commits}
+Delta Lake breaks down complex transactions into smaller atomic commits for reliability. Possible Actions in a Transaction Log Entry: 
+\begin{itemize}
+\item Add File: Records the addition of new data files.
+\item Remove File: Marks data files as deleted.
+\item Update Metadata: Modifies the schema or other metadata properties.
+\item Commit Info: Logs details about the transaction (e.g., timestamp, user).
+\end{itemize}
+Checkpoint files optimize the transaction log by periodically compacting log entries. Reduces the overhead of reading the entire log for large datasets.
+
+\subsubsection{Advantages of Delta Lake}
+\begin{itemize}
+\item Reliability: ACID transactions ensure data integrity and consistency.
+\item Flexibility: Supports diverse data formats and processing engines.
+\item Cost-Effectiveness: Leverages distributed storage systems for scalable and affordable storage.
+\item Performance: Optimized metadata handling and indexing improve query performance.
+\end{itemize}
+Delta Lake bridges the gap between data lakes and data warehouses by providing a unified platform for analytics and machine learning. Its support for ACID transactions, schema enforcement, and scalable metadata handling makes it an ideal choice for modern big data ecosystems. By enabling organizations to build robust data lakehouses, Delta Lake empowers both business intelligence and AI/ML workflows in cloud environments.
 
 
 
