@@ -755,8 +755,7 @@ Deployment strategy impacts SWE practices. Method of deployment depends on facto
     \item \textbf{Agility in Software Engineering}: "Solutions to common software engineering problems not always obvious. Agility - both technical and organizational - is essential to identify solutions that work for current challenges and remain resilient to future changes." - Asim Husain, VP Eng, Google.
 \end{itemize}
 
-
-
+% ---------------------
 \subsection{8. \underline{Static Analysis and Type System}}
 
 
@@ -1133,7 +1132,180 @@ Use STLC as a foundation for understanding other common language constructs.
 \end{itemize}
 
 
+\columnbreak
+% ---------------------
+\subsection{9. \underline{Static Analysis and Type System}}
+ Static analysis. Property-based testing. Differential testing. 
+Metamorphic Testing. Solvers. Symbolic execution. Fuzzing.
 
+\subsection{Static Analysis: A High-Level Perspective}
+Static analysis involves reasoning about code without executing it. It encompasses various techniques, including:
+\begin{itemize}
+\item \textbf{Type Checkers}: Ensure variables used consistently w. declared types (Topic 8).
+\item \textbf{Linters and Style Checkers}: Enforce coding standards, formatting violations.
+\item \textbf{Data-Flow Analysis}: Tracks flow of data through program to identify issues.
+\item \textbf{Control-Flow Analysis}: Analyzes the possible execution paths of a program.
+\end{itemize}
+    
+
+\subsubsection{Static Analysis Tools in Practice}
+Several tools developed to detect style violations and potential bugs in programs. E.g. \textbf{SpotBugs}: Detects common bug patterns in Java programs, \textbf{PMD}: Focuses on code quality and detects issues like overly complex methods or unused variables. 
+\begin{itemize}
+\item These tools aim to improve code quality but often face challenges such as false positives, false negatives, and integration difficulties.
+\end{itemize}
+    
+
+\subsubsection{Soundness vs. Completeness in Static Analysis}
+\begin{itemize}
+\item \textbf{Completeness}: If tool reports an issue, guaranteed to be true (no false positives).
+\item \textbf{Soundness}: If an issue exists, the tool will always report it (no false negatives).
+\end{itemize}
+Static analysis tools balance the two key properties. Achieving both is undecidable (no algorithm can definitively determine a "yes" or "no" answer for all possible inputs) in practice, leading to trade-offs between the two.
+
+\subsubsection{Challenges with Static Analysis}
+Tools face several challenges such as slow execution times, false positives (incorrectly flagged issues) and false negatives (missed bugs), limited applicability to complex features not modeled by tool. Other more practical challenges include:
+\begin{itemize}
+\item Warnings that are not actionable or lack sufficient guidance for resolution.
+\item Difficulty integrating into developers' workflows. See \textbf{Case Studies}:
+\end{itemize}
+\begin{itemize}
+\item  \textbf{Facebook's Infer Deployment}:
+	\begin{itemize}
+	\item Initial deployment: running Infer nightly on the entire codebase generated 2,500 alarms, but developers ignored most due to workflow disruptions.
+	\item Subsequent deployment: Integrating Infer during code reviews (on diffs) increased fix rates to over 70\%.
+	\end{itemize}
+\item \textbf{Google's FindBugs Deployment}:
+	\begin{itemize}
+	\item Attempt 1: Centralized bug dashboard outside developers' workflows not used.
+	\item Attempt 2: Manually filing bug reports for FindBugs issues resulted in only 16\% of reviewed warnings being fixed.
+	\item Attempt 3: Integrating FindBugs into code reviews improved adoption but faced issues with false positives and inconsistent views.
+	\end{itemize}
+\end{itemize}
+Case studies show \textbf{timeliness of reports} crucial; developers more likely to address issues when integrated into current tasks. Reporting only new issues (on diffs) reduces noise and improves developer responsiveness.
+
+\subsubsection{Key Principles for Successful Static Analysis}
+To maximize the effectiveness of static analysis:
+\begin{itemize}
+\item Focus on developer happiness, ensure understandable, actionable outputs.
+\item Maintain low false positive rate (less than 10\%) to build trust in the tool.
+\item Integrate seamlessly into developers' workflows (e.g., during code reviews).
+\item Provide timely feedback to ensure relevance to the current task.
+\item Successful static analysis platforms, like Google's Tricorder, focus on delivering valuable results that align with developer workflows.
+\end{itemize}
+
+
+
+\subsection{Automated Testing}
+Automated testing is where testing tool automatically generates test input and/or applies an automatically-constructed test oracle.
+
+\begin{itemize}
+\item Automated testing is preferred for complex systems (E.g. OS, compilers, DBMS), as manually written tests may miss bugs or may be incomplete.
+\item Example-based testing is simpler but less comprehensive than property-based testing.
+\item \textbf{Black, Grey, White-box Approaches}: No standard def
+	\begin{itemize}
+	\item Black-box: no internal information (e.g., works on the binary only)
+	\item White-box: internal information (heavyweight approaches, systematically analyze program)
+	\item Grey-box: some internal information (e.g., coverage)
+	\end{itemize}
+\end{itemize}
+
+\subsection{Automated Testing Approaches}
+\subsubsection{Property-Based Testing}
+Property-based testing involves specifying properties that the system should satisfy. The testing framework generates test inputs to check if these properties hold. (Test framework tries to find counterexample to break property / falsify it).
+
+\begin{itemize}
+\item \textbf{Example Property}: For a function $ \texttt{Math.abs(x)} $, the property is $ |x| \geq 0 $. (Using jqwik, java property based testing framework).
+\begin{verbatim}
+@Property
+void positiveAbs(@ForAll int val) {
+    assertTrue(Math.abs(val) >= 0);
+}
+// arg0: -2147483648 is input that falsifies property.
+\end{verbatim}
+\item \textbf{Advantages}: Provides greater confidence than example-based unit tests. Useful for communicating specifications.
+\item \textbf{Challenges}: Requires creativity to define meaningful properties.
+\item Property based testing frameworks also allow constraining of input domain. Also provide ways to adapt existing generators or create new ones. Also provide shrinkers (test-input reduction tools).
+\item \textbf{In practice}: used primarily for testing components of complex systems.  Especially in `high-leverage'
+scenarios, where properties are easy to identify and test. 
+\item \textbf{Example}: property based testing on Google Translate, properties include round-trip translation similarity, idempotency (output deterministic same result for same input), word count etc.
+\end{itemize}
+
+\subsubsection{Differential Testing}
+Differential testing compares outputs from multiple implementations or versions of the same functionality, or a simple reference engine, to detect discrepancies.
+\begin{itemize}
+\item \textbf{Approach}: Common input, compare outputs of diff. versions, configurations, or implementations. If outputs differ, at least one system may be affected by bug.
+\item \textbf{Comparing Versions}: Check behavior against known-working base version (`golden version'), form of regression testing. Though change might be intended.
+\item \textbf{Comparing Configurations}: E.g. different optimization levels, different engines.
+\item \textbf{Comparing against Reference Engine}: E.g. mocked component.
+\item \textbf{Comparing Implementations}: For many important software systems, multiple (competing 
+implementations exist).  If sufficiently similar, they can be used for differential testing. (E.g. DB engines, XML processors, compilers.)
+\item \textbf{Challenges}: Small overlap in functionality between system can produce false alarms, may miss out common bugs (e.g. stem from common library used), non deterministic output.
+\end{itemize}
+
+
+\subsubsection{Metamorphic Testing}
+Use source test case and its result to generate \textbf{follow-up test cases}, where differential testing might be inapplicable. Rely on \textbf{metamorphic relations} to infer expected results. Special case of property based testing. Black box approach.
+
+\begin{itemize}
+\item \textbf{Example Metamorphic Relation}: $ \sin(\pi - x) = \sin(x) $. Test both $0.5$, $\pi - 0.5$.
+\item E.g.  Test a sorting function whether relative order of sorted elements maintained when an element is removed from an input array. First result acts as oracle for second result.
+\item E.g. EMI (Equivalence Modulo Inputs) for Compiler testing, create programs that are equivalent only for a given input. Mutate unexecuted part of program running input I, and check if same output for I. Finds bugs as compiler optimizes across both executed and unexecuted parts.
+\item \textbf{Strengths}: Avoids need for multiple systems (unlike differential testing). Simple, effective if metamorphic relation is straightforward.
+\item  \textbf{Weaknesses}: Finding bug-revealing metamorphic relations can be challenging.
+\item E.g. M. testing on Google Translate: Property: Exchange Nouns Preserves Sentence Structure.
+\end{itemize}
+ 
+
+\subsubsection{Fuzzing}
+Fuzzing involves feeding random or semi-random inputs to a program to uncover crashes or other unexpected behaviors.
+
+\begin{itemize}
+\item \textbf{Black-box Fuzzing}: Sends random inputs without knowledge of the program's internals. Simple, efficient test-case generation, but unlikely to uncover deep bugs especially if input format complex. (e.g. image parsers), as inputs probably invalid. (Partly addressed by grammar-based fuzzing).
+\item \textbf{Mutation-based Fuzzing}: mutate existing inputs over random inputs. Higher quality inputs with diverse input seed corpus, but requires seed inputs to mutate.
+\item \textbf{White-box Fuzzing}:  White-box Fuzzing Techniques are often powered by constraint 
+solvers and symbolic execution. Uses symbolic execution to systematically explore paths in the program.
+\item \textbf{Grey-box Fuzzing}: Instruments the program to collect code coverage and guide input generation.  (E.g.  American Fuzzy Lop (AFL), AFL++)
+	\begin{itemize}
+	\item  Balance the benefits of black-box fuzzing (efficient test case generation) and white-box fuzzing (high-quality inputs). 
+	\item For each mutated input, check whether it resulted in a gain of code coverage (or code coverage pattern), if so, mutate further.
+	\end{itemize}
+\item \textbf{Fuzzing Test Oracles}:  Crashes, hangs (pre-set thresholds), and dynamic analysis tools (detect issues e.g. race conditions, undefined behaviours).
+\end{itemize}
+
+\subsubsection{Constraint Solvers}
+
+Constraint solvers: powerful tools used in various swe techniques, symbolic execution, white-box fuzzing, hardware /software verification, program synthesis, program repair. Work by analyzing formulas to determine whether they are satisfiable (SAT) or unsatisfiable (UNSAT). If a formula is satisfiable, the solver provides a model—a valuation of variables that satisfies the formula. \\
+
+\textbf{Types of Solvers}:
+\begin{itemize}
+\item \textbf{SAT Solvers}: Solve propositional formulas with Boolean variables. For example, given the formula $(A \lor B) \land C$, a SAT solver might return $A = \text{true}, B = \text{false}, C = \text{true}$. (NP complete, but modern solvers efficient)
+\item \textbf{SMT Solvers}: Extend SAT solvers to handle more complex theories, such as linear integer arithmetic. (Satisfiability Modulo Theories) For example, given the formula $(a > 5) \land (a \neq 6)$, an SMT solver might return $a = 7$. (NP hard)
+\item E.g. Z3 is a widely-used SMT solver developed by Microsoft. It supports various theories and is accessible via APIs in multiple programming languages.
+\item \textbf{Challenges}: Solving SAT problems is NP-complete, SMT problems often NP-hard / undecidable for certain theories. Performance can degrade with complex path conditions or large formulas.
+\end{itemize}
+
+\subsubsection{Symbolic Execution}
+Technique for systematically exploring all possible execution paths of a program. Instead of using concrete inputs, symbolic execution uses symbolic values to represent inputs and \textit{tracks constraints (path conditions)} on these values. A constraint solver is then used to determine whether a given path is feasible.
+\begin{itemize}
+\item \textbf{Key Idea}: Execute the program symbolically, maintaining a symbolic state ($\sigma$) that maps variables to symbolic expressions. Use a theorem solver to check the feasibility of path conditions and generate test cases for different execution paths.
+\item A path condition encodes all branch decisions on the symbolic variables taken so far. Path conditions can be 
+feasible or infeasible.
+
+\item \textbf{Execution Tree}: An execution tree represents all possible execution paths of a program. Each branch corresponds to a decision based on symbolic variables. Path conditions encode the constraints on symbolic variables for each path. For example:
+        \[
+        \alpha \land (\beta < 5) \land (\neg\alpha \land \gamma)
+        \]
+Infeasible paths are pruned using an SMT solver.
+\item E.g. KLEE Tool: popular symbolic execution tool for C programs built on the LLVM compiler framework. Running KLEE generates test cases that explore all feasible paths through the program.
+\item \textbf{Strengths}: Systematically generation of inputs to cover different execution paths.
+ \item \textbf{Challenges}: Exponential Path Explosion, difficulty in Environment Modeling (library calls, external interacts), infinite Loops, Heap Modeling (Representing heap memory symbolically can be computationally expensive), Solver Performance (Complex path conditions can strain solver performance).
+\end{itemize}
+
+
+
+
+\subsubsection{Automated Testing \& Static Analysis}
+Static analysis and automated testing are complementary approaches to improving software quality. While static analysis provides insights without execution, automated testing validates behavior under various conditions. Both require careful integration into developer workflows to ensure they deliver value without disrupting productivity.
 
 
 
