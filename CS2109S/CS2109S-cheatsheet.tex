@@ -1,4 +1,4 @@
-\documentclass[9pt, landscape]{article}
+\documentclass[a4paper, 9pt, landscape]{article}
 \usepackage[scaled=0.92]{helvet}
 \usepackage{multicol}
 \usepackage{calc}
@@ -47,12 +47,16 @@
 % This sets page margins to .5 inch if using letter paper, and to 1cm
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
-\ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.2in,left=.2in,right=.2in,bottom=.2in} }
-	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-	}
+%\ifthenelse{\lengthtest { \paperwidth = 11in}}
+%	{ \geometry{top=.2in,left=.2in,right=.2in,bottom=.2in} }
+%	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+%		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+%		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+%	}
+
+%% Margins for A4 PAPER
+\geometry{top=0.3cm,left=0.3cm,right=0.3cm,bottom=0.3cm}
+
 
 % Turn off header and footer
 \pagestyle{empty}
@@ -334,11 +338,10 @@ Computers with ability to learn without explicit programming, through algorithms
     \item \textbf{Reinforcement Learning}: Learns to make decisions by interacting with an environment, (rewards and penalties).
 \end{enumerate}
 
-\subsubsection{Supervised Learning}
+\subsection{\underline{Supervised Learning {\scriptsize (Decision Trees, Linear/Logistic Regression, SVMs)}}}
 \begin{itemize}[itemsep=-2pt]
-    \item \textbf{Training Phase}: Learn to map inputs to outputs by minimizing difference btw. predictions and ground truth using a training set.\\
-     Result of training called a \textit{model / hypothesis}.
-    \item \textbf{Testing/Evaluation Phase}: Measures the model's performance on unseen data (test set) to evaluate generalization.
+    \item \textbf{Training Phase}: Map inputs to output, using train data. Result: \textit{model / hypothesis}.
+    \item \textbf{Testing Phase}: Model's performance on test data to evaluate generalization.
     \item Supervised learning: dataset represented as set of pairs $(x^{(i)}, y^{(i)})$:
     {
 	\setlength{\topsep}{0pt}
@@ -350,25 +353,29 @@ Computers with ability to learn without explicit programming, through algorithms
 	\end{itemize}
 	}
 \end{itemize}
-Assume unknown true relationship $y = f^*(x) + \epsilon$, $\epsilon$ noise error term. Find hypothesis $h(x)$ that approximates true function $f^*$.
+\textbf{Goal}: to find hypothesis $h(x)$ that approximates the true function $f^*$, assuming an unknown true relationship $y = f^*(x) + \epsilon$, $\epsilon$ noise error term.
 \begin{itemize}[itemsep=-2pt]
 	\item \textbf{Hypothesis class $ \mathcal{H} $}: set of all possible learnable models or functions. \\
-	 Each $ h \in \mathcal{H} $ is a hypothesis or model. (Classes - e.g decision tree, linear model, neural networks).
-	 \item \textbf{Learning Algorithms $A$}: takes training set $ D_{\text{train}} $, find hypothesis $ h \in \mathcal{H} $. (E.g. Decision tree learning, gradient descent algorithms)
+	 Each $ h \in \mathcal{H} $ is a hypothesis or model. (Classes - e.g DT, linear model, NN).
 	 \item \textbf{Performance Measure}: Test hypothesis on new set (test set). Metrics:
         \begin{itemize}[itemsep=-1.5pt]
-            \item (Regression) Mean Squared Error (MSE): $ = \frac{1}{N} \sum_{i=1}^N (\hat{y}^{(i)} - y^{(i)})^2 $.
-            \item (Regression) Mean Absolute Error (MAE): $ = \frac{1}{N} \sum_{i=1}^N |\hat{y}^{(i)} - y^{(i)}| $.
+            \item (Regression) Mean Squared Error (MSE), Mean Absolute Error (MAE).
             \item (Classification) Accuracy: $ \text{Accuracy} = \frac{1}{N} \sum_{i=1}^N \mathbf{1}(\hat{y}^{(i)} = y^{(i)}) $.
-            \item (Classification) Confusion Matrix: e.g. Precision ($\frac{TP}{TP + FP}$ - maxm if FP costly), Recall ($\frac{TP}{TP + FN}$ - maxm if FN costly), F1 Score: $\frac{2}{\frac{1}{P} +\frac{1}{R}} $
+            \item (Classification) Confusion Matrix: Precision ($\frac{TP}{TP + FP}$ - opt if FP costly), \\
+            Recall ($\frac{TP}{TP + FN}$ - opt if FN costly), F1 Score: $\frac{2}{\frac{1}{P} +\frac{1}{R}} $
         \end{itemize}
-        \item \textbf{Generalization}: How well model performs on unseen data. Affected by dataset quality/quantity (relevance, noise, balance), and Model Complexity. (size and expressiveness of hypothesis class - overfitting \& underfitting). Simple model - high bias, low variance. Complex - low bias, high var.
-        \item \textbf{Hyperparameter Tuning}: Adjust params (e.g. $\gamma$) to optimize performance. Set before training process begins (predefined, adj manually) - hyperparam search: grid (exhaustive), random, local, successive halving etc. 
+        \item \textbf{Generalization}: Model performance on unseen data. Depends on train dataset quality/quantity (relevance, noise, balance), model complexity.
+        \begin{itemize}
+			\item \textbf{Bias}: Error stems from model too simple. Model w. high bias fails to capture patterns in data, leading to underfitting. Error does not reduce with more data.
+			\item \textbf{Variance}: Error stems from model too sensitive to small fluctuations in training data. Captures noise, lead to overfitting. Error reduces more data.
+			\item Simple models tend to have high bias, low variance while complex models have low bias, but high variance. Otherwise, data with significant outliers , weak classifiers, etc can affect bias, variance as well.
+		\end{itemize}
+        \item \textbf{Hyperparameter Tuning}: Adjust params (e.g. $\gamma$) to optimize performance. Predefined before training. Hyperparam search: grid (exhaustive), random etc. 
 \end{itemize}
 
 
 \subsection{6. \underline{Decision Trees}}
-Function that takes as input a vector of attribute values and returns a decision (single output value). Perform sequence of tests from root node to leaf.
+Function input: vector of attribute values. Outputs single value (decision). Perform sequence of tests from root node to leaf.
 \begin{itemize}
 \item \textbf{Expressiveness}: Can express any (propositional) fn of input attributes. 
 \item \textbf{Size of Hypothesis Class}: Distinct decision trees, $ n $ bool. attributes: $2^{2^n}$
@@ -379,26 +386,28 @@ Entropy before dividing: $I(\frac{p}{p+n},\frac{n}{p+n})$, $p + n$ examples in s
 \end{itemize}
 
 
-\subsection{Information Gain}
-Given \textit{attribute} $A$ with $v $ distinct values, the training set is split into subsets $ E_1, ..., E_v $, each with \( p_i \) positive and \( n_i \) negative examples.
+\subsubsection{Information Gain}
+Given \textit{attribute} $A$ with $v $ distinct values, the training set is split into subsets $ E_1, ..., E_v $, each with \( p_i \) positive and \( n_i \) negative examples. Choose attribute with max information gain.
 \begin{itemize}
 \item $\text{remainder}(A) = \sum_{i=1}^{v} \frac{p_i + n_i}{p+n} I\left(\frac{p_i}{p_i+n_i}, \frac{n_i}{p_i+n_i} \right)$
 \item $\text{Info Gain: } IG(A) = I(p_{\text{pos}}, p_{\text{neg}}) - \text{remainder}(A)$
 \end{itemize}
-Choose attribute with max information gain. \\
-\textbf{Generalisation/Overfitting}: \textbf{Prune}, reduce size of decision tree. \\
-• \textbf{min-sample leaf} (min threshold of sample count in leaf node) \\
-•  \textbf{max depth} (longest path from root to leaf) pruning. \\
-Smaller DT may higher accuracy as sample due to noise ignored. \\
-\textbf{Data Preprocessing}: Missing values (assign most common value, drop row/attribute etc.) Continuous values - partition to discrete set as attribute.
+\textbf{Decision Tree Overfitting / Generalization}: 
+\begin{itemize}
+\item \textbf{Prune Decision Tree}: Smaller tree may have higher accuracy due to noise ignored.
+	\begin{itemize}
+	\item \textbf{min-sample leaf} (min threshold of sample count in leaf node) 
+	\item  \textbf{max depth} (longest path from root to leaf) pruning. 
+	\end{itemize}
+\item \textbf{Data Preprocessing}: Missing values (assign most common value, drop row/attribute etc.) Continuous values - partition to discrete set as attribute.
+\end{itemize}
+ 
 
-
-
-\subsection{7. \underline{Linear Regression and Classification}}
+\subsection{7. \underline{Linear Regression  $\rightarrow$ Regression (Prediction) Tasks}}
 
 \textbf{Linear Model}: Input vector $x$ of dimension $d$, hypo class is set of linear fns:
 \[h_w(x) = w_0x_0 + w_1x_1 + w_2x_2 + \dots + w_dx_d\  = w^T x. \] 
-where $ w_0, w_1, \dots, w_d $ are weights, $ x_0 = 1 $ is dummy variable (rmb to add)
+where $ w_0 \text{($\leftarrow$ bias term)}, w_1, \dots, w_d $ are weights, $ x_0 = 1 $, dummy variable.
 
 \centerline{\includegraphics[width=1\linewidth]{matrix}}
 • $X \in \mathbb{R}^{N \times (d+1)} | w \in \mathbb{R}^{d+1} | Y, \hat{Y} \in \mathbb{R}^N $ (target, predicted values).
@@ -409,177 +418,140 @@ where $ w_0, w_1, \dots, w_d $ are weights, $ x_0 = 1 $ is dummy variable (rmb t
 \item \textbf{Derivative}:$\frac{\partial J_{MSE}(w)}{\partial w_j} = \frac{1}{N} \sum_{i=1}^N \big(h_w(x^{(i)}) - y^{(i)}\big) x_j^{(i)}$
 \end{itemize}
 
-\textbf{Learning via Normal Equation}
-\begin{itemize}[itemsep=-2pt]
-    \item (MSE) Solve for $ w $ that minimizes $ J_{MSE} $:    $w = (X^T X)^{-1} X^T Y$
-    \item Problems: Computational cost: $ O(d^3) $ for matrix inversion. Non-linear models cannot be solved using normal equations.
-\end{itemize}
+\textbf{Learning via Normal Equation}: Solve for $ w $ that minimizes $ J_{MSE} $:    $w = (X^T X)^{-1} X^T Y$. However, problem that computational cost: $ O(d^3) $ for matrix inversion. Non-linear models cannot be solved using normal equations. \\ \smallskip
 
-\textbf{Learning via Gradient Descent}
+
+\textbf{Learning via Gradient Descent}: 
 \begin{itemize}[itemsep=-2pt]
-    \item \textbf{Algorithm}: Initialize $ w $ randomly. Update weights iteratively. Repeat until convergence: $w_j \leftarrow w_j - \gamma \frac{\partial J(w_0, w_1, \dots)}{\partial w_j}.$
+    \item \textbf{Algorithm}: Initialize $ w $ randomly. Update weights iteratively. \\
+     Repeat until convergence: $w_j \leftarrow w_j - \gamma \frac{\partial J(w_0, w_1, \dots)}{\partial w_j}.$
     \item \textbf{Learning rate} $ \gamma > 0 $: Controls step size. (Hyperparameter). can $\downarrow$ w time.
     \item \textbf{Variants}: Batch, use all data points. Mini-batch, use data subsets. Stochastic, uses one data point per iteration.
     \item \textbf{Convex}: MSE loss fn. convex, single global min, for linear/poly regression. 
 \end{itemize}
 
-\subsection{8. \underline{Logistic Regression and Classification}}
+\subsection{8. \underline{Logistic Regression  $\rightarrow$ Classification Tasks}}
 \textbf{Logistic Regression Model}: Hypo class: Set of "squashed" linear fns. 
 \begin{itemize}[itemsep=-2pt]
-    \item \textbf{Sigmoid function}: $\sigma(x) = \frac{1}{1 + e^{-x}}$ 
+    \item \textbf{Sigmoid function}: $\sigma(x) = \frac{1}{1 + e^{-x}}$, \quad $\frac{\partial \sigma}{\partial x}: \sigma'(x) = \sigma(x)(1 - \sigma(x))$
     \item Logistic model: $h_w(x) = \sigma(w_0x_0 + w_1x_1 + \dots + w_dx_d) = \sigma(w^T x)$ \\
     where $ w_0, w_1, \dots, w_d $ are weights, $ x_0 = 1 $ is a dummy variable.
 \end{itemize}
 \textbf{Classification with Logistic Regression}: Regression outputs value in $ [0, 1] $, treat as probability of class 1. (E.g. $ h_w(x) = 0.8 $ predicts 80\% chance of failure). Use \textbf{Decision threshold} (e.g. 0.5) for classification.  \\
 \textbf{Desn. Boundary}: surface (e.g. 2D line) separating classes in feature space.\\
-\textbf{Non-Linearly Separable Data}: Non-linearly separable if single linear decision boundary cannot separate classes. Solutions: Use non-linear models or apply non-linear feature transformations.
+\textbf{Non-Linearly Separable Data}: If single linear decision boundary cannot separate classes, use non-linear models or apply non-linear feature transformations. \\
+\textbf{Evaluation Metric}: Use Accuracy. Don't use BCE, MSE, MAE, (loss functions).
 
-\subsubsection{Loss Function - Logistic Regression}
-MSE not ok for logistic due to non-convexity. Use \textbf{Binary Cross Entropy}.
+\subsubsection{Logistic Regression Loss Function}
+Use \textbf{Binary Cross Entropy} for Loss. MSE not ok for logistic due to non-convexity.
 \begin{itemize}[itemsep=-2pt]
-    \item $BCE(y, \hat{y}) = -y \log(\hat{y}) - (1 - y) \log(1 - \hat{y})$$ ,| $$y \in \{0, 1\} $ and $ \hat{y} \in [0, 1] $.
-    \item Small loss if $ y \approx \hat{y} $, large loss if $ y $ and $ \hat{y} $ differ - good loss function.
-    \item BCE loss is convex for logistic regression.
-    \item Derivative: $\frac{\partial J_{BCE}(w)}{\partial w_j} = \frac{1}{N} \sum_{i=1}^N (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}. $ (same-linear)
-    \item Weight update rule: $w_j \leftarrow w_j - \gamma \frac{\partial J_{BCE}(w)}{\partial w_j} $
+    \item $BCE(y, \hat{y}) = -y \log(\hat{y}) - (1 - y) \log(1 - \hat{y})$ .
+    \item \textbf{BCE} loss is convex for logistic regression. Small loss if $ y \approx \hat{y} $, large loss if $ y $ and $ \hat{y} $ differ - good loss function. 
+    \item \textbf{Derivative}: $\frac{\partial J_{BCE}(w)}{\partial w_j} = \frac{1}{N} \sum_{i=1}^N (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}. $ (same-linear)
+    \item \textbf{Weight update} rule: $w_j \leftarrow w_j - \gamma \frac{\partial J_{BCE}(w)}{\partial w_j} $
 \end{itemize}
 
-\subsubsection{Multi-Class Classification}
- Extends binary classification to multiple classes by breaking down into sets.\\
+\subsubsection{Multi-Class Classification {\scriptsize (extending Binary classification)}}
+Extend binary classification to multiple class by breaking down into sets.
  \textbf{One-vs-one}: Binary classifier for every pair of classes $total =\frac{C(C-1)}{2}$ classifiers. Class with most votes wins. \\
  \textbf{One-vs-rest}: Binary classifier for each class, treat all other classes as combined class. \textbf{$C$ classifiers.} Class with highest probability output wins.
 
 \columnbreak
 
-\subsection{9. \underline{Regularization, Kernels, Support Vector Machines}}
-\subsection{Regularization}
-Technique to $\downarrow$ overfitting, by \textbf{penalizing large weights in model}. 
+\subsection{\underline{Regularization} {\scriptsize (Technique to \textbf{reduce overfitting}, \textbf{penalize large weights in model}.) }}
 \begin{itemize}[itemsep=-1pt]
-\item Overfitting when model too complex, capturing training data noise over underlying pattern, leads to poor generalization on unseen data.
-\item Overfitting often associated w. models w. large weights. E.g.:
+\item \textbf{Overfitting} happens when model too complex, captures training data noise over underlying pattern leading to poor generalization on unseen data.
 	\begin{itemize}[itemsep=-2pt]
-	    \item Complex polynomial model $ h(x) = w x^3 - w x $ fits train data perfect, fail to generalize to new data. 
-	    Large oscillations in model can occur as weights $ w $ increase, even while fitting the same set of points.
+	    \item Often associated w. models w. large weights. E.g. Complex polynomial model may fit train data perfectly but fail to generalize to new data. 
+	    Large oscillations in model may occur as weights $ w $ increase, even while fitting same set of points.
 	\end{itemize}
 \end{itemize}
-Regularization: \textbf{penalty term} to loss function, discourage large weights.
+\textbf{Regularization}: Add penalty term to loss function, discourage large weights.
 
 \begin{itemize}[itemsep=-1pt, topsep=0.5pt]
-\item Given a loss function $ J(w) $ (e.g., MSE or BCE), add penalty function $ P(w) $ scaled by a hyperparameter $ \lambda \geq 0 $, where \textbf{optimization goal} becomes:
-\[J_{\text{reg}}(w) = J(w) + \lambda P(w), \text{where we want:} \min_w J_{\text{reg}}(w). \text{(by varying $w$)}\]
 \item Perform feature scaling before regularization. (Same effect on all variables).
+\item Given a loss function $ J(w) $, add penalty function $ P(w) $, hyperparam: $ \lambda \geq 0 $. 
+\[\min_w J_{\text{reg}}(w) = J(w) + \lambda P(w)\]
 \end{itemize}
-\textbf{Common Penalty Functions}
-\begin{itemize}[itemsep=-2pt]
-    \item \textbf{L2 penalty/regularizer (Ridge Regression)}: Penalizes square of weights, encourage smaller weights, smooths model.
+\textbf{Penalty Functions}
+\begin{itemize}[itemsep=-1pt]
+    \item \textbf{L2 (Square, Ridge) penalty/regularizer}: Penalize square of weights. \\
+     \textit{Heavily penalize larger parameters}, but \textit{diminishing return} for reducing already small parameters. Shrink params, but not to 0.
+    \item \textbf{L1 (Absolute, Lasso) Regularizer}: Penalize absolute weights. Since penalty grows at same rate, if parameter loss reduction not much, optimal sets weight to 0. Effectively does feature selection strategy, by driving some weights to 0.
     {\scriptsize
-    \[P_{\text{square}}(w) = \frac{1}{2} \sum_{j=0}^d w_j^2, \quad P_{\text{abs}}(w) = \sum_{j=0}^d |w_j|, \quad P_{\text{max}}(w) = \max(|w_0| ... |w_d|) \]
+    \[P_{\text{square}}(w) = \frac{1}{2} \sum_{j=0}^d w_j^2, \quad P_{\text{abs}}(w) = \sum_{j=0}^d |w_j|, \]
 	}
-    \item \textbf{L1 Regularizer (Lasso Regression)}: Penalizes absolute weight values, encourage sparsity, effectively feature selection by driving some weights to 0.
-    \item \textbf{Max-Norm Penalty}: Constraint max weight, prevent extreme values.
+    \item \textbf{Others}: E.g. max-norm penalty, constraint max weight to prevent extreme values.
 \end{itemize}
 
-\textbf{Effect of Regularization on Learning Algorithms}
+\textbf{Regularization: Effect on Learning Algorithms}
 \begin{itemize}[itemsep=-2pt]
-    \item \textbf{Gradient Descent}: The gradient of the regularized loss function includes both the original loss gradient and the gradient of the penalty term:
-    \[\frac{\partial J_{\text{reg}}(w)}{\partial w_j} = \frac{\partial J(w)}{\partial w_j} + \lambda \frac{\partial P(w)}{\partial w_j}.    \]
+    \item \textbf{Gradient Descent}: Gradient of regularized loss function has both gradient of original loss, and gradient of penalty term: $\frac{\partial J_{\text{reg}}(w)}{\partial w_j} = \frac{\partial J(w)}{\partial w_j} + \lambda \frac{\partial P(w)}{\partial w_j}.$
 
     \item \textbf{Normal Equation}: For linear regression with L2 regularization, the closed-form solution becomes:
-    \[
-    w = (X^T X + \lambda I)^{-1} X^T Y,
-    \]
-    where $ I $ is the identity matrix. This ensures invertibility of $ X^T X + \lambda I $, even in cases of multicollinearity or insufficient data.
+    $w = (X^T X + \lambda I)^{-1} X^T Y $, where $ I $ is a identity matrix. This ensures invertibility of $ X^T X + \lambda I $, even for multicollinearity or insufficient data.
 \end{itemize}
 
-\textbf{Trade-Off w. Regularization Strength $ \lambda $}: Hyperparam (penalty strength) $ \lambda $ controls trade-off between fitting training data and keeping weights small:
+\textbf{Regularization Strength $ \lambda $ Tradeoffs}: Hyperparameter (penalty strength) $ \lambda $ controls trade-off between fitting training data and keeping weights small:
 \begin{itemize}[itemsep=-2pt]
     \item Small $ \lambda $: Emphasizes fitting the data, potentially leading to overfitting.
     \item Large $ \lambda $: Emphasizes smaller weights, potentially leading to underfitting.
 \end{itemize}
 
-\subsection{Kernel Method}
-\textbf{Linear Combination of Vectors, Linear Model Weights \& Training Data}: \\
-A linear combination of vectors is sum of scalar multiples of those vectors.
-vector {\tiny $\begin{bmatrix} 2 \\ 3 \end{bmatrix} = 2 \begin{bmatrix} 1 \\ 0 \end{bmatrix} + 3 \begin{bmatrix} 0 \\ 1 \end{bmatrix}$}. 
-In linear regression, weight vector $ w $ can express as linear combo of training data points $ x^{(j)} $, where coefficients $ \alpha_j $ are real. Normal equation, {\scriptsize $ w = (X^T X)^{-1} X^T Y $ } rewritten as  {\scriptsize $ w = \sum_{j=1}^N \alpha_j x^{(j)} $ }.
-(The weights are derived from a weighted combination of training data.)
-
+\subsection{\underline{Kernels}: Kernel Method}
+In linear models, weights are linear combinations of inputs (consider how weights calculated through normal equation $X^T Y$), relying only on dot products. \\ The \textbf{kernel method} replaces these \underline{dot products} with a \underline{kernel function} $K(x,x')$, enabling powerful nonlinear models without explicit feature mapping.
 \begin{itemize}
-\item \textbf{Dual Formulation of Linear Regression:} Hence, linear model $ h_w(x) = w^T x $ can be rewritten in its dual form, 
-where $ \alpha_j $ are the new parameters (weights), and $ x^{(j)} $ are training data points. This expresses predictions as weighted sum of dot products between training data $ x^{(j)} $ and input $ x $.
-\[h_\alpha(x) = \sum_{j=1}^N \alpha_j (x^{(j)})^T x\]
-\item \textbf{Dot Product and Similarity}: Dot product $ u \cdot v = u^T v $ measures similarity between 2 vectors. E.g. orthogonal vectors dot product of zero: {\tiny$\begin{bmatrix} 1 \\ 1 \end{bmatrix} \cdot \begin{bmatrix} 1 \\ -1 \end{bmatrix} = 0 $}
+	\item \textbf{Dot Product and Similarity}: Dot product $[ u \cdot v = u^T v ]$ measures similarity between 2 vectors. E.g. orthogonal vectors dot product of zero: {\tiny$\begin{bmatrix} 1 \\ 1 \end{bmatrix} \cdot \begin{bmatrix} 1 \\ -1 \end{bmatrix} = 0 $}
+	\item \textbf{Dual Formulation of Linear Regression:} Linear model $ h_w(x) = w^T x $, dual form is where $ \alpha_j $ are new parameters (weights), and $ x^{(j)} $ are training data points. (Predictions as weighted sum of dot products of training data $ x^{(j)} $ and input $ x $).
+	\item \textbf{Dual Formulation with Kernel (Kernel Trick):} We simply replace the dot product $ (x^{(j)})^T x $ with the kernel function $\mathbf{k(x^{(j)}, x)}$.
+	\[h_\alpha(x) = \sum_{j=1}^N \alpha_j (x^{(j)})^T x \quad \implies \quad h_\alpha(x) = \sum_{j=1}^N \alpha_j k(x^{(j)}, x)\]
 \end{itemize}
 
-\subsubsection{Dual Formulation with Kernel: Kernel Trick}
-Dual hypothesis dot product $ (x^{(j)})^T x $ replace by kernel function $\mathbf{k(x^{(j)}, x)}$:
+\subsubsection{Kernel Trick}
 \vspace{-0.5em}
-\[h_\alpha(x) = \sum_{j=1}^N \alpha_j k(x^{(j)}, x).\]
 \centerline{\includegraphics[width=1\linewidth]{kernel}}
-Kernel function $ k(u, v) $ generalizes dot product to measure similarity in potentially higher-dimensional space w/o explicit computing transformation.
+\textbf{Kernel function} $ k(u, v) $ generalizes dot product, measures similarity efficiently in potentially higher-dimension space, w/o explicit computing transformation.
 \begin{itemize}[itemsep=-1.5pt]
-\item \textbf{Kernel Trick}: Replaces dot product with similarity function $ k(u, v) $, enabling efficient computation of complex relationships in data. Valid kernel functions must satisfy conditions like symmetry and positive definiteness. 
-\item A model that uses the kernel trick is called a \textbf{kernel machine}, which allows for implicit computation of high-dimensional feature transformations.
-\item \textbf{Examples of Kernels}:
-	\begin{itemize}[itemsep=-1.5pt]
-	    \item \textbf{Polynomial Kernel}: {\scriptsize $k(u, v) = (u^T v)^s$ } where $ s $ is degree of polynomial.
-	    \item \textbf{Gaussian (RBF) Kernel}:  $k(u, v) = \exp\left(-\frac{\|u - v\|^2}{2 \sigma^2}\right)$ \\
-	    where $ \sigma^2 $ controls width of Gaussian ($\downarrow \sigma = $ narrower, $\uparrow$ = wider).
-	    \item \textbf{String Kernel}: Measures similarity between strings.
-	    \item \textbf{Chi-Squared Kernel}: Useful for histograms.
-	    \item \textbf{Tanh Kernel}: Similar to neural network activation functions.
-	\end{itemize}
-\item \textbf{Transformed Features and Kernels}: Deep connection between kernels and feature transformations (Can be single variable, multi-variable transformations to create new features). Specifically:
-	\begin{itemize}[itemsep=-2pt]
-	    \item Any valid kernel $ k(u, v) $ corresponds to a feature map (transform) $ \phi $ s.t.:
-	    \[
-	    k(u, v) = \phi(u)^T \phi(v).
-	    \]
-	    \item Conversely, any feature transformation $ \phi $ induces a valid kernel.
-	\end{itemize}
-\item \textbf{Implicit, efficient} computation by Kernels of feature transformations, even when transformed feature space is infinite-dimensional. E.g.
-	\begin{itemize}[itemsep=-2pt]
-	    \item The RBF kernel corresponds to an infinite-dimensional feature map.
-	    \item Compute $ \phi(x) $ explicitly maybe infeasible, evaluating $ k(u, v) $ efficient.
-	\end{itemize}
-\item \textbf{E.g. Polynomial Feature Transform}: to all monomials of degree up to 2:
-\vspace{-0.5em}
-\[x = \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} \to \phi(x) = \begin{bmatrix} x_1 \\ x_2 \\ x_1^2 \\ x_2^2 \\ x_1 x_2 \end{bmatrix}
-\text{, corresponding kernel:} \hspace{0.5em} k(u, v) = (u^T v)^2. \]
+	\item \textbf{Valid kernel functions}: satisfies conditions like symmetry, positive definiteness. 
+	\item \textbf{Kernel Machine}:	A model that uses the kernel trick.
+	\item The kernel trick allows handling of non-linear data efficiently, enabling efficient computation of complex relationships in data. 
 \end{itemize}
-Dual formulation of linear models expresses predictions as weighted sum of kernel evaluations. Kernels generalize dot product, enabling implicit computation of high/ infinite-dimensional feature transformations. The kernel trick is powerful for handling non-linear data efficiently.
 
-\subsection{Support Vector Machine (SVM)}
-SVM is a powerful classifier with several key aspects:
+\subsubsection{Kernels and Transformed Features}
+There is a deep connection between kernels and feature transformations (be it single variable, multi-variable transformations to create new features). Specifically:
 \begin{itemize}[itemsep=-2pt]
-    \item \textbf{Optimal Decision Boundary}: SVM constructs an optimal separating decision boundary based on training data.
-    \item \textbf{Fat Margin Classifier}: Maximizes the margin, which improves performance on unseen data and enhances robustness to noise.
-    \item \textbf{Non-linear Decision Boundaries}: The kernel trick allows SVM to handle non-linear decision boundaries naturally.
-    \item \textbf{Kernel Machine}: SVM is one of the most famous kernel machines.
+    \item Any valid kernel $ k(u, v) $ corresponds to a feature map (transform) $ \phi $ s.t.:
+    \[
+    k(u, v) = \phi(u)^T \phi(v).
+    \]
+    \item Conversely, any feature transformation $ \phi $ induces a valid kernel.
 \end{itemize}
 
-\subsubsection{Hyperplanes}
-The zero-offset hyperplane is defined by normal vector $ w $ and contains all vectors $ u $ s.t.: $w^T u = 0$.
-\begin{itemize}
-\item \textbf{Side}: Sign of $ w^T u $ determines which side of hyperplane a point $ u $ lies:
-	\[
-	\text{Sign}(w^T u) =
-	\begin{cases}
-	    > 0 & \text{if } u \text{ is on one side}, \\
-	    < 0 & \text{if } u \text{ is on the other side}.
-	\end{cases}
-	\]
-\item \textbf{Distance to Hyperplane:} Distance of a point $ u $ to hyperplane given by: $\text{Distance} = \frac{|w^T u|}{\|w\|}$ where $ \|w\| $ is the length of the normal vector $ w $.
+
+\subsubsection{Examples of Kernels}
+\begin{itemize}[itemsep=-1pt]
+    \item \textbf{Polynomial Kernel}: {\scriptsize $k(u, v) = (u^T v)^s$ } where $ s $ is degree of polynomial.
+    \item \textbf{Gaussian (RBF) Kernel}: 
+    \[ k(u, v) = \exp\left(-\frac{\|u - v\|^2}{2 \sigma^2}\right) \]
+    \begin{itemize}
+		\item where $ \sigma^2 $ controls width of Gaussian ($\downarrow \sigma = $ narrower, $\uparrow \sigma $ = wider).
+		\item The RBF kernel corresponds to an infinite-dimensional feature map. Computing $ \phi(x) $ explicitly may be infeasible, but evaluating $ k(u, v) $ efficient.
+	\end{itemize}
+    \item \textbf{String Kernel}: Measures similarity between strings.
+    \item \textbf{Chi-Squared Kernel}: Useful for histograms.
+    \item \textbf{Tanh Kernel}: Similar to neural network activation functions.
 \end{itemize}
 
-\subsubsection{SVM: Maximizing the Margin}
+\subsection{9. \underline{Support Vector Machines} (SVM)}
+SVM is a powerful classifier that can use kernel tricks (allowing it to handle non-linear decision boundaries naturally) - a kernel machine. 
 \begin{itemize}[itemsep=-2pt]
-\item \textbf{Decision boundary} in SVM defined by hyperplane separating data points of different classes. The \textbf{margin} is distance between hyperplane and closest data points from each class. \textbf{Width of margin} proportional to 2×margin.
-\item \textbf{Optimization objective} is to maximize margin while ensuring all data points are correctly classified according to respective class.
-\item Data points that lie exactly on boundary of margin called \textbf{support vectors}. These points define position and orientation of hyperplane.
+	\item \textbf{Decision boundary}: defined by hyperplane separating points of diff. classes.
+	\item \textbf{Margin}: distance between hyperplane and closest data points from each class. The width of the margin is proportional to 2 × margin.
+	\item \textbf{Maximizes Margins}: The SVM model is optimized by maximizing the margin subject to constraints that data points are on the correct side of the decision boundary.
+	\item \textbf{Support Vectors}: Data points that lie exactly on boundary of margin. These points define position and orientation of hyperplane.
 \end{itemize}
 
-\subsubsection{SVM: Data, Model, Objective, Sparsity}
+\subsubsection{\underline{SVM}: Data, Model and Sparsity}
 \begin{itemize}[itemsep=-2pt]
     \item Given $ N $ data points, described by features $ x^{(i)} $, target $ y^{(i)} \in \{-1, 1\} $.
     \item The SVM classifier in dual formulation depends on parameters $ \alpha_i $:
@@ -587,98 +559,98 @@ The zero-offset hyperplane is defined by normal vector $ w $ and contains all ve
     \text{SVM}_{\alpha}(x) = \text{sign} \left( \sum_{i=1}^N \alpha_i k(x^{(i)}, x) \right),
     \]
     where $ k(x^{(i)}, x) $ is the kernel function.
-    \item The model is optimized by maximizing the margin subject to constraints that data points are on the correct side of the decision boundary.
-    \item Learning algorithm: Quadratic programming.
     \item \textbf{Sparsity}: Many $ \alpha_1, \alpha_2, \dots, \alpha_N $ will be zero. Only support vectors contribute to classifier. Non-support vectors discarded without affecting model.
     \[    \text{SVM}_{\alpha}(x) = \text{sign} \left( \sum_{i \in \text{Support Vectors}} \alpha_i k(x^{(i)}, x) \right).    \]
     \item \textbf{Implementation}: libraries e.g. \texttt{scikit-learn} to simplify implementation.
+\end{itemize}
+
+\subsubsection{Hyperplanes {\scriptsize (FYI)}}
+Zero-offset hyperplane: define by normal $ w $, contains all vectors $ u $: $w^T u = 0$.
+\begin{itemize}
+\item \textbf{Side}: Sign of $ w^T u $ determines which side of hyperplane a point $ u $ lies.
+\item \textbf{Distance to Hyperplane:} Distance of a point $ u $ to hyperplane given by: \\
+$\text{Distance} = \frac{|w^T u|}{\|w\|}$ where $ \|w\| $ is the length of the normal vector $ w $.
 \end{itemize}
 
 
 % --------------------------------------------------------------------------------------------------------------- %
 
 
-\subsection{10. \underline{Unsupervised Learning, Cluster, Dimensionality Redn}}
-
-\subsection{Unsupervised Learning}
-\begin{itemize}[itemsep=-2pt]
-    \item \textbf{Datasets w/o ground truth output}. (Unlike supervised - pairs of data point to target). Obtain ground truth expensive/ infeasible. E.g. images, videos w/o predefined categories of health, finance, preventative med w/o label.
+\subsection{10. \underline{Unsupervised Learning} {\scriptsize (Clustering, Dimensionality Reduction)}}
+\begin{itemize}[itemsep=-1pt]
+    \item \textbf{Unsupervised Learning}: Deals with \textit{datasets w/o ground truth output}. Obtaining ground truth may be expensive/ infeasible. E.g. images w/o predefined categories.
     \item \textbf{Applications}: Clustering, dimensionality reduction, image segmentation, GPT (unsupervised learning component), anomaly detection etc.
-    \item Given \textbf{set of $ N $ data points} $\{x_1, \dots, x_N\}$, goal to learn patterns in data.
+    \item Given set of $ N $ data points, $\{x_1, \dots, x_N\}$, goal is to learn patterns in data.
 \end{itemize}
 
-\subsection{Clustering}
-Unsupervised machine learning technique to group similar data points into clusters/ groups. Goal to organize objects so those within same group more similar to each other than to in other groups.
-
-\begin{itemize}[itemsep=-2pt]
-    \item \textbf{Number of clusters} not defined by data.
-    \item \textbf{Common applications:} Data segmentation, Anomaly detection
-    \item \textbf{Approaches}: Partitioning-based clustering (K-means, K-Medoids (use actual data points - medoids - instead of centroids as cluster centers) ), Hierarchical (agglomerative / divisive), Density-based Clustering (DBSCAN), Distribution-based, Spectral, Grid-based, Model based, Fuzzy etc.
+\subsection{\underline{Clustering}}
+Unsupervised ML technique to group similar data points into clusters. Common applications include data segmentation, anomaly detection.
+\begin{itemize}[itemsep=-1pt]
+    \item \textbf{Number of clusters}: User defined, not defined by data.
+    \item \textbf{Approaches}: Distance/Partitioning-based clustering (\textbf{K-means}, K-Medoids), Hierarchical (agglomerative / divisive), Density-based Clustering (DBSCAN), Distribution-based, Spectral, Grid-based, GMM, Fuzzy etc.
 \end{itemize}
 
 \subsubsection{K-Means Clustering}
-K-Means clustering - unsupervised learning algorithm to partition $ N $ data points into $ K $ distinct clusters. Each cluster represented by centroid, the mean of all points in the cluster. \\ \smallskip
+Partitions $ N $ data points into $ K $ distinct clusters. Each cluster represented by \textbf{centroid}, the mean of all points in the cluster. 
 
-\textbf{ K-Means Algorithm}: 
-\begin{enumerate}[itemsep=-2pt]
+\subsubsection{ K-Means Algorithm}
+\begin{enumerate}[itemsep=-1pt]
     \item \textbf{Initialize}: Randomly initialize $ K $ centroids $ \mu_1, \dots, \mu_K $.
-    \begin{enumerate}[itemsep=-1pt, leftmargin=1mm, topsep=0.5mm]
+    \begin{enumerate}[itemsep=1pt, leftmargin=2mm, topsep=0.5mm]
         \item \textbf{Assign each Point to Cluster}: $\forall  x^{(i)} $, assign to nearest centroid: 
-        $c^{(i)} = \arg\min_{k} \|x^{(i)} - \mu_k\|^2$ \\
-         {\scriptsize ($ c^{(i)} $ is cluster assignment for $ x^{(i)} $)}
+        $c^{(i)} = \arg\min_{k} \|x^{(i)} - \mu_k\|^2$ \quad {\scriptsize ($ c^{(i)} $ is cluster assignment for $ x^{(i)} $)}
         \item \textbf{Update Centroids}: \textit{Re}-compute centroids as mean of all points assigned to cluster: 
         $\mu_k = \frac{1}{N_k} \sum_{i \in C_k} x^{(i)}$ \\
          {\scriptsize ($ C_k $ is set of points in cluster $ k $, $ N_k $ is number of points in $ C_k $)}
     \end{enumerate}
-    \item \textbf{Convergence}: The algorithm terminates when the assignments no longer change or the centroids stabilize.
+    \item \textbf{Convergence}: The algorithm always terminates, when assignments no longer change or centroids stabilize. Each K-means step never increases distortion.
 \end{enumerate}
 
 \begin{itemize}
-\item \textbf{Measuring the Quality of Clusters}: \\
-The quality of the clusters can measure w. distortion function, computes average squared distance of each point to its assigned centroid:
+\item \textbf{Measuring the Quality of Clusters}: (use distortion function) \\
+Computes average squared distance of each point to its assigned centroid:
 \[
 J(c^{(1)}, c^{(2)}, \dots, c^{(N)}, \mu_1, \mu_2, \dots, \mu_K) = \frac{1}{N} \sum_{i=1}^N \|x^{(i)} - \mu_{c^{(i)}}\|^2.
 \]
-\item Each K-means step never increases distortion. (Convergence guaranteed).
-\item \textbf{Mean normalization, Feature Scaling} important to perform k-means clustering meaningfully (else cost function $J$ dominated by certain feature.)
-\item \textbf{Local Optima}: K-Means prone to local opt. Use multiple random restarts.
-\item \textbf{Picking Clusters Count ($ K $)}: $ K $ user-defined. Use \textbf{Elbow Method}, plot distortion $ J $ against $ K $, "elbow" point where adding more clusters yields diminishing returns.
-\item \textbf{K-Means Variants}: \textit{K-Medoids}: Actual data points as cluster reps (medoids). \textit{Snap to Nearest Data Point}: Centroids "snapped" to nearest data points.
-\item  \textbf{Distance-based Model}: Rely only on distance btwn points (vs. e.g. model).
-\item \textbf{Clustering vs. Classification}: Feedback (input/output): Unsupervised (clustering - distance based) vs. Supervised (classification - hyperplane based (e.g. SVM), probability based (logisitic reg)). Grouping/clustering for K-Means vs. a predictive model for classification. No .of classes defined by dataset (classification), no. of clusters defined by user (clustering).
+\item \textbf{K-Means Optimizations}: 
+	\begin{itemize}
+	\item \textbf{Mean normalization \& Feature Scaling}: prevent cost function $J$ from being dominated by certain select features.
+	\item \textbf{Multiple random restarts}: K-means prone to local optima. Random restarts' random initialization with further optimizations, such as probalistic method to choose next centroid, or choose next centroid as far as possible.
+	\end{itemize}
+\item \textbf{Picking Clusters Count ($ K $)}: \textbf{Elbow Method}, plot distortion $ J $ against $ K $, 'elbow' point is where adding more clusters yields diminishing returns.
+\item \textbf{Variants of K-Means}: \textit{K-Medoids}: Actual data points as cluster reps (medoids), or \textit{Snap to Nearest Data Point}: Centroids "snapped" to nearest data points., etc.
 \end{itemize}
+
+\subsubsection{Kernel K-means Clustering}
+Use the kernel trick in distance computation in K-means clustering. E.g. use Gaussian radial basis function (RBF) kernel, map data into higher-dimensional space, non-linearly separable clusters potentially become linearly separable. (kernel trick applied only to dot products between data points, not point and cluster mean).
+
 
 %% -------------
 
-\subsection{Dimensionality Reduction}
-Technique to reduce number of features (variables or dimensions) in dataset while retaining as much relevant information as possible.
+\subsection{\underline{Dimensionality Reduction} {\scriptsize (Of dataset)}}
+Reduce number of features in dataset while retaining maximal relevant information.
 \begin{itemize}[itemsep=-1.5pt]
-\item \textbf{Curse of Dimensionality}: High-dimensional data (e.g. HD images - $ 1280 \times 720 = 921,600 $ features) challenge in ML. Curse refers to exponential increase in sample complexity with the number of features: $ N = O(2^d) $, $ d $ is no. of features, $ N $ is no. of samples required for effective learning.
-\item \textbf{Remove Redundant Features}: identified, removed by changing basis.
+\item \textbf{Curse of Dimensionality}: High-D data (e.g. HD images - $ 1280 \times 720 = 921,600 $ features). Exponential increase in sample complexity with number of features.
+\item $ N = O(2^d) $, where $ d $ is \# features, $ N $ is \# samples required for effective learning.
+\item \textbf{Dimension Reduction}: Identify, remove redundant feature by changing basis.
 \end{itemize}
 
-\subsubsection{Singular Value Decomposition (SVD)}
-Matrix factorization technique / tool used in linear algebra, machine learning. Any real-valued matrix $ A \in \mathbb{R}^{d \times N} $ decomposable into 3 components:
+\subsubsection{Singular Value Decomposition (SVD) {\scriptsize (Matrix factorization technique)}}
+ Let $d > N$: for any $ d \times N $ real-valued matrix $ A $, there exists a factorization:
 \[
 A = U \Sigma V^T,
 \]
-\begin{itemize}[itemsep=-2pt]
+\begin{itemize}[itemsep=-1pt]
     \item $ U \in \mathbb{R}^{d \times d} $: Matrix of left singular vectors (new basis) w. orthonormal cols.
     \item $ \Sigma  \in \mathbb{R}^{d \times N} $: Diagonal matrix of singular values (importance of each basis vector). Singular values are ordered such that: $\sigma_1 \geq ... \geq \sigma_r \geq 0$.
     \item $ V \in \mathbb{R}^{N \times N} $: Matrix of right singular vectors (coefficients for linear combinations) with orthonormal columns and rows.
-\end{itemize}
-
-\centerline{\includegraphics[width=1\linewidth]{SVD}}
-
-\begin{itemize}[itemsep=-1pt]
-\item \textbf{Existence of SVD}: wlog, let $d > N$: for any $ d \times N $ real-valued matrix $ A $, there exists a factorization $ A = U \Sigma V^T $.
 \item \textbf{Interpretation of SVD}: SVD provides new basis for data:
 	\begin{itemize}[itemsep=-2pt, topsep=-2pt]
 	    \item Columns of $ U $ form an orthonormal basis for the row space of $ A $.
 	    \item Columns of $ V $ form an orthonormal basis for the column space of $ A $.
 	    \item Singular values $ \sigma_j $: importance of basis vector in capturing data variance.
 	\end{itemize}
-\item \textbf{Dimensionality Reduction via SVD}: As singular values $ \sigma_j $ indicate importance of corresponding basis vectors, to reduce dimensionality, retain only the top $ r $ singular values ($ \sigma_1, \sigma_2, \dots, \sigma_r $). Truncate $ \Sigma $ to $ \tilde{\Sigma} $, keep only first $ r $ rows, columns. Use reduced basis matrix $ \tilde{U} $ (first $ r $ columns of $ U $) to project data into a lower-dimensional space.
+\item \textbf{Dimensionality Reduction via SVD}: As singular values $ \sigma_j $ indicate importance of corresponding basis vectors, to reduce dimensionality, retain only top $ r $ singular values ($ \sigma_1, \dots, \sigma_r $). Truncate $ \Sigma $ to $ \tilde{\Sigma} $, keep first $ r $ rows, columns. Use reduced basis matrix $ \tilde{U} $ (first $ r $ columns of $ U $) to project data into a lower-dimensional space.
 
 \item \textbf{Compression}: Original data matrix $ X^T $ approximated using truncated SVD:
 \[ \text{original: } X^T = U\Sigma V^T, \hspace{3pt} \text{ so approx: } \tilde{X}^T = \tilde{U} \tilde{\Sigma} \tilde{V}^T\]
@@ -688,24 +660,25 @@ and $ \tilde{V} \in \mathbb{R}^{N \times r}, (X^T / \tilde{X}^T\in \mathbb{R}^{d
 \\ 
 where $\tilde{U}$: reduced left singular vectors, $Z$: compressed rep of data.
 
-\item \textbf{Example: Data Compression}: Hence, given data matrix $ X^T $, we can compress data by projecting it onto new reduced (lower-dimensional) basis $\tilde{U}$:
+\item \textbf{Example: Lossy Data Compression}: Hence, given data matrix $ X^T $, can compress data by projecting it onto new reduced (lower-dimensional) basis $\tilde{U}$:
 \[Z = \tilde{U}^T X^T, \quad Z \in \mathbb{R}^{r \times N} \]
 \textbf{Intuition:} Project data points $x^{(i)}$. Instead of explicitly working w. $\tilde{\Sigma}, \tilde{V}^T$, project data onto reduced basis $\tilde{U}$. $ Z$ contains all projection coefficients.
 
 \item \textbf{Assumption of Mean-Centered Data}: Data matrix $ X^T $ assumed to be mean-centered (each feature has zero mean). Ensure singular values $ \sigma_j^2 $ directly represent variances along principal directions (axes) defined by singular vectors $ u^{(j)} $, simplify interpretation of SVD results.
 
-\item \textbf{Reconstruction Error}: Error depends on retained singular values. To retain at least 99\% of variance, choose smallest $ r $ such that:
+\item \textbf{Retained Variance}: Reconstruction error depends on retained singular values. To retain at least 99\% of variance, choose smallest $ r $ such that:
 \[\text{Retained Variance} = \frac{\sum_{i=1}^r \sigma_i^2}{\sum_{i=1}^N \sigma_i^2} \geq 0.99.\]
 
-\item \textbf{Applications of SVD}: Dimensionality reduction while retain variance. Noise reduction, remove less impt singular values, filter out noise. Data visualization: Projecting data into 2D or 3D for visualization. Recommendation systems: use SVD to uncover latent factors in user-item interaction matrices.
+\item \textbf{Applications of SVD}: Noise reduction. Data visualization (Project data to 2D).
 
 \item \textbf{Practical implementation}: SVD available using popular numerical computing libraries (\textit{Numpy}: \texttt{numpy.linalg.svd}, \textit{Matlab}: \texttt{svd})
 \end{itemize}
 
-\subsubsection{Principal Component Analysis (PCA)}
-PCA is a statistical application of SVD. PCA identifies directions (principal components) that capture maximum variance in data. Principal components correspond to largest singular values in SVD. By projecting data onto top $ r $ principal components, PCA achieves dimensionality reduction while retaining most important information.
-
-
+\subsubsection{Principal Component Analysis (PCA) {\scriptsize (Application of SVD)}}
+\begin{itemize}
+\item PCA identifies directions (principal components) that capture maximum variance in data. Principal components correspond to largest singular values in SVD
+\item By projecting data onto top $ r $ principal components, PCA achieves dimensionality reduction while retaining most important information.
+\end{itemize}
 
 
 \columnbreak
@@ -974,7 +947,7 @@ PyTorch organizes neural network components into modular containers and layers. 
 
 \columnbreak
 
-\subsection{Convolutional Neural Networks (CNNs)}
+\subsection{12. \underline{Convolutional Neural Networks (CNNs)}}
 CNNs: specialized neural networks for process grid-like data (e.g. image).
 \begin{itemize}
 \item Leverage convolution operations to extract spatial features efficiently.
@@ -1042,20 +1015,270 @@ Pooling layers \textbf{downsample} feature maps to reduce dimensionality. Common
 
 \textbf{CNN Applications}: \textit{Image Classification}: Identify objects in images (e.g. face emotion). \textit{Image Segmentation}: Detect regions of interest (e.g. cancer cell). \textbf{Object Detection}: Locate / classify objects (e.g. self-drive cars).
 
+\columnbreak
+
+\subsection{13. \underline{Recurrent Neural Networks (RNNs)}}
+RNNs are a class of neural networks designed to process sequential data. 
+
+\begin{itemize}
+\item \textbf{Recurrent Neural Networks (RNNs)} maintain a \textbf{hidden state}, unlike traditional feedforward networks, which captures info of previous elements in sequence, enabling modelling temporal dependencies.
+\item \textbf{Sequential data}, text -- context meaning of word), audio (phonemes interpretation) etc, has \textbf{patterns, dependencies} spanning across time steps. If elements treated independently, relationships btw. elements not captured. RNNs maintain \textbf{hidden state} ro encodes contextual information.
+\item \textbf{One-hot Encoding}: method for converting categorical variables into a binary format (e.g. convert word to vector w. length equal to vocab size).
+\item \textbf{Time step}:  single iteration in RNN, one element of sequence processed.
+\item \textbf{Example}: `we saw this saw.', use one-hot encoding, represent word as vectors. Predict`saw' is verb or noun requires context of previous words. Standard feedforward network cannot capture this dependency, RNN can.
+\end{itemize}
+
+\subsubsection{Structure of an RNN}
+An RNN processes sequential data, updating hidden state at each time step. 
+\begin{itemize}
+\item \textbf{Hidden State}: Number of elements in hidden state set according to no. of output we want to generate from each layer (e.g. 2 output $\leftrightarrow$ two elements)
+\item Hidden state typically initialized to 0 ($h^0 = \mathbf{0}$).
+\item Same \textbf{3 different weight matrices}, ($\mathbf{W}^{[xh]}, \mathbf{W}^{[hh]}, \mathbf{W}^{[hy]}$) applied at each time stamp. (weight for each edge)
+\end{itemize}
+
+
+The key equations governing an RNN are:
+\begin{align*}
+    \text{Updating }h: \quad \mathbf{h}^t &= g^{[h]}[(\mathbf{W}^{[xh]})^\top \mathbf{x}^t + (\mathbf{W}^{[hh]})^\top \mathbf{h}^{t-1}] \\
+    \text{Predicting Output:} \quad \hat{\mathbf{y}}^t &= g^{[y]}[(\mathbf{W}^{[hy]})^\top \mathbf{h}^t]
+\end{align*}
+\begin{itemize}[itemsep=0pt]
+\item $\mathbf{x}^t$: Input at time step $t$, \quad $\mathbf{h}^t$: Hidden state at time step $t$
+\item $\hat{\mathbf{y}}^t$: Output prediction at $t$ \quad $\mathbf{g}^{[h]}$, $\mathbf{g}^{[y]}$: Activation Fn (sigmoid, softmax).
+\end{itemize}
+\centerline{\includegraphics[width=0.95\linewidth]{RNN}}
+\hrule
+\centerline{\includegraphics[width=0.9\linewidth]{RNNCalc}}
+
+The hidden state $\mathbf{h}^t$ acts as a memory that stores information about past inputs. At each time step, the RNN combines the current input $\mathbf{x}^t$ with the previous hidden state $\mathbf{h}^{t-1}$ to compute the new hidden state.
+
+\subsubsection{Types of RNN Architectures {\scriptsize (Configuration depending on task) }}
+\begin{itemize}
+    \item \textbf{Many-to-Many ($T_x = T_y > 1$)}: Both input and output sequences have the same length. E.g.: Machine translation (e.g., Eng to French).
+    \item \textbf{Many-to-One ($T_x > 1, T_y = 1$)}: A sequence of inputs produces a single output. E.g.: Sentiment analysis (review positive or neg).
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{many-to-many-1}}
+\begin{itemize}
+    \item \textbf{One-to-Many ($T_x = 1, T_y > 1$)}: A single input generates sequence of outputs. E.g.: Image captioning (e.g. generate image description).
+    \item \textbf{Many-to-Many ($T_x \neq T_y, T_x > 1, T_y > 1$)}: Input and output sequences have different lengths. Has $<$begin$>$ token. E.g.: Video captioning.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{many-to-many-2}}
+\subsubsection{Deep Recurrent Neural Networks}
+Deep RNNs capture more complex hierarchical features by stacking multiple recurrent layers. Each layer processes hidden state from previous layer, allow network to learn more abstract representations of input sequence.
+\centerline{\includegraphics[width=1\linewidth]{deepRNN}}
+
+\begin{itemize}
+	\item \textbf{Application of RNNs}: widely used in tasks involving sequential data, such as \textit{Sentiment Analysis}, \textit{Speech Recognition}: Transcribing spoken language into text, \textit{Video Captioning}: Generating descriptions for video frames.
+	\item \textbf{Properties of RNN}: \textit{Capture Contextual Information}: RNNs use hidden state to encode information about entire sequence seen so far. \textbf{Sequential in Nature}: Predictions at time step $t$ depend on all previous steps, less parallelism-friendly than feedforward networks.
+\end{itemize}
+
+% -----------------------------------------------------------------------------------------
+
+\subsection{14. \underline{Attention Neural Networks: Self-Attention (Layer)}}
+Mechanism that captures contextual information, identify relevant parts of input sequence. Allows model to aggregate useful info from all elements in sequence, to predict current output. $\rightarrow$ can handle sequential data.
+
+\begin{itemize}
+\item \textbf{Query ($Q$)}: Represents current element being processed.
+\item \textbf{Key ($K$)}: Encodes relevance of other elements in sequence to the query.
+\item \textbf{Value ($V$)}: Contains the actual content or information to be aggregated.
+\end{itemize}
+Components derived from input sequence using trainable weight matrices:
+$$
+Q = W^qX, \quad K = W^kX, \quad V = W^vX,
+$$
+where $X$ is (\textbf{column major input matrix}, each column correspond to single feature vector e.g. 
+$\begin{bmatrix}
+x_1 & y_1 & z_2\\
+x_2 & y_2  & z_2\\
+\end{bmatrix}$), and $W^q$, $W^k$, $W^v$ are the weight matrices for queries, keys, and values, respectively. \\
+
+\centerline{\includegraphics[width=1\linewidth]{matrixRNN}}
+
+\subsubsection{Steps in Self-Attention Mechanism}
+\begin{enumerate}
+\item \textbf{Linear Projection}: Each input vector $x_i$ is transformed into query, key, and value vectors:
+$q_i = W_Q x_i, \quad k_i = W_K x_i, \quad v_i = W_V x_i$
+\item \textbf{Compute Attention Scores}: attention scores measure relevance of each element in sequence to current query: 
+$\alpha_{ij} = k_j^\top q_i$ \\
+$k_j$: key vector for $j$-th element, $q_i$: query vector for $i$-th element.
+\item \textbf{Apply Softmax}: attention scores are normalized using softmax function to obtain probabilities:
+$\alpha'_{ij} = \frac{\exp(\alpha_{ij})}{\sum_{j} \exp(\alpha_{ij})}$
+\item \textbf{Aggregate Information}: Final output for $i$-th element is a weighted sum of value vectors:
+$h_i = \sum_{j} \alpha'_{ij} v_j$\\
+$\alpha'_{ij}$': normalized attention score, $v_j$: value vector for $j$-th element.
+\end{enumerate}
+%% Example
+\centerline{\includegraphics[width=1\linewidth]{selfAttentionLayer}}
+
+\begin{itemize}
+\item \textbf{Advantages of Self-Attention}: Captures long-range dependencies in input sequence, does not require sequential processing, can parallel compute, 
+context-aware representations for each element in sequence.
+\item \textbf{Applications}: Self-attention core component of transformer architectures, widely used in NLP, (machine translation, text summarization), Computer Vision (Vision Transformers (ViTs), image classification), Speech Processing (speech recognition, synthesis).
+\item \textbf{Still requires Positional Encoding}: "we saw this saw.": One-hot encoding to represent words, input vectors to self-attention layer, generate outputs. But, \textbf{positional encoding} still needed to generate diff outputs for diff `saw' instances.
+\end{itemize}
+
+\subsubsection{Positional Encoding}
+Technique to inject positional information into input features, e.g. one-hot vectors, to enable models like Transformers to capture order of elements.
+\begin{itemize}
+\item \textbf{Purpose}: Explicitly encode the position of each token in the sequence.
+\item \textbf{Formula}: The positional encoding vector $ PE_i $ for position $ i $ is added to the original input feature vector $ x_i $: 
+\quad $[x'_i = x_i + PE_i]$.\\
+- $ x_i \in \mathbb{R}^d $: Original input feature vector for position $ i $,\\
+- $ PE_i \in \mathbb{R}^d $: Positional encoding vector for position $ i $,\\
+- $ x'_i \in \mathbb{R}^d $: Final input feature vector after adding positional encoding.
+\item \textbf{Generating Positional Encoding Using Sine and Cosine Functions}:
+
+The positional encoding values are computed using sine and cosine functions:
+$$
+PE_{i, 2k} = \sin\left(\frac{i}{10000^{\frac{2k}{d}}}\right), \quad PE_{i, 2k+1} = \cos\left(\frac{i}{10000^{\frac{2k}{d}}}\right)
+$$  
+- $ i $: Position index (starting from 0), \quad $ d $: Input feature dimension.\\
+- $ k $: Dimension index (starting from 0, goes up to $\frac{d}{2} - 1$) \\    
+- In this case, Dimension tells whether to use sine or cosine.
+\item \textbf{Example}: Generate Positional Encoding for input feature dimension $ d = 4 $
+    $$
+    \text{For $ i = 1 $}: PE_1 =
+    \begin{bmatrix}
+    \sin(1) \text{\tiny (k=0)}\\
+    \cos(1) \text{\tiny (k=0)}\\
+    \sin\left(\frac{1}{100}\right) \text{\tiny (k=1)} \\
+    \cos\left(\frac{1}{100}\right) \text{\tiny (k=1)}
+    \end{bmatrix}.
+ 	\text{For $ i = 2 $}: PE_2 =
+    \begin{bmatrix}
+    \sin(2) \\
+    \cos(2) \\
+    \sin\left(\frac{1}{50}\right) \\
+    \cos\left(\frac{1}{50}\right)
+    \end{bmatrix}.
+    $$
+    
+\item \textbf{Why Positional Encoding is Necessary}: Enable self-attention layers to distinguish btw. identical tokens at different positions. (e.g. Both instances of "saw" would have same representation if only one-hot encoding is used.)
+\item Positional encoding ensures that sequential models can capture the order of elements in the input sequence. It is particularly important in architectures like Transformers, which do not inherently process sequences in order.
+\end{itemize}
+
+\subsection{Issues with Deep Learning}
+\subsubsection{Overfitting}
+Occurs when model learns to fit training data too closely, capturing noise and irrelevant patterns instead of generalizing well to unseen data.
+\begin{itemize}
+\item \textbf{Causes of Overfitting}: Model overly complex (e.g., too many params), insufficient training data, training too many epochs w/o proper regularization.
+\item \textbf{Solutions to Overfitting}:
+	\begin{itemize}
+	\item \textbf{Dropout}: During training, randomly set some neurons' outputs to zero with a given probability. Prevents model from relying too heavily on specific neurons, encouraging robustness.
+	\item \textbf{Early Stopping}: Monitor the validation loss during training. Stop training when validation loss stops improving, even if training loss continues to decrease. Prevents the model from over-optimizing on the training data.
+	\item \textbf{Regularization}: Add penalty terms (e.g., L1 or L2 regularization) to loss function to discourage large weights.
+	\item \textbf{Data Augmentation}: Increase size, diversity of training dataset by applying transformations (e.g., rotations, flips, noise).
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Vanishing and Exploding Gradients}
+Training deep neural networks involves backpropagation, where gradients are computed and propagated backward through the layers. Issues:
+\begin{enumerate}
+\item \textbf{Vanishing Gradient}: Small gradients get multiplied repeatedly as they propagate backward through layers, eventually becoming almost zero.
+Prevents earlier layers from learning effectively.
+	\begin{itemize}
+	\item \textbf{Mitigation Strategies for Vanishing Gradients}: Use activation functions that avoid saturation (e.g., ReLU instead of sigmoid or tanh), Normalize inputs and use techniques like Batch Normalization to stabilize gradients, Employ residual connections in architectures like ResNet to allow gradients to flow directly.
+	\end{itemize}
+\item \textbf{Exploding Gradient}: Large gradients get multiplied repeatedly, causing numerical instability or overflow. Destabilizes training process.
+	\begin{itemize}
+	\item \textbf{Mitigation Strategies for Exploding Gradients}: Apply gradient clipping: Clip gradients to a specified range (e.g., $[-\text{clip\_value}, \text{clip\_value}]$). Use weight initialization techniques (e.g., Xavier or He initialization) to prevent large initial gradients.
+	\end{itemize}
+\end{enumerate}
+
+\subsection{\underline{Attention Neural Networks}}
+
+Attention mechanisms in modern neural network architectures, enable model to focus on relevant parts of input sequence when making predictions. Different types of attention neural networks and applications:
+
+\begin{itemize}
+\item \textbf{Many-to-Many Attention}: where input and output sequences same length.
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{attentionNN1}}
+
+\begin{itemize}
+\item \textbf{Many-to-One Attention}: In such networks, input sequence processed to produce a single output. (tasks e.g. sentiment analysis, classification).
+	\begin{itemize}
+	\item Each hidden state $ h_t $ aggregates contextually relevant info from entire input sequence. But, each $ h_t $ does not summarize the entire sequence.
+	\item $h^t$ position-specific focused, summary $h^{\texttt{SUM}}$ captures global context.
+	\item \textbf{Aggregation of Contextual Information}: To address this, special learnable token (e.g., \texttt{<SUM>} learnable input vector) added  to capture a summary representation, and use $h^{\texttt{SUM}}$ to predict output:
+	  $$
+	  \text{e.g.}: \quad h_{\text{SUM}} = \sum_j \alpha'_j v_j, \quad \text{$ \alpha'_j $ are normalized attention weights.}
+	  $$
+	\end{itemize}
+\item \textbf{One-to-Many Attention}: A single input ($ x_1 $) generates sequence of multiple outputs, where $ T_x = 1 $ and $ T_y > 1 $ (e.g. text generation).
+	\begin{itemize}
+	\item First generates first output $ \hat{y}_1 $ via hidden state $ h_1 $. Subsequent outputs $ \hat{y}_2, \hat{y}_3, \dots $ generated sequentially, incorporate previously predicted tokens $ \hat{y}_1, \hat{y}_2, \dots $ as context.
+	\item \textbf{Masked Self-Attention}: To ensure model only uses previously generated tokens during prediction, masked self-attention is applied.
+  $$
+  \text{Masked Attention Scores} = 
+  \begin{bmatrix}
+  0 & -\infty & -\infty \\
+  0 & 0 & -\infty \\
+  0 & 0 & 0
+  \end{bmatrix}, \text{for softmax function}
+  $$
+Diagonal, lower triangular entries set to $ 0 $ (allow attention to current, past tokens). Upper triangular set to $ -\infty $ (blocking attention to future tokens).
+\item \texttt{ADD} mask after compute attention scores, prevent attending to future tokens (cheating). Maintains causal prediction, as during training, in techniques like teacher forcing, ground truth tokens ($ y_1, y_2, \dots $) provided. 
+\item Without mask, model could "cheat" by attending to future tokens, leading to overfitting and poor generalization during inference.
+	\end{itemize}
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{attentionNN2}}
+ 
+ % --------- 
+  
+\subsubsection{Many-to-Many Attention {\scriptsize (input/output sequence different lengths)}}
+\centerline{\includegraphics[width=1\linewidth]{attentionNN3}}
+\begin{itemize}
+\item \textbf{Encoder-Decoder Architecture}: Encoder process input sequence, produce contextual representation. Decoder uses repn. to generate output sequence.
+\item \textbf{Cross-Attention Layer}: enables decoder to focus on relevant parts of the encoder's output while generating each token in the output sequence. Operates by computing attention scores between:
+	\begin{itemize}
+	\item \textbf{Query}: ($Q$): Derived from \underline{decoder's} hidden states.
+	\item \textbf{Key ($K$) and Value ($V$)}: Derived from the \underline{encoder's} output.
+	\end{itemize}
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{crossAttention}}
+
+\subsection{Transformer {\scriptsize Deep (attention-based) Neural Networks.}}
+Transformer is a deep attention-based neural network architecture. Revolution sequence modeling, transduction tasks (machine translation, text generation etc.)
+\begin{itemize}
+\item \textbf{Key Characteristics}: Transformer relies entirely on attention mechanisms, eliminating recurrence and convolution. Composed of two main components: the \textbf{Encoder} and the \textbf{Decoder}, each consisting of multiple stacked blocks.
+\item \textbf{Basic Building Blocks}:
+	\begin{itemize}
+	\item \textbf{Self-Attention Layer}: Capture r/s btw. all elements in \underline{input} sequence.
+	\item \textbf{Feed Forward Network (FFN)}: A two-layer neural network with a ReLU activation applied independently to each position.
+	\item \textbf{Masked Self-Attention Layer}: Ensures causality in autoregressive tasks by masking future tokens.
+	\item \textbf{Cross-Attention Layer}: Enables the decoder to focus on relevant parts of the encoder's output.
+	\item \textbf{Linear Layers}: Used for projection and transformation of inputs.
+	\end{itemize}
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{transformer}}
+
+
+\begin{itemize}
+\item \textbf{Applications of Transformers}:
+	\begin{itemize}
+	\item \textbf{Generative Pretrained Transformers (GPT)}: Built on the Transformer architecture to generate new text based on input prompts.
+	\item \textbf{Vision Transformers (ViT)}: Adapt Transformers for image classification by treating image patches as sequence elements. ($+$ Positional Encoding!) Patches are linearly embedded and combined with positional encoding to form the input sequence. A \textit{learnable summary vector} used to aggregate global information for classification tasks.
+	\item Other applications include machine translation, speech recognition, and time-series forecasting.
+	\end{itemize}
+\end{itemize}
+
+\subsection{15. \underline{AI Ethics}}
+\begin{itemize}
+\item \textbf{Ethics}: Principles guiding human behavior, distinguishing right, wrong.
+\item \textbf{AI Ethics}: Principles that guide developers, manufacturers, authorities, and operators in mitigating the ethical issues arising from AI.
+\item \textbf{Key Ethical Issues}: 
+	\begin{itemize}
+	\item \textbf{Biased Decision-Making}: AI can generate biased outputs, make unfair judgments due to biases in training data or algorithms. (E.g. Bias in AI recruiting tools, generative AI)
+	\item \textbf{Manipulation of Behavior}: AI can be used to generate fake content (e.g., deepfakes) to influence human behavior and decision-making.
+	\item \textbf{Automation and Employment}: AI can replace humans in certain jobs, leading to unemployment and economic inequality.
+	\item \textbf{Autonomous Systems}: Autonomous systems can make decisions independently, raisie ethical questions: How should autonomous systems behave, Who is accountable for harmful actions taken.
+	\item \textbf{Singularity}: Singularity in AI refers to a hypothetical future point when artificial intelligence not only reaches but exceeds human intelligence. Will the singularity ever occur? What would happen if it did occur? We still don't know. Poses existential risks and challenges, including the potential loss of human control over advanced AI systems.
+	\end{itemize}
+\end{itemize}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+    
 
 
 
