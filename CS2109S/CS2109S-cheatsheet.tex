@@ -507,14 +507,13 @@ In linear models, weights are linear combinations of inputs (consider how weight
 	\[h_\alpha(x) = \sum_{j=1}^N \alpha_j (x^{(j)})^T x \quad \implies \quad h_\alpha(x) = \sum_{j=1}^N \alpha_j k(x^{(j)}, x)\]
 \end{itemize}
 
-\subsubsection{Kernel Trick}
+\subsubsection{Kernel Trick {\scriptsize (Usage of Kernel Method to avoid explicit computation)}}
 \vspace{-0.5em}
 \centerline{\includegraphics[width=1\linewidth]{kernel}}
 \textbf{Kernel function} $ k(u, v) $ generalizes dot product, measures similarity efficiently in potentially higher-dimension space, w/o explicit computing transformation.
 \begin{itemize}[itemsep=-1.5pt]
 	\item \textbf{Valid kernel functions}: satisfies conditions like symmetry, positive definiteness. 
 	\item \textbf{Kernel Machine}:	A model that uses the kernel trick.
-	\item The kernel trick allows handling of non-linear data efficiently, enabling efficient computation of complex relationships in data. 
 \end{itemize}
 
 \subsubsection{Kernels and Transformed Features}
@@ -544,10 +543,10 @@ There is a deep connection between kernels and feature transformations (be it si
 
 \subsection{9. \underline{Support Vector Machines} (SVM)}
 SVM is a powerful classifier that can use kernel tricks (allowing it to handle non-linear decision boundaries naturally) - a kernel machine. 
-\begin{itemize}[itemsep=-2pt]
+\begin{itemize}[itemsep=-1pt]
 	\item \textbf{Decision boundary}: defined by hyperplane separating points of diff. classes.
 	\item \textbf{Margin}: distance between hyperplane and closest data points from each class. The width of the margin is proportional to 2 × margin.
-	\item \textbf{Maximizes Margins}: The SVM model is optimized by maximizing the margin subject to constraints that data points are on the correct side of the decision boundary.
+	\item \textbf{Maximizes Margins}: SVM model optimized by maximizing margin, subject to constraints that data points are on the correct side of the decision boundary.
 	\item \textbf{Support Vectors}: Data points that lie exactly on boundary of margin. These points define position and orientation of hyperplane.
 \end{itemize}
 
@@ -558,12 +557,11 @@ SVM is a powerful classifier that can use kernel tricks (allowing it to handle n
     \[
     \text{SVM}_{\alpha}(x) = \text{sign} \left( \sum_{i=1}^N \alpha_i k(x^{(i)}, x) \right),
     \]
-    where $ k(x^{(i)}, x) $ is the kernel function.
     \item \textbf{Sparsity}: Many $ \alpha_1, \alpha_2, \dots, \alpha_N $ will be zero. Only support vectors contribute to classifier. Non-support vectors discarded without affecting model.
     \[    \text{SVM}_{\alpha}(x) = \text{sign} \left( \sum_{i \in \text{Support Vectors}} \alpha_i k(x^{(i)}, x) \right).    \]
-    \item \textbf{Implementation}: libraries e.g. \texttt{scikit-learn} to simplify implementation.
-\end{itemize}
+\end{itemize} 
 
+\noindent\fbox{\begin{minipage}{\linewidth}
 \subsubsection{Hyperplanes {\scriptsize (FYI)}}
 Zero-offset hyperplane: define by normal $ w $, contains all vectors $ u $: $w^T u = 0$.
 \begin{itemize}
@@ -571,7 +569,7 @@ Zero-offset hyperplane: define by normal $ w $, contains all vectors $ u $: $w^T
 \item \textbf{Distance to Hyperplane:} Distance of a point $ u $ to hyperplane given by: \\
 $\text{Distance} = \frac{|w^T u|}{\|w\|}$ where $ \|w\| $ is the length of the normal vector $ w $.
 \end{itemize}
-
+\end{minipage}}
 
 % --------------------------------------------------------------------------------------------------------------- %
 
@@ -686,18 +684,17 @@ where $\tilde{U}$: reduced left singular vectors, $Z$: compressed rep of data.
 
 \subsection{11. \underline{Neural Networks}}
 
-\subsection{Perceptron}
-
-The perceptron is a fundamental building block of neural networks, inspired by biological neurons in the brain. It serves as a binary classifier, capable of learning to separate data into two classes based on input features. Structure and function of biological neurons:
+\subsection{Perceptron {\scriptsize (Binary Classifier)}}
+\textbf{Binary classifier}: learns to separate data into two classes based on input features. Fundamental NN building block, inspired by biological brain neurons. 
 \begin{itemize}
-\item A neuron receives inputs (dendrites), processes, produces an output (axon).
-\item A perceptron takes input features, applies weights to them, sums them up, and passes the result through an activation function to produce an output.
+\item \textbf{Biological neuron}: receives inputs (dendrites), produce output (axon).
+\item \textbf{Perceptron}: takes input features, applies weights, takes summation, passes result through an activation function to produce an output.
 \end{itemize}
 
 \centerline{\includegraphics[width=1\linewidth]{perceptron}}
 
 \subsubsection{Perceptron Model}
-Given an input vector $\mathbf{x}$ of dimension $d$, the perceptron model is defined as:
+For input vector $\mathbf{x}$ of dimension $d$, perceptron model defined as:
 \[
 h_w(x) = \hat{y} = g(\mathbf{w}^T \mathbf{x}) = g\left(\sum_{j=0}^d w_j x_j\right), \quad g(z) =
 \begin{cases}
@@ -706,7 +703,7 @@ h_w(x) = \hat{y} = g(\mathbf{w}^T \mathbf{x}) = g\left(\sum_{j=0}^d w_j x_j\righ
 \end{cases}
 \]
 \begin{itemize}[itemsep=0pt]
-\item $h_w(x) = g(w_0x_0 + w_1x_1 + ... + w_dx_d)$
+\item Equivalently, $h_w(x) = g(w_0x_0 + w_1x_1 + ... + w_dx_d)$
 \item $\mathbf{w} = [w_0, w_1, \dots, w_d]$ are the weights (parameters) of the perceptron.
 \item $x_0 = 1$ is a dummy variable (bias term).
 \item $g(z)$ is the activation function, typically a step function.
@@ -714,8 +711,7 @@ h_w(x) = \hat{y} = g(\mathbf{w}^T \mathbf{x}) = g\left(\sum_{j=0}^d w_j x_j\righ
 \item Features are described by a vector of real numbers in dimension $d$ (i.e. $x$)
 \end{itemize}
 
-\subsubsection{Perceptron Learning Algorithm}
-The perceptron learning algorithm is used to train the model by iteratively updating the weights to minimize misclassifications:
+\subsubsection{Perceptron Learning Algorithm {\scriptsize (Iteratively update weights to train model)}}
 \begin{enumerate}[itemsep=0pt]
     \item Initialize the weights $\mathbf{w}$ (e.g., to zero or small random values).
     \item For each training instance $(\mathbf{x}^{(i)}, y^{(i)})$: 
@@ -727,30 +723,29 @@ The perceptron learning algorithm is used to train the model by iteratively upda
 	\end{itemize}
     \item Repeat until convergence or a maximum number of iterations is reached.
 \end{enumerate}
-\textbf{Example: Cancer Prediction}: Binary classification problem, goal to predict whether tumor benign ($-1$) or malignant ($+1$) based on size. 
+\textbf{Example: Cancer Prediction}: Binary classification of tumor.
 
-\centerline{\includegraphics[width=0.9\linewidth]{perceptronLearning}}
+\centerline{\includegraphics[width=0.95\linewidth]{perceptronLearning}}
 
-\subsubsection{Limitations of the Perceptron}
+\subsubsection{Perceptron Limitations}
 \begin{itemize}
-\item It can only solve linearly separable problems.
-\item It does not handle non-linear relationships between features.
+\item Solves linearly separable problems, cannot handle non-linear feature relationships.
 \item To address these limitations, multi-layer neural networks are used, which stack multiple perceptrons (neurons) with non-linear activation functions.
 \end{itemize}
 
+\columnbreak
 % ---------- 
 
-\subsection{Neural Network}
-A neural network is composed of multiple layers of interconnected neurons, enabling it to learn complex patterns in data.
+\subsection{\underline{Neural Network}}
+\textbf{Multiple layers of interconnected neurons}, model complex/non-linear patterns.
+\begin{itemize}
+\item \textbf{Applications}: Neural networks widely used for image classification, NLP (sentiment analysis), multi-class classification (predict out of several categories).
+\end{itemize}
 
-\subsubsection{Neuron}
-An artificial neuron generalizes perceptron using diff. activation functions: \\
+\subsection{Neuron {\scriptsize (Generalization of a Perceptron)}}
+An artificial neuron generalizes perceptron using diff. activation functions: 
 
 \centerline{\includegraphics[width=0.9\linewidth]{neuronFormula}}
-%\[
-%\hat{y} = h_w(x) = g\left(\sum_{j=0}^d w_j x_j\right)
-%\]
-(activation function $g(z)$ e.g. ReLu, sigmoid function: $g(z) = \frac{1}{1 + e^{-z}}$)
 \begin{itemize}[itemsep=0pt]
 \item A neuron w. linear activation function equivalent to linear regression model.
 \item A neuron w. sigmoid activation function eqv to logistic regression model.
@@ -760,21 +755,17 @@ An artificial neuron generalizes perceptron using diff. activation functions: \\
 	\end{itemize}
 \end{itemize}
 
-\subsection{Feature Engineering for Non-Linear Problems}
-To model non-linearly separable problems (e.g., XNOR gate), feature engineering is essential. Two approaches are commonly used:
+\subsection{Feature Engineering {\scriptsize (To model Non-Linearly Separable Problems)}}
 \begin{itemize}
-\item \textbf{Manual Feature Engineering}: Manual transform existing features to capture non-linear relationships, e.g. polynomial features: $x_1^2, x_2^2, x_1x_2$, apply exponential or logarithmic transformations: $e^{x_1}, \log(x_2)$, combine features multiplicatively: $x_1x_2$. 
-\item \textbf{Using Neurons for Feature Transformation}: Instead of manual transforms, use neurons in neural network to automatically learn new features. Hidden layers apply non-linear activation functions (e.g., sigmoid, ReLU). Weights of neurons effectively create new features making it linearly separable.
+\item \textbf{Manual Feature Engineering}: Manual transform existing features to capture non-linear relationships, e.g. polynomial features: $x_1^2, x_2^2, x_1x_2$, exponential or logarithmic transformations: $e^{x_1}, \log(x_2)$, combine features multiplicatively: $x_1x_2$. 
+\item \textbf{Using Neurons for Feature Transformation}: Use neuron layers to auto learn new features. Hidden layers apply non-linear activation functions (e.g., sigmoid, ReLU). Weights of neurons effectively create new features making it linearly separable.
+\item \textbf{Feature Engineering Usage}: manual feature engineering used in Linear, Logisitic Regression to capture complex patterns. Multi-layer neural network learns on own. 
+\item E.g. To model XOR or XNOR gate (not linearly separable), require intermediate hidden layer for preliminary transformation to achieve logic of XOR/XNOR gate. 
 \end{itemize}
 
-\centerline{\includegraphics[width=1\linewidth]{XNOR}}
-\begin{itemize}
-\item Linear Regression and Logisitic Regression relies on manual feature engineering to capture complex patterns, while a multi-layer neural network learns its own feature representations through its layers with activation functions.
-\end{itemize}
+\subsection{Multi-layer Neural Networks}
 
-\subsubsection{Multi-layer Neural Networks}
-
-Multi-layer neural networks consist of an \textbf{input layer} (receives raw features), \textbf{hidden layers} (transform features using learned weights and activation functions), an \textbf{output layer} (produces final predictions).
+\textbf{Three components}: \textit{input layer} (raw features), \textit{hidden layers} (transform features w learned weights, activation functions), and \textit{output layer} (final predictions).
 
 \centerline{\includegraphics[width=1\linewidth]{multiLayerNeuralNetworks}}
 
@@ -784,39 +775,27 @@ The forward propagation process computes the output as:
 \]
 where $W^{[l]}$ are the weights for layer $l$, and $g^{[l]}$ is the activation function.
 
-\subsubsection{Softmax Activation for Multi-class Classification}
-For multi-class classification, the softmax function is used in the output layer to convert raw scores into probabilities:
+\subsubsection{Multi-class Classification: Softmax Function As Activation Function}
+For multi-class classification, the \underline{softmax function is used in the output layer} to convert raw scores into probabilities:
 \[
-g(z_i) = \frac{e^{z_i}}{\sum_{j=1}^c e^{z_j}},
+\text{\textbf{SoftMax: } \quad}  g(z_i) = \frac{e^{z_i}}{\sum_{j=1}^c e^{z_j}},
 \]
 where $c$ is the number of classes, and $g(z_1) + g(z_2) + \dots + g(z_c) = 1$.
-
-\smallskip
-
-\centerline{\includegraphics[width=1\linewidth]{neuralMulticlass}}
-
-\subsubsection{Summary}
 \begin{itemize}
-\item \textbf{Applications}: Neural networks widely used for image classification, (identifying objects in images), natural language processing (sentiment analysis), multi-class classification (predicting one of several categories).
-\item \textbf{Perceptron} is a single-layer binary classifier.
-\item Neural networks generalize the perceptron by stacking multiple layers and using non-linear activation functions.
-\item Multi-layer neural networks models complex, non-linear data relationships.
+\item \textbf{Softmax function}: used to convert raw scores $z_i$ (summation before activation) into probabilities, and ensures that output values sum to 1. (Normalizes output to probability distribution over predicted output classes.)
+\item \textbf{Usage}: Set number of neurons in last layer as $c$, predict probability of each class using softmax and pick highest probabilty.
 \end{itemize}
 
-\subsection{Neural Networks Training}
+\subsection{\underline{Neural Networks Training} {\scriptsize (Adjusting weights to minimize loss)}}
 
-Training a neural network involves adjusting its weights to minimize loss function, measures difference between predicted output and true target values. Gradient descent usable to update weights in neural network. 
-
+\subsection{Gradient Descent}
 \centerline{\includegraphics[width=1\linewidth]{multiLayer2}}
-\smallskip
 \centerline{\includegraphics[width=1\linewidth]{multiLayer3}}
 
-\subsubsection{Forward Propagation}
-During forward propagation, input data is passed through the network layer by layer to compute the predicted output:
+\subsubsection{Forward Propagation {\scriptsize (Input data passed through to compute output)}}
 \begin{itemize}[itemsep=0pt]
 \item $\hat{y} = g(W^{[L]} \cdot g(W^{[L-1]} \cdot \dots g(W^{[1]} \cdot x) \dots ))$
-\item $ W^{[l]} $: Weight matrix for layer $ l $, $ x $: Input features.
-\item $ g(\cdot) $: Activation function (e.g., ReLU, sigmoid, softmax).
+\item $ W^{[l]} $: Weight matrix for layer $ l $, $ x $: Input features. $ g(\cdot) $: Activation function.
 \item For example, in a simple multi-layer neural network:
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{forwardPropagation}}
@@ -826,7 +805,7 @@ During forward propagation, input data is passed through the network layer by la
 ($L = \frac{1}{2} (\hat{y} - y)^2$), Cross-Entropy Loss (for classification tasks).
 
 
-\subsubsection{Backpropagation}
+\subsubsection{Backpropagation {\scriptsize (Gradient Computation backwards)}}
 Compute gradients of loss function w.r.t weight w. chain rule (MSE Loss):
 $$
 \frac{\partial L}{\partial w_j} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w_j}.
@@ -839,111 +818,56 @@ $$
 \textbf{Key steps in backpropagation}: Compute derivative of loss wrt. output y. Compute derivative of activation function. Propagate error backward through layers, compute respective derivatives. Then compute gradients $\forall$ weights. \\
 \smallskip
 \centerline{\includegraphics[width=1\linewidth]{backPropagation}}
-\subsubsection{Gradient Computation}
-\centerline{\includegraphics[width=1\linewidth]{gradientComputation}}
-E.g. gradient of loss w.r.t $ w_3 $ in the above simple network: 
-$\frac{\partial L}{\partial w_3} =  \frac{\partial L}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_3} = [ (\hat{y} - y) \cdot g'(z_3) \cdot w_5 \cdot g'(z_1) ] \cdot [ x_2 ]$
 
-\columnbreak
 
-\subsubsection{Gradient Descent}
- Once gradients are computed, weights updated using gradient descent:
+\subsubsection{Gradient Descent: Weight Update Formula {\scriptsize (Using computed gradients)}}
 $$
 w_j \leftarrow w_j - \gamma \frac{\partial L}{\partial w_j}, \quad \gamma : \text{ learning rate.}
 $$
+\begin{itemize}
+\item \textbf{E.g.}: $\frac{\partial L}{\partial w_3} =  \frac{\partial L}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_3} = [ (\hat{y} - y) \cdot g'(z_3) \cdot w_5 \cdot g'(z_1) ] \cdot [ x_2 ]$
+\item \textbf{Iterative Optimization}: Forward propagation, loss computation, backpropagation, and weight update steps repeated iteratively until convergence / stopping criterion.
+\end{itemize}
 
-
-\subsubsection{Iterative Optimization}
-The forward propagation, loss computation, backpropagation, and weight update steps are repeated iteratively until convergence / stopping criterion.
-
-\subsection{Neural Network with One Neuron}
-A single neuron is the simplest form of a neural network. It performs the following operations:
-\begin{enumerate}[itemsep=0pt, topsep=0pt]
+\subsection{\underline{Single-Layer Neural Network} (One Neuron)}
+Single neuron as simplest form of neural network. Performs operations:
+\begin{enumerate}[itemsep=0pt]
     \item \textbf{Weighted Sum}: $z = \sum_{j=0}^d w_j x_j = w^T x$, ($ w_0 $: bias term).
     \item \textbf{Activation Function}: $\hat{y} = g(z)$, e.g. sigmoid fn: $g(z) = \frac{1}{1 + e^{-z}}$
 \end{enumerate}
 \begin{itemize}[itemsep=0pt, topsep=0pt]
-\item For binary classification, activation function is typically sigmoid function.
-\item The loss function for a single neuron is often the binary cross-entropy loss: $L = -y \log(\hat{y}) - (1-y) \log(1-\hat{y}).$
+\item For \textbf{Binary classification}, activation function is typically sigmoid function. Then, the loss function for a single neuron is often the binary cross-entropy (BCE) loss: $L = -y \log(\hat{y}) - (1-y) \log(1-\hat{y}).$
+\item \textbf{Binary Classification Hyperparameters} $\alpha$, $\beta$ usable as weights ($L = \alpha[-y \log(\hat{y})] + \beta[-(1-y) \log(1-\hat{y}]).$ Can mitigate problem of highly unbalanced dataset, so machine wont bias towards predicting all samples as overrepresented class. (Punish misclassification of underrepresented class more)
+\item \textbf{Optimization}: For single layer NN, could do manual feature engineering. However, could be computationally expensive, with overfitting if too many features. Final decision still ultimately a linear combination of transformed features.
 \end{itemize}
-\subsection{Multi-layer Neural Network}
-A multi-layer neural network consists of multiple layers of neurons, enabling it to model complex, non-linear relationships. Key components include:
 
 
-
-
-%% ADD TUTORIAL NOTES HERE %
-\subsubsection{Hidden Layers}
-Hidden layers transform the input features into higher-level representations:
+\subsection{\underline{Multi-layer Neural Network}}
+Multiple layers of neurons, enables modeling complex, non-linear relationships. 
+\begin{itemize}
+\item \textbf{Hidden Layers}: Hidden layers transform the input features into higher-level representations:
 $$
 a^{[l]} = g(W^{[l]} a^{[l-1]} + b^{[l]}),
 $$
 where $ a^{[l]} $ is the activation of layer $ l $.
-
-\subsubsection{Activation Functions}
-Common activation functions include:
-
-    
-- ReLU (Rectified Linear Unit): $ g(z) = \max(0, z) $.
-    
-- Sigmoid: $ g(z) = \frac{1}{1 + e^{-z}} $.
-    
-- Softmax (for multi-class classification):
-    $$
-    g(z_i) = \frac{e^{z_i}}{\sum_{j=1}^c e^{z_j}}.
-    $$
-
-
-\subsubsection{Output Layer}
-The output layer produces the final prediction. For regression tasks, it uses a linear activation function. For classification tasks, it uses softmax or sigmoid.
-
-
-%% UP TILL HERE
-\vfill \null
-\columnbreak
-
-
-\subsection{Introduction to PyTorch}
-PyTorch: popular deep learning library, simplifies implementation of neural networks. Flexible, efficient framework for building, training models.
-
-\subsubsection{Modules and Functions API}
-PyTorch organizes neural network components into modular containers and layers. Key components include:
-\begin{itemize}
-\item \textbf{Containers}:
-\begin{itemize}
-\item \texttt{torch.nn.Module}: Base class for all neural network modules.
-\item \texttt{torch.nn.Sequential}: A container for stacking layers sequentially.
-\end{itemize}
-\item \textbf{Linear Layers}:
+\item \textbf{Activation Functions}: Includes ReLU (Rectified Linear Unit): $ g(z) = \max(0, z) $, Sigmoid: $ g(z) = \frac{1}{1 + e^{-z}} $, Softmax (see multi-class classification).
+\item \textbf{Output Layer}: produces final prediction. For regression tasks, it uses a linear activation function. For classification tasks, it uses softmax or sigmoid.
+\item \textbf{Optimizations of Deep NN}: For a multi-layer NN:
 	\begin{itemize}
-	\item \texttt{torch.nn.Linear}: A fully connected layer without activation.
+	\item \textbf{Increase Depth of Network}: Add more hidden layers.
+	\item \textbf{Increase Width of Network}: Add more neurons per layer.
+	\item Complexity of computed function grows exponential with depth, increase more slowly with width. Increasing depth generally more efficient.
+	\item Increased capacity of learning complex patterns also increases risk of overfitting.
+	\item \textbf{Others}: All weights not equal (initial layer matters more, more sensitive), lower layer weights less robust to noise but perform better when optimized. (See paper)
 	\end{itemize}
-\item \textbf{Non-linear Activation Functions}:
+\item \textbf{Potential Issues of Deep NN}: 
 	\begin{itemize}
-	\item \texttt{torch.nn.ReLU}: Rectified Linear Unit.
-	\item \texttt{torch.nn.Sigmoid}: Sigmoid activation function.
-	\item \texttt{torch.nn.Softmax}: Softmax activation function (commonly used for multi-class classification).
-	\end{itemize}
-\item \textbf{Loss Functions}: Various for diff. tasks:
-	\begin{itemize}
-	\item \texttt{torch.nn.MSELoss}: Mean Squared Error (MSE) for regression tasks.
-	\item \texttt{torch.nn.BCELoss}: Binary Cross Entropy Loss, binary classification.
-	\item \texttt{torch.nn.CrossEntropyLoss}: Cross-Entropy Loss, multi-class classification.
-	\end{itemize}
-\item \textbf{Optimizers}: (update weights during training)
-	\begin{itemize}
-	\item Stochastic Gradient Descent (SGD): \texttt{torch.optim.SGD}.
-	\item Adam: \texttt{torch.optim.Adam}.
-	\item \textbf{Important optimizer functions}: \\
-	 \texttt{optimizer.zero\_grad()}: Resets gradients to zero before computing new gradients.\\
-	  \texttt{optimizer.step()}: Updates the weights after backpropagation.
+	\item \textbf{Sigmoid Function}: to compute derivative of first few layers (e.g. $\frac{\partial \varepsilon}{\partial W^{[1]}}$ ), it is product of many derivatives, which is each between 0 and 1. Known as \textbf{Vanishing Gradient problem}. 
+	\item To mitigate, we can use ReLU function, as long as input is non-negative, derivative is 1, precluding the issue.
+	\item \textbf{ReLU function}: When majority of activations are 0 (underlying pre-activation summation mostly non-positive) - network dies halfway. Gradients passed back are 0, cannot recover, stops learning. Known as \textbf{Dying ReLU problem}.
+	\item To mitigate, use Leaky ReLU, has small positive gradient for negative inputs, gives network chance to recover.
 	\end{itemize}
 \end{itemize}
-
-\subsubsection{Building a Neural Network Example}
-\centerline{\includegraphics[width=1\linewidth]{pytorch}}
-\subsubsection{Training a Neural Network Example}
-\centerline{\includegraphics[width=1\linewidth]{pytorch2}}
 
 \columnbreak
 
@@ -951,7 +875,7 @@ PyTorch organizes neural network components into modular containers and layers. 
 CNNs: specialized neural networks for process grid-like data (e.g. image).
 \begin{itemize}
 \item Leverage convolution operations to extract spatial features efficiently.
-\item \textbf{Convolution} is a mathematical operation that combines two functions to produce a third function. In context of CNNs:
+\item \textbf{Convolution}: math operation, combines 2 functions to produce third function. 
 	\begin{itemize}
 	\item One function represents the input data (e.g., an image).
 	\item Other function represents a small matrix called a filter or kernel
@@ -963,7 +887,7 @@ CNNs: specialized neural networks for process grid-like data (e.g. image).
 \subsubsection{Convolution Layer}
 Applies filters to extract spatial features: $\text{Output} = \text{Input} * \text{Filter} + \text{Bias}.$
 \begin{itemize}
-\item \textbf{PyTorch}: {\tiny \texttt{conv\_layer = nn.Conv2d(in\_channels, out\_channels, kernel\_size, stride, padding)}}
+\item {\tiny \textbf{PyTorch}:  \texttt{conv\_layer = nn.Conv2d(in\_channels, out\_channels, kernel\_size, stride, padding)}}
 \end{itemize}
 \centerline{\includegraphics[width=0.8\linewidth]{convoLayer}}
 
@@ -978,14 +902,14 @@ X =
 \end{bmatrix}, \quad
 W = 
 \begin{bmatrix}
-0 & -1 & -1 \\
-0 & -1 & 5 \\
+0 & -1 & 0 \\
+-1 & 5 & -1 \\
 0 & -1 & 0
 \end{bmatrix}. \quad 
 \text{FM} = 
 \begin{bmatrix}
-9 & 8 \\
-6 & 5
+-3 & 4 \\
+-3 & 4
 \end{bmatrix}.
 $$
 
@@ -993,10 +917,11 @@ The convolution operation involves sliding the kernel over the input and computi
 \begin{itemize}
 \item \textbf{Padding}: Adds zeros around the input to control the size of the output.
 \item \textbf{Stride}: Controls the step size of the kernel as it slides over the input.
+\item For a single image and a single kernel, output height $H_1 = \lfloor \frac{H-K+2P}{S} \rfloor + 1$.
 \end{itemize}
 
 \subsubsection{Pooling Layer}
-Pooling layers \textbf{downsample} feature maps to reduce dimensionality. Common pooling / Aggregation methods:
+Pooling layers \textbf{downsample} feature maps to reduce dimensionality.
 \begin{itemize}
 \item \textbf{Max-Pooling}: Takes the maximum value in a window.
 \item \textbf{Average-Pooling}: Computes the average value in a window.
@@ -1017,19 +942,17 @@ Pooling layers \textbf{downsample} feature maps to reduce dimensionality. Common
 
 \columnbreak
 
-\subsection{13. \underline{Recurrent Neural Networks (RNNs)}}
-RNNs are a class of neural networks designed to process sequential data. 
-
+\subsection{13. \underline{Recurrent Neural Networks (RNNs)} {\scriptsize (Processes Sequential Data)}}
 \begin{itemize}
-\item \textbf{Recurrent Neural Networks (RNNs)} maintain a \textbf{hidden state}, unlike traditional feedforward networks, which captures info of previous elements in sequence, enabling modelling temporal dependencies.
-\item \textbf{Sequential data}, text -- context meaning of word), audio (phonemes interpretation) etc, has \textbf{patterns, dependencies} spanning across time steps. If elements treated independently, relationships btw. elements not captured. RNNs maintain \textbf{hidden state} ro encodes contextual information.
+\item \textbf{Sequential data}, e.g. text, audio, has \textbf{patterns, dependencies} across time. Elements treated sequentially to capture relationships.
+\item \textbf{Hidden State}: RNNs maintain a \textbf{hidden state}, unlike traditional feedforward networks. It captures info of previous elements in sequence, to encode contextual info and model temporal dependencies.
 \item \textbf{One-hot Encoding}: method for converting categorical variables into a binary format (e.g. convert word to vector w. length equal to vocab size).
 \item \textbf{Time step}:  single iteration in RNN, one element of sequence processed.
-\item \textbf{Example}: `we saw this saw.', use one-hot encoding, represent word as vectors. Predict`saw' is verb or noun requires context of previous words. Standard feedforward network cannot capture this dependency, RNN can.
+\item \textbf{Example}: `we saw this saw.', use one-hot encoding, represent word as vectors. Predict`saw' is verb or noun requires context of previous words.
 \end{itemize}
 
-\subsubsection{Structure of an RNN}
-An RNN processes sequential data, updating hidden state at each time step. 
+\subsection{RNN Structure}
+An RNN updates hidden state at each time step while it processes sequential data.
 \begin{itemize}
 \item \textbf{Hidden State}: Number of elements in hidden state set according to no. of output we want to generate from each layer (e.g. 2 output $\leftrightarrow$ two elements)
 \item Hidden state typically initialized to 0 ($h^0 = \mathbf{0}$).
@@ -1063,13 +986,14 @@ The hidden state $\mathbf{h}^t$ acts as a memory that stores information about p
     \item \textbf{Many-to-Many ($T_x \neq T_y, T_x > 1, T_y > 1$)}: Input and output sequences have different lengths. Has $<$begin$>$ token. E.g.: Video captioning.
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{many-to-many-2}}
+
 \subsubsection{Deep Recurrent Neural Networks}
-Deep RNNs capture more complex hierarchical features by stacking multiple recurrent layers. Each layer processes hidden state from previous layer, allow network to learn more abstract representations of input sequence.
+Captures more complex hierarchical features by stacking multiple recurrent layers.
 \centerline{\includegraphics[width=1\linewidth]{deepRNN}}
 
 \begin{itemize}
 	\item \textbf{Application of RNNs}: widely used in tasks involving sequential data, such as \textit{Sentiment Analysis}, \textit{Speech Recognition}: Transcribing spoken language into text, \textit{Video Captioning}: Generating descriptions for video frames.
-	\item \textbf{Properties of RNN}: \textit{Capture Contextual Information}: RNNs use hidden state to encode information about entire sequence seen so far. \textbf{Sequential in Nature}: Predictions at time step $t$ depend on all previous steps, less parallelism-friendly than feedforward networks.
+	\item \textbf{Properties of RNN}: \textit{Capture Contextual Information}: RNNs use hidden state to encode information about entire sequence seen so far. \textbf{Sequential in Nature}: Predictions at time step $t$ depend on all previous steps, less parallelism-friendly.
 \end{itemize}
 
 % -----------------------------------------------------------------------------------------
@@ -1113,12 +1037,12 @@ $\alpha'_{ij}$': normalized attention score, $v_j$: value vector for $j$-th elem
 \begin{itemize}
 \item \textbf{Advantages of Self-Attention}: Captures long-range dependencies in input sequence, does not require sequential processing, can parallel compute, 
 context-aware representations for each element in sequence.
-\item \textbf{Applications}: Self-attention core component of transformer architectures, widely used in NLP, (machine translation, text summarization), Computer Vision (Vision Transformers (ViTs), image classification), Speech Processing (speech recognition, synthesis).
-\item \textbf{Still requires Positional Encoding}: "we saw this saw.": One-hot encoding to represent words, input vectors to self-attention layer, generate outputs. But, \textbf{positional encoding} still needed to generate diff outputs for diff `saw' instances.
+\item \textbf{Applications}: Self-attention core component of transformer architectures, widely used in NLP, (machine translation, text summarization), Computer Vision (image classification etc), Speech Processing (speech recognition, synthesis).
+\item \textbf{Still requires Positional Encoding}: One-hot encoding to represent words, input vectors to self-attention layer, generate outputs. But, \textbf{positional encoding} still needed to generate diff outputs for different unique positional instances.
 \end{itemize}
 
 \subsubsection{Positional Encoding}
-Technique to inject positional information into input features, e.g. one-hot vectors, to enable models like Transformers to capture order of elements.
+Technique to inject positional information into input features, e.g. one-hot vectors.
 \begin{itemize}
 \item \textbf{Purpose}: Explicitly encode the position of each token in the sequence.
 \item \textbf{Formula}: The positional encoding vector $ PE_i $ for position $ i $ is added to the original input feature vector $ x_i $: 
@@ -1153,60 +1077,53 @@ $$
     \end{bmatrix}.
     $$
     
-\item \textbf{Why Positional Encoding is Necessary}: Enable self-attention layers to distinguish btw. identical tokens at different positions. (e.g. Both instances of "saw" would have same representation if only one-hot encoding is used.)
-\item Positional encoding ensures that sequential models can capture the order of elements in the input sequence. It is particularly important in architectures like Transformers, which do not inherently process sequences in order.
+\item \textbf{Positional Encoding Purpose}: Enable self-attention layers to distinguish btw. identical tokens at different positions. (e.g. used with one-hot encoding)
+\item Positional encoding ensures sequential models capture order of elements in input sequence. Particularly important in architectures like Transformers, which do not inherently process sequences in order.
 \end{itemize}
 
-\subsection{Issues with Deep Learning}
+\subsection{\underline{Deep Learning Issues / Problems}}
 \subsubsection{Overfitting}
-Occurs when model learns to fit training data too closely, capturing noise and irrelevant patterns instead of generalizing well to unseen data.
+Model fits train data too closely, captures noise, cannot generalize to unseen data.
 \begin{itemize}
 \item \textbf{Causes of Overfitting}: Model overly complex (e.g., too many params), insufficient training data, training too many epochs w/o proper regularization.
 \item \textbf{Solutions to Overfitting}:
 	\begin{itemize}
-	\item \textbf{Dropout}: During training, randomly set some neurons' outputs to zero with a given probability. Prevents model from relying too heavily on specific neurons, encouraging robustness.
+	\item \textbf{Dropout}: During training, randomly set some neurons' outputs to zero with a given probability. Prevents model from relying too heavily on specific neurons.
 	\item \textbf{Early Stopping}: Monitor the validation loss during training. Stop training when validation loss stops improving, even if training loss continues to decrease. Prevents the model from over-optimizing on the training data.
-	\item \textbf{Regularization}: Add penalty terms (e.g., L1 or L2 regularization) to loss function to discourage large weights.
+	\item \textbf{Regularization}: Add penalty terms (e.g., L1, L2 regularization) to loss function.
 	\item \textbf{Data Augmentation}: Increase size, diversity of training dataset by applying transformations (e.g., rotations, flips, noise).
 	\end{itemize}
 \end{itemize}
 
-\subsubsection{Vanishing and Exploding Gradients}
-Training deep neural networks involves backpropagation, where gradients are computed and propagated backward through the layers. Issues:
+\subsubsection{Vanishing and Exploding Gradients {\scriptsize (Specific to Backpropagation)}}
 \begin{enumerate}
-\item \textbf{Vanishing Gradient}: Small gradients get multiplied repeatedly as they propagate backward through layers, eventually becoming almost zero.
-Prevents earlier layers from learning effectively.
+\item \textbf{Vanishing Gradient}: Small gradients multiplied repeatedly in backpropagation through layers, tend to 0. Prevents earlier layers from learning effectively.
 	\begin{itemize}
-	\item \textbf{Mitigation Strategies for Vanishing Gradients}: Use activation functions that avoid saturation (e.g., ReLU instead of sigmoid or tanh), Normalize inputs and use techniques like Batch Normalization to stabilize gradients, Employ residual connections in architectures like ResNet to allow gradients to flow directly.
+	\item \textbf{Mitigation Strategies for Vanishing Gradients}: Use activation functions that avoid saturation (e.g., ReLU instead of sigmoid or tanh), Normalize inputs and use techniques like Batch Normalization to stabilize gradients.
 	\end{itemize}
 \item \textbf{Exploding Gradient}: Large gradients get multiplied repeatedly, causing numerical instability or overflow. Destabilizes training process.
 	\begin{itemize}
-	\item \textbf{Mitigation Strategies for Exploding Gradients}: Apply gradient clipping: Clip gradients to a specified range (e.g., $[-\text{clip\_value}, \text{clip\_value}]$). Use weight initialization techniques (e.g., Xavier or He initialization) to prevent large initial gradients.
+	\item \textbf{Mitigation Strategies for Exploding Gradients}: Apply gradient clipping: Clip gradients to a specified range (e.g., $[-\text{clip\_value}, \text{clip\_value}]$). Use weight initialization techniques to prevent large initial gradients.
 	\end{itemize}
 \end{enumerate}
 
-\subsection{\underline{Attention Neural Networks}}
-
-Attention mechanisms in modern neural network architectures, enable model to focus on relevant parts of input sequence when making predictions. Different types of attention neural networks and applications:
-
+\subsection{\underline{Attention Neural Networks:} Types}
 \begin{itemize}
 \item \textbf{Many-to-Many Attention}: where input and output sequences same length.
+\item \textbf{Many-to-One Attention}: Input sequence processed to produce a single output.
+	\begin{itemize}
+	\item \textbf{Added Input}: \texttt{<SUM>}, which is learnable input token vector that triggers summarization. It is added to capture summary representation.
+	\item \textbf{Added hidden state}: $h_{\text{SUM}}$ is the hidden state that captures summarized sequence, $h_{\text{SUM}} = \sum_j \alpha'_j v_j$, where  $\alpha'_j $ are normalized attention weights.
+	\item Why need new hidden state? Each hidden state $ h_t $ only aggregates contextually relevant info, but not summarize entire sequence. $h^t$ is position-specific focused, summary $h^{\texttt{SUM}}$ captures global context.
+	  \item (tasks e.g. sentiment analysis, classification).
+	\end{itemize}
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{attentionNN1}}
 
 \begin{itemize}
-\item \textbf{Many-to-One Attention}: In such networks, input sequence processed to produce a single output. (tasks e.g. sentiment analysis, classification).
-	\begin{itemize}
-	\item Each hidden state $ h_t $ aggregates contextually relevant info from entire input sequence. But, each $ h_t $ does not summarize the entire sequence.
-	\item $h^t$ position-specific focused, summary $h^{\texttt{SUM}}$ captures global context.
-	\item \textbf{Aggregation of Contextual Information}: To address this, special learnable token (e.g., \texttt{<SUM>} learnable input vector) added  to capture a summary representation, and use $h^{\texttt{SUM}}$ to predict output:
-	  $$
-	  \text{e.g.}: \quad h_{\text{SUM}} = \sum_j \alpha'_j v_j, \quad \text{$ \alpha'_j $ are normalized attention weights.}
-	  $$
-	\end{itemize}
 \item \textbf{One-to-Many Attention}: A single input ($ x_1 $) generates sequence of multiple outputs, where $ T_x = 1 $ and $ T_y > 1 $ (e.g. text generation).
 	\begin{itemize}
-	\item First generates first output $ \hat{y}_1 $ via hidden state $ h_1 $. Subsequent outputs $ \hat{y}_2, \hat{y}_3, \dots $ generated sequentially, incorporate previously predicted tokens $ \hat{y}_1, \hat{y}_2, \dots $ as context.
+	\item \textbf{Algorithm}: Generate 1st output $ \hat{y}_1 $ via hidden state $ h_1 $. Subsequent $ \hat{y}_2, \hat{y}_3, \dots $ generated sequentially, incorporate previous predictions $ \hat{y}_1, \hat{y}_2, \dots $ as input.
 	\item \textbf{Masked Self-Attention}: To ensure model only uses previously generated tokens during prediction, masked self-attention is applied.
   $$
   \text{Masked Attention Scores} = 
@@ -1217,7 +1134,7 @@ Attention mechanisms in modern neural network architectures, enable model to foc
   \end{bmatrix}, \text{for softmax function}
   $$
 Diagonal, lower triangular entries set to $ 0 $ (allow attention to current, past tokens). Upper triangular set to $ -\infty $ (blocking attention to future tokens).
-\item \texttt{ADD} mask after compute attention scores, prevent attending to future tokens (cheating). Maintains causal prediction, as during training, in techniques like teacher forcing, ground truth tokens ($ y_1, y_2, \dots $) provided. 
+\item \textbf{\texttt{ADD} mask} after computing attention scores, prevent attending to future tokens (cheating). Maintains causal prediction, as during training, in techniques like teacher forcing, ground truth tokens ($ y_1, y_2, \dots $) provided. 
 \item Without mask, model could "cheat" by attending to future tokens, leading to overfitting and poor generalization during inference.
 	\end{itemize}
 \end{itemize}
@@ -1229,7 +1146,7 @@ Diagonal, lower triangular entries set to $ 0 $ (allow attention to current, pas
 \centerline{\includegraphics[width=1\linewidth]{attentionNN3}}
 \begin{itemize}
 \item \textbf{Encoder-Decoder Architecture}: Encoder process input sequence, produce contextual representation. Decoder uses repn. to generate output sequence.
-\item \textbf{Cross-Attention Layer}: enables decoder to focus on relevant parts of the encoder's output while generating each token in the output sequence. Operates by computing attention scores between:
+\item \textbf{Cross-Attention Layer}: enables decoder to focus on relevant parts of encoder's output while generating tokens in out sequence. Computes attention scores using:
 	\begin{itemize}
 	\item \textbf{Query}: ($Q$): Derived from \underline{decoder's} hidden states.
 	\item \textbf{Key ($K$) and Value ($V$)}: Derived from the \underline{encoder's} output.
@@ -1237,16 +1154,15 @@ Diagonal, lower triangular entries set to $ 0 $ (allow attention to current, pas
 \end{itemize}
 \centerline{\includegraphics[width=1\linewidth]{crossAttention}}
 
-\subsection{Transformer {\scriptsize Deep (attention-based) Neural Networks.}}
-Transformer is a deep attention-based neural network architecture. Revolution sequence modeling, transduction tasks (machine translation, text generation etc.)
+\subsection{\underline{Transformers} {\scriptsize (Deep attention-based Neural Networks).}}
 \begin{itemize}
 \item \textbf{Key Characteristics}: Transformer relies entirely on attention mechanisms, eliminating recurrence and convolution. Composed of two main components: the \textbf{Encoder} and the \textbf{Decoder}, each consisting of multiple stacked blocks.
 \item \textbf{Basic Building Blocks}:
 	\begin{itemize}
 	\item \textbf{Self-Attention Layer}: Capture r/s btw. all elements in \underline{input} sequence.
 	\item \textbf{Feed Forward Network (FFN)}: A two-layer neural network with a ReLU activation applied independently to each position.
-	\item \textbf{Masked Self-Attention Layer}: Ensures causality in autoregressive tasks by masking future tokens.
-	\item \textbf{Cross-Attention Layer}: Enables the decoder to focus on relevant parts of the encoder's output.
+	\item \textbf{Masked Self-Attention Layer}: Ensures causality in autoregressive tasks.
+	\item \textbf{Cross-Attention Layer}: Enables decoder to focus on parts of encoder's output.
 	\item \textbf{Linear Layers}: Used for projection and transformation of inputs.
 	\end{itemize}
 \end{itemize}
@@ -1257,8 +1173,8 @@ Transformer is a deep attention-based neural network architecture. Revolution se
 \item \textbf{Applications of Transformers}:
 	\begin{itemize}
 	\item \textbf{Generative Pretrained Transformers (GPT)}: Built on the Transformer architecture to generate new text based on input prompts.
-	\item \textbf{Vision Transformers (ViT)}: Adapt Transformers for image classification by treating image patches as sequence elements. ($+$ Positional Encoding!) Patches are linearly embedded and combined with positional encoding to form the input sequence. A \textit{learnable summary vector} used to aggregate global information for classification tasks.
-	\item Other applications include machine translation, speech recognition, and time-series forecasting.
+	\item \textbf{Vision Transformers (ViT)}: Adapt Transformers for image classification by treating image patches as sequence elements. ($+$ Positional Encoding!) 
+	\item \textbf{Others}: machine translation, speech recognition, time-series forecasting etc.
 	\end{itemize}
 \end{itemize}
 
@@ -1276,9 +1192,51 @@ Transformer is a deep attention-based neural network architecture. Revolution se
 	\end{itemize}
 \end{itemize}
 
+\vfill \null
+\columnbreak
 
+\subsection{16. Appendix}
+\subsection{Introduction to PyTorch}
+PyTorch: popular deep learning library, simplifies implementation of neural networks. Flexible, efficient framework for building, training models.
 
-    
+\subsubsection{Modules and Functions API}
+PyTorch organizes neural network components into modular containers and layers.
+\begin{itemize}
+\item \textbf{Containers}:
+\begin{itemize}
+\item \texttt{torch.nn.Module}: Base class for all neural network modules.
+\item \texttt{torch.nn.Sequential}: A container for stacking layers sequentially.
+\end{itemize}
+\item \textbf{Linear Layers}:
+	\begin{itemize}
+	\item \texttt{torch.nn.Linear}: A fully connected layer without activation.
+	\end{itemize}
+\item \textbf{Non-linear Activation Functions}:
+	\begin{itemize}
+	\item \texttt{torch.nn.ReLU}: Rectified Linear Unit.
+	\item \texttt{torch.nn.Sigmoid}: Sigmoid activation function.
+	\item \texttt{torch.nn.Softmax}: Softmax activation function.
+	\end{itemize}
+\item \textbf{Loss Functions}: Various for diff. tasks:
+	\begin{itemize}
+	\item \texttt{torch.nn.MSELoss}: Mean Squared Error (MSE) for regression tasks.
+	\item \texttt{torch.nn.BCELoss}: Binary Cross Entropy Loss, binary classification.
+	\item \texttt{torch.nn.CrossEntropyLoss}: Cross-Entropy Loss, multi-class classifn.
+	\end{itemize}
+\item \textbf{Optimizers}: (update weights during training)
+	\begin{itemize}
+	\item Stochastic Gradient Descent (SGD): \texttt{torch.optim.SGD}.
+	\item Adam: \texttt{torch.optim.Adam}.
+	\item \textbf{Important optimizer functions}: \\
+	 \texttt{optimizer.zero\_grad()}: Resets gradients to zero before computing new gradients.\\
+	  \texttt{optimizer.step()}: Updates the weights after backpropagation.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Building a Neural Network Example}
+\centerline{\includegraphics[width=\linewidth]{pytorch}}
+\subsubsection{Training a Neural Network Example}
+\centerline{\includegraphics[width=\linewidth]{pytorch2}}
 
 
 
