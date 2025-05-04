@@ -1069,8 +1069,8 @@ wrong.
 
 \subsubsection{Soundness and Completeness}
 \begin{itemize}
-\item \textbf{Soundness}: A sound type system never accepts a program that can `go wrong.' No false negatives: The language is type-safe. Ensures execution never reaches a "meaningless" state.
-\item \textbf{Completeness}: A complete type system never rejects a program that cannot go wrong. No false positives.
+\item \textbf{Soundness}: A sound type system never accepts a program that can `go wrong.' No false positives: The language is type-safe. Ensures execution never reaches a "meaningless" state.
+\item \textbf{Completeness}: A complete type system never rejects a program that cannot go wrong. No false negatives.
 \item For any Turing-complete programming language, the set of programs that may "go wrong" is undecidable. Type systems cannot be both sound and complete.
 \item In practice, we prioritize soundness and try to minimize false positives.
 \end{itemize}
