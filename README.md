@@ -30,3 +30,4 @@ Do drop me a message if there are any errors or mistakes. Additionally, do perus
     - IS1128 IT, Management and Organisation
     - CS2109S Introduction to AI and Machine Learning
     - CS3213 Foundations of Software Engineering
+    - CS4225 Big Data Systems for Data Science
