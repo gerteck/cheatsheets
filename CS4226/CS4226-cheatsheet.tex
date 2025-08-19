@@ -1,0 +1,229 @@
+\documentclass[a4paper, 9pt, landscape]{article}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+%\usepackage{hyperref}
+
+\usepackage{newtxtext} 
+
+%for strikeout
+\usepackage{ulem}
+
+%For editing parbox
+\usepackage[table]{xcolor}
+%For editing itemise margins, reduce iterm separaion and list separation
+\usepackage{enumitem}
+% For math
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+
+%For pictures / figures
+\usepackage{color,graphicx,overpic}
+\graphicspath{ {./images/} }
+
+
+\pdfinfo{
+  /Title (CS4226.pdf)
+  /Creator (Ger Teck)
+  /Author (Ger Teck)
+  /Subject ()
+  /Keywords (tex)}
+
+%% Margins for PAPER
+
+%% Margins for A4 PAPER
+\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm}
+\pagestyle{empty}
+\newenvironment{tightcenter}{%
+  \setlength\topsep{0pt}
+  \setlength\parskip{0pt}
+  \begin{center}
+}{%
+  \end{center}
+}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+
+\makeatother
+
+% Define BibTeX command
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+%% this changes all items (enumerate and itemize, reduce margins)
+\setlength{\leftmargini}{0.5cm}
+\setlength{\leftmarginii}{0.5cm}
+\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0mm, before=\justifying}
+\setlist[itemize,2]{leftmargin=2mm,labelindent=0.5mm,labelsep=0.5mm, itemsep = -0.2mm, topsep=-0.2mm, before=\justifying}
+%\setlist{nosep}
+
+\usepackage[document]{ragged2e}
+
+% -------------------------------------------------------------------------------
+
+% START OF DOCUMENT HERE
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{3}
+
+% multicol parameters
+% These lengths are set only within the two main columns
+\setlength{\columnseprule}{0pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{2pt}
+\setlength{\columnsep}{2pt}
+
+\section{CS4226 Internet Architecture}
+\centerline{AY25/26 Sem 1. github.com/gerteck}
+
+\subsection{0. \underline{Introduction}}
+\begin{itemize}
+\item Internet Architecture Prerequisites: Basic network terms including host, packet, protocol, throughput, bottleneck link, store-and-forward, and autonomous systems.
+\item Logical (five layers) and physical architecture (network of ASes). Pros and cons of packet switching versus circuit switching. Different components of end-to-end delay and relation to bandwidth, packet size, distance, propagation speed and queue size.
+\item \textbf{CS3103}: Computer Networks Practice. Focus on practical, protocol level understanding (vertical view of protocol stack), with layers covered including data link, network and transport.
+\item \textbf{CS4226}: Internet Architecture. Focus on theoretical, architectural and systemic (horiziontal ecosystem view). Cross layer architectural design, such as peer-to-peer networks
+\end{itemize}	
+
+
+
+
+\subsection{1. \underline{Performance Metrics}}
+
+\subsubsection{Link Rate / Bandwidth / Capacity}
+\begin{itemize}
+    \item How many bits can be ``pushed'' onto a link per unit time. (Bandwidth)
+    \item E.g. Cable: in Mbps, Fiber optics: $1 \sim 10$ Gbps, Ethernet: $3$ Mbps to $100$ Gbps
+    \item Link rate related to transmission delay, or ``putting furniture into the moving van''.
+\end{itemize}
+
+\subsubsection{Throughput}
+\begin{itemize}
+    \item Throughput of a TCP/UDP flow. (End-to-End, includes propagation delay).
+    \item How many bits are communicated / pushed throughout entire routing path per unit time.
+\end{itemize}
+
+\subsubsection{End-to-End Delay}
+\begin{itemize}
+    \item \textbf{Components}: Processing delay + Queueing delay + Transmission delay + Propagation delay
+	 \item Processing (time taken by router/devices to process packet header), Queueing (time packet waits in buffer before it is transmitted, due to congestion), propagation delay (time taken for bit to travel from one end of link to the other.). Transmission delay is the time it takes for physical layer at source to send all bits of packet onto transmission medium.
+	 \item \textbf{Variables}: Bandwidth, packet size, distance, propagation speed, queue size.
+    \item Example: A packet of $L$ bits sent over a link with rate $R$ bits/sec takes. 
+\end{itemize}
+
+\subsubsection{Packet Switching: Store-and-Forward}
+\begin{itemize}
+    \item A packet of $L$ bits sent on a link with rate $R$ bps takes:
+    \[
+        \text{Transmission delay} = \frac{L}{R} \quad \text{seconds to push out.}
+    \]
+    
+    \item \textbf{Store-and-forward}: entire packet must be at router before transmit to next link.
+    \item E.g. $L = 7.5$ Mbits, $R = 1.5$ Mbps: Transmission delay per link = $\frac{L}{R} = 5$ sec. For 3 links: total delay $= \frac{3L}{R} = 15$ sec
+\end{itemize}
+
+\subsubsection{Other Metrics}
+\begin{itemize}
+\item \textbf{Reponse Time}: Time taken from request to response, aka \textit{round-trip time}, including server processing time etc. Traffic there and back may take different routing paths. Roughly 2x of end-to-end delay, but not exactly.
+\item \textbf{Dropping Probability}, \textbf{Utilization}
+\end{itemize}
+
+\subsubsection{Packet Switching: Statistical Multiplexing}
+\begin{itemize}
+    \item Bandwidth shared on demand, no fixed pattern of packets. This is the origin of \textbf{queuing delay}. (Input rate $>$ output rate).
+    \item Statistical multiplexing $\rightarrow$ efficient use of link capacity. Packet switching is more efficient to share resources among users. (Statistical: arrival of packets non-deterministic)
+    \item Contrast with TDM (Time Division Multiplexing):
+    \begin{itemize}
+        \item TDM: each host gets same slot in a revolving frame.
+        \item Statistical multiplexing: bandwidth allocated dynamically as needed.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Packet vs Circuit Switching}
+\begin{itemize}
+    \item Example: For Link capacity of 1 Mbps, where each user requires 100 kbps when active, active 10\% of time.
+    \begin{itemize}
+	    \item \textbf{Circuit switching} $\Rightarrow$ supports 10 users
+		 \item \textbf{Packet switching} $\Rightarrow$ with 35 users, probability $>10$ active simultaneously is $<0.0004$.
+	 \end{itemize}
+    \item \textbf{Pros of packet switching}: Great for bursty, asynchronous data, Resource sharing, No call setup required.
+    \item \textbf{Cons of packet switching}: Excessive congestion $\rightarrow$ packet delay and loss, requiring protocols for reliability and congestion control.
+\end{itemize}
+
+
+\subsubsection{Single-Server Queueing Model (Abstract System)}
+\begin{itemize}
+    \item Model (to understand queueing delay): one server with infinite queue.
+    \item Arrival rate: $\lambda$ (packets per second).
+    \item Service rate: depends on server capacity (e.g., 1.5 Mbps).
+    \item Average queue length and waiting time linked by Little’s Law.
+\end{itemize}
+\centerline{\includegraphics[width=0.6\linewidth]{littlesLaw}}
+
+\subsubsection{Little’s Law}
+\[
+    L = \lambda W
+\]
+\begin{itemize}
+    \item $L$: average number of customers in system
+    \item $\lambda$: average arrival rate
+    \item $W$: average sojourn time (time spent in system)
+\end{itemize}
+\textbf{Examples:}
+\begin{itemize}
+    \item SoC admits 1500 students per year, has 6000 students enrolled at any time. 
+    \[
+        W = \frac{L}{\lambda} = \frac{6000}{1500} = 4 \text{ years}
+    \]
+    \item If average queue length $=5$ packets and arrival rate $=100$/sec, then
+    \[
+        W = \frac{L}{\lambda} = \frac{5}{100} = 0.05 \text{ sec}
+    \]
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{multicols*}
+\end{document}
