@@ -4,3 +4,6 @@
 *.log
 *.gz
 *.out
+
+## Others
+*.txt
