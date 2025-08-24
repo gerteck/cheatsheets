@@ -45,15 +45,15 @@
 
 % Redefine section commands to use less space
 \makeatletter
-\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+\renewcommand{\title}{\@startsection{section}{1}{0mm}%
                                 {-1ex plus -.5ex minus -.2ex}%
                                 {0.5ex plus .2ex}%x
                                 {\normalfont\large\bfseries}}
-\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+\renewcommand{\section}{\@startsection{subsection}{2}{0mm}%
                                 {-1explus -.5ex minus -.2ex}%
                                 {0.5ex plus .2ex}%
                                 {\normalfont\normalsize\bfseries}}
-\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+\renewcommand{\subsection}{\@startsection{subsubsection}{3}{0mm}%
                                 {-1ex plus -.5ex minus -.2ex}%
                                 {1ex plus .2ex}%
                                 {\normalfont\small\bfseries}}
@@ -94,10 +94,10 @@
 \setlength{\multicolsep}{2pt}
 \setlength{\columnsep}{2pt}
 
-\section{CS4226 Internet Architecture}
+\title{CS4226 Internet Architecture}
 \centerline{AY25/26 Sem 1. github.com/gerteck}
 
-\subsection{0. \underline{Introduction}}
+\section{0. \underline{Introduction}}
 \begin{itemize}
 \item Internet Architecture Prerequisites: Basic network terms including host, packet, protocol, throughput, bottleneck link, store-and-forward, and autonomous systems.
 \item Logical (five layers) and physical architecture (network of ASes). Pros and cons of packet switching versus circuit switching. Different components of end-to-end delay and relation to bandwidth, packet size, distance, propagation speed and queue size.
@@ -108,22 +108,22 @@
 
 
 
-\subsection{1. \underline{Performance Metrics}}
+\section{1. \underline{Performance Metrics}}
 
-\subsubsection{Link Rate / Bandwidth / Capacity}
+\subsection{Link Rate / Bandwidth / Capacity}
 \begin{itemize}
     \item How many bits can be ``pushed'' onto a link per unit time. (Bandwidth)
     \item E.g. Cable: in Mbps, Fiber optics: $1 \sim 10$ Gbps, Ethernet: $3$ Mbps to $100$ Gbps
     \item Link rate related to transmission delay, or ``putting furniture into the moving van''.
 \end{itemize}
 
-\subsubsection{Throughput}
+\subsection{Throughput}
 \begin{itemize}
     \item Throughput of a TCP/UDP flow. (End-to-End, includes propagation delay).
     \item How many bits are communicated / pushed throughout entire routing path per unit time.
 \end{itemize}
 
-\subsubsection{End-to-End Delay}
+\subsection{End-to-End Delay}
 \begin{itemize}
     \item \textbf{Components}: Processing delay + Queueing delay + Transmission delay + Propagation delay
 	 \item Processing (time taken by router/devices to process packet header), Queueing (time packet waits in buffer before it is transmitted, due to congestion), propagation delay (time taken for bit to travel from one end of link to the other.). Transmission delay is the time it takes for physical layer at source to send all bits of packet onto transmission medium.
@@ -131,7 +131,7 @@
     \item Example: A packet of $L$ bits sent over a link with rate $R$ bits/sec takes. 
 \end{itemize}
 
-\subsubsection{Packet Switching: Store-and-Forward}
+\subsection{Packet Switching: Store-and-Forward}
 \begin{itemize}
     \item A packet of $L$ bits sent on a link with rate $R$ bps takes:
     \[
@@ -142,13 +142,13 @@
     \item E.g. $L = 7.5$ Mbits, $R = 1.5$ Mbps: Transmission delay per link = $\frac{L}{R} = 5$ sec. For 3 links: total delay $= \frac{3L}{R} = 15$ sec
 \end{itemize}
 
-\subsubsection{Other Metrics}
+\subsection{Other Metrics}
 \begin{itemize}
 \item \textbf{Reponse Time}: Time taken from request to response, aka \textit{round-trip time}, including server processing time etc. Traffic there and back may take different routing paths. Roughly 2x of end-to-end delay, but not exactly.
 \item \textbf{Dropping Probability}, \textbf{Utilization}
 \end{itemize}
 
-\subsubsection{Packet Switching: Statistical Multiplexing}
+\subsection{Packet Switching: Statistical Multiplexing}
 \begin{itemize}
     \item Bandwidth shared on demand, no fixed pattern of packets. This is the origin of \textbf{queuing delay}. (Input rate $>$ output rate).
     \item Statistical multiplexing $\rightarrow$ efficient use of link capacity. Packet switching is more efficient to share resources among users. (Statistical: arrival of packets non-deterministic)
@@ -159,7 +159,7 @@
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Packet vs Circuit Switching}
+\subsection{Packet vs Circuit Switching}
 \begin{itemize}
     \item Example: For Link capacity of 1 Mbps, where each user requires 100 kbps when active, active 10\% of time.
     \begin{itemize}
@@ -171,7 +171,7 @@
 \end{itemize}
 
 
-\subsubsection{Single-Server Queueing Model (Abstract System)}
+\subsection{Single-Server Queueing Model (Abstract System)}
 \begin{itemize}
     \item Model (to understand queueing delay): one server with infinite queue.
     \item Arrival rate: $\lambda$ (packets per second).
@@ -180,7 +180,7 @@
 \end{itemize}
 \centerline{\includegraphics[width=0.6\linewidth]{littlesLaw}}
 
-\subsubsection{Little’s Law}
+\subsection{Little’s Law}
 \[
     L = \lambda W
 \]
@@ -202,12 +202,129 @@
 \end{itemize}
 
 
+\section{2. \underline{Network Queueing Models}}
 
 
+\subsection{Packet Flow: Arrival Pattern}
+\begin{itemize}
+    \item Arrival times: $t_i$; \quad Inter-arrival times: $T_i \equiv t_{i+1} - t_i$
+    \item Model $T_i$s as independent, identically distributed (i.i.d.) random variable (r.v.) $T$
+\end{itemize}
+\centerline{\includegraphics[width=0.6\linewidth]{packetArrivalModel}}
+
+\subsection{Probability Basics and Recap}
+\begin{itemize}
+    \item Random experiment: outcome cannot be determined in advance
+    \item Sample space $S$: set of all outcomes; \quad Event $E \subseteq S$: occurs if $s \in E$
+    \item Probability function $P(E):  \quad 0 \le P(E) \le 1, \quad P(S) = 1 $
+\end{itemize}
+
+\subsection{Random Variables (r.v.)}
+\begin{itemize}
+    \item Random variable $X$ is a \textbf{mapping}: maps each outcome $s \in S$ to real value
+    \item Distribution function $F(x) = P(X \le x)$
+    \item Continuous r.v.: exists pdf $f(x) = \frac{d}{dx}F(x)$
+    \item Independence: $f_{X,Y}(x,y) = f_X(x) f_Y(y)$
+    \item Expectation:
+    \[
+        E[X] = \int_{-\infty}^\infty x f(x) dx \quad \text{or} \quad E[X] = \sum_x x P(X=x)
+    \]
+\end{itemize}
+
+\subsection{Exponential Distribution}
+\begin{itemize}
+    \item $T \sim \text{Exp}(\lambda)$ with $\lambda > 0$: (note interarrival times cannot be negative).
+    \[
+        f(x) =
+        \begin{cases}
+            \lambda e^{-\lambda x}, & x \ge 0 \\
+            0, & x < 0
+        \end{cases}
+    \]
+    
+    \item \textbf{CDF}: $F(x) = P(T \le x) = 1 - e^{-\lambda x}, x \ge 0$, i.e. P(interarrival time $\leq x$)
+    \item \textbf{Memoryless}: $P(T > s+t \mid T > s) = P(T > t)$
+    \item \textbf{Expectation:}
+    \[
+        E[T] = \int_{0}^{\infty} x \, \lambda e^{-\lambda x} \, dx
+    \]
+    Integration by parts:
+    \[
+        E[T] = \left[ -x e^{-\lambda x} \right]_{0}^{\infty} +
+        \int_{0}^{\infty} e^{-\lambda x} \, dx
+        = 0 + \frac{1}{\lambda} \Rightarrow \; E[T] = \frac{1}{\lambda}
+    \]
+    \item \textbf{Physical meaning of $\lambda$:} 
+    \begin{itemize}
+        \item $\lambda$ is the \emph{arrival rate} (arrivals per unit time), unit: $\text{time}^{-1}$ (e.g., per second).
+        \item On average, $\lambda$ events occur per unit time, or the mean interarrival time is $1/\lambda$.
+    \end{itemize}
+\end{itemize}
+
+\subsection{\underline{Modeling Packet Flow}}
 
 
+\subsection{Poisson Process to model packet flow (Inter-arrival Times)}
+\begin{itemize}
+    \item Inter-arrival times $T_i \sim \text{Exp}(\lambda)$, i.e. each inter-arrival time is an RV with rate $\lambda$.
+    \item \textbf{Arrival pattern}: Poisson process (\# arrivals in an interval follow Poisn. distribn.)
+    \item \textbf{Properties}: Memoryless $\Rightarrow$ starting time irrelevant, and \\
+    Merging: 2 Poisson($\lambda_1$) + Poisson($\lambda_2$) $\Rightarrow$ Poisson($\lambda_1 + \lambda_2$)
+\end{itemize}
+
+\subsection{Service Time (Exponential / i.i.d.)}
+\begin{itemize}
+    \item Service time (processing time) of packet $i$: $S_i$, under fixed link rate.
+    \item $S_i$ are i.i.d. with mean $E[S] = 1/\mu$. ($\mu$: service rate, avg packets per unit time that can be handled)
+    \item Depends on link rate and packet size, as packet size may vary, hence, take average.
+\end{itemize}
+
+\subsection{\underline{M/M/1 Model} {\tiny M (Markovian Poisson arrival process), M (Markovian memoryless service time), 1 (\# servers)  }}
+
+\centerline{\includegraphics[width=0.8\linewidth]{mm1Model}}
+\begin{itemize}
+    \item Assumptions:
+    \begin{itemize}
+        \item Single server, infinite queue size, 
+        \item Poisson arrivals rate $\lambda$, Exponential service time rate $\mu$
+        \item Independent arrivals and service, FIFO service discipline
+    \end{itemize}
+    \item \textbf{Utilization}| (\% time / probability of observation that server busy):
+    \[
+        \rho = \frac{\lambda}{\mu}, \quad \text{need } \lambda < \mu \text{ for stability}
+    \]
+\end{itemize}
 
 
+\subsection{Birth-Death Process}
+\centerline{\includegraphics[width=0.8\linewidth]{birthDeath}}
+\begin{itemize}
+    \item State Transition Diagram for M/M/1 System.
+    \item System state $L(t)$ = (random) number of users in system.
+    \item Transitions: $ i \to i+1 \text{ at rate } \lambda, \quad i \to i-1 \text{ at rate } \mu $
+\end{itemize}
+
+\subsection{\underline{Stationary Distribution} (Long-term behavior of System)}
+\begin{itemize}
+    \item For a M/M/1 system, denote $\pi_i$ as \% time exactly $i$ packets in system (ie. server + queue) / probability $P=\{L=i\}$ of random observation of $i$ packets in system.
+    \item $\pi_i= P(L=i) = (1-\rho) \rho^i$,  (follows a geometric distribution)
+    \item $\pi_0 = 1-\rho$ (utilization), and $\sum_i \pi_i = 1$
+\end{itemize}
+
+\subsection{\underline{M/M/1 Results}}
+\begin{itemize}
+    \item Avg. \# packets in system: $ E[L] = \frac{\rho}{1-\rho} $
+    \item Avg. sojourn time (system delay): $ E[W] = \frac{1}{\mu - \lambda} $
+    \item Avg. \# packets in queue: $ E[Q] = \frac{\rho^2}{1-\rho} $
+    \item Avg. queueing delay of packets: $E[D] = E[W] - \frac{1}{\mu} $
+	\item If $\lambda \ge \mu$, server keep up w. arrivals and queue grows without bound.  
+	      In particular, $\lambda = \mu$ is unstable (graphically approaches vertical asymptote at $\lambda = \mu$):
+	      \[
+	        E[L] = \frac{\rho}{1-\rho} \to \infty, \quad
+	        E[W] = \frac{1}{\mu - \lambda} \to \infty
+	      \]
+	      Stability requires $\lambda < \mu$ (i.e., $\rho < 1$). ($\lambda = \mu$ insufficient bc. randomness).
+\end{itemize}
 
 
 
