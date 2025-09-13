@@ -231,7 +231,7 @@
     \]
 \end{itemize}
 
-\subsection{Exponential Distribution}
+\subsection{Exponential Distribution (Time between Intervals)}
 \begin{itemize}
     \item $T \sim \text{Exp}(\lambda)$ with $\lambda > 0$: (note interarrival times cannot be negative).
     \[
@@ -242,9 +242,10 @@
         \end{cases}
     \]
     
-    \item \textbf{CDF}: $F(x) = P(T \le x) = 1 - e^{-\lambda x}, x \ge 0$, i.e. P(interarrival time $\leq x$)
+    \item \textbf{CDF $F(X)$: probability that event occurs within time x}, $P(T \le x)$
+    \item $F(x) = P(T \le x) = \int_{0}^{x} \lambda e^{-\lambda u}\,du =  1 - e^{-\lambda x}, \quad x \ge 0$
     \item \textbf{Memoryless}: $P(T > s+t \mid T > s) = P(T > t)$
-    \item \textbf{Expectation:}
+    \item \textbf{Expectation: (E[T]: Time till next event)}
     \[
         E[T] = \int_{0}^{\infty} x \, \lambda e^{-\lambda x} \, dx
     \]
@@ -264,18 +265,19 @@
 \subsection{\underline{Modeling Packet Flow}}
 
 
-\subsection{Poisson Process to model packet flow (Inter-arrival Times)}
+\subsection{Packet Arrival / Inter-arrival Times (Poisson Process, T$\sim$Exp($\lambda$).)}
 \begin{itemize}
     \item Inter-arrival times $T_i \sim \text{Exp}(\lambda)$, i.e. each inter-arrival time is an RV with rate $\lambda$.
     \item \textbf{Arrival pattern}: Poisson process (\# arrivals in an interval follow Poisn. distribn.)
     \item \textbf{Properties}: Memoryless $\Rightarrow$ starting time irrelevant, and \\
-    Merging: 2 Poisson($\lambda_1$) + Poisson($\lambda_2$) $\Rightarrow$ Poisson($\lambda_1 + \lambda_2$)
+    Merging: Poisson($\lambda_1$) (combination) Poisson($\lambda_2$) $\Rightarrow$ Poisson($\lambda_1 + \lambda_2$)
 \end{itemize}
 
 \subsection{Service Time (Exponential / i.i.d.)}
 \begin{itemize}
     \item Service time (processing time) of packet $i$: $S_i$, under fixed link rate.
-    \item $S_i$ are i.i.d. with mean $E[S] = 1/\mu$. ($\mu$: service rate, avg packets per unit time that can be handled)
+    \item $S_i$ are i.i.d. with mean $E[S] = 1/\mu$.
+    \item \textbf{Physical meaning of $\mu$}: \emph{service rate}, avg packets per unit time that can be handled
     \item Depends on link rate and packet size, as packet size may vary, hence, take average.
 \end{itemize}
 
@@ -286,10 +288,10 @@
     \item Assumptions:
     \begin{itemize}
         \item Single server, infinite queue size, 
-        \item Poisson arrivals rate $\lambda$, Exponential service time rate $\mu$
+        \item Poisson \underline{arrivals rate $\lambda$}, Exponential \underline{service time rate $\mu$}
         \item Independent arrivals and service, FIFO service discipline
     \end{itemize}
-    \item \textbf{Utilization}| (\% time / probability of observation that server busy):
+    \item \textbf{Utilization $\rho$}| (\% time or probability of observation that server busy):
     \[
         \rho = \frac{\lambda}{\mu}, \quad \text{need } \lambda < \mu \text{ for stability}
     \]
@@ -304,14 +306,14 @@
     \item Transitions: $ i \to i+1 \text{ at rate } \lambda, \quad i \to i-1 \text{ at rate } \mu $
 \end{itemize}
 
-\subsection{\underline{Stationary Distribution} (Long-term behavior of System)}
+\subsection{Stationary Distribution (Long-term behavior of System)}
 \begin{itemize}
     \item For a M/M/1 system, denote $\pi_i$ as \% time exactly $i$ packets in system (ie. server + queue) / probability $P=\{L=i\}$ of random observation of $i$ packets in system.
     \item $\pi_i= P(L=i) = (1-\rho) \rho^i$,  (follows a geometric distribution)
     \item $\pi_0 = 1-\rho$ (utilization), and $\sum_i \pi_i = 1$
 \end{itemize}
 
-\subsection{\underline{M/M/1 Results}}
+\subsection{M/M/1 Results}
 \begin{itemize}
     \item Avg. \# packets in system: $ E[L] = \frac{\rho}{1-\rho} $
     \item Avg. sojourn time (system delay): $ E[W] = \frac{1}{\mu - \lambda} $
@@ -325,6 +327,74 @@
 	      \]
 	      Stability requires $\lambda < \mu$ (i.e., $\rho < 1$). ($\lambda = \mu$ insufficient bc. randomness).
 \end{itemize}
+
+%% LECTURE 2 STOPPED HERE & ----------------------------------------------------------------------
+
+\subsection{\underline{Heavy Notation (Queueing Systems)}}
+\centerline{\includegraphics[width=1\linewidth]{models}}
+\null
+\centerline{\includegraphics[width=1\linewidth]{notations}}
+\null
+
+\subsection{Effective Bandwidth}
+\begin{itemize}
+    \item Physical link capacity: theoretical hardware processing limit (E.g. 10Mbps cable)
+    \item \textbf{Effective bandwidth}: actual throughput achievable, given service quality constraints. E.g. for $\mu$ capacity of M/M/1 link:
+    \item (utilization constraint of $\rho \le \hat{\rho}$ , low delay (delay bounded by  $D \le \hat{D}$, where $E[D] = \frac{\rho}{\lambda - \mu} $, low loss etc) .
+\end{itemize}
+
+\subsection{Statistical Multiplexing vs Time Division Multiplexing}
+\begin{itemize}
+	\item \textbf{Time Division Multiplexing (TDM)}: Each of k users given fixed fraction of link capacity $\mu/k$, regardless of idleness (wasted capacity).
+    \item With $k$ streams, $\rho = \frac{\lambda}{\mu} = \frac{\lambda/k}{\mu/k} = \rho$ (same server utilization), but avg. sojourn time ($E[W]$) increased by $k$ times under TDM. Queue length ($E[Q]$) and total users ($E[L]$) also $k$ times larger
+    \item \textbf{Statistical Multiplexing}: Multiple traffic streams share the common link dynamically, each flow sends when has data, link schedules packets one by one from queue, bandwidth allocated statistically (random arrivals), not deterministically. (e.g. M/M/1 FIFO queue model)
+    \item Statistical better than TDM. (same utilization, average less delay, shorter queue).
+\end{itemize}
+
+\subsection{Variants of Queueing Models}
+\begin{itemize}
+    \item Multiple servers: M/M/2, Limited queue size: M/M/1/K
+    \item Different service: M/M/1/LIFO, General distributions: M/G/1, G/M/1, G/G/1
+\end{itemize}
+
+\subsection{\underline{Burke’s Theorem}}
+\begin{itemize}
+	\item For \textbf{M/M/1 queue} in steady state with arrival rate $\lambda$ and service rate $\mu > \lambda$
+    \item \textbf{Departure} process of form Poisson process of rate ($\lambda$)
+    \item \textbf{Independence}: System size at time $t$ independent of past departure times
+    \item Implication is that output of one M/M/1 queue can be treated as Poisson input for the next queue, simplifying analysis of multi-hop queueing systems.
+\end{itemize}
+
+\subsection{Tandem Queues}
+\begin{itemize}
+	\item \textbf{Tandem Queue}: System where jobs pass through multiple servers in sequence, one after another. Each server $i$ modelled as an M/M/1 queue with own service rate, and utilization of server $i$: $\rho_i = \lambda / \mu_i$
+    \item Joint probability of queue lengths (independent):
+    \[
+        P(L_1=j, L_2=k) = (1-\rho_1)\rho_1^j (1-\rho_2)\rho_2^k
+    \]
+\end{itemize}
+
+\subsection{\underline{Jackson Network of Queues}}
+
+\begin{itemize}
+	\item Firstly, a \textbf{Acyclic Network with Probabilistic Routing} is where jobs arrive at a network node, and choose next node randomly. Poisson property preserved, departures remain independent Poisson processes (Poisson splitting)
+    \item \textbf{Jackson Network}: Network of queues (e.g. M/M/1) with probabilistic routing  between servers $P_{ij}$, and can be acyclic or have feedback (cyclic).
+\end{itemize}
+\centerline{\includegraphics[width=1\linewidth]{jackson}}	    
+\begin{itemize}
+	\item \textbf{Solve Jackson Network}, Burke's theorem merge \& split of Poisson still apply. 
+	\item \textbf{Two-step procedure}: determine utilization $\rho_i$ for each server, and product form solution.
+    \item \underline{Effective arrival rate}: $\lambda_i$ at server $i$: $\lambda_i = r_i + \sum_{j=1}^n \lambda_j P_{ji} $ ($r$ is outside arrival)
+    \item In matrix form: $\lambda = r + \lambda P \quad \Rightarrow \quad \lambda = r (I-P)^{-1}$
+    \item Product form solution: $P(L_1=l_1, \dots, L_n=l_n) = \prod_{i=1}^n (1-\rho_i)\rho_i^{l_i}$
+\end{itemize}
+
+\subsection{Example Jackson Network: Web Server}
+\centerline{\includegraphics[width=1\linewidth]{webServer}}	    
+
+
+
+
 
 
 
