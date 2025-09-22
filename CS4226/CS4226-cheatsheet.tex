@@ -202,7 +202,7 @@
 \end{itemize}
 
 
-\section{2. \underline{Network Queueing Models}}
+\section{2. \underline{Network Queueing \& Models}}
 
 
 \subsection{Packet Flow: Arrival Pattern}
@@ -328,7 +328,7 @@
 	      Stability requires $\lambda < \mu$ (i.e., $\rho < 1$). ($\lambda = \mu$ insufficient bc. randomness).
 \end{itemize}
 
-%% LECTURE 2 STOPPED HERE & ----------------------------------------------------------------------
+%% LECTURE 3:  ----------------------------------------------------------------------
 
 \subsection{\underline{Heavy Notation (Queueing Systems)}}
 \centerline{\includegraphics[width=1\linewidth]{models}}
@@ -392,9 +392,102 @@
 \subsection{Example Jackson Network: Web Server}
 \centerline{\includegraphics[width=1\linewidth]{webServer}}	    
 
+---
+% Lecture 4: 05/09/25 ---------------------------------------
+
+\section{3. \underline{Resource Allocation}}
+\subsection{Queues - Delay (sojourn $ E[W] $), capacity (service $\mu$), arrival ($\lambda$)}
+
+\begin{itemize}
+	\item \textbf{Average waiting (sojourn) time} in an M/M/1 queue is $ E[W] = \frac{1}{\mu - \lambda}$, where $\mu$ is the service rate (i.e. called capacity) while $\lambda$ is arrival rate. More capacity (higher service rate) means higher throughput, and lower delay. 
+	\item \textbf{Max throughput $\lambda$} for a given delay requirement $ E[W] $ would be $\lambda = \mu - \frac{1}{E[W]}$, determined by service rate.
+	\item \textbf{Physical Interpretation of $\lambda$}: Here, because we want to guarantee some delay requirement, for a given service rate / capacity, the total throughput has to be bounded. `Arrival rate' $\lambda$ (throughput) here is instead admission control, where system limits the incoming rate of incoming flow to guarantee latency. Not the senders decision (e.g.UDP), but instead, it is a resource allocation problem.
+\end{itemize}
+
+\subsection{Motivation of Resource Allocation}
+ Internet provides \textbf{best-effort} service. Network resources (bandwidth, buffer space, processing time) are limited.
+ Hence, problem to allocate resources fairly and efficiently across competing flows. Tradeoff between \textbf{efficiency} (maximize utilization) and \textbf{fairness} (avoid starvation).
+
+\subsection{Resource Allocation in Networks}
+
+\textbf{General Utility Perspective}
+\centerline{\includegraphics[width=1\linewidth]{utility}}	    
+
+\textbf{Metrics}: \textit{Throughput}: average rate of successful packet delivery, \textit{Delay}: time from packet arrival to departure, 
+	\textit{Fairness}: how equally bandwidth is shared among flows, \textit{Loss rate}: fraction of packets dropped due to congestion.
+
+\subsubsection{Max-Min Fairness}
+Idea of fairness where low demand users get what they need, large demand users share the rest equally (fair allocation).
+\begin{itemize}
+	\item \textbf{Max-min fair}: A feasible allocation max-min fair iff cannot increase anyone's rate without decreasing someone else's rate that is smaller or equal.
+	\item Also exists, typically unique. Ensures no flow is starved. 
+	\item \textbf{Flow's Bottleneck Resource}: A resource $r$ is a bottleneck for flow $i$ if $r$ is saturated (fully used) and flow $i$ has max rate among all flows using resource $r$ (both conditions).
+	\item \textbf{Theorem}: With infinite demand, a max-min fair allocation iff every flow $i$ has a bottleneck resource $r$ .
+\end{itemize}
+
+\subsection{Water-Filling Algorithm}
+The water-filling algorithm is a practical way to compute max-min fair allocations.  
+\begin{itemize}
+	\item \textbf{Flow} = bucket, \textbf{water} = system resources
+\end{itemize}
+Each flow’s demand is “bucket” with volume $d_i$ and system resources as “water” poured until capacity is exhausted.  
+
+\begin{itemize}
+	\item \textbf{Step 1:} Represent each demand $d_i$ as a bucket (capacity limit).
+	\item \textbf{Step 2:} Start filling all buckets equally (same rate for each flow).
+	\item \textbf{Step 3:} When a bucket demand full (or the flow's bottleneck link saturates - flow hits bottleneck), stop filling; continue distributing remaining capacity among other unfinished buckets. (I.e. stop partial allocations for certain flows that have been constrainted by their bottleneck link).
+	\item \textbf{Step 4:} Continue until all capacity is allocated or all demands are satisfied.
+\end{itemize}
+
+\subsection{Weighted Max-Min Fairness}
+Extension of the water-filling algorithm with weights $\phi_i$. Weighted fairness generalizes the idea to assign priorities via weights.
+\begin{itemize}
+	\item Buckets now have different \textit{widths} proportional to $\phi_i$ (instead of equal).  
+	\item Each flow’s rate grows proportionally to its weight until either demand is satisfied or capacity is exhausted.  
+	\item No user receives more than their demand. Remaining resources are split proportionally.
+\end{itemize}
+
+\subsection{Implementation of Water-Filling Algorithm}
+We do not know in advance which resource will be the next bottleneck, or at what ``water level'' capacity will be fully utilized.
+    \begin{enumerate}
+      \item Start by increasing all flows equally (or proportionally if weighted).
+      \item For each resource, check its capacity constraint $\sum_{i \in R} x_i \leq C_R$.
+      \item The first resource that saturates defines the next bottleneck; flows using this resource are then capped.
+      \item Remove the capped flows from further consideration and continue filling the others.
+    \end{enumerate}
+ This can be executed locally:
+    \begin{itemize}
+      \item Each router enforces per-flow constraints on its outgoing link.
+      \item Flows naturally converge to a max-min fair allocation since no flow can exceed its bottleneck capacity.
+    \end{itemize}
+
+
+\subsection{Implementation of Max-Min Fairness}
+In practice, implementing max-min fairness in the Internet is challenging due to the lack of centralized control.  
+Routers must make local scheduling decisions in a distributed fashion.
+
+\begin{itemize}
+  \item \textbf{Challenge:} No single global controller; each router only sees its local queues.
+  \item \textbf{Classical solutions:}
+    \begin{itemize}
+      \item GPS (Generalized Processor Sharing): theoretical ideal where packets are served bit-by-bit in perfect proportion to their weights.
+      \item WFQ (Weighted Fair Queueing): practical approximation of GPS, where each packet is stamped with a virtual finish time and routers serve packets in increasing finish-time order.
+    \end{itemize}
+  \item \textbf{Modern solution:} SDN (Software Defined Networking) provides centralized or global control of flows, enabling explicit allocation strategies across the network.
+\end{itemize}
 
 
 
+
+---
+
+Midterms will cover everything up until Resource Allocation (inclusive).
+
+\columnbreak
+
+% Lecture 5 @45min %
+
+\section{4. \underline{Software Defined Networking (Design Principles)}}
 
 
 
