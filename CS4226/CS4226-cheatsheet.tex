@@ -392,7 +392,6 @@
 \subsection{Example Jackson Network: Web Server}
 \centerline{\includegraphics[width=1\linewidth]{webServer}}	    
 
----
 % Lecture 4: 05/09/25 ---------------------------------------
 
 \section{3. \underline{Resource Allocation}}
@@ -422,6 +421,7 @@ Idea of fairness where low demand users get what they need, large demand users s
 	\item \textbf{Max-min fair}: A feasible allocation max-min fair iff cannot increase anyone's rate without decreasing someone else's rate that is smaller or equal.
 	\item Also exists, typically unique. Ensures no flow is starved. 
 	\item \textbf{Flow's Bottleneck Resource}: A resource $r$ is a bottleneck for flow $i$ if $r$ is saturated (fully used) and flow $i$ has max rate among all flows using resource $r$ (both conditions).
+	\item Note: \textbf{weighted ($\phi$) flow}: For flow bottleneck resource for weighted max-min, flow $i$ has max (\textbf{normalized}) rate among all flows. (Not max absolute rate).
 	\item \textbf{Theorem}: With infinite demand, a max-min fair allocation iff every flow $i$ has a bottleneck resource $r$ .
 \end{itemize}
 
@@ -477,11 +477,9 @@ Routers must make local scheduling decisions in a distributed fashion.
 \end{itemize}
 
 
-
-
----
-
-Midterms will cover everything up until Resource Allocation (inclusive).
+% 
+% Midterms will cover everything up until Resource Allocation (inclusive).
+%
 
 \columnbreak
 
@@ -489,11 +487,118 @@ Midterms will cover everything up until Resource Allocation (inclusive).
 
 \section{4. \underline{Software Defined Networking (Design Principles)}}
 
+\textbf{Software Defined Networking (SDN)} is a new approach to implement and manage networks based on 
+\underline{fundamental principles} that impact both network design and the pace of innovation.  
+Traditional networking has been successful, but has significant limitations:
+\begin{itemize}
+  \item Closed and proprietary equipment $\rightarrow$ little room for innovation.
+  \item Over-specified protocols $\rightarrow$ slow standardization and evolution.
+  \item Complex, hard-to-manage systems $\rightarrow$ high operational costs and frequent outages.
+\end{itemize}
 
+SDN proposes to solve these challenges by separating the \textbf{control plane} and the \textbf{data plane}, 
+centralizing control, and enabling programmability.
 
+\subsection{Why SDN? Problems with Traditional Networking}
+\begin{enumerate}
+  \item \textbf{Tremendous success, but only at the edge:}  
+  The Internet evolved from research to global infrastructure, great innovation at the 
+  application layer (7) (web, VoIP, P2P, etc.), but very little innovation inside the network.
 
+  \item \textbf{Inside the network:} Closed equipment where hardware and software bundled vendor specific interfaces limit flexibility. Over specified, Protocol standardization is slow $\rightarrow$ decades to evolve routing protocols. Innovation only up to equipment vendors, so slow.
 
+  \item \textbf{Networks are hard to manage:} Operating costs exceed hardware costs. Human error largest cause of outages. Network software is massive and buggy (e.g., routers with 20M+ lines of code).
 
+  \item \textbf{Networking lags behind other systems:} (Compute, Storage, Networks) Computation and storage have been virtualized, enabling rapid innovation. Networking, however, is still highly manual and primitive in management. - New control requirements just lead to greater complexity (isolation, packet processing, payload analysis). 
+\end{enumerate}
+
+\subsection{Networking as a Discipline}
+Unlike OS or DB systems, networking has not converged around basic principles or abstractions.  
+Instead, it is taught as a \textit{``bag of protocols''}.  
+SDN tries to extract simplicity using modular abstractions, much like programming evolved 
+from machine code to higher-level languages with abstracted functions etc.
+
+\subsection{The Network Control Problem}
+The traditional (complex) control problem is:  
+\begin{itemize}
+  \item Compute forwarding tables for each device.
+  \item Operate without reliable communication guarantees.
+  \item Operate within given distributed routing protocols (e.g. OSPF, RIP, BGP).
+\end{itemize}
+This distributed complexity makes it difficult to innovate or manage.
+
+\subsection{Control Plane vs. Data Plane}
+Two key functions of router and switch at the core: Routing algorithms/protocol vs. Forwarding datagrams.
+\begin{itemize}
+  \item \textbf{Control Plane:} Decides how packets should be forwarded (routing, traffic engineering, firewalling).  
+  Operates at slower time scales (per-event basis).
+  \item \textbf{Data Plane:} Forwards packets based on control plane instructions.  
+  Operates at very fast timescales (per-packet basis).
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{hourglass}}	   
+
+\centerline{\includegraphics[width=1\linewidth]{controlData}}	   
+
+\subsection{Principle 1: Disaggregation}
+Traditional networking devices bundle control and data plane tightly.  
+\textbf{Disaggregation} separates them via open interfaces:
+\begin{itemize}
+  \item Commodity switches handle packet forwarding (data plane).
+  \item Control plane software can run independently, possibly from different vendors.
+  \item \textbf{Forwarding Abstraction}: need to define, as a general-purpose way for control plane to tell data plane to forward pkts in specific way.
+  \item E.g.: \textit{OpenFlow} defines \textbf{flow rules} (match-action pairs) as forwarding abstraction.
+\end{itemize}
+
+\subsection{Principle 2: Centralized Control}
+Instead of every router running its own control software:
+\begin{itemize}
+  \item A logically centralized controller has a global network view.
+  \item Simplifies management compared to distributed routing (contrast: OSPF’s 244 pages vs Dijkstra’s 4 pages).
+  \item Physically centralized controllers may have fault-tolerance issues, hence the need for logically centralized 
+  but physically distributed implementations.
+\end{itemize}
+
+\subsection{Principle 3: Programmability}
+\begin{itemize}
+  \item Control shift: vendors $\rightarrow$ operators $\rightarrow$ users.
+  \item Networks programmable via high-level policies. Debug, verification easier.
+  \item Enables rapid innovation and new services (e.g., network slicing in 5G, dynamic security policies in data centers).
+\end{itemize}
+
+\subsection{Benefits of SDN}
+\begin{enumerate}
+  \item \textbf{Easier management:}  
+  Network policies are written at a high level; low-level configurations are handled by the controller.
+  \item \textbf{Faster innovation:}  
+  Network control software evolves independently from hardware. Disaggregation shifts control from vendors to operators or open source that build networks to meet their users needs.
+  \item \textbf{Cheaper infrastructure:}  
+  Commodity (standardized) forwarding devices replace expensive proprietary hardware.
+  \item \textbf{New use case:} Data center virtualization, traffic engineering, dynamic QoS...
+\end{enumerate}
+
+\subsection{Abstraction Concepts}
+These 3 principles modularize the \textbf{network control problem} into something similar to OS computation abstractions:
+\begin{itemize}
+  \item \textbf{Specification abstraction:}  
+  Control applications specify desired behavior without worrying about implementation.
+  \item \textbf{Distribution abstraction:}  
+  Shields applications from distributed system complexity, presenting a logically centralized view..
+  \item \textbf{Forwarding abstraction:}  
+  Provides a generic interface to define how packets should be forwarded (e.g., OpenFlow).
+\end{itemize}
+
+SDN makes networks easier to program, easier to manage, and cheaper to build, while enabling 
+faster innovation and richer functionality.
+
+\columnbreak
+
+\subsection{Network Operating System}
+\centerline{\includegraphics[width=1\linewidth]{SDN1}}	   
+
+\subsection{SDN: An abstraction for Networking}
+
+\centerline{\includegraphics[width=1\linewidth]{SDN2}}	   
 
 
 
