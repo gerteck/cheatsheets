@@ -55,8 +55,12 @@
                                 {\normalfont\normalsize\bfseries}}
 \renewcommand{\subsection}{\@startsection{subsubsection}{3}{0mm}%
                                 {-1ex plus -.5ex minus -.2ex}%
-                                {1ex plus .2ex}%
+                                {0.5ex plus .2ex}%
                                 {\normalfont\small\bfseries}}
+
+% Title becomes section
+% Section becomes subsection
+% Subsection becomes subsubsection
 
 \makeatother
 
@@ -415,7 +419,7 @@
 \textbf{Metrics}: \textit{Throughput}: average rate of successful packet delivery, \textit{Delay}: time from packet arrival to departure, 
 	\textit{Fairness}: how equally bandwidth is shared among flows, \textit{Loss rate}: fraction of packets dropped due to congestion.
 
-\subsubsection{Max-Min Fairness}
+\section{Max-Min Fairness}
 Idea of fairness where low demand users get what they need, large demand users share the rest equally (fair allocation).
 \begin{itemize}
 	\item \textbf{Max-min fair}: A feasible allocation max-min fair iff cannot increase anyone's rate without decreasing someone else's rate that is smaller or equal.
@@ -599,6 +603,129 @@ faster innovation and richer functionality.
 \subsection{SDN: An abstraction for Networking}
 
 \centerline{\includegraphics[width=1\linewidth]{SDN2}}	   
+
+
+\subsection{Recap: Core Principles of SDN}
+SDN is built on three core design principles that aim to simplify and modularize the control of large-scale networks:
+\begin{enumerate}
+  \item \textbf{Separation of Control Plane and Data Plane} – Network devices focus only on packet forwarding (data plane), while decision-making logic (control plane) is moved to a separate controller.
+  \item \textbf{Logically Centralized Control} – A centralized controller maintains a global view of the entire network, enabling coherent and optimized control decisions.
+  \item \textbf{Programmability} – The controller exposes APIs that allow applications and operators to program the network dynamically, enabling automation, customization, and rapid innovation.
+\end{enumerate}
+
+Each principle leverages set of \textbf{abstractions} to network control complexity:
+\begin{itemize}
+  \item \textbf{Specification abstraction} – Allows applications to express \textit{what} behavior is desired, without specifying \textit{how} it is implemented.
+  \item \textbf{Distribution abstraction} – Presents a logically centralized view, hiding the distributed nature of devices and controllers.
+  \item \textbf{Forwarding abstraction} – Defines how the control plane communicates forwarding behavior to the data plane (e.g., OpenFlow rules).
+\end{itemize}
+
+\null
+
+
+\section{5. \underline{SDN - Use Cases, OpenFlow, ONOS}}
+
+\subsection{5.1 Users and Applications of SDN}
+
+\textbf{Who uses SDN today?}
+\begin{itemize}
+  \item \textbf{Cloud providers:} Google, Facebook, Microsoft - leverage SDN to manage large-scale data centers, WANs efficiently. Also release open-source components (e.g., ONOS, OpenFlow) to drive ecosystem adoption.
+  \item \textbf{Network operators:} Comcast, AT\&T, NTT - adopt SDN gradually for traffic engineering and operational flexibility.
+  \item \textbf{Enterprises:} Universities (first to adopt - from research) and private companies - use SDN in managed edge networks and via commercial SDN products.
+\end{itemize}
+
+
+\subsection{5.2 Varied Use Cases of SDN}
+
+\begin{enumerate}
+\item \textbf{Network Virtualization}: Virtualization technology for networks limited to VLANs, VPNs, only virtualizing address space, unlike compute VMs, containers virtualization. Modern clouds want to be able to:
+	\begin{itemize}
+	  \item Programmatically create, manage, and delete virtual networks via APIs.
+	  \item Disaggregate physical networks into multiple virtual ones with isolated address spaces.
+	  \item Treat each virtual network as an independent logical network, managed by SDN controllers.
+	\end{itemize}
+\textbf{SDN enables this}: via centralized control and programmable APIs that create, tear down virtual networks dynamically, w/o manual configuration.  
+Each virtual network can define own policies, routing, topology, like how VMs abstract physical servers.
+
+\item \textbf{Switching Fabrics in Data Centers}: Cloud datacenters want lower costs via commodity hardware, high scalability, fault tolerance, simplified multi-path connectivity for large server clusters. SDN use case: \textbf{Leaf-spine topology} :
+\begin{itemize}
+  \item Each leaf switch (top of rack ToR switch) connects to all spine switches.
+  \item Any two servers two hops apart (within same rack) or four hops (across racks).
+  \item Provides uniform latency and multiple equal-cost paths for load balancing.
+\end{itemize}
+With \textbf{SDN}, central controller can monitor traffic pattern, do dynamic load balancing to distribute workload, installs flow rules to dynamically manage traffic paths across spine-leaf fabric, optimize utilization and fault recovery.
+
+\item \textbf{Traffic Engineering (TE)}: Wide-area links (e.g., btwn Google’s global data centers in \textbf{B4} (private WAN), or Microsoft’s \textbf{SWAN}) often experience variable load and congestion. SDN enables controller to:
+\begin{itemize}
+  \item Collect real-time link utilization data and recompute optimal routes centrally.
+  \item Reconfigure flows dynamically to balance load across available paths.
+\end{itemize}
+\textbf{SDN} allows defining flows with different delay and availability requirements (different traffic classes, i.e. Elastic, Delay-adaptive, Rate-adapative, Hard real-time traffic.)
+
+
+\item \textbf{Software-Defined WAN (SD-WAN)}: applies SDN principles to connect geographically distributed sites securely over public or private WAN links.
+\begin{itemize}
+  \item Dynamic routing based on performance (latency, loss, cost), Centralized policy control and monitoring, Improved reliability via automatic failover.
+\end{itemize}
+Companies may serve customers in different countries, needing to adhere to local data laws. SDN enables enterprises to replace expensive MPLS circuits w. cheaper broadband or 5G links while maintaining performance guarantees.
+\end{enumerate}
+
+
+\centerline{\includegraphics[width=1\linewidth]{sdnUseCases}}
+
+
+\subsection{Summary of SDN Use Cases}
+\begin{itemize}
+  \item \textbf{Killer applications of SDN:} Network virtualization, data center networking, cloud computing. (i.e. software program or feature so valuable/popular, drives adoption of larger technology, platform, or device)
+  \item \textbf{Emerging applications:} Last-mile access networks, software-defined Internet exchanges (SDX), wireless management, network security, monitoring.
+\end{itemize}
+
+\columnbreak
+
+\subsection{5.3 OpenFlow API (Forwarding Abstraction)}
+\textbf{Standard interface} btw. control plane (SDN controller) and data plane (switch). 
+\textbf{OpenFlow}: foundational protocol, controller communication (how to process packets) w. forwarding devices (switches, routers). 
+\begin{itemize}
+  \item \textbf{Open southbound API:} Enables ext software control over device forwardg tables.
+  \item \textbf{OpenFlow switch:} Implements packet-matching and action-execution pipelines.
+  \item Each switch has set of \textbf{Flow Tables}. Flow Entry has \textbf{Match fields} (conditions on header/pipeline fields (e.g., IP, TCP port)), \textbf{Priority} (on multiple entry matches), \textbf{Instruction set:} (actions to perform - forward, drop, or send to controller).
+  \item A packet is processed through one or more flow tables. Matching rules accumulate an \textbf{action set}, which executes once processing is complete.
+  \item Default “table-miss” entry defines for unmatched packets (e.g. send to controller)
+\end{itemize}
+
+\centerline{\includegraphics[width=0.85\linewidth]{openFlow}}
+
+
+\subsection{5.4 Open Network Operating System (Specification Abstraction)}
+
+\textbf{ONOS}: distributed system, open-source \textbf{SDN controller} developed by the Open Networking Foundation (ONF).
+\begin{itemize}
+  \item \textbf{Specification abstraction (northbound APIs):}  
+  Apps can query network state, define intents (high-level connectivity goals), or request packet interception w/o implementation details.
+  \item \textbf{Distribution abstraction (core services):}  
+  Presents logically centralized view by syncing state across distributed controller cluster.
+  \item \textbf{Forwarding abstraction (southbound interface):}  
+  Communicates with devices using protocols such as OpenFlow or NETCONF.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{ONOS}}
+\textbf{ONOS Architecture:} \textit{Northbound Interface (NBI)}, APIs used by apps to query topology, intercept packets, control forwarding behavior. \textit{Distributed Core} maintains network state using a scalable key/value store (\textit{Atomix}), ensuring high availability and consistency. \textit{Southbound Interface (SBI)}, plugin-based interface for different device protocols and drivers. 
+
+\null
+
+\textbf{ONOS programming constructs:} \textit{Intent:} High-level general policy (e.g. connect Host A - Host B w. 10 Mbps guarantee). \textit{Flow Objective:} Mid level, device agnostic rule translating intent to device-specific logic. \textit{Flow Rule:} Low-level hardware rule installed in device tables (e.g., OpenFlow entries). 
+
+\null
+
+\textbf{ONOS (Network Operating System) as a horizontally scalable cloud application}: has set of loosely coupled subsystems, often associated with micro-service architecture, coordinating distributed network devices, like how traditional OS manages hardware resources.
+
+
+
+
+
+
+\subsection{5.5 SDN Abstraction Summary}
+SDN abstracts the network into three layers: \textbf{Apps} that express high-level policies via APIs, \textbf{Control Plane (Controller)} that implements logic, optimization, and state management and \textbf{Data Plane (Devices)} that executes rules defined by controller. SDN transforms rigid networks to open programmable infrastructures.
 
 
 
