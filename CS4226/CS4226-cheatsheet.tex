@@ -124,7 +124,7 @@
 \subsection{Throughput}
 \begin{itemize}
     \item Throughput of a TCP/UDP flow. (End-to-End, includes propagation delay).
-    \item How many bits are communicated / pushed throughout entire routing path per unit time.
+    \item How many bits communicated / pushed throughout entire routing path per unit time.
 \end{itemize}
 
 \subsection{End-to-End Delay}
@@ -135,7 +135,13 @@
     \item Example: A packet of $L$ bits sent over a link with rate $R$ bits/sec takes. 
 \end{itemize}
 
-\subsection{Packet Switching: Store-and-Forward}
+\subsection{Other Metrics}
+\begin{itemize}
+\item \textbf{Reponse Time}: Time taken from request to response, aka \textit{round-trip time}, including server processing time etc. Traffic there and back may take different routing paths. Roughly 2x of end-to-end delay, but not exactly.
+\item \textbf{Dropping Probability}, \textbf{Utilization}
+\end{itemize}
+
+\subsection{1.1 Packet Switching: Store-and-Forward}
 \begin{itemize}
     \item A packet of $L$ bits sent on a link with rate $R$ bps takes:
     \[
@@ -146,13 +152,7 @@
     \item E.g. $L = 7.5$ Mbits, $R = 1.5$ Mbps: Transmission delay per link = $\frac{L}{R} = 5$ sec. For 3 links: total delay $= \frac{3L}{R} = 15$ sec
 \end{itemize}
 
-\subsection{Other Metrics}
-\begin{itemize}
-\item \textbf{Reponse Time}: Time taken from request to response, aka \textit{round-trip time}, including server processing time etc. Traffic there and back may take different routing paths. Roughly 2x of end-to-end delay, but not exactly.
-\item \textbf{Dropping Probability}, \textbf{Utilization}
-\end{itemize}
-
-\subsection{Packet Switching: Statistical Multiplexing}
+\subsection{1.2 Packet Switching: Statistical Multiplexing}
 \begin{itemize}
     \item Bandwidth shared on demand, no fixed pattern of packets. This is the origin of \textbf{queuing delay}. (Input rate $>$ output rate).
     \item Statistical multiplexing $\rightarrow$ efficient use of link capacity. Packet switching is more efficient to share resources among users. (Statistical: arrival of packets non-deterministic)
@@ -175,7 +175,7 @@
 \end{itemize}
 
 
-\subsection{Single-Server Queueing Model (Abstract System)}
+\subsection{1.3 Single-Server Queueing Model (Abstract System)}
 \begin{itemize}
     \item Model (to understand queueing delay): one server with infinite queue.
     \item Arrival rate: $\lambda$ (packets per second).
@@ -184,7 +184,7 @@
 \end{itemize}
 \centerline{\includegraphics[width=0.6\linewidth]{littlesLaw}}
 
-\subsection{Little’s Law}
+\subsection{1.4 Little’s Law}
 \[
     L = \lambda W
 \]
@@ -209,14 +209,14 @@
 \section{2. \underline{Network Queueing \& Models}}
 
 
-\subsection{Packet Flow: Arrival Pattern}
+\subsection{2.1 Packet Flow: Arrival Pattern}
 \begin{itemize}
     \item Arrival times: $t_i$; \quad Inter-arrival times: $T_i \equiv t_{i+1} - t_i$
     \item Model $T_i$s as independent, identically distributed (i.i.d.) random variable (r.v.) $T$
 \end{itemize}
 \centerline{\includegraphics[width=0.6\linewidth]{packetArrivalModel}}
 
-\subsection{Probability Basics and Recap}
+\subsection{2.2 Probability Basics and Recap}
 \begin{itemize}
     \item Random experiment: outcome cannot be determined in advance
     \item Sample space $S$: set of all outcomes; \quad Event $E \subseteq S$: occurs if $s \in E$
@@ -266,7 +266,7 @@
     \end{itemize}
 \end{itemize}
 
-\subsection{\underline{Modeling Packet Flow}}
+\subsection{\underline{2.3 Modeling Packet Flow}}
 
 
 \subsection{Packet Arrival / Inter-arrival Times (Poisson Process, T$\sim$Exp($\lambda$).)}
@@ -285,7 +285,7 @@
     \item Depends on link rate and packet size, as packet size may vary, hence, take average.
 \end{itemize}
 
-\subsection{\underline{M/M/1 Model} {\tiny M (Markovian Poisson arrival process), M (Markovian memoryless service time), 1 (\# servers)  }}
+\subsection{\underline{2.4 M/M/1 Model} {\tiny M (Markovian Poisson arrival), M (Markovian memoryless service time), 1 (\# servers)  }}
 
 \centerline{\includegraphics[width=0.8\linewidth]{mm1Model}}
 \begin{itemize}
@@ -334,20 +334,20 @@
 
 %% LECTURE 3:  ----------------------------------------------------------------------
 
-\subsection{\underline{Heavy Notation (Queueing Systems)}}
+\subsection{\underline{2.5 Heavy Notation (Queueing Systems)}}
 \centerline{\includegraphics[width=1\linewidth]{models}}
 \null
 \centerline{\includegraphics[width=1\linewidth]{notations}}
 \null
 
-\subsection{Effective Bandwidth}
+\subsection{2.6 Effective Bandwidth}
 \begin{itemize}
     \item Physical link capacity: theoretical hardware processing limit (E.g. 10Mbps cable)
     \item \textbf{Effective bandwidth}: actual throughput achievable, given service quality constraints. E.g. for $\mu$ capacity of M/M/1 link:
     \item (utilization constraint of $\rho \le \hat{\rho}$ , low delay (delay bounded by  $D \le \hat{D}$, where $E[D] = \frac{\rho}{\lambda - \mu} $, low loss etc) .
 \end{itemize}
 
-\subsection{Statistical Multiplexing vs Time Division Multiplexing}
+\subsection{2.7 Statistical Multiplexing vs Time Division Multiplexing}
 \begin{itemize}
 	\item \textbf{Time Division Multiplexing (TDM)}: Each of k users given fixed fraction of link capacity $\mu/k$, regardless of idleness (wasted capacity).
     \item With $k$ streams, $\rho = \frac{\lambda}{\mu} = \frac{\lambda/k}{\mu/k} = \rho$ (same server utilization), but avg. sojourn time ($E[W]$) increased by $k$ times under TDM. Queue length ($E[Q]$) and total users ($E[L]$) also $k$ times larger
@@ -355,13 +355,13 @@
     \item Statistical better than TDM. (same utilization, average less delay, shorter queue).
 \end{itemize}
 
-\subsection{Variants of Queueing Models}
+\subsection{2.8 Variants of Queueing Models}
 \begin{itemize}
     \item Multiple servers: M/M/2, Limited queue size: M/M/1/K
     \item Different service: M/M/1/LIFO, General distributions: M/G/1, G/M/1, G/G/1
 \end{itemize}
 
-\subsection{\underline{Burke’s Theorem}}
+\subsection{\underline{2.9 Burke’s Theorem}}
 \begin{itemize}
 	\item For \textbf{M/M/1 queue} in steady state with arrival rate $\lambda$ and service rate $\mu > \lambda$
     \item \textbf{Departure} process of form Poisson process of rate ($\lambda$)
@@ -369,7 +369,7 @@
     \item Implication is that output of one M/M/1 queue can be treated as Poisson input for the next queue, simplifying analysis of multi-hop queueing systems.
 \end{itemize}
 
-\subsection{Tandem Queues}
+\subsection{2.10 Tandem Queues}
 \begin{itemize}
 	\item \textbf{Tandem Queue}: System where jobs pass through multiple servers in sequence, one after another. Each server $i$ modelled as an M/M/1 queue with own service rate, and utilization of server $i$: $\rho_i = \lambda / \mu_i$
     \item Joint probability of no. of jobs in each subsystem (independent):
@@ -378,7 +378,7 @@
     \]
 \end{itemize}
 
-\subsection{\underline{Jackson Network of Queues}}
+\subsection{\underline{2.11 Jackson Network of Queues}}
 
 \begin{itemize}
 	\item Firstly, a \textbf{Acyclic Network with Probabilistic Routing} is where jobs arrive at a network node, and choose next node randomly. Poisson property preserved, departures remain independent Poisson processes (Poisson splitting)
@@ -399,7 +399,7 @@
 % Lecture 4: 05/09/25 ---------------------------------------
 
 \section{3. \underline{Resource Allocation}}
-\subsection{Queues - Delay (sojourn $ E[W] $), capacity (service $\mu$), arrival ($\lambda$)}
+\subsection{3.1 Queues - Delay (sojourn $ E[W] $), capacity (service $\mu$), arrival ($\lambda$)}
 
 \begin{itemize}
 	\item \textbf{Average waiting (sojourn) time} in an M/M/1 queue is $ E[W] = \frac{1}{\mu - \lambda}$, where $\mu$ is the service rate (i.e. called capacity) while $\lambda$ is arrival rate. More capacity (higher service rate) means higher throughput, and lower delay. 
@@ -407,7 +407,7 @@
 	\item \textbf{Physical Interpretation of $\lambda$}: Here, because we want to guarantee some delay requirement, for a given service rate / capacity, the total throughput has to be bounded. `Arrival rate' $\lambda$ (throughput) here is instead admission control, where system limits the incoming rate of incoming flow to guarantee latency. Not the senders decision (e.g.UDP), but instead, it is a resource allocation problem.
 \end{itemize}
 
-\subsection{Motivation of Resource Allocation}
+\subsection{3.2 Motivation of Resource Allocation}
  Internet provides \textbf{best-effort} service. Network resources (bandwidth, buffer space, processing time) are limited.
  Hence, problem to allocate resources fairly and efficiently across competing flows. Tradeoff between \textbf{efficiency} (maximize utilization) and \textbf{fairness} (avoid starvation).
 
@@ -419,7 +419,7 @@
 \textbf{Metrics}: \textit{Throughput}: average rate of successful packet delivery, \textit{Delay}: time from packet arrival to departure, 
 	\textit{Fairness}: how equally bandwidth is shared among flows, \textit{Loss rate}: fraction of packets dropped due to congestion.
 
-\section{Max-Min Fairness}
+\subsection{\underline{3.3 Max-Min Fairness}}
 Idea of fairness where low demand users get what they need, large demand users share the rest equally (fair allocation).
 \begin{itemize}
 	\item \textbf{Max-min fair}: A feasible allocation max-min fair iff cannot increase anyone's rate without decreasing someone else's rate that is smaller or equal.
@@ -503,7 +503,7 @@ Traditional networking has been successful, but has significant limitations:
 SDN proposes to solve these challenges by separating the \textbf{control plane} and the \textbf{data plane}, 
 centralizing control, and enabling programmability.
 
-\subsection{Why SDN? Problems with Traditional Networking}
+\subsection{4.1 Why SDN? Problems with Traditional Networking}
 \begin{enumerate}
   \item \textbf{Tremendous success, but only at the edge:}  
   The Internet evolved from research to global infrastructure, great innovation at the 
@@ -531,7 +531,7 @@ The traditional (complex) control problem is:
 \end{itemize}
 This distributed complexity makes it difficult to innovate or manage.
 
-\subsection{Control Plane vs. Data Plane}
+\subsection{4.2 Control Plane vs. Data Plane}
 Two key functions of router and switch at the core: Routing algorithms/protocol vs. Forwarding datagrams.
 \begin{itemize}
   \item \textbf{Control Plane:} Decides how packets should be forwarded (routing, traffic engineering, firewalling).  
@@ -570,7 +570,7 @@ Instead of every router running its own control software:
   \item Enables rapid innovation and new services (e.g., network slicing in 5G, dynamic security policies in data centers).
 \end{itemize}
 
-\subsection{Benefits of SDN}
+\subsection{4.3 Benefits of SDN}
 \begin{enumerate}
   \item \textbf{Easier management:}  
   Network policies are written at a high level; low-level configurations are handled by the controller.
@@ -581,7 +581,7 @@ Instead of every router running its own control software:
   \item \textbf{New use case:} Data center virtualization, traffic engineering, dynamic QoS...
 \end{enumerate}
 
-\subsection{Abstraction Concepts}
+\subsection{4.4 Abstraction Concepts}
 These 3 principles modularize the \textbf{network control problem} into something similar to OS computation abstractions:
 \begin{itemize}
   \item \textbf{Specification abstraction:}  
@@ -605,7 +605,7 @@ faster innovation and richer functionality.
 \centerline{\includegraphics[width=1\linewidth]{SDN2}}	   
 
 
-\subsection{Recap: Core Principles of SDN}
+\subsection{4.5 Recap: Core Principles of SDN}
 SDN is built on three core design principles that aim to simplify and modularize the control of large-scale networks:
 \begin{enumerate}
   \item \textbf{Separation of Control Plane and Data Plane} – Network devices focus only on packet forwarding (data plane), while decision-making logic (control plane) is moved to a separate controller.
