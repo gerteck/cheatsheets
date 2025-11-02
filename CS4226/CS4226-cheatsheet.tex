@@ -885,6 +885,105 @@ Overall, P4 program describes logical behavior of packet processing from parsing
 \columnbreak
 
 
+\section{7. \underline{Internet Interconnection}}
+
+\subsection{7.0 The Internet}
+The Internet is fundamentally a \textbf{network of networks}. These networks are organized, interconnected, and governed by both technical and business relationships. Focus on three key components:
+\begin{enumerate}
+  \item \textbf{Autonomous Systems (AS):} the basic unit of Internet organization.
+  \item \textbf{Internet Peering:} bilateral interconnection through business relationships.
+  \item \textbf{Internet Exchange Points (IXP):} multilateral interconnection for efficient traffic exchange.
+\end{enumerate}
+
+Internet interconnection defines how ASes cooperate \& compete to maintain global connectivity, shaped by technical routing policies and commercial incentives. \textbf{Inter-domain routing protocols}, particularly the Border Gateway Protocol (BGP), enforces these policies across the global Internet.
+
+
+\subsection{7.1 Autonomous Systems (AS)}
+\begin{itemize}
+\item \textbf{Autonomous System (AS)} is a collection of routers operated under a single administrative domain that shares a consistent routing policy.
+\item Each AS is uniquely identified by an \textit{Autonomous System Number (ASN)}, which is allocated by the \textbf{Internet Assigned Numbers Authority (IANA)} through one of the five \textbf{Regional Internet Registries (RIRs)}.
+\item Public AS databases include \texttt{db-ip.com/asn} and \texttt{peeringdb.com}.
+\item An organization, such as an ISP, corporation, or university, may manage multiple ASes. Each AS determines which other networks to interconnect with,
+which routing policies to apply, and how to manage internal routing. ASes use a common internal routing protocol and appear as single entities in inter-domain routing.
+\item \textbf{Logical Unit}: AS is like a unit of network organization, with defined routing policy and networks.
+\end{itemize} 
+
+\subsection{7.2 Internet Hierarchy and Structure}
+The Internet has a loosely hierarchical structure:
+\begin{itemize}
+  \item \textbf{Tier-1 ISPs}: At the \textbf{core}/top, few large and globally connected. (e.g., AT\&T, Level 3, Sprint, NTT). Peer with one another in full mesh, do not pay for transit.
+  \item \textbf{Tier-2 ISPs} have national or regional coverage, purchasing transit from Tier-1 ISPs while also peering selectively.
+  \item \textbf{Stub ASes}, such as universities or corporate networks, connect to one or more upstream providers and do not provide transit for others.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{ASes}}
+
+Internet Service Providers and ASes:
+\begin{itemize}
+\item \textbf{ISP}: provides internet access, owns and operates one or more ASes.
+\item Content providers like Google have also developed private global networks that often bypass traditional Tier-1 ISPs via direct peering and IXPs. The hierarchical view is thus flattening as more large networks interconnect directly.
+\end{itemize}
+
+
+\textbf{Relationships between ASes}:
+\centerline{\includegraphics[width=1\linewidth]{TransitAS}}
+
+\columnbreak
+
+\subsection{7.3 Business Relationships Between ASes}
+AS interconnection is primarily governed by economics and mutual agreements rather than a central authority. Two dominant business models exist:
+\begin{enumerate}
+\item \textbf{Customer–Provider Relationship}: \textbf{Customer} pays the \textbf{provider} for Internet access and global reachability. The provider offers transit services, forwarding traffic between the customer and the rest of the Internet. Traffic always flows \textit{upstream} (from customer to provider) for forwarding, and the customer does not carry transit traffic between its providers (if multi-homed).
+
+\begin{itemize}
+\item Some customers are \textbf{multi-homed}, connect to multiple providers for redundancy/reliability or load balancing. However, they must ensure that traffic from one provider is not transited to another, maintaining business separation (bc. no incentive to do so).
+\end{itemize}
+
+\item \textbf{Peer-to-Peer (Settlement-Free Peering)}: Two ASes may establish \textbf{peer-to-peer relationship}, interconnect directly to exchange traffic between respective customers. Peers do not transit traffic to third parties and generally do not pay each other. Such \textit{settlement-free peering} reduces upstream transit costs and improves latency.
+
+\begin{itemize}
+\item Peering policies vary: many providers selectively peer based on traffic ratios, geographic presence, and network scale. For example, Verizon’s peering policy requires balanced traffic exchange (below a 1.8:1 ratio), presence across multiple geographic regions, and a minimum interconnection capacity (e.g., OC-192 in the US).
+\end{itemize}
+\end{enumerate}
+
+\subsection{7.4 Transit, Non-Transit ASes, Valley-Free Property}
+\begin{itemize}
+\item \textbf{Transit ASes} provide connectivity between their customers and other networks, often operating as ISPs.
+\item  \textbf{Non-transit ASes}, by contrast, connect only to their own upstream providers without carrying traffic for others. Most enterprise networks, universities (e.g., NUS), and content networks fall under this category. (Multi-homed, but don't carry traffic for and between upstream providers).
+\item \textbf{Valley-Free Property}: A routed network with no traffic flow valleys for any source-destination inter-domain routing path pair has valley-free routing, reflecting economic hierarchy. Traffic flows \textbf{uphill} from a customer to a provider, may traverse one \textbf{peer-to-peer} link, and flows \textbf{downhill} from provider to customer. Traffic does not dip into a valley (e.g. dual-homed customer), through a route leak.
+\item Invalid paths such as provider to customer to peer, or peering to provider, violate business incentives and are filtered by routing policies.
+\end{itemize}
+
+
+\subsection{7.5 Tier-1 ISPs, Internet Exchange Points (IXPs), Flattening Internet}
+\begin{itemize}
+\item \textbf{Tier-1 ISPs} are at the top of the Internet hierarchy. They reach the entire Internet solely through settlement-free peering and have no upstream providers. Roughly 10–12 such ASes exist worldwide (e.g., AT\&T, Sprint, Level 3). They form a full-mesh peering topology ensuring complete reachability.
+\item An \textbf{Internet Exchange Point (IXP)} provides a shared switching fabric that enables multiple ASes to interconnect efficiently at a single physical location. IXPs promote local traffic exchange, reducing latency and upstream transit costs.
+\item Many regional ISPs and content providers rely on IXPs to peer with each other directly instead of routing through upstream transit providers.
+\item The Internet is becoming increasingly \textbf{flat}. Content giants such as Google, Meta, and Amazon now operate private backbones and directly peer at IXPs or with regional ISPs, bypassing Tier-1 providers. This trend improves end-user latency and reduces reliance on traditional transit services.
+\end{itemize}
+
+\subsection{7.6 Peering Dilemmas and Policies}
+\begin{itemize}
+  \item \textbf{Peering Advantages}: reduced transit costs, better performance, essential connectivity to parts of the Internet. 
+  \item \textbf{Peering Challenges}: Peers are often competitors, agreements require periodic renegotiation. Traffic imbalances or asymmetric benefits may lead to disputes.
+  \item Consequently, peering arrangements are typically confidential and governed by private agreements or published criteria.
+  \item \textbf{Peering Dispute \& Impact}: 2005, Level 3 (AS3356) and Cogent (AS174). Level 3, a major Tier-1 provider with over 49 K on-net prefixes, accused Cogent, a fast-growing underdog, of traffic imbalance. Disconnected Cogent on 5 Oct 2005, cut off traffic between two. Around 4.3\% of global prefixes became unreachable, affecting about 1\% of visible ASes. High-profile victims included \textit{The Washington Post}, \textit{CNET Networks}, and the U.S. Department of Health and Human Services. Under public and political pressure, Level 3 restored connectivity two days later.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
