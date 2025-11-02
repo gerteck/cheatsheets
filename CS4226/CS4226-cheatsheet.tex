@@ -728,6 +728,164 @@ Companies may serve customers in different countries, needing to adhere to local
 SDN abstracts the network into three layers: \textbf{Apps} that express high-level policies via APIs, \textbf{Control Plane (Controller)} that implements logic, optimization, and state management and \textbf{Data Plane (Devices)} that executes rules defined by controller. SDN transforms rigid networks to open programmable infrastructures.
 
 
+% 06 == SDN - P4 =======================
+
+
+\section{6.  \underline{SDN - P4 Programming Language}}
+
+\subsection{6.1 What is P4}
+\begin{itemize}
+\item \textbf{P4} is a programming language for controlling packet forwarding planes in networking devices, such as routers and switches.
+\item \textbf{Domain-specific} language with constructs optimized for network data forwarding. Open source. P4: Programming Protocol-Independent Packet Processors.  (i.e. domain is network packet processing)
+\end{itemize}
+
+\subsection{Why P4}
+\begin{itemize}
+  \item \textbf{Limitation of traditional switches:} Fixed-function ASICs (app-specific integrated circuits) can only process a pre-defined set of protocols (e.g., Ethernet, IPv4, TCP). Any new header format or protocol change requires new hardware. Slow innovation cycle, standardization, ASIC redesign take years.
+  \item \textbf{Limitations of OpenFlow}: OpenFlow gives standard API for programming behavior of switches (remote control), but only supports fixed set of header fields (e.g. TCP, VLAN). New protocol (e.g. QUIC, custom headers) means must update OpenFlow standard and hardware vendors.
+  \item Control over flow table rules, but none over packet type, packet parsing, processing inside switch. 
+\end{itemize}
+
+\textbf{Goal of P4:}
+\begin{itemize}
+  \item \textbf{Program the data plane itself}, and not just configure flow rules.
+  \item Define new packet header formats, parsing logic, match-action tables, and actions.
+  \item Enable switches to process any kinds of packets, support protocol evolution with need for hardware redesign, acheiving protocol independence (e.g. no assumption on IPv4, TCP, etc.)
+\end{itemize}
+
+P4 defines the data plane pipeline, can describe fast pipelines (e.g. ASIC, FPGA) and slower ones (e.g. SW switch). Good for both programmable, fixed-function switches. Defines contract btw. control plane and data plane for runtime control.
+
+\centerline{\includegraphics[width=0.8\linewidth]{P4PorFixed}}
+
+
+\subsection{6.2 P4 Logical Pipeline: Programmable Match–Action Pipeline}
+Every P4-based switch implements a \textbf{logical pipeline} of match–action tables that process packets at line rate.
+
+\[
+\text{Input Packet} \rightarrow \text{Parser} \rightarrow \text{Ingress Tables} \rightarrow \text{Traffic Manager} 
+\]
+\[
+ \text{Traffic Manager} \rightarrow \text{Egress Tables} \rightarrow \text{Deparser} \rightarrow \text{Output Packet}
+\]
+
+\begin{itemize}
+  \item \textbf{Parser:} Extracts header fields (Ethernet, IP, etc.) using a finite-state machine.
+  \item \textbf{Ingress Pipeline:} Match–action stages that determine forwarding or modification.
+  \item \textbf{Traffic Manager (TM):} Handles queuing, buffering, and replication (typically fixed-function but configurable).
+  \item \textbf{Egress Pipeline:} Processes packets before transmission (e.g., tagging, metering).
+  \item \textbf{Deparser:} Reassembles headers and payloads into a valid packet.
+\end{itemize}
+
+Parser “reads” packet, tables “decide” what to do, deparser “writes” final packet.
+
+\centerline{\includegraphics[width=0.8\linewidth]{programmableMatchActionPipeline}}
+
+
+\subsection{6.3 Formalization: (PISA) Protocol-Independent Switch Architecture}
+\textbf{PISA} is a \textbf{logical reference model}, defines the standard logical architecture that programmable data planes follow.
+
+\begin{itemize}
+  \item Provides a vendor-neutral abstraction for packet processing, defining programmable blocks: \textit{parser}, \textit{ingress}, \textit{egress}, and \textit{deparser}. It allows the same P4 program to be compiled for different hardware targets.
+  \item \textbf{Benefits:} Hardware independence, program can run on different vendor devices. Clean abstraction of logical packet processing from physical implementation. Faster innovation, new protocols, header fields can be supported instantly.
+\end{itemize}
+
+\centerline{\includegraphics[width=0.8\linewidth]{PISA}}
+
+\subsection{6.4 P4 Architecture and Targets}
+\textbf{Mapping from Logical to Physical}: P4 still needs to account for different chips implementing different physical pipelines. Hence, allows for vendor-specific logical pipelines, through different architectures, evolve from P4$_{14}$ to P4$_{16}$. P4 separates concepts of \textbf{architecture} and \textbf{target}:
+
+\begin{itemize}
+  \item \textbf{Architecture:} Logical model / interface defining programmable components.
+  \item \textbf{Target:} Specific hardware implementation running the compiled P4 program.
+	\item Concept of an architecture defines what target hardware supports. P4 compiler translates logical design from P4 source to what fits physical chip architecture targeted.
+\end{itemize}
+
+\textbf{Common Architectures:}
+\begin{itemize}
+  \item \textbf{V1Model:} Basic architecture used in software switches like \texttt{bmv2}.
+  \item \textbf{PSA (Portable Switch Architecture):} A standardized, general-purpose model.
+  \item \textbf{PNA (Programmable NIC Architecture):} For smart network interface cards.
+\end{itemize}
+
+\textbf{Common Targets:}
+\begin{itemize}
+  \item \texttt{bmv2} (Behavioral Model v2) – software switch for development and testing.
+  \item Intel Barefoot Tofino ASIC – high-performance programmable hardware switch.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{P4Architectures}}
+
+\subsection{6.5 Writing a P4 Program: A Practical Look}
+
+A P4 program for the \texttt{V1Model} architecture follows a well-defined structure that corresponds to the programmable match--action pipeline.
+
+\begin{itemize}
+  \item \textbf{Includes \& Definitions:}  
+  The program begins by including the core P4 libraries and the architecture model file (e.g., \texttt{v1model.p4}).  Also defines \textit{Packet headers} (e.g. Ethernet and IPv4, and \textit{Metadata}, both standard (e.g., \texttt{ingress\_port}) and user-defined.
+    \item \textbf{Parser:} Implements a finite-state machine that reads incoming packets and extracts relevant header fields to identify the packet type.
+  \item \textbf{Control Blocks (Ingress/Egress):}  
+  The core logic of packet processing is defined here as a series of match--action tables.
+  Each table specifies:
+  \begin{itemize}
+    \item \textbf{Key:} Field(s) to match on (e.g., \texttt{ipv4.dstAddr} using longest-prefix match).
+    \item \textbf{Actions:} Possible operations to perform (e.g., \texttt{ipv4\_forward}, \texttt{drop}).
+    \item \textbf{Size:} Maximum number of table entries allowed.
+  \end{itemize}
+  Actions themselves are defined as procedures that manipulate headers or metadata, such as setting \texttt{egress\_port} or decrementing the \texttt{TTL}.
+
+  \item \textbf{Deparser:}  Reassemble modified headers, payload into packet for transmission.
+  \item \textbf{Instantiation:}  Last, all components (\textit{parser, ingress, egress, deparser}) wired together to form full logical pipeline. 
+\end{itemize}
+
+\noindent
+Overall, P4 program describes logical behavior of packet processing from parsing headers, making forwarding decisions, to rewriting and emitting packets, mapped to the architecture’s programmable pipeline.
+
+
+
+\subsection{6.6 P4Runtime and Control–Data Plane Interaction}
+\begin{itemize}
+\item \textbf{Data Plane:} Executes the P4 program, processes each packet according to installed table entries.
+\item \textbf{Control Plane:} Runs externally (e.g., ONOS, Ryu, or custom controller). It inserts, updates, and deletes entries in match–action tables. Uses the \textbf{P4Runtime API} to communicate with the data plane.
+\item \textbf{P4Runtime:} A standard, gRPC-based API between the control plane and P4 devices. It allows runtime configuration, counter reading, and table management. Makes P4 switches vendor-independent and interoperable.
+\item \textit{Example:} The control plane can install a routing rule (destination prefix → output port) in a P4 switch using P4Runtime.
+\end{itemize}
+
+
+
+\subsection{6.7 Real-World Constraints and Considerations}
+
+\begin{itemize}
+  \item \textbf{Hardware limits:} P4 targets have finite memory and pipeline stages.
+  \item \textbf{Limited arithmetic:} Only simple operations (add, shift, subtract) are allowed to maintain line-speed.
+  \item \textbf{Offload to control plane:} Complex computations can be sent to CPU if needed.
+  \item \textbf{Compiler mapping:} P4 compilers optimize logic based on the hardware’s capacity.
+\end{itemize}
+
+
+\subsection{6.8 Example: IPv4 Router in P4}
+\begin{itemize}
+\item \textbf{Parser:} Extract Ethernet and IPv4 headers.  
+\item \textbf{Ingress Table:} Match destination IP (LPM) $\rightarrow$ next-hop MAC + output port.  
+\item \textbf{Action:} Rewrite MAC, decrement TTL, forward.  
+\item \textbf{Control Plane:} Installs and updates routing table entries at runtime.
+\item \textbf{Result:} A fully functional IPv4 router implemented purely in P4 — extendable to other protocols (e.g., IPv6, MPLS) without hardware change.
+\end{itemize}
+
+
+\subsection{6.10 P4 Summary and Key Takeaways}
+
+\begin{itemize}
+  \item P4 introduces true \textbf{data plane programmability}.
+  \item PISA provides a universal, logical model for switch pipelines.
+  \item \textbf{P4Runtime} bridges control and data planes via a vendor-neutral API.
+  \item Tools like \texttt{bmv2} and Mininet enable software experimentation.
+  \item \textbf{Mindset:} Move from configuring fixed hardware to programming network logic directly. Enables networks to evolve as fast as software.
+\end{itemize}
+
+\columnbreak
+
+
+
 
 
 
