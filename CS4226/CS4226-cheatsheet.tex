@@ -933,16 +933,16 @@ Internet Service Providers and ASes:
 \subsection{7.3 Business Relationships Between ASes}
 AS interconnection is primarily governed by economics and mutual agreements rather than a central authority. Two dominant business models exist:
 \begin{enumerate}
-\item \textbf{Customer–Provider Relationship}: \textbf{Customer} pays the \textbf{provider} for Internet access and global reachability. The provider offers transit services, forwarding traffic between the customer and the rest of the Internet. Traffic always flows \textit{upstream} (from customer to provider) for forwarding, and the customer does not carry transit traffic between its providers (if multi-homed).
+\item \textbf{Customer–Provider Relationship}: \textbf{Customer} pays \textbf{provider} for Internet access and global reachability. Provider offers transit services, forwards traffic btw. customer and rest of Internet. For forwarding, traffic always flows \textit{upstream} (from customer to provider). Customer does not carry transit traffic between providers (if multi-homed).
 
 \begin{itemize}
-\item Some customers are \textbf{multi-homed}, connect to multiple providers for redundancy/reliability or load balancing. However, they must ensure that traffic from one provider is not transited to another, maintaining business separation (bc. no incentive to do so).
+\item Some customers \textbf{multi-homed}, connect to multiple providers for redundancy/reliability/load balancing. They must ensure traffic from one provider not transited to other (bc. no incentive to do so).
 \end{itemize}
 
-\item \textbf{Peer-to-Peer (Settlement-Free Peering)}: Two ASes may establish \textbf{peer-to-peer relationship}, interconnect directly to exchange traffic between respective customers. Peers do not transit traffic to third parties and generally do not pay each other. Such \textit{settlement-free peering} reduces upstream transit costs and improves latency.
+\item \textbf{Peer-to-Peer (Settlement-Free Peering)}: Two ASes may establish p2p relationship, interconnect directly to exchange traffic between their customers. Peers do not transit traffic to third parties, generally do not pay each other. \textit{Settlement-free peering} reduces upstream transit costs and improves latency.
 
 \begin{itemize}
-\item Peering policies vary: many providers selectively peer based on traffic ratios, geographic presence, and network scale. For example, Verizon’s peering policy requires balanced traffic exchange (below a 1.8:1 ratio), presence across multiple geographic regions, and a minimum interconnection capacity (e.g., OC-192 in the US).
+\item Peering policies vary: providers selectively peer based on traffic ratios, geographic presence, network scale. E.g. Verizon policy requires balanced traffic exchange (below 1.8:1 ratio), presence across multiple geographic regions, minimum interconnection capacity (e.g., OC-192 in US).
 \end{itemize}
 \end{enumerate}
 
@@ -954,13 +954,14 @@ AS interconnection is primarily governed by economics and mutual agreements rath
 \item Invalid paths such as provider to customer to peer, or peering to provider, violate business incentives and are filtered by routing policies.
 \end{itemize}
 
+\centerline{\includegraphics[width=1\linewidth]{valleyFree}}
 
 \subsection{7.5 Tier-1 ISPs, Internet Exchange Points (IXPs), Flattening Internet}
 \begin{itemize}
-\item \textbf{Tier-1 ISPs} are at the top of the Internet hierarchy. They reach the entire Internet solely through settlement-free peering and have no upstream providers. Roughly 10–12 such ASes exist worldwide (e.g., AT\&T, Sprint, Level 3). They form a full-mesh peering topology ensuring complete reachability.
-\item An \textbf{Internet Exchange Point (IXP)} provides a shared switching fabric that enables multiple ASes to interconnect efficiently at a single physical location. IXPs promote local traffic exchange, reducing latency and upstream transit costs.
-\item Many regional ISPs and content providers rely on IXPs to peer with each other directly instead of routing through upstream transit providers.
-\item The Internet is becoming increasingly \textbf{flat}. Content giants such as Google, Meta, and Amazon now operate private backbones and directly peer at IXPs or with regional ISPs, bypassing Tier-1 providers. This trend improves end-user latency and reduces reliance on traditional transit services.
+\item \textbf{Tier-1 ISPs} at top of Internet hierarchy. Reach entire Internet solely through settlement-free peering, no upstream providers. 10–12 such ASes exist worldwide (e.g., AT\&T, Sprint, Level 3). Form full-mesh peering topology ensures complete reachability.
+\item \textbf{Internet Exchange Point (IXP)} provides shared switching fabric, enables multiple ASes to interconnect efficiently at single physical location. Promotes local traffic exchange, reduce latency and upstream transit costs.
+\item Many regional ISPs, content providers rely on IXPs to peer directly instead of route through upstream transit providers.
+\item Internet becoming increasingly \textbf{flat}. Content giants (Google, Amazon) operate private backbones, directly peer at IXPs or regional ISPs, bypass Tier-1 providers. Improves end-user latency and reduces reliance on traditional transit services.
 \end{itemize}
 
 \subsection{7.6 Peering Dilemmas and Policies}
@@ -971,8 +972,222 @@ AS interconnection is primarily governed by economics and mutual agreements rath
   \item \textbf{Peering Dispute \& Impact}: 2005, Level 3 (AS3356) and Cogent (AS174). Level 3, a major Tier-1 provider with over 49 K on-net prefixes, accused Cogent, a fast-growing underdog, of traffic imbalance. Disconnected Cogent on 5 Oct 2005, cut off traffic between two. Around 4.3\% of global prefixes became unreachable, affecting about 1\% of visible ASes. High-profile victims included \textit{The Washington Post}, \textit{CNET Networks}, and the U.S. Department of Health and Human Services. Under public and political pressure, Level 3 restored connectivity two days later.
 \end{itemize}
 
+\vfill \null
+\columnbreak
+
+\section{8. \underline{Inter-Domain Routing and Policy}}
+\subsection{8.1 Inter-Domain Routing}
+The Internet can be viewed as a `network of networks', consisting of over 50,000 Autonomous Systems (ASes) and millions of routers supporting more than 200,000 IP prefixes. 
+
+\begin{itemize}
+	\item \textbf{Inter-domain routing}: involves connecting distinct administrative domains, each with its own policies and operational objectives.
+    \item \textbf{Challenges for inter-domain routing protocol}:
+\begin{itemize}
+	\item  \textbf{Scale:} Handling vast numbers of routers, prefixes, and ASes.
+    \item \textbf{Privacy:} ASes unwilling to reveal internal topology or business relationships.
+    \item \textbf{Policy-Driven Routing:} Each AS has own objectives e.g. minimize cost, maximize revenue, or reduce latency; no universal metric for best paths.
+    \item \textbf{Diverse Objectives:} Choices influence by technical \& business considerations.
+\end{itemize}
+\end{itemize}
 
 
+\subsection{8.2 Intra-Domain Protocols / IGPs and Limitations}
+Two major intra-domain routing protocols, and understand why we cannot directly borrow ideas from the protocol and where changes and relaxations are needed. Also called interior gateway protocols or IGP.
+\begin{enumerate}
+\item \textbf{Link-State Protocols}: Link-state protocols (e.g., OSPF) require every router to know the entire network topology to compute shortest paths using algorithms such as Dijkstra’s. At Internet scale, this approach is infeasible due to:
+\begin{itemize}
+    \item Flooding topology info across millions of routers too expensive. High bandwidth and storage overhead, entire path computed locally per node requires high processing overhead.
+    \item Privacy concerns prevent ASes from sharing internal network details.
+    \item No universal metric to define shortest path across heterogeneous AS policies.
+\end{itemize}
+
+\item \textbf{Distance-Vector Protocols}: Distance-vector protocols (e.g., RIP) rely on routers exchanging hop-count information with neighbors iteratively using the Bellman-Ford algorithm. Considerations for inter-domain use include:
+\begin{itemize}
+    \item Still requires a shared metric to determine the `best' path.
+    \item Convergence is too slow for Internet-scale networks.
+    \item Better, hides details of network topology, only needs to determines next hop. So solution, we can extend the notion of a DV with BGP.
+\end{itemize}
+\end{enumerate}
+
+
+\subsection{8.3 Border Gateway Protocol (BGP): Path-Vector (PV) Routing}
+
+\begin{itemize}
+\item \textbf{BGP}: the de facto inter-domain routing protocol. Extends distance-vector routing by specifying \textbf{entire AS path} instead of distance metric. Each route advertisement carries sequence of ASes to destination. 
+\item \textbf{Advantages / Features of BGP}:
+	\begin{itemize}
+	    \item \textbf{Loop Prevention:} An AS can detect routing loops by checking whether its own AS number appears in the advertised path.
+	    \item \textbf{Policy Enforcement:} AS-path information allows each AS to apply policies for route selection and advertisement.
+	\end{itemize}
+\item \textbf{Key Features of BGP}
+	\begin{itemize}
+	    \item Operates over TCP (port 179) to provide reliable delivery of routing information.
+	    \item Supports policy-based decisions rather than purely metric-based selection.
+	    \item Provides mechanisms to interconnect ASes via eBGP and propagate routes internally using iBGP.
+	\end{itemize}
+\end{itemize}
+
+\subsection{8.4 BGP Architecture and Sessions}
+
+\begin{itemize}
+\item \textbf{BGP Peers/Speakers}: Routers running BGP establish sessions (TCP connections) to exchange route information. 
+There are two main types:
+	\begin{itemize}
+	    \item \textbf{Exterior BGP (eBGP):} Between BGP speakers in different ASes. Should be directly connected.
+	    Primarily used to exchange reachability information across AS boundaries.
+	    \item \textbf{Internal BGP (iBGP):} Between BGP speakers within the same AS. Not required to be directly connected, IGP takes care of inter-BGP speaker connectivity.
+	    Used to propagate externally learned routes to all routers in the AS.
+	\end{itemize}
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{BGPOps}}
+
+\begin{itemize}
+\item \textbf{iBGP Full Mesh Rule}:
+\begin{itemize}
+    \item iBGP peers must form a logical full mesh to ensure route propagation.
+    \item Routes learned from one iBGP peer not re-advertised to another iBGP peer to prevent loops and unnecessary flooding.
+    \item The underlying IGP (e.g., OSPF routing protocol) handles physical connectivity between iBGP speakers.
+\end{itemize}
+\end{itemize}
+
+
+
+\subsection{8.5 BGP Message Types and Mechanics}
+BGP maintains connectivity, route propagation w. four primary message types:
+\begin{itemize}
+    \item \textbf{OPEN:} Opens TCP connection to peer, authenticates sender.
+    \item \textbf{UPDATE:} Advertises new routes or withdraws existing ones.
+    \item \textbf{KEEPALIVE:} Maintains the session during idle periods.
+    \item \textbf{NOTIFICATION:} Reports errors and terminates sessions if necessary.
+\end{itemize}
+
+\textbf{BGP Routes and Withdrawn Routes}:
+\begin{itemize}
+\item \textbf{No expiration timer}: BGP does not use periodic timers to delete routes, unlike distance vector routing protocol RIP. Once BGP router learns routes, keep indefinitely until told no longer valid.
+\item \textbf{Actively withdrawn or replaced}: Routes are actively withdrawn or replaced by original advertiser through a BGP UPDATE message.
+\item \textbf{Invalidation}: routes from a peer become invalid when the peer goes down.
+\end{itemize}
+
+
+\subsection{8.6 UPDATE Message Format and Route Control}
+BGP uses  \texttt{UPDATE} message to advertise new routes, modify existing ones, or withdraw invalid routes. 
+Event-driven, sends \texttt{UPDATE} only when routing changes occur, either withdraws prefix if unreachable, or replace existing entry with new set of path attributes and NLRI.
+
+\textbf{UPDATE Message Structure:}
+\begin{itemize}
+    \item \textbf{Withdrawn Routes:} Lists of IP prefixes that are no longer reachable. Sent actively to invalidate outdated routes.
+    \item \textbf{Path Attributes:} Metadata describing characteristics or policies of each advertised route (e.g., \texttt{AS-PATH}, \texttt{NEXT-HOP}, \texttt{LOCAL-PREF}). Determines how routers select among multiple available paths.
+    \item \textbf{Network Layer Reachability Information (NLRI):} Set of destination IP prefixes newly advertised as reachable, and their path attributes.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{BGPUpdate}}
+
+\subsection{8.7 Path Attributes and Policy Control}
+The \texttt{Path Attributes} field in \texttt{UPDATE} message is central to BGP’s flexibility and policy-based routing. 
+Each attribute conveys information that influences route selection and propagation behavior across Autonomous Systems (ASes).
+
+BGP classifies attributes into four categories:
+\begin{itemize}
+    \item \textbf{Well-Known Mandatory:} Must appear in all \texttt{UPDATE} messages and be recognized by all BGP routers (e.g., \texttt{ORIGIN}, \texttt{AS-PATH}, \texttt{NEXT-HOP}).
+    \item \textbf{Well-Known Discretionary:} Optional to include but must be understood if present (e.g., \texttt{LOCAL-PREF}).
+    \item \textbf{Optional Transitive:} May be propagated to other peers even if not recognized by a router (e.g., \texttt{COMMUNITY}).
+    \item \textbf{Optional Non-Transitive:} Ignored and not propagated if not recognized (e.g., experimental or vendor-specific attributes).
+\end{itemize}
+
+\textbf{Key Well-Known Mandatory Attributes}
+\begin{itemize}
+    \item \textbf{ORIGIN:} Indicates where the route originated—Interior Gateway Protocol (IGP), Exterior Gateway Protocol (EGP), or \textit{incomplete} (learned indirectly).
+    \item \textbf{AS-PATH:}  Sequence of ASes traversed by the route. Used for loop prevention and as a key decision factor in path selection.
+    \item \textbf{NEXT-HOP:} Specifies the IP address of the next-hop router outside the AS to reach advertised destination. 
+\end{itemize}
+
+
+\subsection{8.7 Forwarding Table Construction (Learning, Choosing Routes)}
+The router integrates BGP routes into forwarding table using following process:
+\begin{enumerate}
+    \item \textbf{Route Learning:} Routes are learned via eBGP (external) and iBGP (internal). Multiple possible paths may exist for the same prefix.
+    \item \textbf{Best Route Selection:} 
+    \begin{itemize}
+        \item \textbf{Shortest AS-Path}: Prefer path with fewest AS hops.
+        \item \textbf{Closest NEXT-HOP}: If tied, prefer the route with the closest exit AS. (aka hot potato routing).
+        \item \textbf{Custom Policies}: Policies (e.g., LOCAL-PREF) can let network operators prioritize certain routes for business or performance reasons. (See 8.11)
+    \end{itemize}
+    \item \textbf{Forwarding Table Population:} Once the best path is selected, the router uses its IGP (like OSPF or IS-IS) to determine which local interface (port) should be used to forward packets to the NEXT-HOP.
+    \item The resulting forwarding table maps destination prefixes → output interfaces, so traffic can be sent efficiently.
+\end{enumerate}
+
+\subsection{8.8 BGP Routing Information Bases (RIBs)}
+BGP keeps multiple logical tables to separate different stages of processing. Separate RIBs ensures policy control, dont advertise unapproved or invalid route.
+\begin{itemize}
+    \item \textbf{Adj-RIBs-In:} Routes learned from peers, before apply import policies. Raw unprocessed routes via inbound UPDATE. (E.g. peer sent 1000 prefixes).
+    \item \textbf{Loc-RIB:} Router's selected best local routes after applying import policies and path finding. (E.g. Out of 3 paths to 10.0.0.0/24, install best in forwarding table).
+    \item \textbf{Adj-RIBs-Out:} Routes to be advertised to other peers after applying export policies. (E.g. tell peer about 500 prefixes allowed by policies).
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{BGPRIB}}
+
+\subsection{8.9 Policy Implementation in BGP (Routes to accept and announce)}
+\begin{itemize}
+    \item \textbf{Import Policies:} Applied to incoming routes to filter unwanted routes or rank preferred paths (e.g., using LOCAL-PREF).
+    \item \textbf{Export Policies:} Applied to outgoing routes to enforce business relationships (See 8.10)
+    \begin{itemize}
+        \item To a provider: advertise all own routes and customer routes.
+        \item To a customer: advertise all known routes (so customer can use).
+        \item To a peer: advertise only own and customer routes.
+        \item I.e. Never advertise peer or provider's routes to another peer or provider.
+    \end{itemize}
+    \item \textbf{AS Path Prepending:} Artificially lengthens AS-PATH to make routes less attractive, controlling inbound traffic. (E.g. don't want traffic coming from particular provider, prepend AS number multiple times to make path longer.)
+\end{itemize}
+
+\subsection{8.10 Business Relationships and BGP Policy}
+\begin{itemize}
+    \item \textbf{Customer-Provider Relationship:} Customer exports all own and customers’ routes to the provider. Provider exports all known routes (other customers, peers, and providers) to the customer, offering full Internet reachability.
+    \item \textbf{Peer-to-Peer Relationship:} Peers export only own and customer routes to each other, avoid transit for routes learned from other peers or providers.
+    \item Export/import policies as technical implementation to enforce relationships.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{BGPRouting}}
+
+\subsection{8.11 BGP Attributes in Route Selection}
+BGP uses various attributes to decide which path is preferred among multiple available routes to the same prefix. These attributes reflect both technical performance and business policy.
+
+\begin{itemize}
+    \item \textbf{LOCAL\_PREF (Local Preference):} 4-byte unsigned int (default value 100, higher = preferred), for BGP speaker to inform other internal peers of preference for a route within the same AS (used in iBGP). Use to prefer certain outbound paths (e.g., prefer customer over peer or provider). Should not send to external eBGP peers.
+
+    \item \textbf{AS\_PATH:} Sequence of AS numbers route traverses, prefer shorter sequences, used to prevent routing loops.
+
+    \item \textbf{MULTI\_EXIT\_DISC (MED):} 4-byte unsigned int (default value 0, lower = more preferred), hint sent by one AS to a neighboring AS, suggest which entry point to use when multiple physical links exist between them. Influences \textit{inbound} traffic when multiple links exist between two ASes. Share only between neighboring ASes, may be propagated over iBGP, but not propagated further to neighbouring ASes.
+
+    \item \textbf{COMMUNITY:} 4-byte tag attached to routes to classify or “group” them logically. Allows bulk policy application — routers can apply import/export rules based on community tags rather than listing prefixes individually. (e.g., “no-export” community). Used to tag customer routes, control export, or trigger remote actions.
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{BGPRouteSelection}}
+
+\subsection{8.12 BGP Security Issues: Prefix Hijacking}
+\begin{itemize}
+    \item \textbf{Prefix Hijacking:} When an AS accidentally or maliciously advertises ownership of an IP prefix it does not own. Other ASes believe, send traffic for that prefix to it.
+    \item \textbf{Subprefix Hijacking:} Attacker AS advertises more specific prefix (e.g., /24 of a victim's /16), causing other AS pick that route following longest matchin prefix, and most traffic to be rerouted to the attacker.
+    \item \textbf{Consequences:} 
+    \begin{itemize}
+        \item \textit{Blackholing:} Traffic is discarded and dropped.
+        \item \textit{Snooping:} Traffic is intercepted and inspected, and redirected back.
+        \item \textit{Impersonation:} Traffic is redirected to fake destinations.
+    \end{itemize}
+    \item \textbf{Prevention:}
+    \begin{itemize}
+        \item Route filtering, where ISPs should only accept prefixes customers legitimately own. However, not everyone applies these practices, hard to filter routes initiated from far away, so BGP remains vulnerable to hijacks.
+        \item \textbf{RPKI (Resource Public Key Infrastructure):} Cryptographically verifies prefix ownership.
+        \item \textbf{ROA (Route Origin Authorization):} Specifies which AS is authorized to originate specific prefixes.
+    \end{itemize}
+\end{itemize}
+
+\subsection{8.13 Summary of BGP used in Practice}
+Overall, BGP can be controlled in three main ways:  \\
+1. \textbf{Preference:} Modify attributes such as LOCAL\_PREF or AS path prepending to prefer certain routes or providers, e.g., to reduce cost. \\
+2. \textbf{Filtering:} Inbound/outbound filters to accept/advertise only desired routes.  \\
+3. \textbf{Tagging:} Use COMMUNITY attributes to classify routes for policy enforcement, either locally or remotely. \\
+These mechanisms allow enforcement of business relationships, traffic engineering, and remote control (request behavior, not enforce) over how other ASes treat your routes.
 
 
 
