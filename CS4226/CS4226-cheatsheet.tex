@@ -1190,18 +1190,221 @@ Overall, BGP can be controlled in three main ways:  \\
 These mechanisms allow enforcement of business relationships, traffic engineering, and remote control (request behavior, not enforce) over how other ASes treat your routes.
 
 
+\section{9. \underline{Peer-to-Peer Networks}}
+
+\subsection{9.1 From Client–Server to a Decentralized Paradigm}
+Traditional client–server model is \textbf{asymmetric architecture}, centralized server serves multiple clients. Model faces inherent challenges:
+\begin{itemize}
+    \item \textbf{Scalability:} Centralized servers become bottlenecks under high demand.
+    \item \textbf{Single Point of Failure:} A server crash or disconnection halts service availability.
+\end{itemize}
+
+To address limitations, can use hierarchical delegation instead, distribute responsibility across multiple tiers of servers. E.g. \textbf{DNS} hierarchical structure of authoritative servers (root, TLD, domain-level). Improves load distribution, fault tolerance. In DNS, servers can respond in two distinct query modes:
+\begin{itemize}
+    \item \textbf{Recursive Resolution:} The contacted server performs all subsequent lookups on behalf of the client until the final answer is obtained.
+    \item \textbf{Iterative Resolution:} The server provides a referral (e.g., another server’s address), and the client continues querying iteratively until the answer is found.
+\end{itemize}
+
+Still, hierarchical model rely on designated servers. \textbf{Peer-to-Peer (P2P)} remove strict client–server distinction, improve scalability, robustness.
+
+
+\null \null
+\columnbreak
+
+
+\subsection{9.2 The Peer-to-Peer (P2P) Model}
+\textbf{Peer-to-peer (P2P)} system: every participating node acts as both client and server. Each can initiate requests and resources to others. 
+\textbf{Symmetrical, decentralized architecture}, control and responsibility distributed. Key characteristics:
+\begin{itemize}
+    \item \textbf{Self-Organization:} Dynamically peer discovery w/o central coordination.
+    \item \textbf{Resource Sharing:} Each peer contributes bandwidth, compute etc to the network.
+    \item \textbf{Scalability:} As more peers join, total system capacity typically increases.
+    \item \textbf{Resilience:} The failure or departure of individual peers has limited impact since data and functions are replicated or distributed across many nodes.
+\end{itemize}
+
+\textbf{Challenges:}
+\begin{itemize}
+    \item \textbf{Peer churn:} Frequent joining and leaving of peers disrupt stability.
+    \item \textbf{Unreliable service:} Peers are non-dedicated and may go offline anytime.
+    \item \textbf{Discovery:} Difficult to locate content and maintain routing in a dynamic environment. (Peers intermittently connected, change IP addresses)
+\end{itemize}
+
+\subsection{9.3 Early P2P Systems: Napster, Gnutella, and KaZaA}
+\begin{itemize}
+    \item \textbf{Napster (Hybrid Model):} 
+    \begin{itemize}
+        \item Used a \textit{centralized index server} to map files to peers.
+        \item Peers queried the central server to locate a file, then downloaded directly from another peer. (Used primarily for sharing MP3 files for free).
+        \item \textbf{Pros:} Fast, accurate keyword searches which returned info (e.g. encoding rate, file size, peer bandwidth, some info entered by user), consistent view of network.
+        \item \textbf{Cons:} Single point of failure of the server, large computation for queries, download from single peer only, unreliable content, legal vulnerability.
+    \end{itemize}
+    \item \textbf{Gnutella (Pure P2P):}
+    \begin{itemize}
+        \item Fully decentralized; peers flood the network with queries to find files.
+        \item \textbf{Pros:} No single authority; robust to node failure.
+        \item \textbf{Cons:} Inefficient due to query flooding and excessive bandwidth overhead.
+    \end{itemize}
+    \item \textbf{KaZaA (Two-Tier Hierarchy):}
+    \begin{itemize}
+        \item Introduced \textit{Super Nodes (SNs)} that act as local hubs for \textit{Ordinary Nodes (ONs)}.
+        \item Super Nodes form a Gnutella-like overlay among themselves.
+        \item \textbf{Pros:} More scalable than Gnutella; avoids Napster’s central bottleneck.
+        \item \textbf{Cons:} Super Nodes can become localized bottlenecks, still partially centralized.
+    \end{itemize}
+\end{itemize}
+
+\centerline{\includegraphics[width=1\linewidth]{pastp2p}}
+
+\null \null
+
+\columnbreak
+
+\subsection{9.4 BitTorrent: P2P for Content Distribution}
+BitTorrent revolutionized P2P systems by focusing on efficient \textbf{file distribution}. Each shared file forms a \textit{swarm} of peers cooperating to exchange chunks.
+
+\textbf{Core components:}
+\begin{itemize}
+    \item \textbf{Tracker:} A central server maintaining a list of peers in the swarm.  Server keeps track of seeds and peers in swarm but doesn’t participate in actual file distribution.
+    \item \textbf{Seed:} A peer possessing the complete file.
+    \item \textbf{.torrent file:} Contains file metadata and tracker information.
+    \item \textbf{torrent}: group of peers exchanging chunks of a file.
+    \item \textbf{swarm}: seeds and peers.
+\end{itemize}
+
+\textbf{How it works:}
+A file is divided into fixed-size chunks (typically \textbf{256 KB}). The distribution process proceeds as follows:
+\begin{enumerate}
+    \item A peer downloads the \texttt{.torrent} file and registers with the tracker.
+    \item The tracker replies with a list of active peers in the swarm.
+    \item The joining peer, initially having no chunks, connects to a subset of peers (its \textit{neighbors}) and begins downloading chunks.
+    \item As it accumulates chunks, simultaneously uploads chunks to other peers.
+    \item Once a peer obtains the entire file, it may leave the swarm (\textit{selfish}) or remain to serve others (\textit{altruistic}).
+\end{enumerate}
+
+\textbf{Pulling chunks:}
+At any time, different peers possess different subsets of chunks. Periodically, a peer queries each neighbor for list of available chunks, then requests missing chunks, prioritizing on \textbf{rarest-first}:
+\begin{itemize}
+    \item Download least common chunks first, maximize data availability, robustness.
+\end{itemize}
+
+\textbf{Pushing chunks: Tit-for-Tat} BitTorrent policy to promote fairness, reciprocity:
+\begin{itemize}
+    \item Each peer uploads chunks to a fixed number (typically four) of neighbors that currently provide it with the highest download rate.
+    \item Every 10 seconds, the peer re-evaluates its top four upload targets.
+    \item Every 30 seconds, it randomly selects another peer to upload to, a process known as \textbf{optimistic unchoking}. This allows discovery of new high-performing peers.
+\end{itemize}
+
+\textbf{Efficiency mechanisms:}
+\begin{itemize}
+    \item \textbf{Rarest-first:} Prioritize downloading rare chunks to ensure availability.
+    \item \textbf{Tit-for-tat:} Upload bandwidth is shared with peers that reciprocate; periodically unchokes random peers to find better connections.
+    \item Dynamic reciprocity ensures that upload bandwidth is allocated fairly, prevents freeloading, and naturally balances network resources.
+\end{itemize}
+
+
+BitTorrent avoids Napster’s legal issues as trackers do not host the actual content, only peer IPs.
+
+
+\centerline{\includegraphics[width=1\linewidth]{bitTorrent}}
 
 
 
 
+%%%%%%%%%%%%%%
+
+\columnbreak
+
+\subsection{9.5 Two Types of P2P Systems:}
+Unstructured P2P systems rely on \textbf{search-based} discovery, simple but inefficient. Structured P2P networks, introduce deterministic \textbf{addressing} using Distributed Hash Tables (DHTs), enabling efficient routing and lookup.
+\begin{itemize}
+    \item \textbf{Unstructured Networks:} Peers are free to join anywhere and select neighbors arbitrarily. Objects are stored at random locations, hence need for search-based mechanisms. However, still exhibit structures like graphs or power-law topologies.
+    \item \textbf{Structured Networks:} Enable deterministic routing and addressing. Network structure dictates where peers and objects are placed. Examples include DHT-based systems such as Chord.
+\end{itemize}
+
+
+\subsection{9.6 Searching and Addressing:}
+\begin{itemize}
+    \item P2P systems can locate objects via two mechanisms:
+    \begin{itemize}
+        \item \textbf{Searching:} Querying network to find object w/o knowing unique identifier.
+        \item \textbf{Addressing:} Using a deterministic mapping to directly locate responsible peer.
+    \end{itemize}
+    \item Choice depends on how the network is formed, how and where objects are placed and the efficiency of lookup mechanisms.
+    \item \textbf{Examples:} Google (search), DNS/IP routing (addressing), Napster / Gnutella / KaZaa / BitTorrent (mixed).
+\end{itemize}
+
+\textbf{Searching vs. Addressing Comparison:}
+\begin{itemize}
+    \item \textbf{Addressing:} Each object is uniquely identifiable. Efficient retrieval via structured placement. Requires maintaining addressing structure and unique identifiers.
+    \item \textbf{Searching:} More user-friendly — no need for unique names. Inefficient unless supported by strong infrastructure (e.g., Google). Requires content comparison to confirm matches.
+\end{itemize}
+
+\subsection{9.7 Structured P2P and Distributed Hash Tables (DHTs)}
+
+\textbf{Key Technologies:} \textbf{Distributed Hash Table (DHT)}: Core data structure enabling scalable, decentralized key-value storage. \textbf{Example architecture:} Chord.
+
+\begin{itemize}
+\item \textbf{Key–Value Store Abstraction:} Entries stored as \texttt{(key, value)} pairs. Supports operations \texttt{Put(key, value)}, and \texttt{Get(key)} → returns value. Conceptually similar to a table lookup; naive lookup requires $O(N)$ time.
+\item \textbf{Hash Tables Recap:} Fixed-size array of hash buckets. Supports operations (insert, delete, lookup) in $O(1)$. Hash function maps keys evenly and efficiently, (e.g. $\text{hash}(x) = x \bmod 8$)
+\item \textbf{Distributed Hash Table (DHT):} distribute hash buckets across multiple peers. Concern is how to design, implement efficient mechanism to determine which peer responsible for which bucket, and how to route requests between peers.
+\end{itemize}
+
+
+\textbf{DHT Principles:}
+\begin{itemize}
+    \item Each node is responsible for one or more hash buckets.
+    \item As nodes join or leave, responsibility reassigns dynamically.
+    \item Nodes communicate to discover responsible peer, scalability makes DHT efficient.
+    \item DHTs support all hash table operations efficiently.
+\end{itemize}
+
+\textbf{Examples of DHTs:}
+\begin{itemize}
+    \item \textbf{Chord (2001)} and \textbf{CAN (2001)} — canonical architectures.
+    \item Other designs: \textbf{Pastry/Tapestry (2001)} — Plaxton-style routing. \textbf{Kademlia (2002)} — XOR metric–based routing.
+    \item All provide the same abstraction: distributed storage and retrieval of \texttt{(key, value)} pairs without semantic meaning.
+    \item Differ mainly in namespace design and routing mechanisms.
+\end{itemize}
+
+\subsection{9.8 Chord: A Structured P2P Ring (DHT)}
+Chord is a distributed lookup protocol used in peer-to-peer (P2P) systems. Locates node storing data item in decentralized network without central directory, is a DHT implementation.
+
+\begin{itemize}
+    \item Developed at MIT, widely used in distributed storage systems.
+    \item Uses SHA-1 hash function to generate 160-bit identifiers for nodes and objects. Node IDs are hashed from IP addresses; object IDs from object names.
+    \item Nodes form a logical ring with wrap-around addressing, each node maintains links to predecessor and successor.
+\end{itemize}
+
+
+\centerline{\includegraphics[width=1\linewidth]{DHT}}
+
+
+\textbf{Identifier Assignment:} $m$-bit IDs are chosen from the range $[0, 2^m - 1]$, using hash function. Identifier space is circular.  Each \texttt{(key, value)} pair is assigned to the node whose ID is the \textbf{successor} of the key’s hash value. (key is stored at the first node whose ID $\geq$ key ID).
+
+\textbf{Naive Lookup and Finger Tables Lookup:}
+\begin{itemize}
+    \item \textbf{Naive}: Search for key start from any node, may require traversing up to $O(N)$ hops. (Since each node knows successor, predecessor). E.g. Looking for key 7 from node 2 → path: $2 \rightarrow 3 \rightarrow 4 \rightarrow 6 \rightarrow 0$.
+    \item \textbf{Finger Tables:} Each node maintains a \textbf{finger table} with up to $m$ entries (shortcuts). The $i$-th finger entry covers nodes at least $2^{i-1}$ distance away. (spaced exponentially around the ring)
+    \item Lookup time reduces to $O(\log N)$:
+    \begin{itemize}
+\item $\text{finger}[k].\text{start} = (n + 2^{k-1}) \bmod 2^m$
+\item $ \text{finger}[k].\text{node} = \text{first node} \geq \text{finger}[k].\text{start}$
+	\end{itemize}
+    \item \textbf{Routing Example:} Query from node 1 for $\text{hash(key)} = 7$. Route follows finger table shortcuts to reach the responsible node efficiently.
+    \item \textbf{Evolution:} Chord’s ring topology can generalize to multi-dimensional overlays (e.g. torus structure).
+\end{itemize}
+
+\textbf{Node Join/Leave}
+\begin{itemize}
+    \item \textbf{Node Join} When a new node joins, it initializes its finger table and updates others’. Keys are redistributed between the new node and its successor.
+	\item \textbf{Node Leave:} Each node maintains IPs of its two successors for redundancy. Periodically pings successors to detect failure. Upon detecting a failed peer, a node updates its successor list and informs neighbors to update finger tables to preserve routing correctness.
+	\item Only a small number of keys require move to maintain balance. Finger tables updated incrementally. Chord can handle churn (nodes join/leave frequently).
+\end{itemize}
 
 
 
-
-
-
-
-
+\subsection{9.9 Summary}
+P2P networking evolved from early unstructured and centralized hybrids like \textbf{Napster} and \textbf{Gnutella} to more efficient, structured systems such as \textbf{Chord}, \textbf{CAN}, and \textbf{BitTorrent}. Trade-off between simplicity, scalability, and efficiency. These systems are capable of decentralized storage, routing, and large-scale content distribution without centralized coordination.
 
 
 
