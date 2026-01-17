@@ -2,8 +2,7 @@
 
 A repository of cheatsheets for Modules/Courses taken in previous (and current) AYs.
 
-Do drop me a message if there are any errors or mistakes. Additionally, do peruse at your own discretion.
-
+Do drop me a message if there are any errors or mistakes, or open a PR if you'd like to fix it. Additionally, do peruse at your own discretion.
 
 ## Contents
 
@@ -34,3 +33,6 @@ Do drop me a message if there are any errors or mistakes. Additionally, do perus
 
 - AY25/26 S1
     - CS4226 Internet Architecture
+
+- AY25/26 S2
+    - CS4222 Wireless Networking
