@@ -1,12 +1,17 @@
 
-#Aux Files produced by TexWorks when editing .tex
+# Aux Files produced by TexWorks when editing .tex
 *.aux
 *.log
 *.gz
 *.out
 
+# Latexmk files
+*.fls
+*.fdb_latexmk
+
 ## Others
 *.txt
+*.DS_Store
 
 ## To remove bloat due to pdf
 ## Manually commit versions with git add --force XX.pdf
