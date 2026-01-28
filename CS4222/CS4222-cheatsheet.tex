@@ -69,7 +69,7 @@
 \renewcommand{\section}{\@startsection{section}{1}{0mm}%
                                 {-1ex plus -.5ex minus -.2ex}%
                                 {0.5ex plus .2ex}%x
-                                {\normalfont\large\bfseries}}
+                                {\normalfont\large\bfseries\underline}}
 \renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
                                 {-1explus -.5ex minus -.2ex}%
                                 {0.5ex plus .2ex}%
@@ -170,34 +170,35 @@ Energy efficiency is a key design constraint
 
 \subsection{Basics of Wireless Communication}
 \begin{itemize}
-\item \textbf{Radio}: Latin \textit{radius} (ray). Communication using EM waves from 3 Hz to 300 GHz. Frequency bands collectively called \textbf{radio spectrum}.
-\item \textbf{Radio Transceivers}: Enable transmission and reception of EM waves. Key component of an \textbf{antenna}, present in WiFi, Bluetooth, smartphones, IoT devices
-\item \textbf{Electromagnetic (EM) Waves}: EM waves consist of oscillating electric and magnetic fields,f, Frequency: cycles per second (Hz). Period inversely proportional to frequency.
+\item \textbf{Radio}: Latin \textit{radius} (ray). EM waves (3 Hz to 300 GHz, collectively called \textbf{radio spectrum}).
+\item \textbf{Radio Transceivers}: for transmission/reception of EM waves. WiFi, Bluetooth, IoT devices
+\item \textbf{Electromagnetic (EM) Waves}: EM waves consist of oscillating electric and magnetic fields. Frequency: cycles per second (Hz). Period inversely proportional to frequency.
 \item \textbf{Wavelength ($\lambda$)}: $\lambda = \frac{c}{f}$. (Since $v = fx$) Speed of light: $c = 3 \times 10^8$ m/s.
-\item \textbf{Example Wavelengths}: 3 kHz $\Rightarrow$ $\lambda \approx 100$ km, 100 MHz (FM) $\Rightarrow$ $\lambda = 3$ m.
-\item 2.4 GHz (WiFi) $\Rightarrow$ $\lambda = 0.125$, 300 GHz $\Rightarrow$ $\lambda = 1$ mm
-\item \textbf{Radio Terminology}: Radio technology implies transmitting and receiving EM waves using of frequency 3Hz to 300GHz. EM waves at these frequencies also called radio waves, frequency bands also called radio spectrum.
+\item \textbf{E.g. Wavelengths}: 98.7 MHz (FM) $\Rightarrow$ $\lambda = 3$ m; 2.4 GHz (WiFi) $\Rightarrow$ $\lambda = 0.125m$.
+\item \textbf{Radio Terminology}: Radio technology implies transmitting and receiving EM waves using of frequency in radio spectrum, also known as radio waves.
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{waveSpectrum}}
 
 \subsection{Radio Spectrum}
 \begin{itemize}
-\item \textbf{Radio Waves}: Modern communcation systems relies on radio waves, longest wavelength in EM spectrum (3 Hz to 300 GHz).
-\item \textbf{Radio Wave Characteristics}: \\
-\textbf{Strength/Power}: energy contained in the radio wave.\\
-\textbf{Frequency}: rate of periodic variation between electric and magnetic fields. \\
-\textbf{Bandwidth}: range of frequencies occupied by the signal.\\
-\textbf{Polarization}: orientation of the electric field - circular, elliptical, linear.\\
-\textbf{Modulation}: method of encoding information onto the carrier wave.
+\item \textbf{Radio Waves}: Modern comms use radio waves, longest $\lambda$ in EM spectrum (3 Hz to 300 GHz).
+\item \textbf{Radio Wave Characteristics}: 
+  \begin{itemize}
+    \item \textbf{Strength/Power}: energy contained in the radio wave.
+    \item \textbf{Frequency}: rate of periodic variation between electric and magnetic fields. 
+    \item \textbf{Bandwidth}: range of frequencies occupied by the signal.
+    \item \textbf{Polarization}: orientation of the electric field - circular, elliptical, linear.
+    \item \textbf{Modulation}: method of encoding information onto the carrier wave.
+  \end{itemize}
 \end{itemize}
-\centerline{\includegraphics[width = 0.8\linewidth]{radioWaves}}
+\centerline{\includegraphics[width = 0.7\linewidth]{radioWaves}}
 
 \subsection{Antennas}
 \begin{itemize}
   \item \textbf{Antenna}: Basically an electrical conductor or array of conductors designed to transmit, receive EM waves. (Transmit (TX): electrical energy to EM waves. Reception (RX): Opposite).
   \item \textbf{Directionality}: directional, omnidirectional (radiates equally in all directions).
   \item \textbf{Common Antenna types}: Monopole (straight rod on conductive ground plane, e.g. cars). Array (multiple elements form directional beam, e.g. radar). Parabolic (dish reflector e.g. satellite). Patch (flat element on substrate, e.g. mobile devices), loop, aperture etc. Dipole Antenna: Two conductors in opposite directions. 
-  \item \textbf{Antenna Size vs Frequency}: Antenna size inversely proportional to frequency of radio wave, lower frequency requires larger antenna. This is cause antennas work by resonating with the radio waves, working efficiently when it is a significant fraction of the signal wavelength. (E.g. half-wave dipole length ($\lambda / 2$), quarter-wave monopole length ($\lambda / 4$)).
+  \item \textbf{Antenna Size vs Frequency}: Antenna size inversely proportional to frequency of radio wave, lower frequency requires larger antenna. Antennas work by resonating with radio waves, work efficiently when specific significant fraction of the signal wavelength. (E.g. half-wave dipole length ($\lambda / 2$), quarter-wave monopole length ($\lambda / 4$)).
   \item Size $\propto \frac{1}{f}$: Low frequency $\Rightarrow$ very large antennas. High frequency $\Rightarrow$ compact antennas.
 \end{itemize}
 
@@ -220,13 +221,109 @@ Energy efficiency is a key design constraint
 \end{itemize}
 
 
+\section{2: Antennas, Propagations and Link Budget}
+
+\subsection{Antenna Size and Frequency}
+A radio transceiver enables transmission and reception of EM waves.The \textbf{antenna} converts electrical signals into radio waves (transmission) and vice versa (reception). Recall that they are \textbf{reciprocal}: they perform equally well for transmitting and receiving.
+
+\begin{itemize}
+  \item \textbf{Antenna size is inversely proportional to frequency}: higher frequency $\Rightarrow$ smaller antenna; lower frequency $\Rightarrow$ larger antenna. Follows from wavelength $\lambda = c/f$, where $c = 3 \times 10^8,\text{m/s}$.
+  \begin{itemize}
+    \item Antennas work efficiency only when their size is a significant fraction of the signal wavelength (e.g., half-wave dipole length = $\lambda/2$, quarter-wave monopole length = $\lambda/4$). (electrically resonant with wavelength of radio wave).
+  \end{itemize}
+  \item \textbf{Effective Area}: related to physical size and shape of antenna.
+  \item \textbf{Antenna Gain}: dimensionless quantity, measures antenna directs/receives radio waves in particular direction compared to a reference antenna. Usually in decibels (dB) or (dBi, dBd).
+  \begin{itemize}
+    \item \textbf{dBi}: dB relative to isotropic antenna, \textbf{dBd}: dB relative to half-wave dipole antenna
+    \item \textbf{Note}: Mathematically, dB and dBi treated same in a link budget, but conceptually they defer: dB represents actual loss or gains, dBi models antenna performance due to directionality.
+    \item \textbf{Formula}: $G = \frac{4\pi A_e}{\lambda^2} = \frac{4\pi f^2 A_e}{c^2}$, where $A_e$ is effective antenna area.
+    \item G: antenna gain ratio, f: carrier frequency, c: speed of light.
+  \end{itemize}
+\end{itemize}
+
+% TODO:
+% Question on Smartphone Antenna Dilemma
 
 
 
+\subsection{Radiation Pattern and Beamwidth}
+\begin{itemize}
+  \item \textbf{Radiation Pattern}: graphical representation of how antenna radiates or receives power in different directions. 3D or 2D plots.
+  \begin{itemize}
+    \item \textbf{Main Lobe}: direction of maximum radiation/reception.
+    \item \textbf{Side Lobes}: smaller lobes representing radiation/reception in other directions.
+    \item \textbf{Back Lobe}: lobe opposite to main lobe.
+    \item \textbf{Nulls}: directions with minimal radiation/reception.
+  \end{itemize}
+  \item \textbf{Beamwidth}: angular separation between the $-3,\text{dB}$ points (half-power points) of the main lobe. It defines the directivity and coverage area of the antenna.
+  \begin{itemize}
+    \item \textbf{$-3,\text{dB}$ points}: points on the radiation pattern where power drops to half of maximum value. ( $10\log_{10}(0.5) \approx -3,\text{dB}$).
+    \item \textbf{Narrow Beamwidth}: implies high directivity and gain (longer range, point-to-point links).
+    \item \textbf{Wide Beamwidth}: implies broader coverage but lower gain (broadcast scenarios).
+    \item \textbf{Examples}: parabolic antennas - highly directional,Yagi-Uda antennas directional,dipole antennas - quasi-omnidirectional, beamwidth $70$--$120^\circ$.
+  \end{itemize}
+\end{itemize}
+
+\centerline{\includegraphics[width = 1\linewidth]{lobes}}
+
+\subsection{Wireless Signal Propagation, Modulation and Range Estimation}
+\begin{itemize}
+  \item \textbf{Attenuation}: signal power loss as it propagates through space.
+  \item \textbf{Gain}: increase in energy of signal. Devices like amplifiers and antennas provide gain (improve signal strength).
+  \item \textbf{Decibels (dB)}: logarithmic unit to express ratios of power levels. We use decibels to express loss/attenuation of signal and gain. (express power ratios)
+  \begin{itemize}
+    \item \textbf{Formula}: $\text{dB} = 10\log_{10}\left(\frac{P_2}{P_1}\right)$, where $P_2$ and $P_1$ are power levels.
+    \item $-3\text{dB}$ change is half the power; $+10\text{dB}$ is $10\times$ increase, $20\text{dB}$ is $100\times$.
+    \item Use dB to measure changes in signal strength, as decibel values can be added and subtracted instead of multiplied and divided. E.g. signal experiences a $-3,\text{dB}$ loss followed by a $+10,\text{dB}$ gain, net change is $-3 + 10 = +7,\text{dB}$, power increase of about $5\times$.
+  \end{itemize}
+  \item \textbf{Decibel Milliwatt (dBm)}: absolute power unit referenced to $1,\text{mW}$. Signal power measure.
+  \begin{itemize}
+    \item \textbf{Formula}: $P(\text{dBm}) = 10\log_{10}(P_{\text{mW}})$, $P_{\text{mW}}$ is power in milliwatts.
+    \item E.g. Calculate power of signal with $dBm = -30$. \\
+      $-30 = 10 \log_{10}(P_{\text{mW}}) \implies P_{\text{mW}} = 10^{-3}\text{mW} = 0.001 \text{mW}$.
+    \item Key values: $0\text{dBm} = 1\text{mW}$. $20\text{dBm} = 100\text{mW}$. $30\text{dBm} = 1\text{W}$.
+    \item 0dBm (1mW) is common reference point, while 30dBm (1W) is often max permissible output power for devices in unlicensed frequencies bands, e.g. WiFi, Bluetooth.
+  \end{itemize}
+\end{itemize}
+
+\columnbreak
+
+\subsection{Wireless Signal Propagation, LoS, NLoS}
+The environment strongly affects propagation. Radio waves suffer attenuation due to distance, obstacles, and interference. Underwater communication favors sound instead of radio waves.
+
+\begin{itemize}
+  \item \textbf{Line-of-Sight (LoS) Propagation}: clear, direct, unobstructed path between transmitter and receiver. Common in open areas (rural, satellite links).
+  \item \textbf{Non-Line-of-Sight (NLoS) Propagation}: obstacles block direct path, causing reflection, diffraction, scattering. Common in urban, indoor environments. Better matches real-world deployments but reduces reliability and range.
+  \item \textbf{Friis Propagation Model}: Estimates received signal strength and range. Assumes LoS, free-space conditions, no obstacles or interference.
+  \begin{itemize}
+    \item \textbf{Friis Transmission Equation}: $P_r = P_t G_t G_r \left( \frac{c}{4\pi f_c d} \right)^\alpha$
+    \item $d$ is distance, $\alpha$ is path loss exponent ($\alpha = 2$ for free space LoS), $G_t, G_r$ are antenna gains, $c$ is speed of light, $f_c$ is carrier frequency.
+    \item the term $\left( \frac{\lambda}{4\pi d} \right)^\alpha$ captures power reaching receiver, aka path loss factor. FSPL isolates and inverts this term to quantify signal attenuation (loss) over distance in free space.
+  \end{itemize}
+  \item \textbf{Free Space Path Loss (FSPL)}: signal attenuation over distance in free space. (in dB)
+  \begin{itemize}
+    \item Represents absolute minimum loss any wireless link will experience, real channels always worse. FSPL helps quantify the cost of moving to different frequencies and distances.
+    \item \textbf{FSPL Formula}: $\text{FSPL}(dB) = 20\log_{10}(d_{\text{m}}) + 20\log_{10}(f_{\text{MHz}}) - 147.55$ 
+    \item $\text{FSPL}(dB) = 32.44 + 20\log_{10}(d_{\text{km}}) + 20\log_{10}(f_{\text{MHz}})$ 
+    \item $\text{FSPL}(dB) = 92.45 + 20\log_{10}(d_{\text{km}}) + 20\log_{10}(f_{\text{GHz}})$ (equivalent forms)
+  \end{itemize}
+  \item FSPL with distance and frequency: Doubling distance or frequency each on their own increases loss by $6,\text{dB}$ (inverse square law).
+  \item \textbf{Link Budget}: accounts for all gains, losses in wireless link to estimate received signal strength.
+  \begin{itemize}
+    \item In dB form, Friis becomes a link budget: $P_r(\text{dBm}) = P_t + G_t + G_r - \text{FSPL} - L_{\text{misc}}$
+    \item where $L_{\text{misc}}$ includes cable, atmospheric, and other losses.
+  \end{itemize}
+\end{itemize}
+
+% TODO look at example. and questions
+% Take a further look at the slides again.
 
 
+\subsection{Modulation Basics}
+Modulation encodes baseband information onto a high-frequency carrier, enabling efficient spectrum usage and multi-user communication. Common analog techniques include \textbf{AM} (vary amplitude) and \textbf{FM} (vary frequency). Digital counterparts include \textbf{ASK}, \textbf{FSK}, and \textbf{PSK}, which are central to computer and IoT communications.
 
 
+%TODO
 
 
 \end{multicols*}
