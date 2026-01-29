@@ -8,30 +8,22 @@
 \hypersetup{colorlinks=true, urlcolor=black, linkcolor=black}
 \usepackage{float}
 \usepackage{tabularx}
-
 \usepackage{newtxtext} 
-
-%for strikeout
-\usepackage{ulem}
-
-%For editing parbox
-\usepackage[table]{xcolor}
-%For editing itemise margins, reduce iterm separaion and list separation
-\usepackage{enumitem}
-% For math
-\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{ulem} %for strikeout
+\usepackage[table]{xcolor} %For editing parbox
+\usepackage{enumitem} %For edit itemise margins, item and list separations
+\usepackage{amsmath,amsthm,amsfonts,amssymb} % For math
+\usepackage[document]{ragged2e}
 
 %For pictures / figures
 \usepackage{color,graphicx,overpic}
 \graphicspath{ {./images/} }
 
-%\usepackage{newtxtext} 
-%\usepackage{amssymb}
-%\usepackage[table]{xcolor}
-%\usepackage{vwcol}
-%\usepackage{tikz}
-%\usepackage{wrapfig}
-%\usepackage{makecell}
+% Enable code blocks, highlighting, math fonts
+\usepackage{listings}
+\usepackage{soul}
+\usepackage{lmodern}
+\usepackage{colortbl, tikz}
 
 \pdfinfo{
   /Title (CS4222.pdf)
@@ -40,32 +32,15 @@
   /Subject ()
   /Keywords (tex)}
 
-%% Margins for PAPER
-
-% This sets page margins to .5 inch if using letter paper, and to 1cm
-% if using A4 paper. (This probably isn't strictly necessary.)
-% If using another size paper, use default 1cm margins.
-% \ifthenelse{\lengthtest { \paperwidth = 11in}}
-%	{ \geometry{top=.3in,left=.3in,right=.3in,bottom=.3in} }
-%	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-%		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-%		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-%	}
-
-%% Margins for A4 PAPER
-\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm}
-
-% Turn off header and footer
-\pagestyle{empty}
-
-% for tight centres (less spacing)
+\geometry{top=0.5cm,left=0.5cm,right=0.5cm,bottom=0.5cm} % Margins for A4 PAPER
+\pagestyle{empty} % Turn off header and footer
 \newenvironment{tightcenter}{%
   \setlength\topsep{0pt}
   \setlength\parskip{0pt}
   \begin{center}
-}{%
+}{
   \end{center}
-}
+} % for tight centres (less spacing)
 
 % Redefine section commands to use less space
 \makeatletter
@@ -77,17 +52,11 @@
                                 {-1explus -.5ex minus -.2ex}%
                                 {0.5ex plus .2ex}%
                                 {\normalfont\normalsize\bfseries}}
-\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
-                                {-1ex plus -.5ex minus -.2ex}%
-                                {1ex plus .2ex}%
-                                {\normalfont\small\bfseries}}
-
 % 4. Subsubsection acts as Paragraph (Level 4) - BLOCK STYLE
 \renewcommand{\subsubsection}{\@startsection{paragraph}{4}{0mm}%
                                 {-1ex plus -.5ex minus -.2ex}% Space above
                                 {0.5ex plus .2ex}% POSITIVE value = Block (New line)
-                                {\normalfont\footnotesize\bfseries}} % Smaller font
-
+                                {\normalfont\footnotesize\bfseries}}
 \newcommand{\inlineSection}[1]{%
     \@startsection{section}{1}{0mm}%
                   {-1ex plus -.5ex minus -.2ex}%
@@ -95,9 +64,6 @@
                   {\normalfont\large\bfseries\underline}{#1}%
 }
 
-% change font
-%\renewcommand{\familydefault}{\sfdefault}
-%\renewcommand\rmdefault{\sfdefault}
 \makeatother
 
 % Define BibTeX command
@@ -111,14 +77,48 @@
 \setlength{\parskip}{0pt plus 0.5ex}
 
 %% this changes all items (enumerate and itemize, reduce margins)
-\setlength{\leftmargini}{0.5cm}
-\setlength{\leftmarginii}{0.5cm}
-\setlist[itemize,1]{leftmargin=2mm,labelindent=1mm,labelsep=1mm, itemsep = 0mm, before=\justifying}
-\setlist[itemize,2]{leftmargin=2mm,labelindent=0.5mm,labelsep=0.5mm, itemsep = -0.2mm, topsep=-0.2mm, before=\justifying}
-%\setlist{nosep}
+\setlist[itemize]{
+  leftmargin=2mm,
+  labelindent=1mm,
+  labelsep=1mm,
+  topsep=0pt,
+  noitemsep,
+  before=\justifying
+}
 
-\usepackage[document]{ragged2e}
+\setlist[itemize,2]{
+  labelindent=0.5mm,
+  labelsep=0.5mm
+}
 
+\setlist[enumerate]{
+  leftmargin=2mm,
+  topsep=0pt,
+  noitemsep
+}
+
+
+% Color Math and Highlighting Definitions
+\definecolor{mathblue}{cmyk}{1,.72,0,.38}
+\definecolor{paleyellow}{RGB}{251,243,218}
+
+% This command makes all inline math ($...$) blue automatically
+\everymath\expandafter{\the\everymath \color{mathblue}}
+
+% Custom definitions for highlighting
+\newcommand{\definition}[2][]{\sethlcolor{paleyellow}\hl{\textbf{#2}} #1  $\rightarrow$}
+\newcommand{\ildefinition}[1]{\sethlcolor{paleyellow}\hl{\textbf{#1}}}
+
+\lstset{
+    tabsize=2,    
+    language={java},
+    basicstyle = \tiny\ttfamily, % Use tiny to prevent overflow in columns
+    frame=single,
+    breaklines=true,
+    keywordstyle=\color[rgb]{0,0,1},
+    commentstyle=\color{teal},
+    backgroundcolor=\color{white}
+}
 % -------------------------------------------------------------------------------
 
 % START OF DOCUMENT HERE
@@ -357,6 +357,13 @@ Modulation encodes baseband information onto a high-frequency carrier, enabling 
 
 %TODO
 
+
+\section{References and Credits}
+\begin{itemize}
+  \item Course Content topics, ordering from CS4222, National University of Singapore.
+  \item Select contents, diagrams referenced from goated CS4222 Cheatsheet - @JasonYapzx \\ 
+  (@JasonYapzx cheatsheet is clear and concise, while these notes focuses understanding)
+\end{itemize}
 
 
 
