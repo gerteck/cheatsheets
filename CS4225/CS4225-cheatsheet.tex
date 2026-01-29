@@ -122,8 +122,7 @@
 \section{CS4225/5425 Big Data Systems, Data Science}
 \centerline{AY24/25 Sem 2. github.com/gerteck}
 
-(Big) Data science. Interdisciplinary field about processes and systems 
-to extract knowledge or insights from data in various forms.
+(Big) Data science. Interdisciplinary field about processes and systems to extract knowledge or insights from data in various forms.
 \begin{itemize}
 \item \textbf{Processing} diff. types of data (large data volume, graph data, stream data).
 \item \textbf{Models of Computation}: MapReduce/Spark, Large graph processing engines, Streams and online algorithms.
@@ -184,6 +183,7 @@ Data science, cross-disciplinary, emerging research area w. applications in engi
 
 \subsubsection{Data Flow Paths}
 Data flow paths depend on the location of the source and destination. Data access may cross several components, e.g. hard disk, DRAM, rack switch, cluster switch.
+
 \begin{itemize}[itemsep = -2pt]
 \item E.g. Local DRAM $\rightarrow$ Local Disk in same server.
 \item Server A DRAM to server B DRAM in same rack (i.e.  Local DRAM  $\rightarrow$ Rack Switch  $\rightarrow$ Server B’s DRAM)
@@ -217,6 +217,7 @@ Data flow paths depend on the location of the source and destination. Data acces
 \subsection{3. \underline{MapReduce}}
 Big data requires new prog. abstractions, runtime systems. Hadoop MapReduce widely used for efficient, process large datasets in e.g. databases, data mining. \\
 \textbf{MapReduce}: prog. model \& associated runtime system to process large datasets in parallel across distributed cluster. (Parallel $+$ Divide \& Conquer Paradigm). MapReduce provides functional abstractions for two operations.
+
 \begin{itemize}
     \item \textbf{Map function}:  \texttt{(k1, v1) → List(k2, v2)}. Processes each input key-value pair and emits intermediate key-value pairs. 
     \item \textbf{Reduce}: Aggregate intermediate results to generate the final output.  \texttt{reduce(k2, List(v2)) → List(k3, v3)}. All values with same key sent to same reducer.
@@ -425,7 +426,7 @@ Clustering technique. Separates data points into $K$ clusters by iteratively opt
 \textbf{MapReduce Usage in Data Mining, Machine Learning}
 \begin{itemize}
 \item MapReduce still needs to iteratively run till convergence.
-\item Iiterative algorithms like K-Means maybe not ideal for MapReduce, high network, disk I/O overhead (input disk read for every iteration). 
+\item Iterative algorithms like K-Means maybe not ideal for MapReduce, high network, disk I/O overhead (input disk read for every iteration). 
 \item \textbf{In-mapper combiner}: aggregate values directly in mapper using in-memory structures to emit fewer k-v pairs, reducing number of combiner calls. Reduce disk I/O since fewer intermediate records, but hgiher memory usage in mapper. 
 \item \textbf{System Combiner}: Use dedicated combiner function (run after map phase before data sent to reducer), run by system. More suitable when memory is limited.
 \item \textbf{Secondary Sort} - No aggregation, records (same key) go reducer in specific order.
@@ -995,7 +996,7 @@ Each event typically includes metadata such as a timestamp, key, and payload (th
 	\item \textbf{Fault Tolerance}: Photo uploads not lost even if some server fail.
 	\end{itemize}
 \item \textbf{Advantages of Kafka}: High Throughput, Low Latency, Durability, Scalability.
-\item \textbf{Challenges with Kafka}: Complexity, Resource Intensive, Latency for small mesages.
+\item \textbf{Challenges with Kafka}: Complexity, Resource Intensive, Latency for small messages.
 \end{itemize}
 
 
@@ -1323,6 +1324,7 @@ Delta Lake is an open-source storage layer (Lakehouse) that sits on top of exist
 
 \subsubsection{Data Lakehouse Architecture}
 Delta Lake serves as the foundation for building a \textit{data lakehouse}, combines best features of data lakes and data warehouses:
+
 \begin{itemize}
 \item \textbf{Data Lake Benefits}: Cost-effective storage for large-scale data. Flexibility in choosing storage systems, file formats, and processing engines. Support for structured, semi-structured, and unstructured data.
 \item \textbf{Data Warehouse Benefits}: Strong ACID guarantees for transactional integrity. (Relational DB). Optimized query performance using metadata and indexing. Schema enforcement for improved data quality.
@@ -1338,7 +1340,7 @@ Delta Lake serves as the foundation for building a \textit{data lakehouse}, comb
 \centerline{\includegraphics[width=1\linewidth]{lakeHouse}}
 
 \subsubsection{Delta Lake Format}
-Delta Lake stores data in the **Parquet format** with additional metadata to support advanced features:
+Delta Lake stores data in the \textbf{Parquet format} with additional metadata to support advanced features:
 \begin{itemize}
 \item \textbf{Parquet Files}: Column-oriented storage for efficient compression and query performance.  Open-source and self-describing, containing both data and metadata (schema and file structure).
 \item \textbf{Delta Log}: Transaction log (`DeltaLog`) is a critical component of Delta Lake. It records every transaction made against a Delta table, acting as the "single source of truth." Enables features like ACID transactions, scalable metadata handling, and time travel.
