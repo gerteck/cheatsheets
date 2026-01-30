@@ -226,7 +226,7 @@ Energy efficiency is a key design constraint.
 
 % \centerline{\includegraphics[width = 0.7\linewidth]{radioWaves}}
 
-\section{2: Antennas, Propagation and Link Budget}
+\section{2. Antennas, Propagation and Link Budget}
 
 \subsection{Antenna Basics, Directionality, Types}
 \begin{itemize}
@@ -425,7 +425,8 @@ The environment strongly affects propagation. Radio waves suffer attenuation due
 
 \subsection{Total link gain in wireless communication}
 \begin{itemize}
-  \item Net amplification/attenuation of EM signal along the communication path. Antennas, FSPL, any other system component is included. 
+  \item Net amplification/attenuation of EM signal along the communication path.
+  \\ Antennas, FSPL, any other system component is included. 
   \begin{itemize}
     \item \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-150\fboxrule}{% 
         $\text{(dB)} = G_{Tx} + G_{Rx} - L_{Path} - L_{Misc}$
@@ -440,7 +441,7 @@ The environment strongly affects propagation. Radio waves suffer attenuation due
 
 \subsection{Link Budget and Total Link Gain}
 \begin{itemize}
-  \item \textbf{Link Budget}: Calculation that takes into account all gains/losses to determine received signal strength of wireless signal in a communication system
+  \item \textbf{Link Budget}: Calculate received signal strength given all gains/losses in comm. system
   \item Total Link Budget ($P_{rx}$) = $P_{tx} + $ Total Link Gain 
   \item \textbf{Total Link Budget} \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-280\fboxrule}{% 
     $ P_{Rx}= P_{Tx} + G_{Tx} + G_{Rx} - L_{Total}$
@@ -452,7 +453,8 @@ The environment strongly affects propagation. Radio waves suffer attenuation due
     \item $L_{\text{Total}}$ = Total losses (e.g., free space path loss, cable losses) in dB.
     \item $P_{\text{Rx}}$ = Received power in dBm.
   \end{itemize}
-  \item \textbf{Google Project Loon Case Study}: Balloons at 20km altitude vs. satellites at 400km. Lower latency, transmit power, IoT device with sensitivity of -100 dBm can comms with balloon 20km away using only 5.3mW of power.
+  \item \textbf{Link Margin}: Received power minus receiver sensitivity. (Excess above bare min needed)
+  \item \textbf{Google Project Loon Case Study}: Balloons at 20km altitude vs. satellites at 400km. Lower latency/power. -100 dBm sensitivity device comms balloon 20km away, only 5.3mW power.
 \end{itemize}
 
 % TODO look at example. and questions
@@ -471,7 +473,7 @@ The environment strongly affects propagation. Radio waves suffer attenuation due
   \end{itemize}
   \item \textbf{Adding dBi to dBm to get EIRP:}
   \begin{itemize}
-    \item Effective Isotropic Radiated Power (EIRP): total output power including antenna gain: $EIRP = P_{TX}(dBm) + G_{antenna}(dBi)$ (power in direction of antenna main lobe)
+    \item \textbf{Effective Isotropic Radiated Power (EIRP)}: total output power including antenna gain: \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-280\fboxrule}{$EIRP = P_{TX}(dBm) + G_{antenna}(dBi)$}} (in direction of antenna main lobe)
   \end{itemize}
   \item \textbf{Subtracting Losses (dB) from Power (dBm)}
   \begin{itemize}
@@ -509,225 +511,266 @@ dBm + dBm (via linear) & $\checkmark$ & Convert to mW, sum, then log: $P_{total}
 \end{tabularx}
 }
 
+\section{3. Modulation Techniques for Wireless Communication}
 
+\subsubsection{How are radio waves modified to carry information}
+How information 'rides' on radio waves. Radio waves are pure sine waves that carry no information. To modify to send information (e.g. speech, bits):
 
-% \subsubsection{How are radio waves modified to carry information}
+\begin{itemize}
+  \item Start with low frequency baseband signal (message signal)
+  \item Use it to modify a high frequency carrier signal (radio wave)
+  \item Transmit modified carrier signal over the air
+  \item Receiver demodulates to recover baseband signal
+\end{itemize}
+This process is called \textbf{modulation}. Modulation Techniques include Amplitude Modulation (AM), Frequency Modulation (FM), Phase Modulation (PM), or vary them together and advanced digital schemes like QAM, PSK.
+
+\subsection{Modulation}
+Encoding 'baseband' information into analog (continuous, smooth waveform) 'carrier' signal. Baseband signal often $\downarrow$ frequency than carrier. Frequency of carrier dictates spectrum usage.
+
+\begin{itemize}
+  \item \textbf{Why use a high-frequency carrier instead of sending baseband directly?}
+  \begin{itemize}
+    \item Baseband signals or info change at a much lower rate. (E.g. Speech up to $20$KHz, temp changes $\approx$ few Hz) - these signals are slow compared to radio waves (MHz to GHz).
+    \item If transmit baseband directly, need large antennas (size $\approx \frac{1}{4} \lambda$), and frequency overlaps.
+  \end{itemize}
+
+  \item \textbf{Benefits of modulating onto high frequency carrier}
+  \begin{itemize}
+    \item More efficient (smaller) antenna size, better radio spectrum usage with no overlap, and enables communication among devices sharing the spectrum. (e.g. 2.401 GHz, 2.412 GHz - frequency division multiplexing).
+  \end{itemize}
+\end{itemize}
+
+\centerline{\includegraphics[width = 1\linewidth]{modulation.jpg}}
+\begin{itemize}
+  \item \textbf{Modulation Index}: Signifies extent carrier signal modulated w. message signal. Determines strength of modulated signal, impacts bandwidth, power distribution and overall signal quality.
+\end{itemize}
+
+\subsection{Amplitude modulation (AM)}
+\begin{itemize}
+  \item Change amplitude of carrier signal according to the message signal
+      \[
+        \boxed{s(t) = [A_c + A_m \cdot m(t)] \cdot (2\pi f_c t)}
+      \]
+      \begin{multicols}{2}
+        \begin{itemize} 
+          \item $A_c$ Carrier amplitude
+          \item $A_m$ Baseband signal amplitude
+          \item $m(t)$ Message signal
+          \item $f_c$ Carrier Frequency
+        \end{itemize}
+    \end{multicols}
+  \item \textbf{AM Modulation Index $\mu$}
+  \begin{itemize}
+    \item For amplitude modulation $(modulation \ index): \mu = A_m / A_c$
+    \begin{itemize}
+      \item $A_m$ = Peak amplitude of modulating/baseband signal
+      \item $A_c$ = Peak amplitude of carrier signal
+      \item For AM: $\mu < 1$: under-modulated (weak signal, no distortion); $\mu = 1$: fully modulated; $\mu > 1$: over-modulated (distortion, clipping)
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\subsection{Frequency modulation (FM)}
+\begin{itemize}
+  \item Change frequency of carrier signal according to the message signal
+  \item Advantages over AM: resilient to interference, spectrum efficiency, remains used for radio broadcast, computer communication.
+  \item \textbf{Bandwidth}: how much "room" signal occupies in frequency spectrum. FM bandwidth depends on how \textit{fast} and \textit{how much} you wiggle carrier freq around $f_c$ to carry information.
+      \[
+        \boxed{s(t) = A_c cos (2\pi f_c t + 2\pi k_f \int m(t) dt))}
+      \] 
+    \begin{itemize}
+      \item $A_c$ Carrier amplitude, $f_c$ Carrier Frequency
+      \item $k_f$ Frequency sensitivity of modulator (how much carrier freq. changes in response to amplitude of modulating signal)
+      \item $m(t)$ Modulating signal
+    \end{itemize}
+  \item \textbf{FM Modulation Index: $\beta$}
+  \begin{itemize}
+    \item $\beta(modulation \ index) = \triangle f / f_m$
+    \item $\triangle f$ = Peak frequency deviation (how much carrier frequency changes)
+    \item $f_m$ = Maximum frequency of the modulating signal
+    \item $\beta < 1$: Narrow band signal, $\beta > 1$ Wideband signal.
+    \item FM broadcast uses wideband signal, better noise immunity (less static, hiss)
+    \item Given by Carson's rule, bandwidth $B \approx 2 (\triangle f + f_m)$
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{What is a phase}
+\begin{itemize}
+  \item Represents position of point on waveform cycle, an offset from starting position of sine wave
+  \item Complete cycle of sine wave is 360 degress / 2 $\pi$ radian
+  \begin{multicols}{2}
+      \[
+        \boxed{s(t) = A \cos(2\pi ft + \phi)}
+      \]
+    \columnbreak
+    \begin{itemize}
+      \item $A$ = Amplitude of signal
+      \item $f$ = Frequency of signal
+      \item $\phi$ Phase (phase contstant / offset)
+    \end{itemize}
+  \end{multicols}
+  \item $\phi$ determines where in its cyclewave is (begins at $t=0$)
+  \item Changing $phi$ shifts waveform left or right in time
+  \item \textbf{\underline{Impact of phase shifts on waves (summation)}} (interference)
+  \begin{itemize}
+    \item \textit{Constructive:} 2 waves with same phase add tgt to form larger amplitude
+    \item \textit{Destructive:} 2 waves out-of-phase (e.g. 180$\deg$ apart), cancel each other
+  \end{itemize}
+\end{itemize}
+
+\subsection{Phase modulation}
+\begin{itemize}
+  \item Change phase of carrier signal according to the message signal
+  \item Integral part of modern communcation standards: Wifi/Television
+  \item Advantages over FM: Better SNR and spectral efficiency
+  \item Uses different phase shifts to represent digital data
+  \begin{multicols}{2}
+    \begin{center}
+      \[
+        \boxed{s(t) = A \cos(2\pi f_c t + 2\pi k_p m(t))}
+      \]
+    \end{center}
+    \columnbreak
+    \begin{itemize}
+      \item $A$ = Amplitude of signal
+      \item $f_c$ = Carrier frequency
+      \item $k_p$ = Phase sensitivity (rad / unit amplitude)
+      \item $m(t)$ = modulating signal
+    \end{itemize}
+  \end{multicols}
+\end{itemize}
+
+\subsubsection{Binary Phase Shift Keying}
+\begin{itemize}
+  \item simple form of phase modulation where phase is shifted between 2 values 
+  \item \textit{Bit 0} $\rightarrow$ 0 degrees ($A\sin (2\pi f_c t)$)
+  \item \textit{Bit 1} $\rightarrow$ 180 degrees ($A\sin(2\pi f_c t + \pi)$)
+\end{itemize}
+\includegraphics*[width=8.5cm, height=2.8cm]{bpsk.png}
+
+\subsubsection{Quadrature Binary Phase Shift Keying}
+\begin{itemize}
+  \item extends BPSK with 4 distinct phase states, allow encoding of 2 bits/symbols
+  \item \textit{Bit 00} $\rightarrow$ 45 degrees ($A\sin (2\pi f_c t + \pi/8)$)
+  \item \textit{Bit 01} $\rightarrow$ 90 degrees ($A\sin(2\pi f_c t + \pi/4)$)
+  \item \textit{Bit 10} $\rightarrow$ 135 degrees, \textit{Bit 11} $\rightarrow$ 225 degrees
+  \item We are \textit{doubling the bit rate} for the same bandwidth
+\end{itemize}
+\centerline{\includegraphics[width = \linewidth]{modulations.jpg}}
+
+\subsection{Digital equivalent of AM FM and PM modulation}
+\begin{itemize}
+  \item Vary analog signal according to digital bits
+  \begin{itemize}
+    \item ASK: amplitude/FSK: frequency/PSK: phase shift keying
+  \end{itemize}
+  \item Digital variants relevant with respect to computer communication
+\end{itemize}
+
+% \subsubsection{Wireless Link quality and Reliability}
 % \begin{itemize}
-%   \item Encoding information `basedband' in an analog `carrier' signal
+%   \item Link reliability metrics quantify quality and stability of wireless links
+%   \item Wireless links are unstable due to interference, multipath fading, mobility
 %   \begin{itemize}
-%     \item Baseband signal often much lower in frequence than carrier
-%     \item Frequency of the carrier signal dictates the part of the radio spectrum
-%   \end{itemize}
-%   \item Why? baseband signals or info change at a much lower rate
-%   \begin{itemize}
-%     \item Speech up to $20KHz$, temp changes $\approx$ few $Hz$
-%     \item Enables a better usage of the radio spectrum
-%     \item Enables communication among several devices sharing the spectrum
-%   \end{itemize}
-%   \item Modulation techniques
-%   \begin{itemize}
-%     \item Vary frequency, amplitute, phase of carrier signal according to msg signal
-%     \item OR vary them together to support complex modulation schemes
-%     \item Analog / Digital counterparts of these modulations schemes exists
+%     \item Helps in routing decisions optimizing network performance and improving communication reliability among other uses
+%     \item From application perspective, no buffering and low latency
 %   \end{itemize}
 % \end{itemize}
 
-% \subsubsection{Modulation}
-% % \includegraphics*[width=8.5cm, height=1.7cm]{modulation.png}
+\vfill
+\null
+\columnbreak
 
-% \subsubsection{Amplitute modulation}
-% \begin{itemize}
-%   \item Change amplitute of carrier signal according to the message signal
-%   % \item Simplest and earliest modulation technical
-%   % \item Remains widely used for radio broadcast/computer communication
-%       \[
-%         \boxed{s(t) = [A_c + A_m \cdot m(t)] \cdot (2\pi f_c t)}
-%       \]
-%       \begin{multicols}{2}
-%         \begin{itemize} 
-%           \item $A_c$ Carrier Amplitute
-%           \item $A_m$ Baseband signal amplitude
-%           \item $m(t)$ Message signal
-%           \item $f_c$ Carrier Frequency
-%         \end{itemize}
-%     \end{multicols}
-%   \item \textbf{Modulation Index}
-%   \begin{itemize}
-%     % \item Signifies extent to which carrier signal modulated with message signal. Determines strength of modulated signal, impacts bandwidth and also power distribution and overall signal quality.
-%     \item For amplitude modulation $\mu (modulation \ index) = A_m / A_c$
-%     \begin{itemize}
-%       \item $A_m$ = Peak amplitude of modulating/baseband signal
-%       \item $A_c$ = Peak amplitude of carrier signal
-%       \item $\mu < 1$: under-modulated (weak signal, no distortion); $\mu = 1$: fully modulated; $\mu > 1$: over-modulated (distortion, clipping)
-%     \end{itemize}
-%   \end{itemize}
-% \end{itemize}
+\subsection{Wireless Link Quality and Reliability Metrics:}
+\begin{itemize}
+  \item \textbf{Packet Delivery Ratio (PDR)}: ratio of successfully received packets to transmitted packets. 
 
-% \subsubsection{Frequency modulation}
-% \begin{itemize}
-%   \item Change frequency of carrier signal according to the message signal
-%   \item Advantages over AM: resilient to interference, spectrum efficiency
-%   \item Remains widely used for radio broadcast, also computer communication
-%   \item Bandwidth of frequency modulated signals
-%       \[
-%         \boxed{s(t) = A_c cos (2\pi f_c t + 2\pi k_f \int m(t) dt))}
-%       \] 
-%     \begin{itemize}
-%       \item $A_c$ Carrier Amplitute, $f_c$ Carrier Frequency
-%       \item $k_f$ Frequency sensitivity of modulator (how much carrier freq. changes in response to amplitude of modulating signal)
-%       \item $m(t)$ Modulating signal
-%     \end{itemize}
-%   \item \textbf{Modulation Index}
-%   \begin{itemize}
-%     \item $\beta(modulation \ index) = \triangle f / fm$
-%     \item Given by Carson's rule, bandwidth is $2 (\triangle f + fm)$
-%     \item $\triangle f$ = Peak frequency deviation (how much carrier frequency changes)
-%     \item $f_m$ = Maximum frequency of the modulating signal
-%     \item $B < 1$: Narrow band signal, $B > 1$ Wideband signal, better noise immunity, signal quality, FM broadcast
-%   \end{itemize}
-% \end{itemize}
+  \centerline{
+    \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-280\fboxrule}{% 
+      $PDR = \frac{Received \ Packets}{Transmitted \ Packets} \times 100$
+    }}
+  }
+  \begin{itemize}
+    \item $\uparrow$ = better link quality, $\downarrow$ = congestion/interference or poor connectivity
+  \end{itemize}
 
-% \subsubsection{What is a phase}
-% \begin{itemize}
-%   \item Represents position of point on waveform cycle, an offset from starting position of sine wave
-%   \item Complete cycle of sine wave is 360 degress / 2 $\pi$ radian
-%   \begin{multicols}{2}
-%       \[
-%         \boxed{s(t) = A \cos(2\pi ft + \phi)}
-%       \]
-%     \columnbreak
-%     \begin{itemize}
-%       \item $A$ = Amplitude of signal
-%       \item $f$ = Frequency of signal
-%       \item $\phi$ Phase (phase contstant / offset)
-%     \end{itemize}
-%   \end{multicols}
-%   \item $\phi$ determines where in its cyclewave is (begins at $t=0$)
-%   \item Changing $phi$ shifts waveform left or right in time
-%   \item \textbf{\underline{Impact of phase shifts on waves (summation)}} (interference)
-%   \begin{itemize}
-%     \item \textit{Constructive:} 2 waves with same phase add tgt to form larger amplitude
-%     \item \textit{Destructive:} 2 waves out-of-phase (e.g. 180$\deg$ apart), cancel each other
-%   \end{itemize}
-% \end{itemize}
+  \item \textbf{Bit Error Rate (BER):} Ratio of bits received in error to the total transmitted bits. Indicates transmission quality at the physical layer.
+  
+  \centerline{
+  \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-240\fboxrule}{% 
+    $BER = \frac{Errored \ Bits}{Total \ Bits \ Transmitted} \times 100$
+  }}
+  }
+  \begin{itemize}
+    \item $\downarrow$ = fewer errors + better link perf. $\uparrow$ = data corruption / retransmissions
+    \item Wired Ethernet: $10^{-12}$, Wireless Wifi: $10^{-6}$ to $10^{-3}$, Poor cxn = $10^{-2}$ 
+  \end{itemize}
 
-% \subsubsection{Phase modulation}
-% \begin{itemize}
-%   \item Change phase of carrier signal according to the message signal
-%   \item Integral part of modern communcation standards: Wifi/Television
-%   \item Advantages over FM: Better SNR and spectral efficiency
-%   \item Uses different phase shifts to represent digital data
-%   \begin{multicols}{2}
-%     \begin{center}
-%       \[
-%         \boxed{s(t) = A \cos(2\pi f_c t + 2\pi k_p m(t))}
-%       \]
-%     \end{center}
-%     \columnbreak
-%     \begin{itemize}
-%       \item $A$ = Amplitude of signal
-%       \item $f_c$ = Carrier frequency
-%       \item $k_p$ = Phase sensitivity (rad / unit amplitude)
-%       \item $m(t)$ = modulating signal
-%     \end{itemize}
-%   \end{multicols}
-% \end{itemize}
+  \item \textbf{Signal-to-Noise Ratio (SNR):} Ratio of signal power to background noise, often measured in decibels (dB). 
+  
+  \centerline{
+    \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-250\fboxrule}{% 
+      $SNR = 10\log_{10}(\frac{P_{signal}}{P_{noise}})$ | if $P$ in $W$
+    }}
+  }
+  \begin{itemize}
+    \item Else $P_{signal} - P_{noise}$ in $dBm$
+    \item $\uparrow$ = stronger signal, fewer errors. $\downarrow$ = more packet loss. 
+    \item SNR $> 25 dB$ = excellent (4G LTE etc). SNR $< 10 dB$ = unreliable link.
+  \end{itemize}
 
-% \subsubsection{Binary Phase Shift Keying}
-% \begin{itemize}
-%   \item simple form of phase modulation where phase is shifted between 2 values 
-%   \item \textit{Bit 0} $\rightarrow$ 0 degrees ($A\sin (2\pi f_c t)$)
-%   \item \textit{Bit 1} $\rightarrow$ 180 degrees ($A\sin(2\pi f_c t + \pi)$)
-% \end{itemize}
-% \includegraphics*[width=8.5cm, height=2.8cm]{bpsk.png}
+  \item \textbf{Expected Transmission Count (ETX):} Measures expected number of trasmissions (including re-trasmission) required for packet to successfully received. Used in routing algorithms.
+  
+  \centerline{
+    \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-340\fboxrule}{% 
+      $ETX = \frac{1}{P_{forward} \times P_{reverse}}$
+    }} 
+  }
+  \begin{itemize}
+    \item Lower ETX means fewer transmission and better efficiency, higher leads to increased latency and power consumption
+  \end{itemize}             
+\end{itemize}
 
-% \subsubsection{Quadrature Binary Phase Shift Keying}
-% \begin{itemize}
-%   \item extends BPSK with 4 distinct phase states, allow encoding of 2 bits/symbols
-%   \item \textit{Bit 00} $\rightarrow$ 45 degrees ($A\sin (2\pi f_c t + \pi/8)$)
-%   \item \textit{Bit 01} $\rightarrow$ 90 degrees ($A\sin(2\pi f_c t + \pi/4)$)
-%   \item \textit{Bit 10} $\rightarrow$ 135 degrees, \textit{Bit 11} $\rightarrow$ 225 degrees
-%   \item We are \textit{doubling the bit rate} for the same bandwidth
-% \end{itemize}
+\subsubsection{Understanding Channel Capacity \& Link Quality}
+\begin{itemize}
+    \item \textbf{Definition:} Max rate information can be transmitted over comm. channel without error.
+    \item Channel capacity is measured in the unit of \textbf{bits/second}.
+    \item How does channel capacity relate to link quality?
+    \begin{itemize}
+        \item Higher \textbf{SNR} usually leads to a higher capacity. (Bandwidth is the frequency range over which signal is transmitted; wider bandwidth more data can fit, higher rates)
+        \item Factors that reduce link quality: \textbf{Fading, interference}, reducing channel capacity.
+    \end{itemize}
+    \item Channel Capacity and Link Quality | Shannon Perspective:
+    \begin{multicols}{2}
+      \begin{center}
+        \[
+          \boxed{C = B \times \log_2(1 + \frac{S}{N})}
+        \]
+      \end{center}
+      \columnbreak
+      \begin{itemize}
+        \item $C$ Channel capacity in bits per second (bps)
+        \item $B$ = Bandwidth of the channel in Hertz (Hz)
+        \item $S/N$ Signal-to-noise ratio (SNR) expressed as linear ratio
+      \end{itemize}
+    \end{multicols}
+\end{itemize}
 
-% \subsubsection{Digital equivalent of AM FM and PM modulation}
-% \begin{itemize}
-%   \item Vary analog signal according to digital bits
-%   \begin{itemize}
-%     \item ASK: amplitute/FSK: frequency/PSK: phase shift keying
-%   \end{itemize}
-%   \item Digital variants relevant when we talk about computer communication
-% \end{itemize}
-
-% % \subsubsection{Wireless Link quality and Reliability}
-% % \begin{itemize}
-% %   \item Link reliability metrics quantify quality and stability of wireless links
-% %   \item Wireless links are unstable due to interference, multipath fading, mobility
-% %   \begin{itemize}
-% %     \item Helps in routing decisions optimizing network performance and improving communication reliability among other uses
-% %     \item From application perspective, no buffering and low latency
-% %   \end{itemize}
-% % \end{itemize}
-
-% \subsubsection{Link Quality Metrics:}
-% \begin{itemize}
-%   \item \textbf{Packet Delivery Ratio (PDR)}: ratio of successfully received packets to transmitted packets. \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-280\fboxrule}{% 
-%     $PDR = \frac{Received \ Packets}{Transmitted \ Packets} \times 100$
-%   }}
-%   \begin{itemize}
-%     \item $\uparrow$ = better link quality, $\downarrow$ = congestion/interference or poor connectivity
-%   \end{itemize}
-%   \item \textbf{Bit Error Rate (BER):} Ratio of bits received in error to the total transmitted bits. Indicates transmission quality at the physical layer
-%   \begin{itemize}
-%     \item \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-240\fboxrule}{% 
-%       $BER = \frac{Errored \ Bits}{Total \ Bits \ Transmitted} \times 100$
-%     }}
-%     \item $\downarrow$ = fewer errors + better link perf. $\uparrow$ = data corruption / retransmissions
-%     \item Wired Ethernet: $10^{-12}$, Wireless Wifi: $10^{-6}$ to $10^{-3}$, Poor cxn = $10^{-2}$ 
-%   \end{itemize}
-%   \item \textbf{Signal-to-Noise Ratio (SNR):} Ratio of signal power to background noise, often measured in decibels. \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-250\fboxrule}{% 
-%     $SNR = 10\log_{10}(\frac{P_{signal}}{P_{noise}})$ | if $P$ in $W$
-%   }}
-%   \begin{itemize}
-%     \item Else $P_{signal} - P_{noise}$ in $dBm$
-%     \item $\uparrow$ = stronger signal, fewer errors. $\downarrow$ = more packet loss. 
-%   \end{itemize}
-%   \item \textbf{Expected Transmission Count (ETX):} Measures expected number of trasmissions (including re-trasmission) required for packet to successfully received. Used in routing algorithms \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-340\fboxrule}{% 
-%     $ETX = \frac{1}{P_{forward} \times P_{reverse}}$
-%   }} 
-%   \begin{itemize}
-%     \item Lower ETX means fewer transmission and better efficiency, higher leads to increased latency and power consumption
-%   \end{itemize}             
-% \end{itemize}
-
-% \subsubsection{Understanding Channel Capacity \& Link Quality}
-% \begin{itemize}
-%     \item \textbf{Definition:} Maximum rate at which information can be transmitted over a communication channel without error.
-%     \item Channel capacity is measured in the unit of \textbf{bits/second}.
-%     \item How does channel capacity relate to link quality?
-%     \begin{itemize}
-%         \item Higher \textbf{SNR} usually leads to a higher capacity.
-%         \item Recall bandwidth is the frequency range over which the signal is transmitted; a wider bandwidth can support higher data rates.
-%         \item Factors that reduce link quality: \textbf{Fading, interference}, reducing channel capacity.
-%     \end{itemize}
-%     \item Channel Capacity and Link Quality | Shannon Perspective:
-%     \begin{multicols}{2}
-%       \begin{center}
-%         \[
-%           C = B \times \log_2(1 + \frac{S}{N})
-%         \]
-%       \end{center}
-%       \columnbreak
-%       \begin{itemize}
-%         \item $C$ Channel capacity in bits per second (bps)
-%         \item $B$ = Bandwidth of the channel in Hertz (Hz)
-%         \item $S/N$ Signal-to-noise ratio (SNR) expressed as linear ratio
-%       \end{itemize}
-%     \end{multicols}
-% \end{itemize}
-
-
-
+\subsubsection{Channels, Subchannels and Overall Wireless Link Quality}
+\begin{itemize}
+  \item Total bandwidth divided into \textbf{subchannels}, each w. own bandwidth ($B_i$), SNR ($S/N_i$). 
+  \begin{itemize}
+      \item Capacity per subchannel: $C_i = B_i \log_2(1 + S/N_i)$
+      \item Overall channel capacity = sum of capacities of all subchannels: $C_\text{total} = \sum_i C_i$
+      \item Intuition: Some parts of the channel may experience more noise or interference than others. Treating them separately allows a more accurate capacity estimate.
+  \end{itemize}
+    \item \textbf{Link quality} is determined by reliability (PDR, ETX), physical-layer conditions (BER, SNR).
+    \item \textbf{High PDR} and \textbf{low ETX} indicate reliable, efficient packet delivery with fewer retransmissions.
+    \item \textbf{Low BER} implies fewer bit errors and less need for retransmission, improving throughput.
+    \item \textbf{Higher SNR} leads to fewer errors and directly increases achievable channel capacity.
+    \item \textbf{Channel capacity} increases with both \textbf{bandwidth} and \textbf{SNR}.
+    \item \textbf{Poor link conditions} (fading, interference, noise) reduce effective capacity even if theoretical capacity is high. In practice, \textbf{wireless systems aim to maximize SNR and minimize interference} to approach theoretical capacity limits.
+\end{itemize}
 
 
 
