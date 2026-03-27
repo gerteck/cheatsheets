@@ -800,7 +800,7 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
       \begin{itemize}
         \item $C$ Channel capacity in bits per second (bps)
         \item $B$ = Bandwidth of the channel in Hertz (Hz)
-        \item $S/N$ Signal-to-noise ratio (SNR) expressed as linear ratio
+        \item $S/N$ Signal-to-noise ratio (SNR) expressed as linear ratio (convert: $10^{\text{SNR(dB)}/10}$)
       \end{itemize}
     \end{multicols}
 \end{itemize}
@@ -813,6 +813,10 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
       \item Overall channel capacity = sum of capacities of all subchannels: $C_\text{total} = \sum_i C_i$
       \item Intuition: Some parts of the channel may experience more noise or interference than others. Treating them separately allows a more accurate capacity estimate.
   \end{itemize}
+\end{itemize}
+
+\subsubsection{Link Quality and Channel Capacity Relationship}
+\begin{itemize}
     \item \textbf{Link quality} is determined by reliability (PDR, ETX), physical-layer conditions (BER, SNR).
     \item \textbf{High PDR} and \textbf{low ETX} indicate reliable, efficient packet delivery with fewer retransmissions.
     \item \textbf{Low BER} implies fewer bit errors and less need for retransmission, improving throughput.
@@ -830,21 +834,20 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 \subsubsection{Processors, Memory, Contiki}
 \begin{itemize}
   \item Microcontroller ($\mu C$) small computer on single integrated circuit on simple CPU with peripheral devices (I/O, timers, memories)
-  \item Low power, often include sleep mode that dramatically reduces the power consumed to micro or even nanowatts
-\end{itemize}
-
-\subsubsection{ISA and Realization}
-\begin{itemize}
-  \item \textbf{Instruction set architecture:} definition of instructions that processor can execute and certain structural constraints (such as word size) that realizations must share
-  \item \textbf{Processor, Realization Chip:} Piece of silicon sold by vendor which is realization of the ISA
-  \item A ISA may appear in many different chips often made by different manufacturers with widely varying performance profiles
+  \item Low power, sleep modes, dramatically reduces power consumed to micro or even nanowatts
+  \item \textbf{ISA and Realization}:
+  \begin{itemize}
+    \item \textbf{Instruction set architecture:} definition of instructions that processor can execute and certain structural constraints (such as word size) that realizations must share
+    \item \textbf{Processor, Realization Chip:} Piece of silicon sold by vendor, realization of the ISA
+    \item A ISA may appear in different chips by different manufacturers performance profiles varies.
+  \end{itemize}
 \end{itemize}
 
 \subsubsection{Digital Signal Processor}
 \begin{itemize}
   \item Deal with large amounts of information, Sample in time/space/both
   \item Sophisticated mathematical operations like filtering, frequency analysis
-  \item Digital signal processor are class of processors optimized for such mathematically intensive tasks
+  \item Digital signal processor: class of processors optimized for mathematically intensive tasks
 \end{itemize}
 
 \subsubsection{Random access memory}
@@ -861,7 +864,7 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
     \item \textbf{DRAM (dynamic RAM):}
     \begin{itemize}
       \item Uses less area/bit (higher density)
-      \item Requires periodic refresh cycles to maintain data, can introduce access time variability and potential stalling
+      \item Requires periodic refresh cycles to maintain data, variable access time, potential stalling
     \end{itemize}
   \end{multicols}
 \end{itemize}
@@ -919,7 +922,7 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 \end{itemize}
 
 \subsubsection{Sensors}
-Eyes and ears for an embedded device. Sense environment and help to understand physical world. Sensor is an electronic component that measures a physical phenomenon.
+Electronic component that measures physical phenomenon.
 \subsubsection{Models of sensors}
 \begin{itemize}
   \item Many sensors can be modelled approximately as an affine function
@@ -929,14 +932,13 @@ Eyes and ears for an embedded device. Sense environment and help to understand p
     \item $f(x(t))$: Value reported by sensor for the particular physical quantity
     \item Function $f$ is linear if there exists proportionality constant $a \in R$ and a bias $b \in R$ s.t. $\forall x(t) \in R$, $f(x(t)) = ax(t) + b$
   \end{itemize}
-  \item \textbf{Proportionality constant $a$:} represents the sensitivity of a sensor, specifies degree to which sensor reading changes in correspondence to the change in the physical quantity
-  \item No sensor truly \textit{realizes an affine function}, range of sensor, set of values of a physical quantity that it can measure is always limited
-  \item Outside that range, an affine function model is no longer valid
+  \item \textbf{Proportionality constant $a$:} represents \textit{sensitivity} of a sensor, specifies degree sensor reading changes to change in physical quantity.
+  \item No sensor truly \textit{realizes an affine function}, range of sensor, set of values of a physical quantity that measures is always limited. Outside range, an affine function model is no longer valid.
   \item Physical quantities outside this range typically \textit{saturate}
   \begin{itemize}
     \item These quantities yield a max or min reading \underline{outside their range}
   \end{itemize}
-  \item When we talk about embedded systems, we focus on \textit{passive sensing} as it is much cheaper and lower energy consumption
+  \item Embedded systems, focus on \textit{passive sensing}, much cheaper, lower energy consumption
 \end{itemize}
 
 \subsubsection{Sensors transform phenomenon into electrical signals}
@@ -978,13 +980,13 @@ Eyes and ears for an embedded device. Sense environment and help to understand p
   \includegraphics*[width=2.2cm, height=2cm]{voltagedividers.png}
 \end{multicols}
 
-\subsubsection{ADC: Bridging analog and digital worlds | Analog Digital Converter}
+\subsubsection{Analog Digital Converter (ADC): Bridging analog and digital worlds }
 \begin{itemize}
-  \item ADCs convert analog signals, which have a continuous range of values, into digital signals, which have discrete numerical representations. This is essential for digital devices to process real-world analog inputs.
+  \item ADCs convert analog signals (continuous range of values) into digital signals (discrete numerical representations). Essential for digital devices to process real-world analog inputs.
     \item \textbf{What are the various parameters of the ADC?}
     \begin{itemize}
         \item \textbf{Resolution:} Determined by the number of bits the ADC uses to represent the analog value. More bits mean higher resolution and finer granularity in the output.
-        \item \textbf{Sampling Rate:} The frequency at which the ADC samples the analog signal. Higher sampling rates can capture more detail and are necessary to comply with the Nyquist theorem. It also means higher power consumption.
+        \item \textbf{Sampling Rate:} Frequency ADC samples the analog signal. Higher sampling rates capture more detail, necessary to comply with Nyquist theorem. Also higher power consumption.
         \item \textbf{Accuracy:} The closeness of the ADC's output to the true input value. It includes factors such as linearity, noise, and error rate.
     \end{itemize}
 \end{itemize}
@@ -1032,7 +1034,7 @@ Eyes and ears for an embedded device. Sense environment and help to understand p
 
 \subsubsection{How does this related to ADCs}
 \begin{itemize}
-  \item The smaller the sampling interval $T$, the more costly it becomes to provide more bits in an ADC
+  \item The smaller the sampling interval $T$, more costly to provide more bits in an ADC.
   \item Same cost, faster ADCs typically produce fewer bits and hence have either higher quantization error or smaller range
 \end{itemize}
 
@@ -1078,31 +1080,32 @@ Eyes and ears for an embedded device. Sense environment and help to understand p
 \vfill \null
 \columnbreak
 
-\section{6. Power Consumption, Management, Energy Efficiency}
 
+
+\section{6. Backscatter Wireless Communication}
+
+\subsection{Power Consumption}
 \subsubsection{Battery capacity}
 \begin{itemize}
-  \item Watt-hour (Wh) = unit of energy equivalent to 1 Watt of power expended for 1 hour of time
-  \item Ampere-hour (Ah) is unit of electric charge equal to charge transferred by steady current of 1A flowing for 1 hour
-  \item Typically wireless devices consume more power than batteried devices
+  \item \textbf{Watt-hour (Wh):} unit of energy equivalent to 1 Watt of power expended for 1 hour of time
+  \item \textbf{Ampere-hour (Ah):} unit of electric charge equal to charge transferred by steady current of 1A flowing for 1 hour
+  \item When \textbf{comparing} ampere-hour ratings of batteries, need to consider voltage to get watt-hour rating for accurate comparison. (Need to be same voltage to compare ampere-hour ratings)
+  \item Typically wireless devices consume more power than batteried devices 
 \end{itemize}
 
-\subsubsection{Smart phone power consumption}
+\subsubsection{Device Power consumption}
 \begin{itemize}
-  \item Wifi state transition for beacon communication is faster
-  \item However state transition for data communications is still slow due to driver/software overhead
+  \item Wifi state transition for beacon (small information, e.g. existence) communication is faster. However state transition for data communications is still slow due to driver/software overhead
+  \item Power consumption of IoT devices usually dominated by radio communication, (WiFi, Bluetooth), outside of phone display. 
+  \item Optimizing power consumption means optimize communication patterns/ protocols.
+  \item \textbf{Transmission states for wireless networking}, Hence, device \textbf{rarely} transmit continuously. Having \underline{different power states} allow power consumption to be reduced
 \end{itemize}
 
-\subsubsection{Transmission states for wireless networking}
-\begin{itemize}
-  \item Device \textbf{rarely} transmit continuously
-  \item Having \underline{different power states} allow power consumption to be reduced
-\end{itemize}
 
-\subsubsection{Low-power transmission}
-\subsubsection{Backscatter communication}
+\subsection{Low-power Wireless Transmission: Backscatter}
+\subsubsection{Backscatter Communication}
 \begin{itemize}
-  \item Vary between absorbing or reflecting signal to modulate data
+  \item Device does not generate its own power; instead, it varies between absorbing or reflecting signal to modulate data onto existing radio waves in the environment
   \begin{itemize}
     \item Wireless transmission at microwatts of power draw (10000x energy savings)
     \item Frequency bands: 400MHz, 900MHz 2.4GHz
@@ -1111,18 +1114,31 @@ Eyes and ears for an embedded device. Sense environment and help to understand p
 
 \includegraphics*[width=8.5cm, height=2.4cm]{backscatter.png}
 
-\subsubsection{Communication using inductive coupling}
+\subsubsection{Far-field Backscatter}
+
+\begin{itemize}
+  \item \textbf{RFID}: Radio Frequency Identification, widely deployed backscatter system. Cheap tags, complex readers (low/high/ultra frequency readers).
+  \item \textbf{Active / Semi-Passive tags}: Active $\rightarrow$ own power source, semi-passive $\rightarrow$ battery for internal circuitry, rely on reader signal for communication. Greater range but bulky, high cost.
+  \item \textbf{PushID [NSDI 2019]}: extend range without modify tag, leverage collaboration between multiple RFID readers. (beamforming)
+  \item \textbf{Decouple signal generation and reception (LoRea)}: long range backscatter transmission, self-interference reduced.
+  \item \textbf{Usages}: ID, transmissions, backscatter as a sensor in gesture monitoring.
+  \item Overall, backscatter is essentially 'free' communication (given a high capability device), but difficult to reflect already low energy (doubled path loss there and back), limited range.
+\end{itemize}
+
+
+\subsubsection{Near-field Backscatter}
+
+\subsubsection{Backscatter Communication using Inductive Coupling}
 \begin{itemize}
   \item Shared magnetic field created between 2 devices
-  \item $\triangle$ current through one induces current charge on other
-  \item Device can vary load to transmit
+  \item $\triangle$ current through one induces current charge on other, device can vary load to transmit
   \item Very low frequency bands (135 KHz, 13.56 MHz), transmit through materials like skin, but sensitive to metal
 \end{itemize}
 
-\subsubsection{Near Field Communication}
+\subsubsection{Near Field Communication (NFC)}
 \begin{itemize}
   \item Inductive Coupling concept (13.56 MHz): attached to powered + capable device, $10-20$cm range, Data range $100-400$ kbps
-  \item Can act as tag or reader (smart phone can power a tag if needed, and act like a card to respond to reader)
+  \item Act as tag/reader (smart phone can power a tag if needed, act as card to respond to reader)
 \end{itemize}
 
 \subsubsection{Wireless communcation through Light}
@@ -1135,10 +1151,11 @@ Eyes and ears for an embedded device. Sense environment and help to understand p
   \end{itemize}
 \end{itemize}
 
+\vfill \null
+\columnbreak
 
 
-
-% \section{7.  SOME NEW SECTION}
+% \section{7.  Wireless Medium Access Control (MAC)}
 
 
 
