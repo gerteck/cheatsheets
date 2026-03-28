@@ -1155,10 +1155,7 @@ Electronic component that measures physical phenomenon.
 \columnbreak
 
 
-% \section{7.  Wireless Medium Access Control (MAC)}
-
-
-
+\section{7.  Wireless Medium Access Control (MAC)}
 
 
 % \subsubsection{Communication Layers}
@@ -1273,278 +1270,247 @@ Electronic component that measures physical phenomenon.
 %   \end{itemize}
 % \end{enumerate}
 
-% \subsubsection{MAC for wireless}
-% \begin{itemize}
-%   \item Wired networks are constant, reliable, and physically isolated
-%   \begin{itemize}
-%     \item Ethernet has the same throughput minute-to-minute
-%     \item  Bits sent through Ethernet or USB are (usually) received
-%   \end{itemize}
-%   \item Lack of wires introduces variability, unreliability, and vulnerability to
-%   interference compared to wired communication
-%   \item Wireless networks are variable, error-prone, and shared
-%   \begin{itemize}
-%     \item WiFi throughput changes based on location and walls
-%     \item  Signals from nearby devices interfere with your signals
-%     \item  Individual bits might flip or never be heard at all
-%     \item  Wireless signals degrade with distance, obstacles, and interferences
-%   \end{itemize}
-%   \item Increasing \textbf{\underline{network capacity}} is challenging
-%   \begin{itemize}
-%     \item Wired networks just add more wires, buses are many signals in parallel to send more data
-%     \item Wireless networks, adding more links increases interference, need expand to diff frequencies
-%   \end{itemize}
-% \end{itemize}
+\subsection{Multiple Access Control Protocols for Wireless Networks}
+\begin{itemize}
+  \item Wired networks: reliable, physically isolated. Consistent throughput, low packet loss.
+  \item Lack of wires introduces variability, unreliability, vulnerability to interference
+  \item Increasing \textbf{\underline{wireless network capacity}} is challenging.
+\end{itemize}
 
-% \subsubsection{Channelization Protocols}
-% \subsubsection{FDMA | Frequency Division Multiple Access}
-% \begin{itemize}
-%   \item Separate transmissions by placing then at diff freq.
-%   \item Technically, each device can use a separate, fixed frequency
-%   \begin{itemize}
-%     \item One example can be walkie-talkies (mostly separate), $\uparrow$ throughput and reliability, spatial diversity
-%     \item \textbf{Disadvantages:} If devices are not always transmitted, that part of the spectrum is not being used | inefficient use of the entire spectrum
-%   \end{itemize}
-% \end{itemize}
+\centerline{\includegraphics[width = 0.8\linewidth]{MAC}}
 
-% \subsubsection{Multi Channel MAC Protocols}
-% \begin{itemize}
-%   \item Control channel: default, time syncrhonization for control/msg exchange
-%   \item Nodes switch to different channel for data communication
-%   \item All channels used for comm. , node switches channel when link quality bad
-% \end{itemize}
 
-% \subsubsection{TDMA | Time Division Multiple Access}
-% \begin{itemize}
-%   \item Split transmission in time, devices share same channel
-%   \item Splits time into \underline{fixed-length} windows: each device assigned 1 or more window, can build priority system here with uneven split among devices
-%   \item Requires syncrhonization between devices
-%   \begin{itemize}
-%     \item Often devices must listen periodically to resynchronize
-%     \item Less efficient use of slots reduce synchronization
-%     \item Large guard windows e.g. $1.5$ second slot for $1$ second trans.
-%   \end{itemize}
-% \end{itemize}
+\subsection{Channelization Protocols}
+\subsubsection{TDMA | Time Division Multiple Access}
+\begin{itemize}
+  \item Split transmission in time, devices share same channel
+  \item Splits time into \underline{fixed-length} windows: each device assigned 1 or more window, can build priority system here with uneven split among devices
+  \item Requires syncrhonization between devices
+  \begin{itemize}
+    \item Often devices must listen periodically to resynchronize
+    \item Less efficient use of slots reduce synchronization
+    \item Large guard windows e.g. $1.5$ second slot for $1$ second trans.
+  \end{itemize}
+\end{itemize}
 
-% \subsubsection{Orthogonal Frequency Division Multiplexing | OFDM}
-% \begin{multicols}{2}
-%   \begin{itemize}
-%     \item FDM: entire frequency spectrum is dedicated to carry data from a single source
-%     \columnbreak
-%     \item OFDM: data divided into many (slower) bit streams and multiple subcarriers (each with smaller spectrum used)
-%   \end{itemize}
-% \end{multicols}
+\subsubsection{FDMA | Frequency Division Multiple Access}
+\begin{itemize}
+  \item Separate transmissions by placing then at diff freq. Transmit at same time. 
+  \item Technically, each device can use a separate, non-overlap, fixed frequency
+  \begin{itemize}
+    \item E.g. walkie-talkies (mostly separate), $\uparrow$ throughput and reliability, spatial diversity
+    \item \textbf{Disadvantages:} If devices not always transmitting, part of spectrum is not used, inefficient.
+  \end{itemize}
+  \item \textbf{WiFi} - Overlapping channels, pack more concurrent users (OFDMA).
+\end{itemize}
 
-% \includegraphics*[width=8.5cm, height=4.2cm]{tdmavsfdma.png}
+\subsubsection{Multi Channel MAC Protocols}
+\begin{itemize}
+  \item Control channel: default, time syncrhonization for control/msg exchange
+  \item Nodes switch to different channel for data communication
+  \item All channels used for comm. , node switches channel when link quality bad
+\end{itemize}
 
-% \subsubsection{Frequency and Time leads to Spread Spectrum (SS)}
-% \begin{itemize}
-%   \item Spread-spectrum techniques are methods by which a signal is deliberately spread in the frequency domain, resulting in a signal with a wider bandwidth
-%   \item Such techniques can be used to establish secure communications, increase resistance to natural interference, jamming and to prevent detection
-%   \item \textbf{Advantages:}
-%   \begin{itemize}
-%     \item Resistant to narrowband interference
-%     \item Signals are difficult to interpret – appears as if increase in background noise
-%     \item Can share frequency band with others with minimal interference
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{Orthogonal Frequency Division Multiplexing | OFDM}
+\begin{multicols}{2}
+  \begin{itemize}
+    \item FDM: entire frequency spectrum is dedicated to carry data from a single source
+    \columnbreak
+    \item OFDM: data divided into many (slower) bit streams and multiple subcarriers (each with smaller spectrum used)
+  \end{itemize}
+\end{multicols}
 
-% \includegraphics*[width=8.5cm, height=2.8cm]{frequencyhopping.png}
-% \subsubsection{Spectral Efficiency}
-% \begin{itemize}
-%   \item Spectral efficiency (in bits/s/Hz) determines how efficiently devices
-%   utilize allocated bandwidth, depending on the modulation scheme
-%   \item Different modulation schemes provide different spectral efficiency:
-%   \begin{itemize}
-%     \item Simple modulation (e.g., FSK) $\approx$ 1 bit/s/Hz
-%     \item Advanced modulation (e.g., QPSK, QAM) higher bits/s/Hz (2–8 bps/Hz).
-%   \end{itemize}
-% \end{itemize}
+\includegraphics*[width=8.5cm, height=4.2cm]{tdmavsfdma.png}
 
-% \subsubsection{Random Access Protocol}
-% \begin{itemize}
-%   \item Networks are increasingly wireless and dynamic:
-%   \begin{itemize}
-%     \item Rapid proliferation of mobile devices, sensors, and IoT nodes
-%     \item Devices join or leave networks unpredictably; traffic patterns not always regular predictable
-%   \end{itemize}
-%   \item Fixed scheduling is challenging or impractical:
-%   \begin{itemize}
-%     \item Pre-allocating transmission slots becomes inefficient when traffic is bursty/unpredictable
-%     \item Scheduled transmissions waste resources if nothing to send during allocated slots
-%     \item RAPs provide an efficient, lightweight solution for managing sporadic,
-%     unscheduled, low-rate data transmissions
-%   \end{itemize}
-% \end{itemize}
 
-% \subsubsection{Aloha}
-% \begin{itemize}
-%   \item Devices transmit whenever data is available, without explicit coordination, no prior scheduling or channel sensing; purely random transmissions 
-%   \item Rules:
-%   \begin{enumerate}
-%     \item If you have data, transmit immediately
-%     \item After transmission, wait a certain time to receive acknowledgment (ACK)
-%     \item If ACK is received, transmission successful; if no ACK, wait a random time interval and retransmit (exponential backoff recommended) 
-%   \end{enumerate}
-%   \item Collision Problem:
-%   \begin{itemize}
-%     \item If $\geq 2$ nodes transmit simultaneously, collision occurs, results in lost data
-%     \item Nodes do not listen before transmitting (no channel sensing)
-%   \end{itemize}
-%   \includegraphics*[width=8cm, height=4.8cm]{packetcollision1.png}
-%   \item Slotted Aloha: 
-%   \begin{itemize}
-%     \item Slotted ALOHA reduces collision windows by aligning transmissions to predefined slots
-%     \item Requires synchronization: Every device must know slot boundaries, adding complexity to the implementation and device
-%     \item Real world Analogy: Speaking during predefined time slots in a conference
-%     \item Slotted throughput is double because the “before” collisions can no longer occur
-%     \includegraphics*[width=8cm, height=2cm]{packetcollision2.png}
-%   \end{itemize}
-% \end{itemize}
 
-% \subsubsection{Why Use Random Access if Efficiency is Limited}
-% \begin{itemize}
-%   \item \textit{Simplicity and low overhead:}
-%   \begin{itemize}
-%     \item RAPs do not need complex synchronization or scheduling mechanisms
-%     \item Suitable for resource-constrained IoT or sensor networks
-%   \end{itemize}
-%   \item \textit{Efficiency in low-load scenarios:}
-%   \begin{itemize}
-%     \item Collisions are rare when network load is low
-%     \item Random access can achieve low latency for intermittent or bursty transmissions
-%   \end{itemize}
-%   \item \textit{Real-world usage examples:}
-%   \begin{itemize}
-%     \item BLE beaconing: Short, random broadcasts to discover devices
-%     \item LoRaWAN: Simplicity and battery efficiency preferred over maximizing throughput
-%     \item Satellite and RFID networks: Sporadic data transmission scenarios
-%   \end{itemize}
-% \end{itemize}
 
-% \subsubsection{Carrier Sense Multiple Access w/ Collision Avoidance (CSMA/CA)}
-% \begin{itemize}
-%   \item Carrier Sense Multiple Access with Collision Avoidance is a medium access control
-%   protocol widely used in wireless networks (especially WiFi)
-%   \item Nodes sense the medium to check if it’s busy before attempting transmission, but
-%   collisions are actively avoided rather than detected after occurrence 
-%   \item Why is Collision Avoidance necessary:
-%   \begin{itemize}
-%     \item Wireless networks have difficulty reliably detecting collisions directly due to signal
-%     fading, interference, and hidden nodes.
-%     \item Collision Avoidance proactively reduces the probability of collisions occurring
-%   \end{itemize}
-%   \item Algorithm:
-%   \begin{enumerate}
-%     \item \textit{Listen first (Carrier Sensing):} Nodes listen (sense) the channel before transmission. If the channel is busy, the node waits.
-%     \item \textit{Random Backoff (Collision Avoidance):} Once the channel becomes idle, nodes don’t transmit immediately. Instead, they wait for a random time interval (random backoff period) before transmitting
-%     \item \textit{Transmit Data:} After the random wait, if the medium remains idle, the node transmits its data
-%     \item \textit{Acknowledgment (ACK):} Successful reception is confirmed through an ACK from the receiving node. Lack of ACK implies potential collision or error, triggering retransmission
-%   \end{enumerate}
-%   \item Choosing $W_{max}$
-%   \begin{itemize}
-%     \item Intuitively, $W_{max}$ should be small when there is lower chance of collision
-%     and vice versa
-%     \item $W_{max}$ varies according to the Binary Exponential Backoff (BEB) algorithm.
-%     \item Set “slot time” to 2 times the max. propagation delay on the channel
-%     \item If this is the first transmission, sends immediately
-%     \item If there is a collision, after i-th collision, pick $W_{max}$ randomly between $0$ and $2^i -1$ time slots.
-%   \end{itemize}
-%   \item Binary Exponential BAckoff (BEB)
-%   \begin{itemize}
-%     \item If collisions occur, waiting intervals adaptively increase to further reduce future collision probability
-%     \item Each successive collision indicates higher channel contention
-%     \begin{enumerate}
-%       \item Initial attempt: Small waiting period (randomized within a small range).
-%       \item After each collision: The range (window size) for the random backoff doubles (exponential increase), reducing collisions progressively:
-%       \begin{itemize}
-%         \item 1st collision: Wait between $0 - (2^1-1)$ slots
-%         \item 2nd collision: Wait between $0 - (2^2-1)$ slots
-%         \item After i-th collision: Wait between $0 - (2^i-1)$ slots
-%       \end{itemize}
-%     \end{enumerate}
-%   \end{itemize}
-%   \item Trade-offs:
-%   \begin{itemize}
-%     \item More aggressive (smaller $W_{max}$) – more likely to achieve higher channel utilization,
-%     but also more likely to collide
-%     \item Less aggressive – lower channel utilization, less likely to collide
-%     \item \textbf{Utilization vs Delay:} Overly aggresive or conservative can increase delay
-%     \item \textbf{Optimal point depends:} no. of stations/nodes contenting + traffic load
-%   \end{itemize}
-%   \item CSMA with RTS/CTS
-%   \begin{itemize}
-%     \item Occurs when two transmitters cannot sense each other’s transmissions
-%     but interfere at a common receiver
-%     \item RTS/CTS Mechanism:
-%     \begin{itemize}
-%       \item Request to Send (RTS): Short control frame sent by transmitter requesting access
-%       \item Clear to Send (CTS): Receiver replies if it’s ready, informing nearby nodes to
-%       remain silent temporarily
-%     \end{itemize}
-%     \item A partial solution
-%     \begin{itemize}
-%       \item When channel is idle, transmitter sends a short (RTS)
-%       \item Receiver will send a Clear To Send (CTS) to only one node at a time
-%       \item RTS collisions are faster, less wasteful than hidden terminal collisions
-%       \item Downside: overhead is high for waiting for CTS when contention is low
-%     \end{itemize}
-%   \end{itemize}
-% \end{itemize}
+%% FREQUENCY HOPPING
 
-% \subsubsection{Medium Access Control for Internet of Things}
-% \begin{itemize}
-%   \item General wireless MAC protocols typically optimize for:
-%   \begin{itemize}
-%     \item Low Latency
-%     \item High Channel Utilization
-%     \item Fairness (all nodes have equal chance to communicate)
-%   \end{itemize}
-%   \item However, IoT has unique requirements:
-%   \begin{itemize}
-%     \item Extremely low power consumption
-%     \item Typically, low and intermittent channel utilization
-%   \end{itemize}
-%   \item Priority shift for IoT MAC protocols:
-%   \begin{itemize}
-%     \item Energy conservation becomes the primary design goal
-%     \item MAC protocols must minimize power usage to prolong battery life
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{Frequency and Time leads to Spread Spectrum (SS)}
+\begin{itemize}
+  \item Spread-spectrum techniques are methods by which a signal is deliberately spread in the frequency domain, resulting in a signal with a wider bandwidth
+  \item Such techniques can be used to establish secure communications, increase resistance to natural interference, jamming and to prevent detection
+  \item \textbf{Advantages:}
+  \begin{itemize}
+    \item Resistant to narrowband interference
+    \item Signals are difficult to interpret – appears as if increase in background noise
+    \item Can share frequency band with others with minimal interference
+  \end{itemize}
+\end{itemize}
 
-% \includegraphics*[width=8.5cm, height=3.7cm]{maclifecycle.png}
-% \begin{itemize}
-%   \item Idle listening consumes significant energy, especially at low load:
-%   \begin{itemize}
-%     \item Measurements show idle listening can consume between $50\%$ to $100\%$ of the energy needed for actual receiving
-%   \end{itemize}
-%   \item Dilemma clearly presented: If nodes turn off their radios to save power, how will they detect incoming transmissions?
-%   \item Solution: Duty cycling—periodically waking up briefly to sense transmissions, then returning to sleep mode
-%   \begin{itemize}
-%     \item Nodes sleep when inactive, drastically reducing idle listening time
-%     \item Periodically “wake up” to sense channel activity
-%     \item Challenges:
-%     \begin{itemize}
-%       \item Determining the optimal wake-up schedule is critical
-%       \item Coordination required to ensure nodes wake at the right time to detect transmissions
-%     \end{itemize}
-%   \end{itemize}
-% \end{itemize}
+\includegraphics*[width=8.5cm, height=2.8cm]{frequencyhopping.png}
+\subsubsection{Spectral Efficiency}
+\begin{itemize}
+  \item Spectral efficiency (in bits/s/Hz) determines how efficiently devices
+  utilize allocated bandwidth, depending on the modulation scheme
+  \item Different modulation schemes provide different spectral efficiency:
+  \begin{itemize}
+    \item Simple modulation (e.g., FSK) $\approx$ 1 bit/s/Hz
+    \item Advanced modulation (e.g., QPSK, QAM) higher bits/s/Hz (2–8 bps/Hz).
+  \end{itemize}
+\end{itemize}
 
-% \subsubsection{ALOHA with Preamble Sampling}
-% \begin{itemize}
-%   \item Determining the optimal wake-up schedule is critical
-%   \item Coordination required to ensure nodes wake at the right time to detect transmissions
-%   \item Algorithm:
-%   \begin{itemize}
-%     \item Sender transmits a long preamble to “wake up” receiver
-%     \item Receiver periodically wakes briefly to sense for preambles
-%     \item Once a preamble is detected, receiver stays awake, receives the actual data, and acknowledges
-%   \end{itemize}
-%   \includegraphics*[width=8cm, height=2cm]{preamblesampling.png}
-%   \item \textbf{Advantages:} Reduces idle listening significantly, saving power, simple to implement async
-%   \item \textbf{Disadvantages:} Preamble wastes energy at sender and slightly increases latency
-% \end{itemize}
+\subsection{Random Access Protocols}
+In Random Access Protocols (RAPs), users are allowed to transmit at any time without pre-scheduling, but risk collisions. 
+
+For dynamic wireless networks, fixed scheduling often inefficient or impractical:
+\begin{itemize}
+  \item Pre-allocate transmit slots inefficient when traffic is bursty/unpredictable, waste resources if nothing sent during allocated slots.
+  \item RAPs are efficient, lightweight for managing sporadic,
+  unscheduled, low-rate data transmits.
+\end{itemize}
+
+
+\subsection{Aloha}
+\begin{itemize}
+  \item Devices transmit whenever data is available, without explicit coordination, no prior scheduling or channel sensing; purely random transmissions 
+  \item \textbf{Rules:}
+  \begin{enumerate}
+    \item If you have data, transmit immediately
+    \item After transmission, wait a certain time to receive acknowledgment (ACK)
+    \item If ACK is received, transmission successful; if no ACK, wait a random time interval and retransmit (exponential backoff recommended) 
+  \end{enumerate}
+  \item Collision Problem:
+  \begin{itemize}
+    \item If $\geq 2$ nodes transmit simultaneously, collision occurs, results in lost data
+    \item Nodes do not listen before transmitting (no channel sensing)
+  \end{itemize}
+
+  \centerline{\includegraphics[width = 0.8\linewidth]{packetcollision1.jpg}}
+
+  \item \textbf{Slotted Aloha:}
+  \begin{itemize}
+    \item Slotted ALOHA reduces collision windows by aligning transmissions to predefined slots
+    \item Requires sync: devices must know slot boundaries, add complexity to implementation
+    \item Slotted throughput is double as “before” collisions can no longer occur
+
+  \centerline{\includegraphics[width = 0.8\linewidth]{packetcollision2.jpg}}
+  \end{itemize}
+
+  \item \textbf{ALOHA Throughput}: Shown that traffic maxes out at ALOHA throughput of 18.4\% (slotted ALOHA doubles to 36.8\%), assuming Poisson distribution of traffic.
+\end{itemize}
+
+\subsubsection{Why Use Random Access if Efficiency is Limited}
+\begin{itemize}
+  \item \textit{Simplicity and low overhead:}
+  \begin{itemize}
+    \item RAPs do not need complex synchronization or scheduling mechanisms
+    \item Suitable for resource-constrained IoT or sensor networks
+  \end{itemize}
+  \item \textit{Efficiency in low-load scenarios:}
+  \begin{itemize}
+    \item Collisions are rare when network load is low
+    \item Random access can achieve low latency for intermittent or bursty transmissions
+  \end{itemize}
+  \item \textit{Real-world usage examples:}
+  \begin{itemize}
+    \item BLE beaconing: Short, random broadcasts to discover devices
+    \item LoRaWAN: Simplicity and battery efficiency preferred over maximizing throughput
+    \item Satellite and RFID networks: Sporadic data transmission scenarios
+  \end{itemize}
+\end{itemize}
+
+\subsection{Carrier Sense Multiple Access w/ Collision Avoidance (CSMA/CA)}
+\textbf{CSMA/CA} medium access control protocol widely used in wireless networks (especially WiFi). Nodes sense medium to check if busy before attempting transmission, collisions actively avoided rather than detected after occurrence.
+
+\begin{itemize}
+  \item Wireless networks have difficulty reliably detecting collisions directly due to signal
+  fading, interference, and hidden nodes.
+  \item Collision Avoidance proactively reduces the probability of collisions occurring.
+\end{itemize}
+
+
+\subsubsection{CSMA/CA Algorithm Steps:}
+\begin{enumerate}
+  \item \textit{Listen first (Carrier Sensing):} Nodes listen before transmission. If channel busy, node waits.
+  \item \textit{Random Backoff (Collision Avoidance):} Once channel idle, nodes don't transmit immediately. Wait a random time interval (random backoff period) before transmitting.
+  \item \textit{Transmit Data:} After random wait, if medium remains idle, node transmits its data.
+  \item \textit{Acknowledgment (ACK):} Successful reception is confirmed through an ACK from the receiving node. Lack of ACK implies potential collision or error, triggering retransmission.
+\end{enumerate}
+
+\subsubsection{Choosing $W_{max}$: Maximum Backoff Window Size}
+\begin{itemize}
+  \item Intuitively, $W_{max}$ should be small when lower chance of collision
+  and vice versa
+  \item $W_{max}$ varies according to the Binary Exponential Backoff (BEB) algorithm.
+  \item Set “slot time” to 2 times the max. propagation delay on the channel
+  \item If this is the first transmission, sends immediately
+  \item If there collision, after i-th collision, pick $W_{max}$ randomly between $0$ and $2^i -1$ time slots.
+  \item \textbf{Optimal point}: depends on no. of nodes condenting + traffic load. Too aggressive (small $W_{max}$): more collisions, too conservative (large $W_{max}$): underutilization of channel.
+\end{itemize}
+
+\subsubsection{Binary Exponential BBackoff (BEB)}
+\begin{itemize}
+  \item If collisions occur, wait intervals adaptively increase to reduce future collision probability
+  \item Each successive collision indicates higher channel contention
+  \begin{enumerate}
+    \item Initial attempt: Small waiting period (randomized within a small range).
+    \item After each collision: The range (window size) for the random backoff doubles (exponential increase), reducing collisions progressively:
+    \begin{itemize}
+      \item 1st collision: Wait between $0 - (2^1-1)$ slots
+      \item 2nd collision: Wait between $0 - (2^2-1)$ slots
+      \item After i-th collision: Wait between $0 - (2^i-1)$ slots
+    \end{itemize}
+  \end{enumerate}
+\end{itemize}
+
+\subsection{TCSMA with RTS/CTS (Threshold CSMA)}
+\begin{itemize}
+  \item \textbf{Hidden Terminal Problem}: Occurs when two transmitters cannot sense each others transmissions but interfere at a common receiver. (Not hearing another sender does not necessarily mean the receiver is free). RTS/CTS Mechanism:
+  \begin{itemize}
+    \item \textbf{Request to Send (RTS):} Short control frame sent by transmitter requesting access
+    \item \textbf{Clear to Send (CTS):} Receiver replies w. CTS if ready to one node at a time.
+    \begin{itemize}
+        \item \textbf{Deferring}: Nearby nodes hearing CTS for a different receiver address (RA) must defer for time specified in Duration field.
+        \item \textbf{Backoff (BEB)}: If RTS fails (no CTS received), sender assumes a collision and performs a Binary Exponential Backoff before retrying.
+    \end{itemize}
+    \item \textbf{Upside}: RTS collisions are faster, less wasteful than hidden terminal collisions
+    \item \textbf{Downside:} overhead is high for waiting for CTS when contention is low + network overhead
+  \end{itemize}
+\end{itemize}
+
+
+\subsection{Medium Access Control for Internet of Things}
+\begin{itemize}
+  \item \textbf{MAC Goals for Wireless} (E.g. WiFi): General wireless MAC protocols optimize for:
+  \begin{itemize}
+    \item Low Latency, High Channel Utilization, Fairness (equal chance to communicate)
+  \end{itemize}
+  \item \textbf{MAC Goals for Low-Power IoT}: Optimize for unique requirements:
+  \begin{itemize}
+    \item Extremely low power consumption, low, intermittent channel utilization
+    \item Energy conservation becomes the primary design goal, MAC protocols must minimize power usage to prolong battery life, tradeoff latency or reduced throughput.
+  \end{itemize}
+\end{itemize}
+
+\centerline{\includegraphics[width = 0.95\linewidth]{macLifecycle.jpg}}
+
+\begin{itemize}
+  \item \textbf{Idle listening} consumes significant energy, especially at low load, can consume between $50-100\%$ of energy needed for actual receiving. But need to listen for incoming transmissions, so cannot simply turn off radio.
+  \item \textbf{Duty cycled MAC protocol}: periodically wake up briefly to sense transmissions/channel activity, return to sleep mode. Nodes sleep when inactive, minimize idle listening time.
+  \item \textbf{Challenges}: Determining the optimal wake-up schedule, coordination to ensure nodes wake at the right time to detect transmissions
+\end{itemize}
+
+\subsection{Duty Cycled MAC Protocols}
+\subsection{ALOHA with Preamble Sampling}
+\begin{itemize}
+  \item Algorithm/Steps:
+  \begin{itemize}
+    \item Sender transmits a long preamble to “wake up” receiver
+    \item Receiver periodically wakes briefly to sense for preambles
+    \item Once preamble detected, receiver stays awake, receives the actual data, acknowledges.
+  \end{itemize}
+  \centerline{\includegraphics[width = 0.95\linewidth]{preambleSampling.jpg}}
+  \item \textbf{Detection}: preamble duration ($T_p \geq T_S$) must be greater or equal to receiver's sleep interval. Else, receiver may miss preamble, sleep before data starts.
+  \item \textbf{Advantages:} Reduces idle listening significantly, saving power, simple to implement async
+  \item \textbf{Disadvantages:} Preamble wastes energy at sender and slightly increases latency
+\end{itemize}
+
+
+%% Lecture 7 Ends here
+
+
 
 % \subsubsection{B-MAC: Asynchronous Medium Access Control}
 % \begin{itemize}
@@ -2783,8 +2749,7 @@ Electronic component that measures physical phenomenon.
 \section{References and Credits}
 \begin{itemize}
   \item Course Content topics, ordering from CS4222, National University of Singapore.
-  \item Select contents, diagrams referenced from goated CS4222 Cheatsheet - @JasonYapzx \\ 
-  (@JasonYapzx cheatsheet is clear and concise, while these notes focuses understanding)
+  \item Select contents, diagrams referenced from goated CS4222 Cheatsheet - @JasonYapzx
 \end{itemize}
 
 
