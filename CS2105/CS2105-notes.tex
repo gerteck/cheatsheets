@@ -420,10 +420,10 @@ logical communication between \textbf{hosts}. (best-effort, unreliable)
 \item Compute 1’s complement to get UDP checksum.
 \end{itemize}
 
-\subsubsection{Principles of Reliable Data Transfer (rdt)}
+\section{Principles of Reliable Data Transfer (rdt)}
 Build reliable transport layer protocol on top of unreliable communication.
 \begin{itemize}
-\item Factors: \textbf{Packet corruption, Packet loss, Packet reordering, Packet (Long) Delay.}
+\item Factors: \textbf{Packet corruption, loss, reordering, Packet (Long) Delay.}
 \item Finite State Machines to describe protocol.
 \end{itemize}
 
@@ -435,9 +435,9 @@ Build reliable transport layer protocol on top of unreliable communication.
 
 \subsubsection{rdt 2.0 (Corruptable Data)}
 \begin{itemize}
-\item Assumption: Underlying channel may flip bits. Use \textbf{stop and wait} (for receiver response) protocol. 
+\item Assume: Underlying channel may flip bits. Receiver uses \textbf{stop and wait} protocol. 
 \item Receiver uses checksum to detect bit errors, sends NAK if corrupted. Sender resends if NAK received.
-\item \textbf{Problem: If ACK or NACK corrupted}, no guaranteed way to recover. If packet resent, the receiver will not know it’s a duplicate.
+\item \textbf{Problem: If ACK or NACK corrupted}, no guaranteed way to recover. If packet re-sent, the receiver cannot identify duplicate.
 \end{itemize}
 
 \subsubsection{rdt 2.1}
@@ -451,7 +451,7 @@ Build reliable transport layer protocol on top of unreliable communication.
 \subsubsection{rdt 2.2}
 \begin{itemize}
 \item \textbf{Use ACK of last packet sequence number for NAK.}  
-\item Receiver explicitly include seq. no, duplicate ACKs results in retransmit current pkt.
+\item Receiver includes seq. no, duplicate ACKs results in retransmit current pkt.
 \end{itemize}
 \smallskip
 \centerline{\includegraphics[width=1\linewidth]{rdt2.2-3}}
@@ -465,7 +465,7 @@ Build reliable transport layer protocol on top of unreliable communication.
 \item Stop and Wait limits use of physical resources.
 \end{itemize}
 
-\subsubsection{Pipelining}
+\section{Pipelining}
 \begin{itemize}
 \item  \textbf{Pipelined Protocols}: sender allows multiple, “in-flight”, yet to-be-acknowledged packets. \\
 • range of sequence numbers must be increased \\
