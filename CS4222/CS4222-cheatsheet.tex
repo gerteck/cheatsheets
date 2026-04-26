@@ -1154,6 +1154,8 @@ Electronic component that measures physical phenomenon.
 \vfill \null
 \columnbreak
 
+\vfill \null
+\columnbreak
 
 \section{7.  Wireless Medium Access Control (MAC)}
 
@@ -1270,10 +1272,9 @@ Electronic component that measures physical phenomenon.
 %   \end{itemize}
 % \end{enumerate}
 
-\subsection{Multiple Access Control Protocols for Wireless Networks}
 \begin{itemize}
   \item Wired networks: reliable, physically isolated. Consistent throughput, low packet loss.
-  \item Lack of wires introduces variability, unreliability, vulnerability to interference
+  \item Wireless: Lack of wires introduces variability, unreliability, vulnerability to interference
   \item Increasing \textbf{\underline{wireless network capacity}} is challenging.
 \end{itemize}
 
@@ -1281,6 +1282,9 @@ Electronic component that measures physical phenomenon.
 
 
 \subsection{Channelization Protocols}
+
+Channelization: divide single communication medium into multiple distinct channels, transmit without collisions through preassign, but rigid allocation wastes capacity under bursty traffic.
+
 \subsubsection{TDMA | Time Division Multiple Access}
 \begin{itemize}
   \item Split transmission in time, devices share same channel
@@ -1471,7 +1475,16 @@ For dynamic wireless networks, fixed scheduling often inefficient or impractical
 \end{itemize}
 
 
-\subsection{Medium Access Control for Internet of Things}
+
+
+
+\vfill \null
+\columnbreak
+
+
+\section{8. Medium Access Control (MAC) for Internet of Things}
+IoT MAC has different goals from generic wireless MAC: energy conservation as primary objective, can tolerate low throughput and higher latency. Hence, implication that protocols for WiFi (CSMA/CA) waste a lot of energy, and IoT has purpose built MAC protocols to minimize radio-on time.
+
 \begin{itemize}
   \item \textbf{MAC Goals for Wireless} (E.g. WiFi): General wireless MAC protocols optimize for:
   \begin{itemize}
@@ -1483,104 +1496,207 @@ For dynamic wireless networks, fixed scheduling often inefficient or impractical
     \item Energy conservation becomes the primary design goal, MAC protocols must minimize power usage to prolong battery life, tradeoff latency or reduced throughput.
   \end{itemize}
 \end{itemize}
+\smallskip
 
 \centerline{\includegraphics[width = 0.95\linewidth]{macLifecycle.jpg}}
 
 \begin{itemize}
   \item \textbf{Idle listening} consumes significant energy, especially at low load, can consume between $50-100\%$ of energy needed for actual receiving. But need to listen for incoming transmissions, so cannot simply turn off radio.
   \item \textbf{Duty cycled MAC protocol}: periodically wake up briefly to sense transmissions/channel activity, return to sleep mode. Nodes sleep when inactive, minimize idle listening time.
-  \item \textbf{Challenges}: Determining the optimal wake-up schedule, coordination to ensure nodes wake at the right time to detect transmissions
+  \item \textbf{Challenges}: Determining the optimal wake-up schedule, coordination to ensure nodes wake at the right time to detect transmissions.
+  \item All low power MAC protocols are fundamentally about deciding when to turn the radio on and off. Trade-off latency, energy.
+  \item \textbf{Duty Cycle Formula}: $\text{Duty Cycle} = \left( \frac{t_{\text{active}}}{t_{\text{active}} + t_{\text{sleep}}} \right) \times 100\%$
 \end{itemize}
 
-\subsection{Duty Cycled MAC Protocols}
-\subsection{ALOHA with Preamble Sampling}
+\subsection{Design Space of Low-Power MAC}
 \begin{itemize}
-  \item Algorithm/Steps:
+  \item \textbf{Synchronous vs Asynchronous}: Does network share common schedule?
+  \item \textbf{Sender-initiated vs. Receiver-initiated}: who starts handshake?
+  \item \textbf{Preamble-based vs. Schedule based}: How does sender reach sleeping receiver?
+\end{itemize}
+
+\centerline{\includegraphics[width = 0.7\linewidth]{designMac.png}}
+
+\subsection{Comparison of Low-Power MAC}
+
+\centerline{\includegraphics[width = 0.95\linewidth]{IoTMACSummary.png}}
+\begin{itemize}
+  \item \textbf{Selection Guidelines}:
   \begin{itemize}
-    \item Sender transmits a long preamble to “wake up” receiver
-    \item Receiver periodically wakes briefly to sense for preambles
-    \item Once preamble detected, receiver stays awake, receives the actual data, acknowledges.
+    \item Simple deploy: X-MAC/ContikiMAC. Dense w. regular traffic: S-MAC or T-MAC. 
+    \item Industrial reliability: TSCH. Intermittent: receiver-initiated or wake-up receiver.
   \end{itemize}
-  \centerline{\includegraphics[width = 0.95\linewidth]{preambleSampling.jpg}}
+  \item \textbf{Design Principles}: Sleep by default, minimize idle listening (duty-cycle), trade latency for energy, reduce control overhead (RTS, CTS, becaons), avoid overhearing, adapt to traffic, exploit link quality, consider whole system (energy budget)
+  \item \textbf{Information reduces energy}: Every improvement in low-power MAC is to give nodes more info, make better decisions when to sleep and wake.
+\end{itemize}
+
+
+\vfill \null
+\columnbreak
+
+\subsection{8.1 Asynchronous MAC (Sender-Initiated / LPL)}
+Nodes operate on independent schedules. The burden of "finding" receiver on sender.
+
+\subsubsection{Theory: ALOHA with Preamble Sampling}
+\begin{itemize}
+  \item \textbf{Steps}: Sender transmits long preamble to “wake up” receiver. Receiver periodically wakes briefly to sense for preambles. Once preamble detected, receiver stays awake, receives the actual data, acknowledges.
+
+  \centerline{\includegraphics[width = 0.8\linewidth]{preambleSampling.jpg}}
   \item \textbf{Detection}: preamble duration ($T_p \geq T_S$) must be greater or equal to receiver's sleep interval. Else, receiver may miss preamble, sleep before data starts.
   \item \textbf{Advantages:} Reduces idle listening significantly, saving power, simple to implement async
   \item \textbf{Disadvantages:} Preamble wastes energy at sender and slightly increases latency
 \end{itemize}
 
+\subsection{B-MAC: Asynchronous Medium Access Control}
+Berkeley MAC protocol, use preamble sampling. Improvement over ALOHA preamble: Adds \textbf{Clear Channel Assessment (CCA)} and a configurable interface for duty cycling.
 
-%% Lecture 7 Ends here
+\begin{itemize}
+  \item \textbf{Preamble sampling concept}: Nodes independently choose wake-up intervals (asynchronous).
+  \item Operational Steps:
+  \begin{enumerate}
+    \item Sender transmits a long preamble
+    \item Receivers periodically sample the channel
+    \item If a preamble is detected, the receiver stays awake for data transmission
+  \end{enumerate}
+  \item \textbf{Channel sampling interval}: Determines energy usage (Receiver waking rarely saves energy, but need longer preamble, sender wastes energy, higher latency, channel blocked longer). Long preamble as duration must match sampling interval to ensure detection.
+  \item Pros: Energy-efficient, simple, asynchronous operation
+  \item Cons: Long preamble introduces latency and unnecessary overhead
+\end{itemize}
+
+\subsection{X-MAC: Explicit MAC (B-MAC improvements)}
+\begin{itemize}
+  \item Replace long continuous preamble w. \textbf{short probe packets with gaps}:
+  \begin{enumerate}
+    \item Sender transmits short probe packets containing the destination address
+    \item Between probes, sender listens briefly for response
+    \item  Target receiver wakes up, checks address, sends early ACK
+    \item Sender immediately transmits the data packet
+  \end{enumerate}
+  \item \textbf{Early ACK}: sender stops probing as soon as target responds. On average, half preamble duration. Also \textbf{reduced latency}, data transfer begins on response, no wait for full preamble.
+  \item \textbf{Non-target receivers}: sleep immediately after read address. In B-MAC all neighbours must listen to all preambles and data.
+  \item \textbf{Gains}: X-MAC achieves 2-3x energy savings over B-MAC by reduce preamble by 50\% (on average target wakes up halfway) and eliminate non-target overhearing.
+  \item \textbf{Limitation}: X-MAC still uses async wake-ups, sender must probe for up to entire preamble duration in worst case. Synchronous approaches (S-MAC) avoid this.
+\end{itemize}
+  
+\subsection{ContikiMAC}
+\begin{itemize}
+  \item \textbf{ContikiMAC} treats data as preamble, takes X-MAC further.
+  \item  No separate preamble or probe packets. Sender repeatedly transmits actual data packet until ACK is received. Data serves as wake-up signal. Receiver detects data, decodes, and ACKs.
+  \item \textbf{Phase-Lock optimization}: After first successful exchange, sender learns when the receiver wakes up. Subsequent transmissions are timed to
+coincide with the receiver wake-up. Reduces preamble to near-zero for known neighbors.
+  \item No wasted probe packets, phase lock eliminates preable overhead for known neighbours, energy efficient in practice.
+\end{itemize}
+\centerline{\includegraphics[width = 0.8\linewidth]{contikimac.png}}
+
+\subsection{8.2 Synchronous MAC (Scheduled)}
+
+Nodes agree on a common wake-up schedule. Neighbors follow same schedule.
+
+\subsection{S-MAC: Synchronous Duty-Cycled MAC}
+\begin{itemize}
+  \item Nodes agree to wake up simultaneously at predetermined intervals
+  \item Each interval split into active (listen period) and inactive (sleep period)
+  \begin{enumerate}
+    \item 10$\%$ duty cycle: 10$\%$ of the time nodes listen; 90$\%$ sleep.
+    \item For example: nodes listen for 100 ms, then sleep for 900 ms.
+  \end{enumerate}
+  \item \textbf{Advantages:} Predictable and coordinated, easier to manage communication during listening, lower sender energy than B-MAC.
+  \item \textbf{Disadvantages:} Requires synchronization overhead (clock drift), less flexible compared to asynchronous schemes (X-MAC, B-MAC). Latency for event directly after active period. 
+\end{itemize}
+
+\centerline{\includegraphics[width = 0.8\linewidth]{syncmac.jpg}}
+
+\subsection{T-MAC: Timeout - Improve S-MAC Efficiency}
+\begin{itemize}
+  \item \textbf{S-MAC Limitation}: Fixed active period length. Nodes waste energy on idle channel period.
+  \item \textbf{T-MAC Improvement}: Use \textbf{adaptive active period}. Nodes stay awake only for activity.
+  \item \textbf{Mechanism (Timeout $T_A$)}: If no start-of-frame is detected within $T_A$, node sleeps early.
+  \item \textbf{Gains}: Under 10\% load, T-MAC can save up to \textbf{5$\times$} more energy than S-MAC.
+  \item \textbf{Trade-off (Early Sleep Problem)}: A node might sleep before a neighbor has a chance to transmit to it. This is partially mitigated by using \textit{Future Request-to-Send (FRTS)}.
+\end{itemize}
+
+\subsection{TSCH: Time-Slotted Channel Hopping (802.15.4e)}
+\textbf{Standard}: Part of IEEE 802.15.4e. Used in industrial IoT (WirelessHART, 6TiSCH).
+\begin{itemize}
+  \item \textbf{Concept}: Combine \textbf{TDMA} (time slots) w. \textbf{Frequency Hopping} (packets change channels).
+  \item \textbf{Slotframe}: Time is divided into repeating slotframes. Each slot (typically 10ms) provides enough time for TX + RX + ACK + Guard time.
+  \item \textbf{The Cell}: A communication link is assigned a specific (Time Slot, Channel Offset).
+  \item \textbf{Key Advantages}:\textbf{Reliability}: Channel hopping avoids persistent interference (e.g., Wi-Fi on specific freq), \textbf{Determinism}: Guaranteed latency bounds as no contention within assigned cells, \textbf{Scalability}: Multiple pairs can communicate in same time slot using different channels.
+\end{itemize}
+
+\subsection{8.3 Other MAC protocols}
+\subsubsection{Wake-Up Receivers (WuRx)}
+\begin{itemize}
+  \item \textbf{Add a second, ultra-low-power receiver}: listens continuously while \textbf{Main Radio} stays in deep sleep (5--20mA vs. 1--100$\mu$A).
+  \item \textbf{Operation}: The WuRx detects a specific wake-up signal and triggers an interrupt to "power on" the main radio for data transfer.
+  \item \textbf{Advantages}: Eliminates \textit{idle listening} energy on the main radio. Near-zero power consumption with almost zero latency (no waiting for duty cycle wake-up).
+  \item \textbf{Challenges}: \textbf{Low sensitivity} ($\sim$$-55$dBm) means much shorter range than main radio ($\sim$$-100$dBm), \textbf{False Wake-ups}: Interference can trigger main radio, waste power.
+\end{itemize}
 
 
 
-% \subsubsection{B-MAC: Asynchronous Medium Access Control}
-% \begin{itemize}
-%   \item Implements preamble sampling concept.
-%   \begin{itemize}
-%     \item Nodes independently choose wake-up intervals (asynchronous).
-%   \end{itemize}
-%   \item Operational Steps:
-%   \begin{enumerate}
-%     \item Sender transmits a long preamble
-%     \item Receivers periodically sample the channel
-%     \item If a preamble is detected, the receiver stays awake for data transmission
-%   \end{enumerate}
-%   \item Key Parameters:
-%   \begin{itemize}
-%     \item Channel sampling interval: Determines energy usage
-%     \item Long preamble: Duration matches sampling interval to ensure detection
-%   \end{itemize}
-%   \item Pros: Energy-efficient, simple, asynchronous operation
-%   \item Cons: Long preamble introduces latency and unnecessary overhead
-% \end{itemize}
+\subsubsection{Sender-Initiated vs. Receiver-Initiated MAC (who triggers handshake)}
+\begin{itemize}
+  \item \textbf{Sender-Initiated}: Sender transmits preambles/probes until the receiver wakes up. (E.g. B-MAC, X-MAC, ContikiMAC.) \textbf{Trade-off}: Simple logic, but long preambles waste sender energy and increase collision probability.
+  \item \textbf{Receiver-Initiated}: Receiver wakes up and broadcasts a short \textbf{beacon} ("I'm awake, send data now"). Senders listen for this beacon before transmitting. (E.g. RI-MAC, A-MAC.). \textbf{Tradeoffs}: Eliminate long preambles; more efficient for multiple senders. But, sender must stay awake (idle listen) to catch the beacon; beacons can collide.
+\end{itemize}
 
-% \subsubsection{B-MAC improvements with X-MAC}
-% \includegraphics*[width=8.5cm, height=2.2cm]{xmac.png}
-% \begin{itemize}
-%   \item Sender transmits many “probes” with gaps between probes. Each probe contains address of intended receiver
-%   \item Receiver checks address embedded in probe, sends acks if it is the destination during the gap period between probes
-%   \item Sender transmits DATA, receive replies with Ack to complete data transfer
-% \end{itemize}
+\vfill \null
+\columnbreak
 
-% % \subsubsection{ContikiMAC}
-% % \includegraphics*[width=8.5cm, height=2.9cm]{contikimac.png}
+\subsection{8.4 Beyond Collision Avoidance: Exploiting Interference}
 
-% \subsubsection{Synchronous MAC}
-% \includegraphics*[width=8.5cm, height=2cm]{syncmac.png}
-% \begin{itemize}
-%   \item Nodes agree to wake up simultaneously at predetermined intervals
-%   \item Each interval split into active (listen period) and inactive (sleep period)
-%   \begin{enumerate}
-%     \item 10$\%$ duty cycle: 10$\%$ of the time nodes listen; 90$\%$ sleep.
-%     \item For example: nodes listen for 100 ms, then sleep for 900 ms.
-%   \end{enumerate}
-%   \item \textbf{Advantages:} Predictable and coordinated, easier to manage communication during listening
-%   \item \textbf{Disadvantages:} Requires synchronization overhead, less flexible compared to asynchronous schemese (X-MAC, B-MAC)
-% \end{itemize}
+\subsection{Capture Effect (Decoding)}
+\begin{itemize}
+  \item \textbf{Definition}: The ability of a receiver to successfully decode the \textbf{strongest} signal during a collision, effectively "ignoring" weaker interferers.
+  \item \textbf{The SIR Rule}: Typically requires a Signal-to-Interference Ratio (SIR) $>3$--$6$dB.
+  \item \textbf{Quantitative Evidence}: A signal at $-70.89$dBm (strong) can achieve 99\% reception despite collisions if it has a $\sim$10dB advantage over the weak signal.
+  \item \textbf{Impact}: Provides a natural \textit{spatial priority} for closer nodes and increases actual ALOHA throughput beyond traditional theoretical limits ($Ge^{-2G}$).
+\end{itemize}
 
-% \subsubsection{Collisions are not always bad}
-% \begin{itemize}
-%   \item Occurs when multiple nodes transmit simultaneously, yet the receiver
-%   successfully decodes the strongest signal
-%   \item In some scenarios, collisions do not always cause complete failures
-%   \item Receiver receives the strongest signal, ignoring weaker interfering signals
-%   \item Enhances performance in certain scenarios (dense IoT deployments)
-% \end{itemize}
 
-% \subsubsection{Flooding}
-% \begin{itemize}
-%   \item Goal: get information to all nodes, problem of \underline{data dissemination}
-%   \item Problem: difficult in Mesh topologies: packet loss, retransmission delays
-%   \item But broadcast transmission do not reach far enough to cover entire mesh
-% \end{itemize}
+\subsection{Synchronous Transmissions (Time-based)}
+\begin{itemize}
+  \item \textbf{Concept}: Multiple nodes transmit the \textbf{exact same packet} at the \textbf{exact same time}.
+  \item \textbf{The 500ns Rule ($\Delta$)}: R can receive packet with high probability if $\triangle$ is small. For IEEE 802.15.4, if timing offset between signals is $\Delta < 500$ns (approx. 1/32 of a symbol duration), they arrive in phase.
+  \item \textbf{Constructive Interference}: Instead of collision corruption, the signals reinforce each other. 
+  \item \textbf{Benefit}: More transmitters: higher signal energy, higher probability of reception at receiver.
+\end{itemize}
 
-% \subsubsection{Synchronous Transmissions}
-% \includegraphics*[width=8.5cm, height=2cm]{synctrans.png}
-% \begin{itemize}
-%   \item Multiple nodes transmit same packet at same time
-%   \item R can receive packet with high probability if $\triangle$ is small
-%   \item May even improve probability of reception (more energy at receiver)
-%   \item $500$ ns is $1/32$ of a symbol for $802.15.4$ (chip duration)
-% \end{itemize}
+\centerline{\includegraphics[width = 0.8\linewidth]{synctrans.png}}
+
+
+
+\subsection{Network Layer Application: Glossy Flooding}
+
+\begin{itemize}
+  \item \textbf{Traditional Simple Flooding Mechanism}: Nodes rebroadcast received packet once with duplicate detection.
+  \item \textbf{Challenges}: \textbf{Broadcast Storm}: $O(n)$ transmissions, massive redundancy and energy waste. \textbf{Collision Cascade}: Nodes at same hop distance rebroadcast at similar times, making collisions nearly certain without random delays. \textbf{Latency}: Accumulates due to random backoffs (jitter). A 10-hop flood can exceed $150$ms.
+\end{itemize}
+
+\subsubsection{Solution: Glossy (Sync-TX Network Flooding)}
+\textbf{Paradigm Shift}: Stop avoiding collisions; exploit them as a beneficial feature.
+\begin{itemize}
+  \item \textbf{Mechanism}: Receivers use hardware interrupts to retransmit a packet \textit{immediately} upon reception to meet the $<500$ns synchronization requirement.
+  \item \textbf{Performance}: \textbf{Speed}: Floods a 200-node network in $\sim$5ms (vs. 100+ ms for traditional flooding). \textbf{Reliability}: high delivery rate from deterministic constructive interference.
+  \item \textbf{Applications}: Sub-microsec time sync, firmware updates, \textbf{Low-Power Wireless Bus (LWB)}.
+\end{itemize}
+\smallskip
+
+\centerline{\includegraphics[width = 0.7\linewidth]{glossy.jpg}}
+
+\subsection{8.5 Li-Fi Light Fidelity (802.11bb)}
+\begin{itemize}
+  \item \textbf{Definition}: Wireless communication using visible light (VLC) instead of radio frequencies. Standardized as \textbf{IEEE 802.11bb}.
+  \item \textbf{Transmitter}: Modulate LED intensity at speeds imperceptible to the human eye. \textbf{Receiver}: A photodetector or camera decodes the light pulses back into digital data.
+  \item \textbf{Dual Use}: Same LED infrastructure provides room illumination and data transmission.
+  \item \textbf{Advantages}: \textbf{Massive Bandwidth}: Entire visible light spectrum ($\sim$300--800THz), orders of magnitude wider than entire RF spectrum. \textbf{Security}: Light does not penetrate walls, no eavesdropping. \textbf{RF-Safe}: No electromagnetic interference, good for hospitals, aircraft, underwater environments where RF attenuates quickly. \textbf{License-Free}.
+  \item \textbf{Disadvantages}: Require \textbf{Line-of-Sight (LoS)} and direct or near-direct alignment. \textbf{Interference}: ambient sunlight or other light sources create a high noise floor. \textbf{Uplink Difficulty}: While ceiling LEDs easily provide \textit{downlink}, an \textit{uplink} (device to ceiling) often requires additional IR LEDs or hybrid RF solutions.
+  \item \textbf{Typical Applications}: \textbf{Indoor Positioning}: LED ID beacons for precise location tracking, \textbf{D2D (Device-to-Device)}: Short-range data transfer (e.g., screen-to-camera), \textbf{Hazardous Environments}: Safe for use in petrochemical plants or mines where RF sparks are a concern.
+\end{itemize}
+
+
+
 
 % \subsection{Wireless Localization}
 % \begin{itemize}
