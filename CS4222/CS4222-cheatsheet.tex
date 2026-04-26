@@ -1878,442 +1878,357 @@ Nodes agree on a common wake-up schedule. Neighbors follow same schedule.
 
 
 
+\section{10. Wireless Sensor Networks}
 
+\subsection{10.1 Neighbour Discovery}
+Once deployed, sensors have to initiate \textcolor{red}{neighbour discovery} to connect with one another.
 
+\begin{itemize}
+  \item \textbf{Naive approach}: \textcolor{red}{Continously listens} for neighbour to transmit signals until hears transmission. To wake up and constantly listen, battery drained \textbf{quickly}. Not energy efficient.
+\end{itemize}
 
-% \subsection{Sensor Networks}
-% \begin{itemize}
-%   \item Once deployed, sensors have to initiate \textcolor{red}{neighbour discovery}
-%   \item Discover neighbours to connect with one another
-%   \item \textbf{Naive approach}
-%   \begin{itemize}
-%     \item Node A \textcolor{red}{continously listens} its neighbour to transmit signals until hears transmission from Node B
-%     \item Problem is that Node A has to wake up and constantly listen during period, battery drained \textbf{quickly}
-%   \end{itemize}
-% \end{itemize}
+\subsection{Synchronous Neighbour Discovery}
+\begin{itemize}
+  \item \textbf{All nodes synchronized} to same clock/time. Nodes scheduled to wake up periodically at same time to transmit/receive.
+  \item \textcolor{red}{deterministic} approach | provide guarantee bounds on discovery latency
+  \item \textbf{Disadvantages}: \textcolor{red}{Synchronization} overhead, consumes significant power. \textcolor{red}{Slow discovery process} to detect all nodes. \textcolor{red}{Scalability} issues as network grows, more nodes to sync.
+\end{itemize}
 
-% \subsubsection{Synchronous Neighbour Discovery}
-% \begin{itemize}
-%   \item \textbf{All nodes synchronized} to same clock/time
-%   \item Nodes scheduled to wake up periodically at same time to transmit/receive
-%   \item \textcolor{red}{deterministic} approach | provide guarantee bounds on discovery latency
-%   \item \textbf{Disadvantages}
-%   \begin{itemize}
-%     \item \textcolor{red}{Synchronization} overhead, consumes significant power
-%     \item \textcolor{red}{Slow discovery process} to detect all nodes
-%   \end{itemize}
-% \end{itemize}
+\subsection{Asynchronous Neighbour Discovery}
+\begin{itemize}
+  \item \textbf{No clock synchronization needed}: Each device uses own clock to divide timeline into time slots. Independently wakeup for TX/RX at random time slots.
+  \item No restrict wake-up schedules $\rightarrow$ much lower average discovery latency
+\end{itemize}
 
-% \subsubsection{Asynchronous Neighbour Discovery}
-% \begin{itemize}
-%   \item \textbf{No clock synchronization needed}
-%   \item Each device uses its own clock to divide its timeline into time slots
-%   \item Each node independently wakeup for TX/RX at random time slots
-%   \item No restrict wake-up schedules $\rightarrow$ much lower average discovery latency
-% \end{itemize}
+\subsubsection{Birthday Protocol - Asynchronous neighbor discovery}
+Easy to implement + Good average discovery latency but \underline{unbounded worst case}
+\centerline{\includegraphics[width = 0.7\linewidth]{birthdayparadox.png}}
+\begin{enumerate}
+  \item Nodes have repeating periods. E.g. each period has 10 time slots.
+  \item Node randomly pick wake-up slots (shaded) (e.g., 1 slot per period (10\% duty cycle))
+\end{enumerate}
 
-% \subsubsection{Birthday Protocol - Asynchronous neighbor discovery}
-% Easy to implement + Good average discovery latency but \underline{unbounded worst case}
-% \includegraphics*[width=8.5cm, height=0.8cm]{birthdayparadox.png}
-% \begin{enumerate}
-%   \item Nodes have repeating periods (like birthdays repeat every 365 days)
-%   \item Each period has 10 time slots
-%   \item Node randomly pick wake-up slots – shaded boxes
-% \end{enumerate}
+\subsubsection{Model probability of birthday paradox}
+\begin{itemize}
+  \item Two nodes randomly choose to wakeup $k$ time slots (\textcolor{red}{shaded boxes}) out of a \textcolor{red}{total $n$ slots (periods)}. What is the probability that they wakeup at the same time slot at least once?
+  \item Probability ($Q$) can be written down as:
+  \begin{itemize}
+    \item (\textcolor{blue}{Duty-cycle: 1\%}) $n = 100$, $k = 1$, $Q(100,1) = 0.01$
+    \item (\textcolor{blue}{Duty-cycle: 5\%}) $n = 100$, $k = 5$, $Q(100,5) = 0.23$
+    \item (\textcolor{blue}{Duty-cycle: 1\%}) $n = 1000$, $k = 10$, $Q(1000,10) = 0.096$
+    \item (\textcolor{blue}{Duty-cycle: 5\%}) $n = 1000$, $k = 50$, $Q(1000,50) = 0.928$
+  \end{itemize}
+  \item $Q(n,k) = 1 - \frac{\binom{n-k}{k}}{\binom{n}{k}}$
+  \item \textcolor{blue}{Drawbacks}: probabilistic bound for discovery time, some nodes may take very long
+\end{itemize}
 
-% \subsubsection{Model probability of birthday paradox}
-% \begin{itemize}
-%   \item Two nodes randomly choose to wakeup $k$ time slots (\textcolor{red}{shaded boxes}) out of a \textcolor{red}{total $n$ slots (periods)}. What is the probability that they wakeup at the same time slot at least once?
-%   \item Probability ($Q$) can be written down as:
-%   \begin{itemize}
-%     \item (\textcolor{blue}{Duty-cycle: 1\%}) $n = 100$, $k = 1$, $Q(100,1) = 0.01$
-%     \item (\textcolor{blue}{Duty-cycle: 5\%}) $n = 100$, $k = 5$, $Q(100,5) = 0.23$
-%     \item (\textcolor{blue}{Duty-cycle: 1\%}) $n = 1000$, $k = 10$, $Q(1000,10) = 0.096$
-%     \item (\textcolor{blue}{Duty-cycle: 5\%}) $n = 1000$, $k = 50$, $Q(1000,50) = 0.928$
-%   \end{itemize}
-%   \item $Q(n,k) = 1 - \frac{\binom{n-k}{k}}{\binom{n}{k}}$ | \textcolor{blue}{Drawbacks} – probabilistic bound for discovery time, some nodes may take very long sometimes
-% \end{itemize}
+\subsubsection{DISCO - Asynchronous deterministic neighbor discovery}
+\begin{itemize}
+  \item Scheduling wake-up timeslots at multiples of prime numbers to \textcolor{red}{ensure deterministic discovery}. Nodes can have different duty cycles.
+  \begin{itemize}
+    \item Each node picks \textcolor{red}{two prime numbers $p_{i1}$ and $p_{i2}$}
+    \item Node \textbf{wakes up every $p_{i1}$ and $p_{i2}$ time slots} to $\uparrow$ discovery chances
+    \item The duty cycle is $(1/p_{i1} + 1/p_{i2})$
+    \item If both nodes pick the same pair of prime numbers:
+    \begin{itemize}
+      \item Duty cycle $\approx (p_{i1} + p_{i2})/ p_{i1}p_{i2}$, Worst Case time $\approx p_{i1}p_{i2}$
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
 
-% \subsubsection{DISCO - Asynchronous deterministic neighbor discovery}
-% \begin{itemize}
-%   \item Scheduling wake-up timeslots at multiples of prime numbers to \textcolor{red}{ensure deterministic discovery}
-%   \item Nodes can have different duty cycles
-%   \item \textbf{Version 0:} Node i picks \textcolor{red}{a prime number $p_i$} and wakes up every $p_i$ time slots
-%   \begin{itemize}
-%     \item The duty cycle is $(1/p_i)$
-%     \item \textcolor{red}{In the worst case, two nodes $p_i$ and $p_j$ will meet after $(p_i * p_j)$ timeslots}
-%   \end{itemize}
-%   \item \textbf{Problem:} what if both nodes pick the same prime number?
-%   \item \textbf{Improved Version:}
-%   \begin{itemize}
-%     \item Each node picks \textcolor{red}{two prime numbers $p_{i1}$ and $p_{i2}$}
-%     \item Node \textbf{wakes up every $p_{i1}$ and $p_{i2}$ time slots} to $\uparrow$ discovery chances
-%     \item The duty cycle is $(1/p_{i1} + 1/p_{i2})$
-%     \item If both nodes pick the same pair of prime numbers:
-%     \begin{itemize}
-%       \item Duty cycle $\approx (p_{i1} + p_{i2})/ p_{i1}p_{i2}$, Worst Case time $\approx p_{i1}p_{i2}$
-%     \end{itemize}
-%   \end{itemize}
-% \end{itemize}
+\subsection{10.2 Routing}
+If all N nodes connected directly, $N(N-1)$ or $O(N^2)$ uni-directional links
 
-% \subsubsection{Routing}
-% If all N nodes are connected to each other, there will be $N(N-1)$ or $O(N^2)$ uni-directional links
+\subsubsection{Structure of wired networks}
+\begin{itemize}
+  \item \textcolor{red}{Hierarchical and structured}: \textit{switches}, \textit{routers} for managing connections and route data.
+  \begin{itemize}
+    \item Switch connects multiple devices within a local network (e.g., at home or in an office)
+    \item Router connects different networks together (e.g., your home network to the Internet)
+  \end{itemize}
+  \item Add more switches/routers reduces \# of direct links needed and \textcolor{red}{allows network scaling}.
+\end{itemize}
 
-% \subsubsection{Structure of wired networks}
-% \begin{itemize}
-%   \item \textcolor{red}{Hierarchical and structured}
-%   \item Use \textit{switches} and \textit{routers} for managing connections and route data
-%   \begin{itemize}
-%     \item Switch connects multiple devices within a local network (e.g., at home or in an office)
-%     \item Router connects different networks together (e.g., your home network to the Internet)
-%   \end{itemize}
-%   \item Adding more switches/routers reduces the number of direct links needed and \textcolor{red}{allows network to scale efficiently}
-% \end{itemize}
+\subsubsection{Structure of wireless networks}
+\begin{itemize}
+  \item Wireless network are typically \textcolor{red}{single-hop:} All stations/devices \textcolor{red}{communicate directly} with base stations or (Access Points) (E.g.  WiFi, Cellular Network, LoRa)
+  \item \textbf{Multi-hop}
+  \begin{itemize}
+    \item Extends network reach/coverage for the same number of base stations
+    \item Provides more routes, potentially more robust
+  \end{itemize}
+\end{itemize}
 
-% \subsubsection{Structure of wireless networks}
-% \begin{itemize}
-%   \item Wireless network are typically \textcolor{red}{single-hop:} All stations/devices \textcolor{red}{communicate directly} with base stations or (Access Points)
-%   \begin{itemize}
-%     \item Example: WiFi, Cellular Network, LoRa
-%   \end{itemize}
-%   \item \textbf{Multi-hop}
-%   \begin{itemize}
-%     \item Extends network reach/coverage for the same number of base stations
-%     \item Provides more routes, potentially more robust
-%   \end{itemize}
-% \end{itemize}
+\subsection{Routing Metrics: Factors to consider in Routing Decisions}
+\begin{itemize}
+  \item \textcolor{red}{Energy efficiency}
+  \item \textcolor{red}{Reliability:} ensure packets successfully delivered (e.g., ETX)
+  \item \textcolor{red}{Hop Count}
+  \item Delay: how long it takes for data to reach the destination
+  \item Other factors: network congestion / throughput
+\end{itemize}
 
-% \subsubsection{Factors (routing metrics) to consider}
-% \begin{itemize}
-%   \item \textcolor{red}{Energy efficiency}
-%   \item \textcolor{red}{Reliability:} ensure packets successfully delivered (e.g., ETX)
-%   \item \textcolor{red}{Hop Count}
-%   \item Delay: how long it takes for data to reach the destination
-%   \item Other factors: network congestion / throughput
-% \end{itemize}
+\subsection{Energy Consumption}
+\begin{itemize}
+  \item Free space model: $P_r = C P_t / d^\alpha$
+  \begin{itemize}
+    \item $C$ is a constant | $\alpha$ is an exponent, typically 2 or 3
+  \end{itemize}
+  \item Transmission over a total distance $d$, minimum received power $P_0$
+  \item \textbf{Single-hop} transmission to cover distance $d$, calculate transmission power ($P_1$):
+  \begin{itemize}
+    \item $P_0 = CP_1/d^\alpha$ or $P_1 = P_0/C * d^\alpha$
+  \end{itemize}
+  \item \textbf{Multiple-hop} ($N$) transmissions to cover distance $d$, calc transmission power ($P_N$) per hop:
+  \begin{itemize}
+    \item $P_0 = CP_N/(d/N)^\alpha$ or $P_N = P_0/C * (d/N)^\alpha$
+    \item Total transmission power is $N P_N = N P_0/C * (d/N)^\alpha$
+  \end{itemize}
+\end{itemize}
 
-% \subsubsection{Energy Consumption}
-% \begin{itemize}
-%   \item Free space model: $P_r = C P_t / d^\alpha$
-%   \begin{itemize}
-%     \item $C$ is a constant | $\alpha$ is an exponent, typically 2 or 3
-%   \end{itemize}
-%   \item Transmission over a total distance $d$, minimum received power $P_0$
-%   \item \textbf{Single-hop} transmission to cover distance $d$, calculate transmission power ($P_1$):
-%   \begin{itemize}
-%     \item $P_0 = CP_1/d^\alpha$ or $P_1 = P_0/C * d^\alpha$
-%   \end{itemize}
-%   \item \textbf{Multiple-hop} ($N$) transmissions to cover distance $d$, calculate transmission power ($P_N$) per hop:
-%   \begin{itemize}
-%     \item $P_0 = CP_N/(d/N)^\alpha$ or $P_N = P_0/C * (d/N)^\alpha$
-%     \item Total transmission power is $N P_N = N P_0/C * (d/N)^\alpha$
-%   \end{itemize}
-% \end{itemize}
+\subsection{Reliability}
+\begin{itemize}
+  \item Ensure packets successfully delivered, minimize packet loss
+  \item Routing Metric: \textcolor{red}{``expected number of transmissions''} to successfully transmit a packet (ETX)
+  \item Measure \textcolor{red}{link quality} over time to determine each link's reliability
+  \begin{itemize}
+    \item Link quality varies between nodes
+    \item Fewest hops might not be the ``most reliable'' path
+  \end{itemize}
+\end{itemize}
 
-% \subsubsection{Reliability}
-% \begin{itemize}
-%   \item Ensure packets successfully delivered, minimize packet loss
-%   \item Routing Metric: \textcolor{red}{``expected number of transmissions''} to successfully transmit a packet, so called ETX
-%   \item Measure \textcolor{red}{link quality} over time to determine each link's reliability
-%   \begin{itemize}
-%     \item Link quality varies between nodes
-%     \item Fewest hops might not be the ``most reliable'' path
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{Measure Packet Reception Ratio (PRR)}
+\begin{itemize}
+  \item A transmitter sends \textcolor{red}{$S$ packets} over a period of \textcolor{red}{$T$ seconds}. The \textcolor{red}{receiver} records number of packets successfully received, denoted as $R$. $PRR = R/S$
+  \item \textbf{Overheads of Measuring PRR}: Trade-off communication cost and reaction time.
+    \begin{itemize}
+    \item Assume ZigBee radio is used (250Kbps), each transmission takes 1ms ($\sim$250bits, $\sim$30bytes) and link measurement probes should not collide
+    \item If T=1s, S=100, Measurement takes up 10\% of bandwidth 1 node. If there are 10 nodes, 100 probes need to be transmitted in 1 sec (100\% of bandwidth used only for measurement!)
+    \item If T=100s, S=10, Measurement takes up very little bandwidth, but it takes a long time to get an accurate estimate of link quality. If link quality changes during that time, the measurement may be inaccurate. Good S and T values application dependent.
+    \end{itemize}
+\end{itemize}
 
-% \subsubsection{Measure Packet reception ratio (PRR)}
-% \begin{itemize}
-%   \item A transmitter sends \textcolor{red}{$S$ packets} over a period of \textcolor{red}{$T$ seconds}
-%   \item During $T$ sec, \textcolor{red}{the receiver} records the number of packets successfully received, denoted as $R$
-%   \item $PRR = R/S$
-% \end{itemize}\subsubsection{Overheads of Measuring PRR}
-% \begin{itemize}
-%   \item Trade-off between communication cost and reaction time
-%   \item Assume ZigBee radio is used (250Kbps), each transmission takes 1ms ($\sim$250bits, $\sim$30bytes) and link measurement probes should not collide
-%   \item If T=1s, S=100
-%   \begin{itemize}
-%     \item Measurement takes up 10\% of bandwidth 1 node
-%     \item If there are 10 nodes, 100 probes need to be transmitted in 1 sec (100\% of bandwidth used only for measurement!)
-%   \end{itemize}
-%   \item If T=100s, S=10
-%   \begin{itemize}
-%     \item Measurement takes up very little bandwidth
-%     \item Is S too small?
-%     \item If there is a change in link quality, how long does it take to notice?
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{Calculate Expected number of Transmissions: ETX}
+\begin{itemize}
+  \item ETX (expected transmissions) is a \textcolor{red}{commonly used routing metric}
+  \item Using Packet reception ratio (PRR): $ETX = 1/PRR$
+\end{itemize}
 
-% \subsubsection{Calculate Expected number of transmissions: ETX}
-% \begin{itemize}
-%   \item ETX (expected transmissions) is a \textcolor{red}{commonly used routing metric}
-%   \item Using Packet reception ratio (PRR): $ETX = 1/PRR$
-% \end{itemize}
+\subsection{Routing Algorithms}
 
-% \subsection{Routing}
+\subsubsection{Route using shortest path algorithm}
+\begin{itemize}
+  \item Many practical routing algorithms based on notion of shortest path between two nodes. Each link assigned a positive number called its length. Route each packet along minimum length (or shortest) path between source and destination.
+  \item If length is always 1, shortest path becomes minimum hop routing
+  \item By defining the length using metrics like ETX, energy, delay etc, other paths can be obtained
+\end{itemize}
 
-% \subsubsection{Routing using the shortest path algorithm}
-% \begin{itemize}
-%   \item Many practical routing algorithms are based on the notion of shortest path between two nodes
-%   \item Each link is assigned a positive number called its length
-%   \item A shortest path routing algorithm routes each packet along the minimum length (or shortest) path between the source and destination
-%   \item If length is always 1, then shortest path becomes minimum hop routing
-%   \item By defining the length using metrics like ETX, energy, delay etc, other paths can be obtained
-% \end{itemize}
-
-% \begin{center}
-% \begin{tikzpicture}[scale=0.8]
-%     \node[circle,draw] (A) at (0,0) {A};
-%     \node[circle,draw] (B) at (2,0) {B};
-%     \node[circle,draw] (C) at (4,0) {C};
-%     \node[circle,draw] (D) at (2,-1.5) {D};
+\begin{center}
+\begin{tikzpicture}[scale=0.6]
+    \node[circle,draw] (A) at (0,0) {A};
+    \node[circle,draw] (B) at (2,0) {B};
+    \node[circle,draw] (C) at (4,0) {C};
+    \node[circle,draw] (D) at (2,-1.5) {D};
     
-%     \draw (A) -- node[above] {5/4} (B);
-%     \draw (B) -- node[above] {2} (C);
-%     \draw (A) -- node[below] {3} (D);
-%     \draw (D) -- node[below] {3} (C);
+    \draw (A) -- node[above] {5/4} (B);
+    \draw (B) -- node[above] {2} (C);
+    \draw (A) -- node[below] {3} (D);
+    \draw (D) -- node[below] {3} (C);
     
-%     \node[text width=2cm] at (0,0.5) {Source};
-%     \node[text width=2cm] at (4,0.5) {Destination};
-% \end{tikzpicture}
-% \end{center}
+    \node[text width=2cm] at (-1,0.6) {Source};
+    \node[text width=2cm] at (6.5,0.6) {Destination};
+\end{tikzpicture}
+\end{center}
 
-% \subsubsection{Classification of Routing Protocols}
-% \begin{itemize}
-%   \item \textbf{Proactive (Routing Table based):} when a packet needs to be forwarded, the \textcolor{red}{best route is already known (stored in the routing table)}
-%   \item \textbf{Reactive (Demand-based):} Determine the best route only when there is data to send
-% \end{itemize}
+\subsection{Classification of Routing Protocols}
+\begin{itemize}
+  \item \textbf{Proactive (Routing Table based):} when a packet needs to be forwarded, the \textcolor{red}{best route is already known (stored in the routing table)}
+  \item \textbf{Reactive (Demand-based):} Determine the best route only when there is data to send
+\end{itemize}
 
-% \subsubsection{Proactive Routing}
-% \begin{itemize}
-%   \item \textcolor{red}{Periodically} query for the possible routes in the network
-%   \begin{itemize}
-%     \item Save all routes that are important (maybe just all routes?)
-%     \item Also determine routes whenever topology changes (nodes join/leave)
-%   \end{itemize}
-%   \item \textbf{Upside:} when a packet arrives, route to destination is already known
-%   \item \textbf{Downside:} requires more memory and effort on part of routers
-%   \begin{itemize}
-%     \item Wastes some network bandwidth on checking for route changes
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{Proactive Routing}
+\begin{itemize}
+  \item \textcolor{red}{Periodically} query for the possible routes in the network. Save all routes that are important (or all routes), also determine routes whenever topology changes (nodes join/leave)
+  \item \textbf{Upside:} when a packet arrives, route to destination is already known
+  \item \textbf{Downside:} requires more memory and effort on part of routers. Wastes some network bandwidth on checking for route changes
+\end{itemize}
 
-% \subsubsection{Reactive Routing}
-% \begin{itemize}
-%   \item Build up a map of the routes through a network
-%   \begin{itemize}
-%     \item Hopefully the ``optimal'' routes
-%   \end{itemize}
-%   \item Map routes in reaction to a packet arrival
-%   \begin{itemize}
-%     \item Sensor devices are slow and limited
-%     \item Most likely to resend to same prior address
-%     \item Discover a route when it is needed, then cache for next time
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{Reactive Routing}
+\begin{itemize}
+  \item Opportunistically build up a map of the routes through network, hopefully optimal routes.
+  \item Map routes in reaction to a packet arrival. 
+  \item \textbf{Rationale}: Sensor devices are slow and limited, most likely to resend to same prior address. Discover a route when it is needed, then cache for next time
+\end{itemize}
 
-% \subsubsection{Ad-hoc Networks}
-% \begin{itemize}
-%   \item What if the nodes are not static but mobile?
-%   \item A Mobile Ad hoc Network (MANET) is an autonomous system of mobile nodes (MS) (also serving as routers) connected by wireless links
-%   \item No infrastructure exists in a MANET
-%   \item Network's wireless topology may change dynamically in an unpredictable manner since nodes are free to move, each node has limited transmitting power
-%   \item Assumption: Due to node mobility, routing path may be available but needs to be ``discovered''
-% \end{itemize}
+\subsubsection{Ad-hoc Networks}
+\begin{itemize}
+  \item \textbf{A Mobile Ad hoc Network (MANET)} is an autonomous system of mobile (non-static) nodes (MS) (also serving as routers) connected by wireless links. No infrastructure exists.
+  \item Network's wireless topology may change dynamically in an unpredictable manner as nodes are free to move, each node has limited transmitting power.
+  \item \textbf{Assumption}: Due to node mobility, routing path may be available, needs to be ``discovered''
+\end{itemize}
 
-% \subsubsection{Ad-hoc On-demand Distance Vector Routing (AODV)}
-% \begin{itemize}
-%   \item \textbf{Ad-hoc:} dynamic and temporary networks
-%   \item \textbf{On-demand:} \textcolor{red}{Construct routes only when needed}
-%   \item \textbf{Distance vector:} routing metric is \textcolor{red}{the number of hops} a packet has to pass (\textcolor{red}{Hop Count})
-% \end{itemize}
+\subsection{Ad-hoc On-demand Distance Vector Routing (AODV)}
+\begin{itemize}
+  \item \textbf{Ad-hoc:} dynamic and temporary networks
+  \item \textbf{On-Demand}: Routes are only created when a source node has data to send.
+  \item \textbf{Distance vector:} routing metric is \textcolor{red}{the number of hops} a packet has to pass (\textcolor{red}{Hop Count})
+\end{itemize}
 
-% \subsubsection{AODV Routing Table}
-% \begin{itemize}
-%   \item \textcolor{red}{Store the next hop} towards a destination, instead of storing a full path
-%   \begin{itemize}
-%     \item All routers along the path must also have Destination$\rightarrow$Next mappings
-%   \end{itemize}
-%   \item Also keep hops-to-destination and last-seen-destination-sequence-number
-%   \begin{itemize}
-%     \item Destination-sequence-number is an indicator of route freshness
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{AODV Routing Table}
+Each node maintains a table that stores:
+\begin{itemize}
+  \item \textbf{Destination IP Address}: The final target.
+  \item \textbf{Next Hop}: \textcolor{red}{Stores only the immediate neighbor} towards the destination, not the full path.
+  \item \textbf{Hop Count}: Distance to the destination.
+  \item \textbf{Destination Sequence Number}: An indicator of route \textbf{freshness}.
+  \item \textbf{Lifetime}: Expiration time of the route.
+\end{itemize}
 
-% \subsubsection{AODV Route Discovery}
-% \begin{itemize}
-%   \item Upon demand: check table
-%   \item If not cached send \textcolor{red}{Route Request} (RREQ) via broadcasting
-%   \begin{itemize}
-%     \item Route is unknown, so broadcasting is needed
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{The 2-Step Route Discovery Process}
 
-% \subsubsection{AODV Route Requests (RREQs)}
-% \begin{center}
-%   \begin{tabular}{|c|c|c|c|c|c|}
-%   \hline
-%   Request & Source & Destination & Source & Destination & \cellcolor{orange!60}Hop \\
-%   ID & Address & Address & SeqNo & SeqNo & \cellcolor{orange!60}Count \\
-%   \hline
-%   \end{tabular}
-% \end{center}
+\textbf{1. Route Request (RREQ) -- Discovery (Broadcast)}
+\begin{itemize}
+  \item \textbf{Action}: When route isn't cached, source \textbf{floods} an RREQ (nodes forward it, incrementing hop count), till reaches destination or node with valid route to destination.
+  \item \textbf{Reverse Path}: Each intermediate node records which neighbor sent the RREQ, creating a path back to the source.
+  \item \textbf{AODV Route Requests (RREQ) Packet Structure}:
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    Request & Source & Destination & Source & Destination & \cellcolor{orange!60}Hop \\
+    ID & Address & Address & SeqNo & SeqNo & \cellcolor{orange!60}Count \\
+    \hline
+    \end{tabular}
+  \end{center}
+  \item \textbf{Sequence Numbers}: Monotonically increasing values used to determine if information is ``fresh.'' A node only updates its table if the incoming SeqNo is higher than its stored value.
+  \begin{itemize}
+    \item \textbf{Source SeqNo}: E.g. like a broadcast number, used by receivers to learn the "freshness" of the path \textit{back to the source}.
+    \item \textbf{Destination SeqNo}: Used by the source to specify how "fresh" the route \textit{to the destination} must be that it will accept. If source does not know destination's SeqNo, it can set it to zero, meaning it will accept any route.
+    \item \textbf{The Rule of Freshness}: A node updates its routing table only if:
+      \begin{enumerate}
+          \item $\text{Incoming SeqNo} > \text{Stored SeqNo}$ (Newer information), or (Shorter path):
+          \item $\text{Incoming SeqNo} = \text{Stored SeqNo}$ \textbf{AND} $\text{Incoming Hop Count} < \text{Stored Hop Count}$
+      \end{enumerate}
+  \end{itemize}
+  \item \textbf{Request ID}: Unique ID for RREQ to detect and discard duplicate broadcasts.
+  \item \textbf{Hop Count}: The number of hops request has taken. Starts at 1, incremented by nodes.
+\end{itemize}
 
-% \begin{itemize}
-%   \item Request ID identifies this RREQ
-%   \begin{itemize}
-%     \item Used to discard duplicates during flooding
-%   \end{itemize}
-%   \item Sequence Numbers are per-device, monotonically increasing
-%   \begin{itemize}
-%     \item Used as a notion of ``how recently'' device has been seen
-%     \item Source SeqNo is the source's most recent sequence number
-%     \item Destination SeqNo is the most recently seen from the destination by the source (Defaults to zero)
-%   \end{itemize}
-%   \item Hop Count is the number of hops this request has taken
-%   \begin{itemize}
-%     \item Starts at 1 and incremented by each transmitter along the path
-%   \end{itemize}
-% \end{itemize}
+\smallskip
 
-% \subsubsection{AODV Route Response (RREP)}
-% \begin{center}
-%   \begin{tabular}{|c|c|c|c|}
-%   \hline
-%   Source & Destination & Destination & \cellcolor{orange!60}Hop \\
-%   Address & Address & SeqNo & \cellcolor{orange!60}Count \\
-%   \hline
-%   \end{tabular}
-% \end{center}
+\textbf{2. Route Response (RREP) -- Establishment (Unicast)}
+\begin{itemize}
+  \item \textbf{Action}: The destination (or a node with a valid route) replies with a unicast RREP.
+  \item \textbf{AODV Route Response (RREP) Packet Structure}:
+  \begin{center}
+      \begin{tabular}{|c|c|c|c|}
+      \hline
+      Source Addr & Destination Addr & Destination SeqNo & Hop Count \\
+      \hline
+      \end{tabular}
+  \end{center}
+  \item \textbf{Forward Path}: The RREP follows the reverse path back to the source, establishing the forward route for data in the routing tables. Includes destination sequence number as a sense of recency. Note dest. addr. still refers to the original target node, same as the RREQ.
+  \item \textbf{Logic Check}: The \textbf{Destination Addr} and \textbf{Dest SeqNo} still refer to the \textbf{Target Node}. The RREP updates the Dest. SeqNo before sending RREP to prove required recency.
+  \item \textbf{Generating the RREP}: 
+    \begin{itemize}
+      \item \textbf{By Destination Node}: Increments its sequence number to ensure it is strictly greater than the one in the RREQ. This forces the network to accept the new route.
+      \item \textbf{By Intermediate Node}: Can only reply if it has a route with a $Dest SeqNo \geq$ the one in the RREQ. It \textit{cannot} increment the value; it simply relays the cached $DestSeqNo$.
+    \end{itemize}
+\end{itemize}
+  
 
-% \begin{itemize}
-%   \item Reply is sent unicast back to the source via newly constructed route
-%   \begin{itemize}
-%     \item Each node along the way already knows the route back
-%   \end{itemize}
-%   \item Includes recent destination sequence number as a sense of recency
-%   \begin{itemize}
-%     \item No need for source sequence number anymore
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{Route Maintenance (Self-Healing)}
+\begin{itemize}
+  \item \textbf{Link Break}: Detected when a neighbor fails to acknowledge a transmission.
+  \item \textbf{RERR (Route Error)}: Node that detects break sends a RERR to all "upstream" neighbors.
+  \item \textbf{Recovery}: Source node receives the RERR, deletes the stale route, and starts a new RREQ if it still needs to send data.
+\end{itemize}
 
+\subsubsection{Tradeoffs for Reactive Routing}
+\begin{itemize}
+  \item \textbf{Upside: Efficiency} 
+  \begin{itemize}
+    \item \textcolor{red}{No transmissions unless demand}: Save battery, bandwidth, avoid periodic "heartbeats".
+    \item \textbf{Dynamic Tolerance}: Routes can break/change w/o penalty if no data currently being sent.
+  \end{itemize}
+  
+  \item \textbf{Downside: Performance Costs}
+  \begin{itemize}
+    \item \textcolor{red}{Large, Variable Delay}: The first packet must wait for the full RREQ/RREP "handshake" to complete across the network before it can be sent.
+    \item \textbf{Discovery Overhead}: In high-mobility or high-traffic networks, frequent RREQ broadcasts can lead to a "Broadcast Storm," clogging the channel.
+    \item \textbf{Stale Cache Issues}: If a cached route is broken, the sender won't know until the data fails and a \textbf{RERR} is received, forcing a costly discovery restart.
+  \end{itemize}
+\end{itemize}
 
-% \subsubsection{Route maintenance in AODV}
-% \begin{itemize}
-%   \item If a link in the routing table breaks, all active neighbors are informed with Route Error (RERR) messages
-%   \begin{itemize}
-%     \item After some number of retransmissions and timeouts
-%     \item RERR contains destination address that broke
-%   \end{itemize}
-%   \item Nodes receiving RERR can start RERQ for destination address
-%   \begin{itemize}
-%     \item Which lets them find a new path through the network
-%     \item And updates everyone's cached next-hops
-%   \end{itemize}
-% \end{itemize}
+\subsection{10.3 Load Balancing in Wireless Network}
+% Add before Load Balancing section
 
-% \subsubsection{Tradeoffs for reactive routing}
-% \begin{itemize}
-%   \item \textbf{Upside:} \textcolor{red}{no transmissions unless there is demand}
-%   \begin{itemize}
-%     \item Routes might appear, disappear, reappear, but no need to update if no one actually wants to transmit anything
-%   \end{itemize}
-%   \item \textbf{Downside:} large, \textcolor{red}{variable delay} when actually sending a packet
-%   \begin{itemize}
-%     \item Full RREQ/RREP protocol before data can actually be sent
-%     \item Route might have broken at some point
-%     \begin{itemize}
-%       \item So data will be sent based on cached information
-%       \item RERR will occur, RREQ/RREP will occur
-%       \item Then data will be sent again
-%     \end{itemize}
-%   \end{itemize}
-% \end{itemize}
+\subsection{Many-to-one Sensor Networks}
+\begin{itemize}
+  \item \textcolor{red}{Data collection follows a spanning tree}
+  \begin{itemize}
+    \item All data is collected on a single node (gateway)
+  \end{itemize}
+  \item \textcolor{red}{Routing is simple:}
+  \begin{itemize}
+    \item Each device only needs to remember hop to gateway
+    \item If gateway wants to send message back, it must include a full hop path
+  \end{itemize}
+  \item \textbf{Power consumption for each node}
+  \begin{itemize}
+    \item Per-node power consumption for data transmission and reception \textcolor{red}{grows exponentially} from the leaves to the root of the tree
+    \item Power consumption increases at least linearly when nodes are closer to the sink
+    \item Typical case is much worse
+    \item Consequence: the power sources of the nodes close to the sink (gateway) deplete faster.
+  \end{itemize}
+\end{itemize}
 
-% \subsubsection{Load Balancing in Wireless Network}
-% % Add before Load Balancing section
+\begin{center}
+  \begin{tikzpicture}[
+    every node/.style={draw, circle, minimum size=5mm, inner sep=0mm},
+    every path/.style={thick,->}
+]
 
-% \subsubsection{Many-to-one Sensor Networks}
-% \begin{itemize}
-%   \item \textcolor{red}{Data collection follows a spanning tree}
-%   \begin{itemize}
-%     \item All data is collected on a single node (gateway)
-%   \end{itemize}
-%   \item \textcolor{red}{Routing is simple:}
-%   \begin{itemize}
-%     \item Each device only needs to remember hop to gateway
-%     \item If gateway wants to send message back, it must include a full hop path
-%   \end{itemize}
-%   \item \textbf{Power consumption for each node}
-%   \begin{itemize}
-%     \item Per-node power consumption for data transmission and reception \textcolor{red}{grows exponentially} from the leaves to the root of the tree
-%     \item Power consumption increases at least linearly when nodes are closer to the sink
-%     \item Typical case is much worse
-%     \item Consequence: the power sources of the nodes close to the sink (gateway) deplete faster.
-%   \end{itemize}
-% \end{itemize}
+% Nodes
+\node (A) at (0,3) {A};
+\node (B) at (1,3) {B};
+\node (C) at (2,3) {C};
+\node (D) at (3,2) {D};
+\node (G) at (4,2) {G};
+\node (X1) at (0,2) {};
+\node (X3) at (2,2) {};
 
-% \begin{center}
-%   \begin{tikzpicture}[
-%     every node/.style={draw, circle, minimum size=5mm, inner sep=0mm},
-%     every path/.style={thick,->}
-% ]
+% Edges
+\draw (A) -- (B);
+\draw (B) -- (C);
+\draw (C) -- (D);
+\draw (X1) -- (X3);
+\draw (X3) -- (D);
+\draw (D) -- (G);
+% Labels
+\node[draw=none, above left, red] at (A) {Leaf Node};
+\node[draw=none, above, red] at (G) {Root Node};
+\node[draw=none, below, black] at (G) {Gateway};
 
-% % Nodes
-% \node (A) at (0,3) {A};
-% \node (B) at (1,3) {B};
-% \node (C) at (2,3) {C};
-% \node (D) at (3,2) {D};
-% \node (G) at (4,2) {G};
-% \node (X1) at (0,2) {};
-% \node (X3) at (2,2) {};
-% \node (X2) at (1,1) {};
-% \node (X4) at (2,1) {};
-
-% % Edges
-% \draw (A) -- (B);
-% \draw (B) -- (C);
-% \draw (C) -- (D);
-% \draw (X1) -- (X3);
-% \draw (X3) -- (D);
-% \draw (D) -- (G);
-% \draw (X2) -- (X4);
-% \draw (X4) -- (D);
-% % Labels
-% \node[draw=none, above left, red] at (A) {Leaf Node};
-% \node[draw=none, above, red] at (G) {Root Node};
-% \node[draw=none, below, black] at (G) {Gateway};
-
-% \end{tikzpicture}
-% \end{center}
+\end{tikzpicture}
+\end{center}
 
 
-% \subsubsection{In-network data aggregation}
-% \begin{itemize}
-%   \item To mitigate cost of forwarding, \textcolor{red}{compute relevant statistics along the way:} mean (A, B, C), max, min, median etc.
-%   \begin{itemize}
-%     \item E.g., Node C sends mean of (A, B, C)
-%     \item Send one value, instead of three separate messages
-%   \end{itemize}
-%   \item Forwarding nodes aggregate the data they receive with their own and send one message instead of relaying multiple messages
-%   \begin{itemize}
-%     \item Prevents exponentially growing number of messages
-%   \end{itemize}
-%   \item \textbf{Issues:}
-%   \begin{itemize}
-%     \item Location-based information is lost
-%     \item Distributed computation of statistics
-%     \begin{itemize}
-%       \item mean: node needs to know both the mean values and the sizes of samples to aggregate correctly
-%       \item median: only an approximated computation is possible
-%     \end{itemize}
-%   \end{itemize}
-%   \item \textbf{Applications:}
-%   \begin{itemize}
-%     \item Especially useful in a query-based data collection system
-%     \item Queries regard a known subset of nodes
-%     \item Aggregation function can be specified
-%   \end{itemize}
-% \end{itemize}
+\subsection{In-network data aggregation}
+\begin{itemize}
+  \item To mitigate cost of forwarding, \textcolor{red}{compute relevant statistics along the way:} mean, max, min, median etc. (e.g. Node C sends mean of (A, B, C), instead of three separate messages).
+  \item Forwarding nodes aggregate the data they receive with their own and send one message instead of relaying multiple messages. Prevent exponential growth of messages.
+  \item \textbf{Issues:}
+  \begin{itemize}
+    \item Location-based information is lost
+    \item Distributed computation of statistics: For mean, nodes needs to know both the mean values and the sizes of samples to aggregate correctly, and for median, only an approximated computation is possible
+  \end{itemize}
+  \item \textbf{Applications:}
+  \begin{itemize}
+    \item Especially useful in a query-based data collection system
+    \item Queries regard a known subset of nodes
+    \item Aggregation function can be specified
+  \end{itemize}
+\end{itemize}
 
 % \subsection{Wifi}
 % \begin{itemize}
@@ -2783,7 +2698,7 @@ Nodes agree on a common wake-up schedule. Neighbors follow same schedule.
 \section{References and Credits}
 \begin{itemize}
   \item Course Content topics, ordering from CS4222, National University of Singapore.
-  \item Select contents, diagrams referenced from goated CS4222 Cheatsheet - @JasonYapzx
+  \item Select contents, diagrams referenced from @JasonYapzx CS4222 Cheatsheet
 \end{itemize}
 
 
