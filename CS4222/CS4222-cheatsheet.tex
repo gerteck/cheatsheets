@@ -1695,273 +1695,191 @@ Nodes agree on a common wake-up schedule. Neighbors follow same schedule.
   \item \textbf{Typical Applications}: \textbf{Indoor Positioning}: LED ID beacons for precise location tracking, \textbf{D2D (Device-to-Device)}: Short-range data transfer (e.g., screen-to-camera), \textbf{Hazardous Environments}: Safe for use in petrochemical plants or mines where RF sparks are a concern.
 \end{itemize}
 
+\vfill \null
+\columnbreak
+
+
+\section{9. Wireless Localization}
+\begin{itemize}
+  \item Localization systems determine the physical coordinates of an electronic device such as IoT nodes, drones, mobile phones or a subject. 
+  \textbf{Types of Target Physical Coordinates}:
+  \begin{itemize}
+    \item \textbf{Global (absolute) coordinates:} defined using an external reference system
+    (e.g., GPS), meaning coordinates are absolute and universally understood.
+    \begin{itemize}
+      \item Global coordinates: (37.7749° N, 122.4194° W)
+    \end{itemize}
+    \item \textbf{Relative coordinates} defined with respect to another coordinate system,
+    using transformation like rotation, reflection, or translation
+    \begin{itemize}
+      \item E.g., locating an AirTag indoors, for example, inside a room
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\subsection{9.1 GPS | Global Positioning System}
+\begin{itemize}
+  \item Satellites placed in Medium Earth Orbit (Altitude 20,000 KM)
+  \item Orbit twice a day, $\geq$ 4 satellites visible from anywhere on Earth at all times
+  \item Steps of GPS positioning:
+  \begin{enumerate}
+    \item GPS satellites broadcast their \textcolor{red}{positions and time}
+    \begin{itemize}
+      \item Position: Global coordinates of the satellite
+      \item Time: A precise timestamp of when the signal was sent (\textcolor{red}{Time of Transmission})
+    \end{itemize}
+    \item The GPS receiver (e.g., phone) receives signals from \textcolor{red}{multiple} satellites
+    \begin{itemize}
+      \item It logs the exact timestamp (\textcolor{red}{Time of Arrival}) when each signal arrives
+    \end{itemize}
+    \item The GPS receiver \textcolor{red}{calculates the distance} from each satellite
+    \begin{itemize}
+      \item \textcolor{teal}{Time of flight} = Time of Arrival - Time of Transmission
+      \item \textcolor{red}{Distance} = \textcolor{teal}{time of flight} $\times$ speed of light ($3.0 \times 10^8$ m/s)
+    \end{itemize}
+    \item Using \textcolor{red}{trilateration}, your device computes your exact location
+    \begin{itemize}
+      \item With dist. measurements from each beacon, we determine the position
+      \item \textcolor{red}{Goal: find intersection point} of circles(2D) / spheres (3D)
+    \end{itemize}
+  \end{enumerate}
+  \item GPS requires at least 4 satellites
+  \begin{itemize}
+    \item 3D scenario: with 3 satellites, trilateration results in two possible locations. If target device on ground, the incorrect point can be easily eliminated.
+    \item \textbf{\textit{However}}: Not all targets are on the ground, e.g., aircraft. Additionally, may be clock (time) drift in GPS receivers, e.g., mobile phone
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{GPS receiver (e.g. phone): Determining distance}
+\begin{multicols}{2}
+  \begin{itemize}
+    \item Each satellite periodically sends a unique pseudo-random no. sequence
+    \begin{itemize}
+      \item Receivers also \textcolor{red}{locally generate the same sequence in synchronized fashion}
+    \end{itemize}
+    \item Receivers measure \textcolor{red}{time of arrival} of the sequence, use offset in sequence to calculate  \textcolor{red}{Time of Flight} and distance.
+    \item Transmission also includes \textcolor{red}{time of transmission} of sequence, location of satellite at time
+  \end{itemize}
+  \columnbreak
+  \includegraphics*[width=4cm, height=2.5cm]{determiningdistance.png}
+\end{multicols}
+\begin{itemize}
+  \item Satellites have very accurate (expensive) clocks, and all satellites are precisely synchronized.
+  \item Receivers have less accurate clock, e.g., mobile phone, much cheaper. The 4th satellite helps solve for the receiver's clock error.
+  \item Overall, solves for 4 unknowns: \texttt{latitude, longitude, altitude, clock drift}
+\end{itemize}
+
+\subsubsection{Physical layer of GPS}
+\begin{itemize}
+  \item Frequency: $1.2$GHz and $1.5$GHz, $10-15$MHz. BPSK modulation.
+  \item Receiver needs to know additional info: Current time, position of each satellite
+  \item GPS transmission has this data layered on top (50bps)
+  \begin{itemize}
+    \item \textbf{Ephemeris}: valid for up to 4 hours. Listen (up to) 30 seconds gets time, satellite position.
+    \item \textbf{Almanac}, valid for up to two weeks. Listen for 12.5 minutes gets all satellites positions.
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Assisted GPS}
+\begin{itemize}
+  \item Cell phone GPS is so quick by downloading \textbf{almanac} from the internet
+  \item Bootstraps location information, cell towers give coarse position, enables devices to know which satellites are overhead
+\end{itemize}
+
+\subsubsection{Beacon Nodes (e.g., GPS satellites)}
+\begin{itemize}
+  \item Necessary to localize a network in a global coordinate system, also they can be used for finding relative coordinates. At a minimum:
+  \begin{itemize}
+    \item Three (non-collinear) beacons required to define a global coordinate system in 2D.
+    \item Four non-coplanar beacons for 3-D coordinates
+  \end{itemize}
+  \item \textcolor{red}{Beacon Placement}: Has significant impact on localization
+  \begin{itemize}
+    \item If the beacons are spread out around the target area instead of being clustered together, we get more accurate positioning
+    \item Adding an extra beacon somewhere centrally can also improve results
+  \end{itemize}
+\end{itemize}
+
+\null \null
+\columnbreak
+
+\subsection{9.2 Ways to measure distances}
+\subsubsection{Time of Flight (ToF) / Time of Arrival (ToA)}
+\begin{itemize}
+  \item \textbf{Mechanism}: Determine distance by knowing exact position of infrastructure, Transmit time, Receive time, Signal velocity (e.g. light)
+  \item Infrastructure transmits (can happen constantly), device can listen only when needed.
+  \item \textbf{Conditions}: Requires time synchronization between infrastructure and device (Synchronization must be good: $1\mu$ s $= 300$ meters). Additional considerations: Speed of signal propagation, Distance to be measured, Clock accuracy
+  \item E.g.: Speed of light ($c$) $\approx 3\times10^8$ m/s, Distance travel in 1ms = 300m, Clock accuracy needed for meter accuracy (1/$c$) $\approx 3$ns
+\end{itemize}
+
+\subsubsection{Time difference of arrival | (TDoA)}
+\begin{itemize}
+  \item \textcolor{red}{(Target) Device transmits} and infrastructure \textcolor{red}{(beacon) listens} transmission. Multiple connected infrastructure nodes receive at different times based on distance.
+  \item \textbf{Mechanism}: Determine distance by knowing exact position of infrastructure, Time of arrival at two different locations, Signal velocity (i.e. speed of light).
+  \item \textcolor{red}{Does not require synchronization with infrastructure!}
+  \begin{itemize}
+    \item Still requires synchronization between infrastructure nodes
+    \item Does require device to transmit "loud" enough for infrastructure to hear it
+  \end{itemize}
+  \item With different mediums:
+  \begin{multicols}{2}
+    \begin{itemize}
+      \item TDoA: $\frac{d}{S_{sound}} - \frac{d}{S_{Radio}} + t_{delay}$, Works well in LOS environment
+      \item Requires additional hardware but works better with calibration
+    \end{itemize}
+    \columnbreak
+    \includegraphics*[width=4cm, height=1.5cm]{tdoa.png}
+  \end{multicols}
+\end{itemize}
+
+\subsubsection{Ultrasound}
+\begin{itemize}
+  \item \textbf{Advantages}: Solves barrier problem (cannot pass through solid objects like walls). Human spaces already designed to contain sound. Easier to get high-accuracy: Sound much slower than light. Less synchronization needed for same accuracy.
+  \item \textbf{Disadvantages}: More energy to transmit, Slower update rate (still sub-second), Limited range, Pets can hear it
+\end{itemize}
+
+
+\subsubsection{Received Signal Strength Indicators (RSSI)}
+\begin{itemize}
+  \item RSSI measures \textcolor{red}{signal strength} to estimate distance. In theory, \textcolor{red}{RSSI varies with 1/d$^\alpha$}
+  \begin{itemize}
+    \item $\alpha$ depends on the wireless environment (typically 2 or 3)
+    \item Common assumption: closer nodes receive stronger RSSI than those further away
+  \end{itemize}
+  \item In practice, RSSI range measurements contain noise, several meters off, highly non-uniform
+  \begin{itemize}
+    \item Radio propagation differs over different surface (water, asphalt etc.), obstacles (wall, furniture etc.). \textbf{Problem:} Pathloss is NOT only due to distance
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Fingerprinting using RSSI}
+\begin{itemize}
+  \item Shifts from trilateration to mapping: Use RSSI patterns of known locations.
+  \item \textcolor{red}{Phase 1 - Setup}: Measure signal strength from multiple Access Points at various locations. Record measurement in a database - mapping signal strengths to specific locations.
+  \item \textcolor{red}{Phase 2 - Localization}: Device measures real-time signal strength from surrounding APs. Compare readings to the database to determine the most likely location.
+  \item \textbf{Wi-Fi Fingerprinting}: Repurpose existing infrastructure for localization (e.g. Wifi points). Enable localization with unmodified hardware, no extra infra. (E.g. WiFi RADAR)
+  \item \textbf{Challenges}: Efforts to create database: manual measurements at locations, Non-static environment: signal strength changes with obstacles, periodically re-measure and update database, Measurements might vary between devices (how you hold, antennas of devices etc).
+  \item \textbf{Variations:} Measurements can use several access points simultaneously to improve accuracy. No need Wi-Fi based, can use cellular networks or deploy own BLE beacons
+  \item \textbf{Accuracy:} State-of-the-art: median accuracy of 0.5-1.5 meters. (Enough to pinpoint room etc.) Barrier problems depend on walls.
+\end{itemize}
+
+\subsubsection{Angle of arrival (AoA)}
+\begin{itemize}
+  \item Measures \textcolor{red}{direction of incoming signal} using antenna array
+  \item Using 2 anchors (B1, B2), $A$ can determine position. BLE 5.1 includes AoA localization
+  \item Leverage antenna arrays, measure differences in arrival time ($\triangle t$) across antenna elements 
+  \item $d$ (antenna spacing), $\triangle t \times \text{speed of light} = d\sin\theta$; $\implies$ $\sin \theta = \text{speed of light} \times \frac{\triangle t}{d}$
+\end{itemize}
+\smallskip
+\begin{multicols}{2}
+\includegraphics*[width=4.2cm, height=2cm]{aoa.png}
+\includegraphics*[width=4.2cm, height=2cm]{aoa2.png}
+\end{multicols}
 
 
 
-% \subsection{Wireless Localization}
-% \begin{itemize}
-%   \item Localization systems determine the physical coordinates of an electronic device such as IoT nodes, drones, mobile phones or a subject
-%   \item Types of the Target’s Physical Coordinates
-%   \begin{itemize}
-%     \item \textbf{Global (absolute) coordinates:} defined using an external reference system
-%     (e.g., GPS), meaning coordinates are absolute and universally understood.
-%     \begin{itemize}
-%       \item Global coordinates: (37.7749° N, 122.4194° W)
-%     \end{itemize}
-%     \item \textbf{Relative coordinates} defined with respect to another coordinate system,
-%     using transformation like rotation, reflection, or translation
-%     \begin{itemize}
-%       \item E.g., locating an AirTag indoors, for example, inside a room
-%     \end{itemize}
-%   \end{itemize}
-% \end{itemize}
 
-% \subsubsection{GPS | Global Positioning System}
-% \begin{itemize}
-%   \item Satellites placed in Medium Earth Orbit (Altitude 20,000 KM)
-%   \item Orbit twice a day, $\geq$ 4 satellites visible from anywhere on Earth at all times
-%   \item Steps of GPS positioning:
-%   \begin{enumerate}
-%     \item GPS satellites broadcast their \textcolor{red}{positions and time}
-%     \begin{itemize}
-%       \item Position: Global coordinates of the satellite
-%       \item Time: A precise timestamp of when the signal was sent (\textcolor{red}{Time of Transmission})
-%     \end{itemize}
-%     \item The GPS receiver (e.g., phone) receives signals from \textcolor{red}{multiple} satellites
-%     \begin{itemize}
-%       \item It logs the exact timestamp (\textcolor{red}{Time of Arrival}) when each signal arrives
-%     \end{itemize}
-%     \item The GPS receiver \textcolor{red}{calculates the distance} from each satellite
-%     \begin{itemize}
-%       \item \textcolor{teal}{Time of flight} = Time of Arrival - Time of Transmission
-%       \item \textcolor{red}{Distance} = \textcolor{teal}{time of flight} $\times$ speed of light
-%       \item Speed of light: 3.0 × $10^8$ m/s
-%     \end{itemize}
-%     \item Using \textcolor{red}{trilateration}, your device computes your exact location
-%     \begin{itemize}
-%       \item With dist. measurements from each beacon, we determine the position
-%       \item \textcolor{red}{Goal: find intersection point} of circles(2D)/spheres (3D) 
-%       \includegraphics*[width=7.8cm, height=2.3cm]{trilateration.png}
-%     \end{itemize}
-%   \end{enumerate}
-%   \item GPS requires at least 4 satellites
-%   \begin{itemize}
-%     \item 3D scenario: with 3 satellites, trilateration results in two possible locations
-%     \item If the targe device is on the ground, the incorrect point can be easily eliminated.
-%     \item \textbf{\textit{However}}
-%     \begin{itemize}
-%       \item Not all targets are on the ground, e.g., aircraft
-%       \item Clock (time) drift in GPS receivers, e.g., mobile phone
-%     \end{itemize}
-%   \end{itemize}
-% \end{itemize}
 
-% \subsubsection{GPS receiver (e.g. phone): Determining distance}
-% \begin{multicols}{2}
-%   \begin{itemize}
-%     \item Each satellite periodically sends a unique pseudo-random no. sequence
-%     \begin{itemize}
-%       \item Receivers also \textcolor{red}{locally generate the same sequence in synchronized fashion}
-%     \end{itemize}
-%     \item Receivers measure \textcolor{red}{time of arrival} of the sequence
-%     \item Transmission includes \textcolor{red}{time of transmission} of the sequence and the location of the satellite at that time
-%     \begin{itemize}
-%       \item Allows receiver to calculate \textcolor{red}{Time of Flight} and distance
-%     \end{itemize}
-%   \end{itemize}
-%   \columnbreak
-%   \includegraphics*[width=4.2cm, height=3.5cm]{determiningdistance.png}
-% \end{multicols}
-% \begin{itemize}
-%   \item Satellites have very accurate (expensive) clocks, and all satellites are precisely synchronized.
-%   \item Receivers have less accurate clock, e.g., mobile phone, much cheaper.
-%   \item The 4th satellite helps solve for the receiver’s clock error \texttt{latitude, longitude, altitude, clock drift}
-% \end{itemize}
-
-% \subsubsection{Physical layer of GPS}
-% \begin{itemize}
-%   \item Frequency: $1.2$GHz and $1.5$GHz, $10-15$MHz
-%   \item Receiver needs to know additional information:
-%   \begin{itemize}
-%     \item Current time, position of each satellite
-%   \end{itemize}
-%   \item GPS transmission has this data layered on top (50bps)
-%   \item Listening for (up to) 30 seconds gets time and this satellite’s position
-%   \begin{itemize}
-%     \item Known as ephemeris, valid for up to 4 hours 
-%   \end{itemize}
-%   \item Listening for 12.5 minutes gets all satellites’ positions
-%   \begin{itemize}
-%     \item Known as almanac, valid for up to two weeks
-%   \end{itemize}
-% \end{itemize}
-
-% \subsubsection{Assisted GPS}
-% \begin{itemize}
-%   \item Cell phone GPS is so quick as only downloads almanac from the internet
-%   \item Bootstraps location information, cell towers give coarse position, enables devices to know which satellites are overhead
-% \end{itemize}
-
-% \subsubsection{Beacon Nodes (e.g., GPS satellites)}
-% \begin{itemize}
-%   \item Necessary to localize a network in a global coordinate system, also they can be used for finding relative coordinates
-%   \item At a minimum
-%   \begin{itemize}
-%     \item Three (non-collinear) beacons required to define a global coordinate system in two dimensions
-%     \item Four non-coplanar beacons for 3-D coordinates
-%   \end{itemize}
-%   \item \textcolor{red}{Beacon Placement}
-%   \begin{itemize}
-%     \item Significant impact on localization
-%     \item If the beacons are spread out around the target area instead of being clustered together, we get more accurate positioning
-%     \item Adding an extra beacon somewhere centrally can also improve results
-%   \end{itemize}
-% \end{itemize}
-
-% \subsubsection{Ways to measure distances}
-% \subsubsection{Time of flight | time of arrival (ToA)}
-% \begin{itemize}
-%   \item Determine distance by knowing:
-%   \begin{itemize}
-%     \item Exact position of infrastructure
-%     \item Transmit time
-%     \item Receive time
-%     \item Signal velocity (i.e. speed of light)
-%   \end{itemize}
-%   \item Infrastructure transmits and device listens
-%   \begin{itemize}
-%     \item Can happen all the time, but devices only listen when they want a position
-%   \end{itemize}
-%   \item Requires time synchronization between infrastructure and device
-%   \begin{itemize}
-%     \item Synchronization must be good: $1\mu$ s $= 300$ meters
-%   \end{itemize}
-%   \item Important Considerations:
-%   \begin{itemize}
-%     \item Speed of signal propagation, Distance to be measured, Clock accuracy
-%   \end{itemize}
-%   \item Example:
-%   \begin{itemize}
-%     \item Speed of light ($c$) $\approx 3\times10^8$ m/s
-%     \item Distance travel in 1ms = 300m
-%     \item Clock accuracy needed for meter accuracy (1/$c$) $\approx 3$ns
-%   \end{itemize}
-% \end{itemize}
-
-% \subsubsection{Time difference of arrival | (TDoA)}
-% \begin{itemize}
-%   \item \textcolor{red}{(Target) Device transmits} and infrastructure \textcolor{red}{(beacon) listens} transmission
-%   \begin{itemize}
-%     \item Multiple infrastructure nodes receive at different times based on distance
-%   \end{itemize}
-%   \item Determine distance by knowing
-%   \begin{itemize}
-%     \item Exact position of infrastructure
-%     \item Time of arrival at two different locations
-%     \item Signal velocity (i.e. speed of light)
-%   \end{itemize}
-%   \item \textcolor{red}{Does not require synchronization with infrastructure!}
-%   \begin{itemize}
-%     \item Still requires synchronization between infrastructure nodes
-%     \item Does require device to transmit "loud" enough for infrastructure to hear it
-%   \end{itemize}
-%   \item With different mediums:
-%   \begin{multicols}{2}
-%     \begin{itemize}
-%       \item $\frac{d}{S_{sound}} - \frac{d}{S_{Radio}} + t_{delay}$, Works well in LOS environment
-%       \item Requires additional hardware but works better with calibration
-%     \end{itemize}
-%     \columnbreak
-%     \includegraphics*[width=4cm, height=1.5cm]{tdoa.png}
-%   \end{multicols}
-% \end{itemize}
-
-% \subsubsection{Ultrasound}
-% \begin{itemize}
-%   \item \textbf{Advantages}
-%   \begin{itemize}
-%     \item Solves the barrier problem
-%     \begin{itemize}
-%       \item Human spaces already designed to contain sound
-%     \end{itemize}
-%     \item Easier to get high-accuracy results
-%     \begin{itemize}
-%       \item Sound is $\sim$1,000,000x slower than light
-%       \item Less synchronization is needed to get same accuracy
-%     \end{itemize}
-%   \end{itemize}
-%   \item \textbf{Disadvantages}
-%   \begin{itemize}
-%     \item More energy to transmit, Slower update rate (still sub-second), Limited range, Pets can hear it
-%   \end{itemize}
-% \end{itemize}
-
-% \subsubsection{Received Signal Strength Indicators (RSSI)}
-% \begin{itemize}
-%   \item RSSI measures \textcolor{red}{signal strength} to estimate distance
-%   \item In theory, \textcolor{red}{RSSI varies with 1/d$^\alpha$}
-%   \begin{itemize}
-%     \item Where $\alpha$ depends on the wireless environment (typically 2 or 3)
-%     \item Common assumption: closer nodes receive stronger RSSI than those further away
-%   \end{itemize}
-%   \item In practice, RSSI ranging measurements contain noise on the order of several meters, highly non-uniform
-%   \begin{itemize}
-%     \item Radio propagation differs over different surface (water, grass, asphalt etc.)
-%     \item Obstacles such as wall, furniture etc.
-%   \end{itemize}
-%   \item \textbf{Problem:} Pathloss is NOT only due to distance
-% \end{itemize}
-
-% \subsubsection{Fingerprinting using RSSI}
-% \begin{itemize}
-%   \item Shifts from trilateration to mapping
-%   \item Uses RSSI patterns from known locations to determine position
-%   \item \textcolor{red}{Phase 1 – Setup}
-%   \begin{itemize}
-%     \item Measure signal strength from multiple Access Points at various locations
-%     \item Record measurement in a database – mapping signal strengths to specific locations
-%   \end{itemize}
-%   \item \textcolor{red}{Phase 2 - Localization}
-%   \begin{itemize}
-%     \item A device measures real-time signal strength from surrounding APs
-%     \item The system compares these readings to the database to determine the most likely location
-%   \end{itemize}
-%   \item \textbf{Wi-Fi Fingerprinting}
-%   \item \begin{itemize}
-%     \item Repurpose existing infrastructure for localization (e.g. Wifi points)
-%     \item Benefits: localization with unmodified hardware, no extra infra
-%   \end{itemize}
-%   \item \textbf{Challenges}
-%   \begin{itemize}
-%     \item Efforts to create database: manual measurements at locations
-%     \item Non-static environment: signal strength changes with obstacles, needs to periodically re-measure and update database
-%     \item Measurements might vary between devices (how you hold it, antennas of devices etc)
-%   \end{itemize}
-%   \item \textbf{Variations:}
-%   \begin{itemize}
-%     \item Measurements can be used by several access points simultaneously, improves accuracy quite a bit
-%     \item May not have to be Wi-Fi base dat all, cellular networks do the fingerprinting, deploying your own BLE beacons
-%   \end{itemize}
-%   \item \textbf{Accuracy:}
-%   \begin{itemize}
-%     \item State-of-the-art: median accuracy of 0.5-1.5 meters
-%     \item Barrier problems depend on walls
-%   \end{itemize}
-% \end{itemize}
-
-% \subsubsection{Angle of arrival (AoA)}
-% \begin{itemize}
-%   \item Measures \textcolor{red}{direction of incoming signal} using antenna array
-%   \item By using 2 anchors (B1 and B2), A can determine its position
-%   \item BLE 5.1 includes AoA localization
-%   \item Leveraing antenna arrays, measures differences in arrival time ($\triangle t$) across the antenna elements 
-%   \item $d$ is known, antenna spacing, $\triangle t \times \text{speed of light} = d\sin\theta$
-%   \item $\sin \theta = \text{speed of light} \times \frac{\triangle t}{d}$
-% \end{itemize}
-% \begin{multicols}{2}
-% \includegraphics*[width=4.2cm, height=2cm]{aoa.png}
-% \includegraphics*[width=4.2cm, height=2cm]{aoa2.png}
-% \end{multicols}
 
 % \subsection{Sensor Networks}
 % \begin{itemize}
