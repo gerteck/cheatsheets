@@ -2230,403 +2230,258 @@ Each node maintains a table that stores:
   \end{itemize}
 \end{itemize}
 
-% \subsection{Wifi}
-% \begin{itemize}
-%   \item Designed for high-speed communication over short indoor ranges
-%   \begin{itemize}
-%     \item Typical range: approximately 10 to 30 meters
-%     \item Primary use: connecting devices like laptops, mobile phones etc.
-%   \end{itemize}
-% \end{itemize}
-
-% \subsubsection{Basic WiFi network}
-% \begin{multicols}{2}
-% \begin{itemize}
-%   \item Star topology network
-%   \item A Basic Service Set includes:
-%   \begin{itemize}
-%     \item Access point(s) - AP
-%     \item Multiple connected clients
-%   \end{itemize}
-%   \item Service Set ID (SSID)
-%   \begin{itemize}
-%     \item Identifies network
-%     \item Broadcast by access point in beacons
-%   \end{itemize}
-% \end{itemize}
-% \end{multicols}
+\vfill \null
+\columnbreak
 
 
-% \subsubsection{Random Backoff in WiFi}
-% \begin{itemize}
-%   \item Carrier Sense Multiple Access
-%   \item Listen for activity
-%   \begin{itemize}
-%     \begin{multicols}{2}
-%       \item If free:
-%       \begin{itemize}
-%         \item Wait for Inter Frame Spacing (IFS)
-%         \item If still free, transmit
-%       \end{itemize}
-%       \item If busy:
-%       \begin{enumerate}
-%         \item Randomly select a number of backoff slots
-%         \item Count down slots whenever medium is not busy
-%         \item If busy when backoff completes:
-%         \begin{itemize}
-%           \item Increase maximum backoff slots
-%           \item Repeat
-%         \end{itemize}
-%       \end{enumerate}
-%     \end{multicols}
+\section{11. WiFi (802.11)}
+\begin{itemize}
+  \item \textbf{Purpose}: High-speed, short-range (10--30m) indoor communication.
+  \item \textbf{History}: FCC opened ISM bands (1985); Wi-Fi Alliance (1999), certify compatibility.
+\end{itemize}
 
-%   \end{itemize}
-%   \item Slot time: basic time unit for protocol
-%   \begin{itemize}
-%     \item Total time of: switch from Rx to Tx, plus processing time, plus propagation delay
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{WiFi Network Architecture}
+\begin{itemize}
+  \item \textbf{Star Topology}: All client devices connect to a central \textbf{Access Point (AP)}.
+  \item \textbf{Basic Service Set (BSS)}: The combination of one AP and its connected clients.
+  \item \textbf{SSID (Service Set ID)}: The network name, broadcast by the AP in \textbf{Beacons} so clients can find, identify and join the network.
+\end{itemize}
 
-% \subsubsection{Prioritizing packets with varying IFS}
-% \begin{itemize}
-%   \item Tiered Contention Multiple Access (TCMA)
-%   \begin{itemize}
-%     \item Idea: assign different inter-frame spacing based on traffic class
-%     \item Inherently prioritizes communication
-%   \end{itemize}
-%   \item Acknowledgements sent with Short IFS (SIFS)
-%   \begin{itemize}
-%     \item Will always transmit before new data clears CSMA check
-%   \end{itemize}
-%   \item Regular data sent with DIFS
-%   \item SIFS < PIFS < DIFS
-% \end{itemize}
+\subsection{11.1 MAC Layer: How WiFi Avoids Collisions}
+WiFi uses \textbf{CSMA/CA} (Carrier Sense Multiple Access with Collision Avoidance) as wireless radios cannot usually detect collisions while transmitting. \textbf{CSMA/CA Process:}
+\begin{enumerate}
+  \item \textbf{Carrier Sense}: Listen to the medium. 
+  \item \textbf{If Free}: Wait for a specific \textbf{IFS} (Inter-Frame Spacing). If still free, \textbf{Transmit}.
+  \item \textbf{If Busy (Random Backoff)}: 
+  \begin{itemize}
+    \item Select a random number of \textbf{Backoff Slots}.
+    \item \textbf{Count Down}: Only decrement slots while the medium is idle.
+    \item \textbf{On Expiry}: If the medium is busy when the counter reaches zero, \textbf{increase} the maximum backoff range (Binary Exponential Backoff) and repeat.
+  \end{itemize}
+\end{enumerate}
 
-% \includegraphics*[width=8.5cm, height=2cm]{ifs.png}
+\textbf{Slot Time}: The basic unit of time for the protocol, calculated as:
+\begin{center}
+    $\text{Slot Time} = \text{Rx-to-Tx switch time} + \text{Processing delay} + \text{Propagation delay}$
+\end{center}
 
-% \subsubsection{FHSS}
-% \begin{itemize}
-%   \item Frequency Hopping Spread Spectrum
-%   \item Frequency hopping over 80 channels (1 MHz each)
-%   \item Have the transmitter hop between a seemingly random sequence of frequencies
-%   \item Spreading pattern shared by pairs of sender and receiver
-%   \item FHSS is one type of \textit{Spread Spectrum technique}
-% \end{itemize}
+\subsection{11.2 Traffic Priority - Tiered Contention Multiple Access (TCMA)}
+WiFi uses different IFS (inter-frame spacing) durations to ensure certain traffic classes / packets (like ACKs) can `cut the line' before new data starts. (Prioritize communication)
 
-% \begin{center}
-% \includegraphics*[width=8.5cm, height=2.5cm]{fhss.png}
-% \end{center}
+\begin{itemize}
+  \item \textbf{Hierarchy}: \textbf{SIFS $<$ PIFS $<$ DIFS}
+  \item \textbf{SIFS (Short IFS)}: Used for \textbf{Acknowledgements (ACKs)}. Because SIFS is the shortest, an ACK will always be sent before any other device can start a new data transmission.
+  \item \textbf{DIFS (Distributed IFS)}: Used for standard data packets. This is the "normal" waiting time.
+  \item \textbf{Logic}: Shorter wait time = Higher priority. (PIFS: Point Coordination IFS, for control frames)
+\end{itemize}
 
-% \subsubsection{Direct Sequence Spread Spectrum (DSSS)}
-% \begin{itemize}
-%   \item Each bit of information is coded so that it uses a larger bandwidth
-%   \item Essentially, each bit is \textcolor{red}{multiplied by a sequence of bits} with a much higher data rate
-% \end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{ifs.png}}
 
-% \begin{center}
-%   \includegraphics*[width=8.5cm, height=2.5cm]{dsss.png}
-%   \includegraphics*[width=8.5cm, height=4cm]{dsss2.png}
-% \end{center}
+\subsection{11.3 Evolution of WiFi}
+In 20 years, WiFi has evolved from 2 Mbps to 9.6 Gbps. Achieved through:
+\begin{enumerate}
+    \item \textbf{Capable Modulation}: Shifting from Spread Spectrum to OFDM/OFDMA.
+    \item \textbf{Bandwidth Expansion}: From 2.4 GHz to 5 GHz/6 GHz, wider channels (20 to 160 MHz).
+\end{enumerate}
+\smallskip
+\centerline{\includegraphics[width = 0.8\linewidth]{WifiEvolution.jpg}}
 
-% \subsubsection{DSSS properties}
-% \begin{itemize}
-%   \item DSSS increases bandwidth of a signal
-%   \begin{itemize}
-%     \item Beyond what is needed for the data
-%     \item Energy is smeared across the frequencies
-%   \end{itemize}
-%   \item More robust against interference
-%   \begin{itemize}
-%     \item Data can be recovered from partial code
-%   \end{itemize}
-%   \item \textcolor{red}{Data Rate better than FHSS}
-%   \begin{itemize}
-%     \item DSSS transmits continuously over a wide band
-%     \item FHSS has to switch frequencies, introducing delays during each hop
-%   \end{itemize}
-%   \item Cost: using a lot of bandwidth for only a little data
-%   \item GPS uses DSSS
-% \end{itemize}
+\subsection{11.4 Spread Spectrum (Legacy WiFi)}
+The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than required for the data rate to gain robustness against interference and noise.
 
-% \subsubsection{Spread Spectrum Summary}
-% \begin{itemize}
-%   \item Spreading out the signals over a wide channel
-%   \begin{itemize}
-%     \item FHSS (multi-frequency hops)
-%     \item DSSS (single frequency)
-%   \end{itemize}
-%   \item Spread Spectrum:
-%   \begin{itemize}
-%     \item Add Redundancy in frequency domain
-%     \item \textcolor{red}{Spread transmission much wider spectrum band} than needed for the intended bit rate
-%     \item Key idea: traffic of other users looks like noise
-%   \end{itemize}
-%   \item Cellular 3G (CDMA) builds on spread spectrum
-%   \begin{itemize}
-%     \item Each pair of the TX and RX must coordinate so RX can apply the same code to decode the data
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{1. Frequency Hopping (FHSS)}
+\begin{itemize}
+  \item \textbf{Mechanism}: The transmitter "hops" between 80 narrow channels (1 MHz each) in a pseudo-random sequence known to both sender and receiver.
+  \item \textbf{Pros}: Simple hardware; resists interference on specific frequencies.
+  \item \textbf{Cons}: \textcolor{red}{Slow data rates} due to switching delays (`settling time' of radio during a hop).
+\end{itemize}
 
-% \subsubsection{OFDM}
-% \begin{itemize}
-%   \item \textbf{OFDM:} \textcolor{teal}{orthogonal} \textcolor{red}{frequency division multiplexing}
-%   \item \textbf{Channel Impact - Multipath:}
-%   \begin{itemize}
-%     \item \textbf{Key Issues:}
-%     \begin{itemize}
-%       \item Frequency selective fading: Induces significant impact at \textcolor{red}{high data rates} and on \textcolor{red}{wide-band channels}
-%       \item Inter-symbol interference (ISI): As rates increase, symbol duration shrinks, making ISI effects more pronounced
-%     \end{itemize}
-%     \item Caused by signal reflection from objects (e.g., walls) creating multiple paths
-%     \item \textbf{Solution needed:} An encoding/modulation solution to mitigate multipath effect
-%   \end{itemize}
-% \end{itemize}
-
-% \includegraphics*[width=8.5cm, height=4.5cm]{intersymbolinterference.png}
-
-% \subsubsection{Key Idea | Frrequency Division Multiplexing}
-% \includegraphics*[width=8.5cm, height=4cm]{distributebitsoversubcarriers.png}
-
-% \begin{itemize}
-%   \item Each subcarrier is a narrow-band signal with a different center frequency
-%   \item Symbol duration \textcolor{red}{increases} with number of carriers, more resistance to ISI
-%   \item \textbf{Implementation:}
-%   \begin{itemize}
-%     \item \textcolor{red}{Distribute bits over N subcarriers} that use different frequencies over the band with \textcolor{red}{B bandwidth}
-%     \item Each signal uses $\sim$ B/N bandwidth
-%     \item Multi-carrier modulation
-%   \end{itemize}
-%   \item \textbf{Benefits:}
-%   \begin{itemize}
-%     \item Since each subcarrier only encodes 1/N of the bit stream, each symbol can \textcolor{red}{take N times longer in time}
-%     \item Since \textcolor{red}{signals are narrower} in spectrum, frequency-selective fading is mitigated
-%   \end{itemize}
-% \end{itemize}
-
-% \includegraphics*[width=8.5cm, height=4cm]{fdmillustration.png}
-
-% \subsubsection{Why Orthogonal in OFDM}
-% \includegraphics*[width=8.5cm, height=4cm]{ofdmillustration.png}
-% \begin{itemize}
-%   \item \textbf{Goal:} \textcolor{teal}{To achieve even higher data rate}
-%   \item \textbf{Challenge:} How to pack multiple subcarriers very densely?
-%   \begin{itemize}
-%     \item Need to support 48 or more subcarriers
-%     \item Must avoid interference between subcarriers
-%     \item Traditional FDM uses guard bands between adjacent subcarriers
-%   \end{itemize}
-%   \item \textbf{Solution:} Orthogonal subcarriers
-%   \begin{itemize}
-%     \item Allows denser packing of subcarriers without interference
-%     \item More efficient use of available bandwidth compared to traditional FDM
-%   \end{itemize}
-% \end{itemize}
-
-% \subsubsection{Orthogonal Subcarriers}
-% \includegraphics*[width=8.5cm, height=2.5cm]{orthogonalsubcarriers.png}
-% \begin{itemize}
-%   \item Peaks of spectral density of each carrier falls exactly at the zeros of the other carriers
-%   \item Carriers can be packed densely with minimal interference
-% \end{itemize}
-
-% \subsubsection{OFDM enables higher throughput}
-% \begin{itemize}
-%   \item \textbf{Evolution:} Replace DSSS with Orthogonal Frequency Division Multiplexing
-%   \item \textbf{OFDM Approach:}
-%   \begin{itemize}
-%     \item Split band into a number of narrow subcarriers
-%     \item Subcarriers are spaced so that they don't interfere
-%     \item Transmit on multiple subcarriers at once to increase throughput
-%   \end{itemize}
-%   \item \textbf{Implementation:}
-%   \begin{itemize}
-%     \item Receivers collect signal from entire channel
-%     \item Can split it apart to gain data on each subcarrier
-%     \item Process: Frequency-Domain QAM → IFFT → Time-Domain Signal → FFT → Recovered QAM Data
-%   \end{itemize}
-%   \item \textbf{Advantages:}
-%   \begin{itemize}
-%     \item Higher spectral efficiency through dense subcarrier packing
-%     \item Parallel transmission across multiple subcarriers
-%     \item Better handling of multipath effects
-%   \end{itemize}
-%   \item \textbf{Tradeoffs:}
-%   \begin{itemize}
-%     \item Benefits: more throughput, still robust against narrowband interference
-%     \item Costs: more complicated and sensitive radio design
-%   \end{itemize}
-% \end{itemize}
-
-% \subsubsection{802.11a - First WiFi with OFDM}
-% \begin{itemize}
-%   \item \textbf{Implementation (1999):}
-%   \begin{itemize}
-%     \item Applied OFDM techniques on the \textcolor{red}{5 GHz band}
-%     \item Enabled more data throughput \textcolor{red}{54 Mbps} (compare to 11 Mbps for 802.11b)
-%   \end{itemize}
-%   \item \textbf{Multiple rates available:}
-%   \begin{itemize}
-%     \item BPSK/QPSK/QAM over OFDM
-%     \item Quadrature Amplitude Modulation (QAM)
-%   \end{itemize}
-%   \item \textbf{Channel Structure:}
-%   \begin{itemize}
-%     \item Several 20 MHz channels with no overlap
-%     \item Big increase from "three" channels of 2.4 GHz
-%     \item Various regional rules on number of different channels
-%     \item Needs to avoid frequencies in use by existing radar deployments
-%   \end{itemize}
-%   \item Never reached widespread adoption
-%   \begin{itemize}
-%     \item Regulatory hurdles in some regions
-%     \item More complicated hardware delayed it
-%   \end{itemize}
-% \end{itemize}
+\centerline{\includegraphics[width = 0.8\linewidth]{fhss.png}}
 
 
-% \subsubsection{Use multiple antennas to increase throughput}
-% \includegraphics*[width=8.5cm, height=2.2cm]{multiantennas.png}
-% \begin{itemize}
-%   \item \textbf{Multiple Antenna Benefits:}
-%   \begin{itemize}
-%     \item \textcolor{red}{Receive multiple copies} of the same signal
-%     \item \textcolor{red}{Combine copies to improve signal quality} (e.g., stronger, clearer)
-%     \item More robust performance in noisy environments
-%     \item Better signal \textcolor{red}{allows for faster data transmission}
-%     \begin{itemize}
-%       \item Enables higher data rates without extra bandwidth
-%     \end{itemize}
-%   \end{itemize}
-%   \item \textbf{Multiple Antenna Configurations:}
-%   \begin{itemize}
-%     \item Multiple transmitters to single receiver (2$\rightarrow$1)
-%     \item Single transmitter to multiple receivers (1$\rightarrow$2)
-%     \item Each configuration provides different benefits for signal quality and reliability
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{2. Direct Sequence (DSSS)}
+\begin{itemize}
+  \item \textbf{Mechanism}: Each data bit is multiplied by a higher-rate \textbf{Chipping Code}. This `smears' the bit's energy across a wide frequency band (22 MHz in 802.11b).
+  \item \textbf{Robustness}: Even if noise destroys part of the signal, the original bit can often be recovered from the remaining `chips.' (resistant to narrowband interference). (Both RX and TX knows chipping code.) Allow multiple users to share band using different codes.
+  \item \textbf{Advantage over FHSS}: \textcolor{red}{Higher Data Rates} because transmission is continuous; no time is wasted hopping between frequencies.
+  \item Essentially, each bit is \textcolor{red}{multiplied by a sequence of bits} with a much higher data rate. Data Bit ($t_b$) $\times$ Chipping Code ($t_c$) = Transmitted Signal. As $t_c \ll t_b$, bandwidth increases.
+\end{itemize}
 
-% \subsubsection{MIMO - Multiple Input Multiple Output}
-% \begin{itemize}
-%   \item \textbf{Architecture:}
-%   \begin{itemize}
-%     \item N transmit antennas communicate with M receive antennas
-%     \item Creates $N \times M$ subchannels for simultaneous data transmission
-%   \end{itemize}
-%   \item \textbf{Benefits:}
-%   \begin{itemize}
-%     \item \textcolor{red}{Huge boost in data throughput}
-%     \item Antenna diversity adds to \textcolor{red}{reliability} as well
-%   \end{itemize}
-%   \item \textbf{Signal Processing:}
-%   \begin{itemize}
-%     \item The signals may interfere with each other
-%     \item But receiving all of them allows the data to be recovered
-%   \end{itemize}
-%   \item \textbf{Beamforming:}
-%   \begin{itemize}
-%     \item Use interactions between array of antennas to focus energy on the receiver
-%   \end{itemize}
-% \end{itemize}
+\centerline{\includegraphics[width = 0.9\linewidth]{dsss.jpg}}
 
-% \subsubsection{802.11n - Wider channels and MIMO}
-% \begin{itemize}
-%   \item \textbf{Channel Width (2009):}
-%   \begin{itemize}
-%     \item OFDM allows many subcarriers within a channel to be used at once
-%     \item Throughput scales with the amount of bandwidth available
-%     \item Allow larger \textcolor{red}{40 MHz channels} to be used
-%   \end{itemize}
-%   \item \textbf{Dual-band Support:}
-%   \begin{itemize}
-%     \item Supports OFDM and MIMO on 2.4 GHz and 5 GHz
-%     \item Supports 20 MHz and 40 MHz channels
-%     \item Easier to create large channels in 5 GHz band
-%   \end{itemize}
-%   \item \textbf{Compatibility:}
-%   \begin{itemize}
-%     \item Backwards compatible with 802.11g (tries not to be with 802.11b)
-%     \item Wildly successful
-%     \begin{itemize}
-%       \item Still the 2.4 GHz band protocol (802.11ac is 5 GHz only)
-%       \item A little less than half of the networks visible are still 802.11n
-%     \end{itemize}
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{Spread Spectrum Summary}
+\begin{itemize}
+  \item \textbf{Key Idea}: Traffic from other users appears as low-level background noise as they use different hop sequences or chipping codes. Spreading signal over wide spectrum (FHSS: multi-freq hop or DSSS: single frequency), more resilient to interference and eavesdropping.
+  \item \textbf{Redundancy}: Extra bandwidth provides frequency-domain redundancy.
+  \item \textbf{Legacy Tech}: Used in 802.11 (Original) and 802.11b; also the foundation for GPS and 3G (CDMA) cellular. Each pair of the TX and RX must coordinate so RX can apply the same code to decode the data.
+\end{itemize}
 
-% \includegraphics*[width=8.5cm, height=4.2cm]{multimimo.png}
-% \subsubsection{802.11ac - Enhanced MIMO and wider channels}
-% \begin{itemize}
-%   \item \textbf{Implementation (2013):}
-%   \begin{itemize}
-%     \item Update for \textcolor{red}{5 GHz band only}
-%     \item Supports Downlink MU-MIMO (from AP to device)
-%     \item Supports channel widths up to \textcolor{red}{160 MHz}
-%     \item Engineering updates: up to 256-QAM
-%   \end{itemize}
-%   \item \textbf{Deployment Strategy:}
-%   \begin{itemize}
-%     \item \textcolor{red}{Routers apply 802.11ac to 5 GHz and 802.11n to 2.4 GHz}
-%   \end{itemize}
-% \end{itemize}
+\subsubsection{802.11b Channels (2.4 GHz)}
+\begin{itemize}
+    \item \textbf{Width}: 22 MHz per channel (14 total), \textbf{Spacing}: 5 MHz spacing between channel centers.
+    \item \textbf{Overlap}: Most overlap significantly, only \textbf{Channels 1, 6, and 11} considered non-overlapping.
+\end{itemize}
 
-% \subsubsection{WiFi 6 - Focus on Network Efficiency}
-% \begin{itemize}
-%   \item \textbf{Primary Goal:} Improve \textcolor{red}{total throughput} across all devices in the network
-%   \item \textbf{Context:}
-%   \begin{itemize}
-%     \item For point-to-point, WiFi is "(more than) fast enough"
-%     \item Now the problem is the quantity of devices in a single space
-%     \begin{itemize}
-%       \item Desktop, laptop, tablet, smartphone, smartwatch, IoT devices, etc.
-%     \end{itemize}
-%   \end{itemize}
-%   \item \textbf{Solution Approach:}
-%   \begin{itemize}
-%     \item Insight: Bring established cellular techniques to WiFi
-%     \item Focus on managing multiple concurrent connections efficiently
-%   \end{itemize}
-% \end{itemize}
+\subsection{11.5 OFDM: Orthogonal Frequency Division Multiplexing}
 
-% \subsubsection{OFDMA - Efficient Multi-user Access}
-% \includegraphics*[width=8.5cm, height=2.2cm]{ofdma.png}
-% \begin{itemize}
-%   \item \textbf{OFDM vs OFDMA:}
-%   \begin{itemize}
-%     \item OFDM: split channel into subcarriers and transmit on those
-%     \item OFDMA: \textcolor{red}{allocate subcarriers to a device for an amount of time}
-%   \end{itemize}
-%   \item \textbf{Key Innovation:}
-%   \begin{itemize}
-%     \item Turns OFDM into an \textcolor{red}{access control mechanism}
-%     \item Complicated question: which device gets which subcarriers at which time?
-%   \end{itemize}
-%   \item \textbf{Benefits:}
-%   \begin{itemize}
-%     \item More efficient use of available bandwidth
-%     \item Multiple users can transmit simultaneously
-%     \item Reduced latency for small data transfers
-%   \end{itemize}
-% \end{itemize}
+\textbf{The Problem: Multipath Interference}: High-speed wireless communication faces two physical challenges due to signals reflecting off walls and objects, creating multiple paths.
 
-% \subsubsection{802.11ax (WiFi 6) - 6 GHz Band Extension}
-% \begin{itemize}
-%   \item \textbf{Standard Timeline:}
-%   \begin{itemize}
-%     \item Standard approved on February 9\textsuperscript{th} 2021
-%     \item First devices started supporting it in 2019 (WiFi 6)
-%   \end{itemize}
-%   \item \textbf{6 GHz Band (WiFi 6E):}
-%   \begin{itemize}
-%     \item \textcolor{red}{1.2 GHz of bandwidth} (5.925-7.125 GHz)
-%     \item 2020: US FCC made band available for unlicensed use
-%     \item EU followed in March 2021
-%   \end{itemize}
-%   \item \textbf{OFDMA Implementation:}
-%   \begin{itemize}
-%     \item MAC scheduling variant of OFDM
-%     \item Schedule devices based on time and subcarrier allocations
-%   \end{itemize}
-% \end{itemize}
+\begin{itemize}
+  \item \textbf{Frequency Selective Fading}: Certain frequencies in a wide band get `cancelled out' by reflections while others pass through. Significant at \textcolor{red}{high data rates} and on \textcolor{red}{wide-band channels}.
+  \item \textbf{Inter-Symbol Interference (ISI)}: At high data rates, bits sent so quickly (short symbol duration), reflected `echo' of previous bit crashes into the current bit, causing distortion.
+\end{itemize}
+
+\textbf{Solution: Multi-Carrier Modulation (FDM)}: Instead of sending one very fast stream of data on a single carrier, we distribute bits over \textbf{N subcarriers} in parallel.
+
+\begin{itemize}
+  \item \textbf{Subcarriers}: Each is a narrow-band signal with its own center frequency.
+  \item \textbf{Symbol Duration}: Since each subcarrier only handles $1/N$ of data, can send $N$ times \textbf{slower}.
+  \item \textbf{Result}: Longer symbol durations make the signal much more resistant to ISI.
+\end{itemize}
+
+\centerline{\includegraphics[width = 0.6\linewidth]{interSymbolInterference.jpg}}
+
+\subsubsection{The Mechanics of OFDM}
+
+\subsubsection{Concept 1: Multi-Carrier Modulation (FDM)}
+The core idea is to distribute bits over $N$ narrow subcarriers instead of one wide one.
+\begin{itemize}
+  \item \textbf{Symbol Duration Extension}: If you split the data across 52 subcarriers, each subcarrier only handles a fraction of the data. This allows each "symbol" to last \textbf{N times longer} in time.
+  \item \textbf{Why this works}: Longer symbols are "slower." Reflections (Multipath) finish bouncing around before next symbol starts, effectively \textbf{eliminating Inter-Symbol Interference (ISI)}.
+  \item \textbf{Narrow-band Advantage}: Each subcarrier is so narrow that it experiences `flat fading' (easier to fix) rather than `selective fading' (which destroys wide signals).
+\end{itemize}
+\centerline{\includegraphics[width = 1\linewidth]{FDM.jpg}}
+\medskip
+
+---
+
+
+\subsubsection{Concept 2: The `Orthogonal' Advantage (Achieve higher data rate)}
+How do we pack subcarriers densely without them bleeding into each other?
+\begin{itemize}
+  \item \textbf{Traditional FDM}: Requires "Guard Bands" (wasted empty space) between channels.
+  \item \textbf{OFDM}: Uses \textbf{Orthogonality}. The subcarriers are mathematically spaced so that the \textbf{peak power} of one carrier happens exactly at the \textbf{null (zero) point} of all other carriers.
+  \item \textbf{Spectral Efficiency}: This allows subcarriers to overlap significantly, removing the need for guard bands and maximizing the data rate.
+\end{itemize}
+
+\centerline{\includegraphics[width = 0.6\linewidth]{orthogonalSubcarriers.jpg}}
+
+
+\subsubsection{Concept 3: Implementation \& 802.11a}
+The math required to turn bits into these overlapping waves is complex:
+\begin{itemize}
+  \item \textbf{Signal Processing}: \texttt{IFFT} (Inverse Fast Fourier Transform): Used at the Transmitter to combine all subcarriers into one signal. \texttt{FFT} (Fast Fourier Transform): Used at the Receiver to split the signal back into individual subcarriers.
+  \item \textbf{802.11a (First WiFi with OFDM) Specs}:
+    \begin{itemize}
+      \item \textbf{Band}: 5 GHz (cleaner airwaves, more channels than 2.4 GHz). \textbf{Speed}: 54 Mbps.
+      \item \textbf{Modulation}: \textbf{QAM} (Quadrature Amplitude Modulation) to pack more bits per subcarrier.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{OFDM vs DSSS, Trade-offs}
+\begin{itemize}
+  \item \textbf{Evolution:} Replace DSSS with Orthogonal Frequency Division Multiplexing
+  \item \textbf{DSSS (Legacy)}: High redundancy, low speed. One signal "spread" thin.
+  \item \textbf{OFDM (Modern)}: High complexity, high speed (throughput), spectral efficiency (dense subcarrier packing). Also robust against narrowband interference, handles multipath effects. Many signals "stacked" efficiently.
+\end{itemize}
+
+
+
+
+\subsection{11.6 MIMO: Multiple Input Multiple Output}
+
+\textbf{Concept: Why use Multiple Antennas?} For wired, add more wires for more speed. In wireless, use multiple antennas to create "virtual wires" in the air.
+
+\begin{itemize}
+  \item \textbf{Architecture}: $N$ transmit antennas, $M$ receive antennas, create $N \times M$ subchannels.
+  \item \textbf{Spatial Multiplexing (Speed)}: Sending \textit{different} data streams simultaneously across antennas. This provides a huge boost in throughput without needing more bandwidth.
+  \item \textbf{Antenna Diversity (Reliability)}: Sending and receiving \textcolor{red}{multiple copies} of the \textit{same} signal. If one path is blocked by a wall, another antenna likely has a clear line of sight.
+\end{itemize}
+
+\subsubsection{Advanced Signal Processing}
+\begin{itemize}
+  \item \textbf{Interference Recovery}: While signals overlap in the air, the receiver uses complex math to "unmix" the streams based on the unique spatial signature of each path.
+  \item \textbf{Beamforming}: Instead of broadcasting in all directions, the AP uses the interaction between antennas to \textbf{focus energy} specifically toward the client.
+  \item \textbf{Benefit}: Higher Signal-to-Noise Ratio (SNR) and better range.
+\end{itemize}
+
+
+
+\subsubsection{802.11n (WiFi 4): Use MIMO}
+2009: 802.11n standard transformed WiFi from single-lane to multi-lane.
+
+\begin{itemize}
+  \item \textbf{Wider Channels}: Doubled bandwidth from 20 MHz to \textbf{40 MHz}. (Channel bonding: combine two adjacent channels into one big channel)
+  \item \textbf{Dual-Band}: The first standard to work on both \textbf{2.4 GHz} and \textbf{5 GHz} bands.
+  \item \textbf{Throughput}: Boosted maximum rates up to \textbf{600 Mbps} (up from 54 Mbps in 802.11g).
+  \item \textbf{Legacy}: 802.11n remains the "baseline" for 2.4 GHz today, as many later standards (like 802.11ac) focus strictly on the 5 GHz band.
+\end{itemize}
+
+\subsubsection{Multi-User MIMO (MU-MIMO)}
+Introduced with 802.11ac, solve `crowded room' problem, many devices connected to one AP.
+
+\begin{itemize}
+  \item \textbf{Single-User (SU-MIMO)}: AP talks one device at a time. Other devices wait (Sequential).
+  \item \textbf{Multi-User (MU-MIMO)}: AP uses beamforming to talk to \textbf{multiple devices simultaneously} on the same frequency (Parallel).
+  \item \textbf{802.11ac Limitation}: Supports \textbf{Downlink only} (AP to devices). Devices still contend for the medium when uploading to the AP.
+\end{itemize}
+
+\centerline{\includegraphics[width = 0.9\linewidth]{multiUserMIMO.jpg}}
+
+
+
+\subsubsection{802.11ac - Enhanced MIMO and wider channels}
+\begin{itemize}
+  \item \textbf{Implementation (2013):} Update for \textcolor{red}{5 GHz band only}, supports Downlink MU-MIMO (from AP to device), channel widths up to \textcolor{red}{160 MHz}, and higher modulation (256-QAM).
+  \item \textbf{Deployment Strategy:}: \textcolor{red}{Routers apply 802.11ac to 5 GHz and 802.11n to 2.4 GHz}
+\end{itemize}
+
+\subsection{11.7 WiFi 6 (802.11ax): High Efficiency Wireless}
+
+\textbf{Goal}: Improve total throughput across \textit{all} devices in a crowded network (High Efficiency), rather than just the peak speed of one device.
+
+\subsection{OFDMA (Orthogonal Frequency Division Multiple Access)}
+\begin{itemize}
+  \item \textbf{From OFDM to OFDMA}: turn OFDM into access control mechanism. More efficient use of bandwidth in high-density environments.
+  \begin{itemize}
+    \item \textbf{OFDM}: One user takes the \textit{entire} channel for a duration of time, even if they only have a small packet to send (wasted bandwidth).
+    \item \textbf{OFDMA}: The channel is divided into \textbf{Resource Units (RUs)}. The AP can allocate different subcarriers to different users \textit{simultaneously}. Multiple users can transmit simultaneously, reduced latency for small data transfers.
+  \end{itemize}
+\end{itemize}
+
+\centerline{\includegraphics[width = 0.8\linewidth]{ofdma.png}}
+
+
+\subsubsection{802.11ax (WiFi 6) - 6 GHz Band Extension and Features}
+\begin{itemize}
+  \item \textbf{Standard Timeline:} Standard approved in 2021, though first devices started supporting it in 2019 (WiFi 6).
+  \item \textbf{Spectrum}: Works in 2.4 GHz, 5 GHz, and the new \textbf{6 GHz} band (WiFi 6E).
+  \item \textbf{6 GHz Band}: Provides 1.2 GHz of new, unlicensed bandwidth (huge increase channels).
+  \item \textbf{Up/Down MU-MIMO}: Unlike WiFi 5, support Multi-User MIMO, both uploads/downloads.
+  \item \textbf{1024-QAM}: Packs 10 bits per symbol (25\% increase over 256-QAM) for short-range speed.
+\end{itemize}
+
+
+\subsubsection{WiFi Evolution Summary}
+\begin{center}
+    \begin{tabular}{|l|c|c|l|}
+    \hline
+    \textbf{Standard} & \textbf{Bandwidth} & \textbf{Max Rate} & \textbf{Key Technology} \\ \hline
+    802.11g & 20 MHz & 54 Mbps & OFDM \\ \hline
+    802.11n (WiFi 4) & 40 MHz & 600 Mbps & MIMO + Channel Bonding \\ \hline
+    802.11ac (WiFi 5) & 160 MHz & 3.46 Gbps & DL MU-MIMO + 256-QAM \\ \hline
+    802.11ax (WiFi 6) & 160 MHz & 9.6 Gbps & OFDMA + 1024-QAM + 6 GHz \\ \hline
+    \end{tabular}
+\end{center}
+\begin{itemize}
+    \item \textbf{Legacy (11b/g)}: Basic wireless connection.
+    \item \textbf{Middle (11n/ac)}: Increasing the speed for a single user (MIMO, Wider Channels).
+    \item \textbf{Modern (11ax)}: Managing high-density environments with many IoT and mobile devices (OFDMA, Scheduling).
+\end{itemize}
+
+
+
+
 
 
 
@@ -2635,64 +2490,64 @@ Each node maintains a table that stores:
 
 
 
-% \begin{tabular}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
-%   \hline
-%   \rowcolor[gray]{0.8}
-%   \textbf{Feature} & \textbf{FDMA} & \textbf{TDMA} & \textbf{OFDM} \\
-%   \hline
-%   Channel Access & Divides channel into frequency bands, each user assigned a specific frequency & Divides channel into time slots, each user assigned a specific time slot & Uses multiple orthogonal subcarriers simultaneously \\
-%   \hline
-%   Collision Handling & No collisions within allocated frequency bands & No collisions within allocated time slots & Minimizes collisions through orthogonal frequency division \\
-%   \hline
-%   Efficiency & Medium: Bandwidth may be wasted if user has no data to send & Medium-High: Time slots may be wasted if user has no data to send & High: Efficient spectrum usage through parallel transmissions \\
-%   \hline
-%   Interference & Vulnerable to narrowband interference & Less vulnerable to frequency-specific interference & Resistant to narrowband interference and multipath fading \\
-%   \hline
-%   Synchronization & No tight synchronization needed & Requires precise time synchronization & Requires frequency synchronization \\
-%   \hline
-%   Best Used In & Simple constant-bit-rate applications, analog systems & Digital cellular systems, satellite communications & Modern wireless networks (Wi-Fi, 4G/5G), high-speed data transmission \\
-%   \hline
-%   \end{tabular}
+\begin{tabular}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
+  \hline
+  \rowcolor[gray]{0.8}
+  \textbf{Feature} & \textbf{FDMA} & \textbf{TDMA} & \textbf{OFDM} \\
+  \hline
+  Channel Access & Divides channel into frequency bands, each user assigned a specific frequency & Divides channel into time slots, each user assigned a specific time slot & Uses multiple orthogonal subcarriers simultaneously \\
+  \hline
+  Collision Handling & No collisions within allocated frequency bands & No collisions within allocated time slots & Minimizes collisions through orthogonal frequency division \\
+  \hline
+  Efficiency & Medium: Bandwidth may be wasted if user has no data to send & Medium-High: Time slots may be wasted if user has no data to send & High: Efficient spectrum usage through parallel transmissions \\
+  \hline
+  Interference & Vulnerable to narrowband interference & Less vulnerable to frequency-specific interference & Resistant to narrowband interference and multipath fading \\
+  \hline
+  Synchronization & No tight synchronization needed & Requires precise time synchronization & Requires frequency synchronization \\
+  \hline
+  Best Used In & Simple constant-bit-rate applications, analog systems & Digital cellular systems, satellite communications & Modern wireless networks (Wi-Fi, 4G/5G), high-speed data transmission \\
+  \hline
+  \end{tabular}
 
   
-%   \begin{tabular}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
-%   \hline
-%   \rowcolor[gray]{0.8}
-%   \textbf{Feature} & \textbf{Aloha} & \textbf{Slotted Aloha} & \textbf{CSMA} \\
-%   \hline
-%   Channel Access & Transmits immediately when data is ready without checking channel status & Transmits only at beginning of predetermined time slots & Listens to the channel before transmitting (sense-before-send) \\
-%   \hline
-%   Collision Handling & Collisions occur frequently due to uncoordinated transmissions & Reduced collisions compared to pure Aloha, but still occur & Significantly reduces collisions by avoiding transmission when channel is busy \\
-%   \hline
-%   Retransmission & Random backoff time before retrying after collision & Random waiting time before retrying, synchronized to slots & Uses various backoff algorithms (e.g., exponential) to reduce subsequent collisions \\
-%   \hline
-%   Efficiency & Very low: ~18\% of channel capacity & Low-Medium: ~36\% of channel capacity & Medium-High: Up to 80\% in optimal conditions \\
-%   \hline
-%   Collision Avoidance & None; simply retransmits after collision & None; retransmits at next available slot & Various mechanisms like RTS/CTS and collision detection depending on variant \\
-%   \hline
-%   Best Used In & Simple, very low-traffic networks & Networks with predictable traffic patterns & Wireless and wired LANs with variable traffic loads \\
-%   \hline
-%   \end{tabular}
+  \begin{tabular}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
+  \hline
+  \rowcolor[gray]{0.8}
+  \textbf{Feature} & \textbf{Aloha} & \textbf{Slotted Aloha} & \textbf{CSMA} \\
+  \hline
+  Channel Access & Transmits immediately when data is ready without checking channel status & Transmits only at beginning of predetermined time slots & Listens to the channel before transmitting (sense-before-send) \\
+  \hline
+  Collision Handling & Collisions occur frequently due to uncoordinated transmissions & Reduced collisions compared to pure Aloha, but still occur & Significantly reduces collisions by avoiding transmission when channel is busy \\
+  \hline
+  Retransmission & Random backoff time before retrying after collision & Random waiting time before retrying, synchronized to slots & Uses various backoff algorithms (e.g., exponential) to reduce subsequent collisions \\
+  \hline
+  Efficiency & Very low: ~18\% of channel capacity & Low-Medium: ~36\% of channel capacity & Medium-High: Up to 80\% in optimal conditions \\
+  \hline
+  Collision Avoidance & None; simply retransmits after collision & None; retransmits at next available slot & Various mechanisms like RTS/CTS and collision detection depending on variant \\
+  \hline
+  Best Used In & Simple, very low-traffic networks & Networks with predictable traffic patterns & Wireless and wired LANs with variable traffic loads \\
+  \hline
+  \end{tabular}
 
   
-%   \begin{tabular}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
-%   \hline
-%   \rowcolor[gray]{0.8}
-%   \textbf{Feature} & \textbf{ALOHA with preamble} & \textbf{B-MAC} & \textbf{X-MAC} \\
-%   \hline
-%   Channel Access & Sends a preamble before data transmission to announce intent & Uses Low Power Listening (LPL) with long preambles & Uses shortened preambles with target address \\
-%   \hline
-%   Collision Handling & Reduced collisions compared to pure Aloha & Collisions reduced through channel sensing & Improved collision avoidance through early acknowledgment \\
-%   \hline
-%   Power Efficiency & Low: Continuous listening & Medium: Periodic channel sampling & High: Early acknowledgment reduces overhearing \\
-%   \hline
-%   Latency & Medium & High due to long preamble & Reduced compared to B-MAC \\
-%   \hline
-%   Adaptability & Limited adaptability to traffic patterns & Configurable sleep intervals & Adaptable to varying traffic patterns \\
-%   \hline
-%   Best Used In & Simple networks with low power constraints & Wireless sensor networks with low duty cycles & Energy-constrained sensor networks with variable traffic \\
-%   \hline
-%   \end{tabular}
+  \begin{tabular}{|p{2.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
+  \hline
+  \rowcolor[gray]{0.8}
+  \textbf{Feature} & \textbf{ALOHA with preamble} & \textbf{B-MAC} & \textbf{X-MAC} \\
+  \hline
+  Channel Access & Sends a preamble before data transmission to announce intent & Uses Low Power Listening (LPL) with long preambles & Uses shortened preambles with target address \\
+  \hline
+  Collision Handling & Reduced collisions compared to pure Aloha & Collisions reduced through channel sensing & Improved collision avoidance through early acknowledgment \\
+  \hline
+  Power Efficiency & Low: Continuous listening & Medium: Periodic channel sampling & High: Early acknowledgment reduces overhearing \\
+  \hline
+  Latency & Medium & High due to long preamble & Reduced compared to B-MAC \\
+  \hline
+  Adaptability & Limited adaptability to traffic patterns & Configurable sleep intervals & Adaptable to varying traffic patterns \\
+  \hline
+  Best Used In & Simple networks with low power constraints & Wireless sensor networks with low duty cycles & Energy-constrained sensor networks with variable traffic \\
+  \hline
+  \end{tabular}
 
 
 \section{References and Credits}
