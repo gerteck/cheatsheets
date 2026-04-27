@@ -220,7 +220,7 @@
 
 \section{2. Link Budget and Antenna Design}
 
-\subsection{Antenna Basics, Directionality, Types}
+\subsection{2.1 Antenna Basics, Directionality, Types}
 \begin{itemize}
   \item \textbf{Radio Transceiver}: Electrical device that enables transmission and reception of EM waves.
   \item \textbf{Antenna}: Electrical conductor, transmit, receive EM waves. Converts electrical signals to radio waves and vice versa, reciprocal (equal performance for transmit TX and reception RX).
@@ -230,7 +230,7 @@
 
 \centerline{\includegraphics[width = 1\linewidth]{lobes}}
 
-\subsection{Antenna Size and Frequency}
+\subsection{2.2 Antenna Size and Frequency}
 Antenna size is \textbf{inversely proportional} to frequency of radio wave ($\lambda = c/f$)
 \begin{itemize}
   \item Higher frequency, smaller antenna size, Lower frequency, larger size
@@ -241,7 +241,7 @@ Antenna size is \textbf{inversely proportional} to frequency of radio wave ($\la
 
 
 
-\subsection{Performance of Antenna: Antenna Gain}
+\subsection{2.3 Antenna Gain: Performance of Antenna}
 \begin{itemize}
   \item \textbf{Gain of antenna:} Dimensionless ratio (unitless in linear form), commonly expressed in decibels (dB) or dBi. Measures ability of antenna to focus energy in a particular direction compared to a reference.
   \begin{itemize}
@@ -288,7 +288,7 @@ Antenna size is \textbf{inversely proportional} to frequency of radio wave ($\la
 % TODO:
 % Question on Smartphone Antenna Dilemma
 
-\subsection{Radiation Pattern and Beamwidth}
+\subsection{2.4 Radiation Pattern and Beamwidth}
 \begin{itemize}
   \item \textbf{Radiation Pattern}: graphical representation of relative strength of radiated or received power in various directions. 3D or 2D plots.
   \begin{itemize}
@@ -320,7 +320,7 @@ Waves suffer attenuation due to distance, obstacles, interference. Underwater fa
   \item \textbf{Non-Line-of-Sight (NLoS) Propagation}: obstacles, reflection, diffraction, scattering. Common in urban, indoor environments. Reduces reliability and range.
 \end{itemize}
 
-\subsection{Attenuation and Gain: Decibel (dB) and dBm Units}
+\subsection{2.5 Attenuation and Gain: Decibel (dB) and dBm Units}
 \begin{itemize}
   \item \textbf{Attenuation:} Loss of energy when signal traverses through a medium
   \item \textbf{Gain:} $\uparrow$ in energy $\rightarrow$ devices employed to improve signal strength (E.g. amplifiers, antennas)
@@ -346,7 +346,7 @@ Waves suffer attenuation due to distance, obstacles, interference. Underwater fa
 \end{itemize}
 
 
-\subsection{Estimating received Signal Strength: Friis propagation model}
+\subsection{2.6 Estimating received Signal Strength: Friis propagation model}
 \begin{multicols}{2}
   \begin{center}
     \[
@@ -393,7 +393,7 @@ Waves suffer attenuation due to distance, obstacles, interference. Underwater fa
 
 
 
-\subsection{Free Space Path Loss  $FSPL (\text{linear}) = {(\frac{4\pi d f }{c}})^2$}
+\subsection{2.7 Free Space Path Loss  $FSPL (\text{linear}) = {(\frac{4\pi d f }{c}})^2$}
 \begin{itemize}
   \item Loss of power by signal as it transmits from the transmitter to receiver 
   \item $d$ is the distance between the transmitter and receiver antennas (in meters),
@@ -413,7 +413,7 @@ Waves suffer attenuation due to distance, obstacles, interference. Underwater fa
   \item Doubling distance or frequency each on own increases loss by $6,\text{dB}$ (inverse square law).
 \end{itemize}
 
-\subsection{Total link gain in wireless communication}
+\subsection{2.8 Total link gain in wireless communication}
 \begin{itemize}
   \item Net amplification/attenuation of EM signal along the communication path.
   \\ Antennas, FSPL, any other system component is included. 
@@ -429,7 +429,7 @@ Waves suffer attenuation due to distance, obstacles, interference. Underwater fa
 \end{itemize}
 
 
-\subsection{Link Budget, Link Margin, Total Link Gain}
+\subsection{2.9 Link Budget, Link Margin, Total Link Gain}
 \begin{itemize}
   \item \textbf{Link Budget}: Calculate received signal strength given all gains/losses in comm. system
   \item Total Link Budget ($P_{rx}$) = $P_{tx} + $ Total Link Gain 
@@ -451,7 +451,7 @@ Waves suffer attenuation due to distance, obstacles, interference. Underwater fa
 % Take a further look at the slides again.
 
 
-\subsection{dB, dBm and dBi operations}
+\subsection{2.10 dB, dBm and dBi operations}
 \begin{itemize}
   \item \textbf{db} (Decibel): log unit for ratios (gain/loss), dimensionless multiplier, no abolute meaning
   \item \textbf{dBm}: absolute power reference to $1mW$, $0 dBm = 1mW$ (physical quantity)
@@ -547,7 +547,7 @@ How information 'rides' on radio waves. Radio waves are pure sine waves that car
 \end{itemize}
 This process is called \textbf{modulation}. Modulation Techniques include Amplitude Modulation (AM), Frequency Modulation (FM), Phase Modulation (PM), or vary them together and advanced digital schemes like QAM, PSK.
 
-\subsection{Modulation}
+\subsection{3.1 Modulation}
 Encoding 'baseband' information into analog (continuous, smooth waveform) 'carrier' signal. Baseband signal often $\downarrow$ frequency than carrier. Frequency of carrier dictates spectrum usage.
 
 \begin{itemize}
@@ -570,7 +570,7 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
   \item \textbf{Modulation Index $\mu$, $\beta$}: Extent carrier signal is modulated w. message signal. Determines strength of modulated signal, impacts bandwidth, power distribution, overall signal quality.
 \end{itemize}
 
-\subsection{Amplitude modulation (AM)}
+\subsection{3.2 Amplitude modulation (AM)}
 \begin{itemize}
   \item Change amplitude of carrier signal according to the message signal: $s(t)$: modulated signal
       \[
@@ -617,7 +617,7 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 \vfill \null 
 \columnbreak
 
-\subsection{Frequency modulation (FM)}
+\subsection{3.3 Frequency modulation (FM)}
 \begin{itemize}
   \item Change frequency of carrier signal according to the message signal
   \item Advantages over AM: resilient to interference, spectrum efficiency, used for radio
@@ -665,7 +665,7 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
   \end{itemize}
 \end{itemize}
 
-\subsection{Phase modulation}
+\subsection{3.4 Phase modulation}
 \begin{itemize}
   \item Change phase of carrier signal according to the message signal
   \item Integral part of modern communcation standards: Wifi/Television
@@ -826,265 +826,88 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 \end{itemize}
 
 
-\vfill \null
+\null \null \null \null
+\null \null \null \null
 \columnbreak
 
 \section{5. Sensors and Actuators}
-
-\subsubsection{Processors, Memory, Contiki}
+\subsection{5.1 Sensor Modeling}
 \begin{itemize}
-  \item Microcontroller ($\mu C$) small computer on single integrated circuit on simple CPU with peripheral devices (I/O, timers, memories)
-  \item Low power, sleep modes, dramatically reduces power consumed to micro or even nanowatts
-  \item \textbf{ISA and Realization}:
+  \item \textbf{Definition}: Components measuring physical phenomena.
+  \item \textbf{Affine (linear r/s) Model}: $f(x(t)) = ax(t) + b$
   \begin{itemize}
-    \item \textbf{Instruction set architecture:} definition of instructions that processor can execute and certain structural constraints (such as word size) that realizations must share
-    \item \textbf{Processor, Realization Chip:} Piece of silicon sold by vendor, realization of the ISA
-    \item A ISA may appear in different chips by different manufacturers performance profiles varies.
+    \item $x(t)$: True physical quantity; $f(x(t))$: Reported value.
+    \item \textbf{Sensitivity ($a$)}: Change in reading per unit physical change.
+    \item \textbf{Bias ($b$)}: Offset/reading when true input is zero.
   \end{itemize}
+  \item \textbf{Inversion (Calibration)}: To recover physical value from raw reading: $x(t) = \frac{f(x(t)) - b}{a}$.
+  \item \textbf{Saturation}: Real sensors have limited ranges $[L, H]$. Outside this, readings "saturate" (clip to max/min), and the affine model fails.
 \end{itemize}
 
-\subsubsection{Digital Signal Processor}
+\subsection{5.2 Electrical Transduction}
 \begin{itemize}
-  \item Deal with large amounts of information, Sample in time/space/both
-  \item Sophisticated mathematical operations like filtering, frequency analysis
-  \item Digital signal processor: class of processors optimized for mathematically intensive tasks
-\end{itemize}
-
-\subsubsection{Random access memory}
-\begin{itemize}
-  \item Fast, temp storage where individual bytes/words can be read/written quickly
-  \begin{multicols}{2}
-    \item \textbf{SRAM (static RAM):}
+  \item \textbf{Mechanism}: Converting phenomena into electrical signals (Voltage/Current/Resistance).
+  \item \textbf{Ohm's Law}: $V = I \times R$ where $R = \frac{\rho L}{A}$.
+  \item \textbf{Voltage Dividers}: Essential for converting variable Resistance into measurable Voltage ($V_{out}$) for an ADC. $V_{out} = V_{in} \cdot \frac{R_2}{R_1 + R_2}$
+  \item \textbf{Resistivity ($\rho$)}: Changes based on physical conditions:
     \begin{itemize}
-      \item Faster, more reliable
-      \item Uses more silicon area per bit
-      \item Data remains as long as power is maintained
+      \item \textbf{Temperature}: Conductors (higher $\rho$ at higher $T$); Thermistors (non-linear).
+      \item \textbf{Light}: Photoresistors/Photocells (non-linear $\rho$ change).
+      \item \textbf{Strain}: Strain gauges ($\rho$ increases when stretched).
     \end{itemize}
-    \columnbreak
-    \item \textbf{DRAM (dynamic RAM):}
+  \item \textbf{Piezoelectric Effect}: Some sensors (accelerometers, ultrasound) generate voltage directly via mechanical compression/strain rather than changing resistance.
+\end{itemize}
+
+\subsection{5.3 Analog-to-Digital Conversion (ADC)}
+\begin{itemize}
+  \item \textbf{Function}: Bridges analog (continuous) and digital (discrete) domains.
+  \item \textbf{ADC Parameters}:
     \begin{itemize}
-      \item Uses less area/bit (higher density)
-      \item Requires periodic refresh cycles to maintain data, variable access time, potential stalling
+      \item \textbf{Resolution}: Number of bits. More bits = finer granularity.
+      \item \textbf{Sampling Rate}: Frequency of samples. Must follow \textbf{Nyquist}: $f_s \ge 2 \times f_{max}$.
+      \item \textbf{Accuracy}: Closeness to true value (impacted by noise and linearity).
     \end{itemize}
-  \end{multicols}
-\end{itemize}
-
-\subsubsection{Non-volatile memory}
-\begin{itemize}
-  \item Retains data when power is lost, essential for firmware/persistent user data
-  \item \textbf{ROM (Read-Only Memory / Mask ROM)}
-  \begin{itemize}
-    \item Fixed content programmed during manufacturing
-    \item Suitable for mass-produced firmware that does not change
-  \end{itemize}
-  \item \textbf{EEPROM (Electrically-Erasable Programmable ROM)}
-  \begin{itemize}
-    \item Can be reprogrammed in the field, longer write times, limited write cycles
-  \end{itemize}
-  \item Flash Memory
-  \begin{itemize}
-    \item \textbf{NOR Flash:} Accessible like RAM but slowe erase/writes
-    \item \textbf{NAND Flash:} Cheaper, faster erase/write time, data access in large blocks (hundreds to thousands of bits)
-    \item \textbf{Disk memories:} large capacities, involve mechnical parts (spinning disks), leading to slower variable access time
-  \end{itemize}
-\end{itemize}
-
-\subsubsection{SRAM (RAM) versus Flash (ROM)}
-\begin{itemize}
-    \item Size and time difference between non-volatile and volatile memory is \textit{significantly} reduced from traditional computing
+  \item \textbf{Dynamic Range ($D$)}: Ratio of range to precision $p$.
     \begin{itemize}
-        \item Non-volatile store 2--10x larger than volatile
-        \item Single-cycle RAM. Maybe two-cycles to Flash (to read)
+      \item $D = \frac{H - L}{p}$ or $D_{dB} = 20\log_{10}(\frac{H-L}{p})$, Precision $p = \frac{H-L}{2^{bits} - 1}$.
     \end{itemize}
-    \item Major difference: energy and writability
-    \begin{itemize}
-        \item SRAM is low-energy to read and write (no refresh needed)
-        \item Flash is lowish-energy to read, but very high energy to write
-    \end{itemize}
-    \item Hierarchical structure is not enforced
-    \begin{itemize}
-        \item Same address space for RAM and Flash (very different from traditional)
-        \item Run instructions right inside of Flash
-        \item Keep variables in RAM (or const variables in Flash)
-    \end{itemize}
+  \item \textbf{Quantization}: Mapping continuous $x(t)$ to one of $2^n$ discrete digital values.
 \end{itemize}
 
-\subsubsection{Memory Map}
+\subsection{5.4 Sampling and Time}
 \begin{itemize}
-  \item how processor addresses correspond to physical memory and the peripherals
-  \item size of memory map constrained by processors address width
-  \item 32 bit processor has $2^{32}$ locations or 4 GB of memory Accessible
-  \item e.g. ARM Cortex-M3
-  \begin{itemize}
-    \item Separation of address spaces: distinct regions for program memory (flash), data memory (SRAM, DRAM) and peripheral devices
-    \item Havard architecture: Separates instructions (program memory) from data (data memory) to allow simultaneous fetches, improving throughput
-  \end{itemize}
+  \item \textbf{Uniform Sampling}: Discrete signal $s(n) = f(x(nT))$ where $T$ is the sampling interval.
+  \item \textbf{Trade-offs}: Smaller $T$ (higher rate) increases ADC cost/power and usually reduces bit-depth (resolution) for the same hardware cost.
+  \item \textbf{Noise}: Undesired signal component $n(t) = x'(t) - x(t)$ caused by quantization errors or imperfections.
 \end{itemize}
 
-\subsubsection{Sensors}
-Electronic component that measures physical phenomenon.
-\subsubsection{Models of sensors}
+\subsection{5.5 Specific Sensor Types}
 \begin{itemize}
-  \item Many sensors can be modelled approximately as an affine function
-  \item $f:R \rightarrow R$
-  \begin{itemize}
-    \item $x(t)$: Physical Quantity reported by sensor at the time instance $t$
-    \item $f(x(t))$: Value reported by sensor for the particular physical quantity
-    \item Function $f$ is linear if there exists proportionality constant $a \in R$ and a bias $b \in R$ s.t. $\forall x(t) \in R$, $f(x(t)) = ax(t) + b$
-  \end{itemize}
-  \item \textbf{Proportionality constant $a$:} represents \textit{sensitivity} of a sensor, specifies degree sensor reading changes to change in physical quantity.
-  \item No sensor truly \textit{realizes an affine function}, range of sensor, set of values of a physical quantity that measures is always limited. Outside range, an affine function model is no longer valid.
-  \item Physical quantities outside this range typically \textit{saturate}
-  \begin{itemize}
-    \item These quantities yield a max or min reading \underline{outside their range}
-  \end{itemize}
-  \item Embedded systems, focus on \textit{passive sensing}, much cheaper, lower energy consumption
+  \item \textbf{Active vs. Passive}: Passive sensing (e.g., PIR) is cheaper and lower energy. Active (e.g., Ultrasound) consumes more power.
+  \item \textbf{Motion (Accelerometer)}: Measures "proper acceleration" by mass displacement. Units in $g$.
+  \item \textbf{Rotation (Gyroscope)}: Detects orientation changes (MEMS based); unaffected by gravity.
+  \item \textbf{Magnetic (Magnetometer)}: Detects Earth's magnetic field; used for compasses/localization.
+  \item \textbf{Active (Ultrasound)}: Emits sound and measures Time-of-Flight (ToF). Distance $d = \frac{v \times t}{2}$. Power-hungry but useful for proximity.
+  \item \textbf{Passive Infrared (PIR)}: Detects movement via changes in Infrared (heat) levels. Low energy.
 \end{itemize}
 
-\subsubsection{Sensors transform phenomenon into electrical signals}
+\subsection{5.6 Actuators}
 \begin{itemize}
-  \item \textbf{\underline{Ohm's Law}}: voltage ($V$) = Current ($I$) $\times$ Resistance ($R$)
-  \item By altering one of the variables, in response to changes in the phenomenon, a sensor generates an analog signal that corresponds with the phenomenon
-  \begin{itemize}
-    \item e.g. Resistivity $\rho$: materials with higher $\rho$ create more resistance for same length/area. $R = \frac{\rho L}{A}$ Sensitive to physical conditions:
-    \begin{itemize}
-      \item Temperature: Many conductors have higher resistivity at higher temps
-      \item Light: materials (photoresistors) change resistivity exposed to light
-      \item Strain: e.g. strain gauges increase in resistivity when stretched
-    \end{itemize}
-  \end{itemize}
-  \item \textbf{\textit{Temperature}} sensing using resistivity changes
-  \begin{itemize}
-    \item Thermistor is a sensor which varies in resistance based on temperature
-    \begin{itemize}
-      \item \textbf{Advantages:} cheap and easy to use , low cost
-      \item \textbf{Disadvantages:} non-linear transfer function
-    \end{itemize}
-  \end{itemize}
-  \item \textbf{\textit{Light}} sensing using resistivity changes
-  \begin{itemize}
-    \item Photocell change resistance with light (non-linear)
-  \end{itemize}
+  \item \textbf{Definition}: Modifies physical quantities (opposite of sensors).
+  \item \textbf{LEDs}: Directional (Cathode/Short lead = Negative). 
+  \item \textbf{RGB LEDs}: Combines 3 colors to create any spectrum.
+  \item \textbf{Audio}: Speakers/Horns (e.g., 85 dB horn in Nest Protect).
 \end{itemize}
 
-\subsubsection{Voltage Dividers}
-\begin{multicols}{2}
-  \begin{itemize}
-    \item $V_{out} = \frac{R_2}{R_1 + R_2} \times V_{in}$
-    \begin{itemize}
-      \item $V_{in}$ is a voltage source and $R_1$ and $R_2$ are resistors
-    \end{itemize}
-    \item If $R_1 == R_2$, $V_{out} = \frac{V_{in}}{2}$
-    \item Smaller $R_1$ means larger $V_{out}$, $V_{out}$ approaches $V_{in}$
-  \end{itemize}
-  \includegraphics*[width=2.2cm, height=2cm]{voltagedividers.png}
-\end{multicols}
-
-\subsubsection{Analog Digital Converter (ADC): Bridging analog and digital worlds }
-\begin{itemize}
-  \item ADCs convert analog signals (continuous range of values) into digital signals (discrete numerical representations). Essential for digital devices to process real-world analog inputs.
-    \item \textbf{What are the various parameters of the ADC?}
-    \begin{itemize}
-        \item \textbf{Resolution:} Determined by the number of bits the ADC uses to represent the analog value. More bits mean higher resolution and finer granularity in the output.
-        \item \textbf{Sampling Rate:} Frequency ADC samples the analog signal. Higher sampling rates capture more detail, necessary to comply with Nyquist theorem. Also higher power consumption.
-        \item \textbf{Accuracy:} The closeness of the ADC's output to the true input value. It includes factors such as linearity, noise, and error rate.
-    \end{itemize}
-\end{itemize}
-
-\subsubsection{Digital Sensors}
-\begin{itemize}
-    \item Some sensors incorporate ADC within their circuits to provide digitized signals, which can then be read by a microcontroller.
-    \item \textbf{Dynamic Range:} Digital sensors are unable to distinguish between two closely spaced values of the physical quantity. The precision $p$ of a sensor is the smallest absolute difference between two values of a physical quantity whose sensor readings are distinguishable.
-    \begin{itemize}
-      \item $D \in R+$ of a digital sensor is the ratio
-      \item $p$ = represents the precision of the sensor: $D = \frac{H - L}{p}$, where $H$ and $L$ are limits of range in (often expressed as units of decibels)
-      \item $D_{dB} = 20\log_{10}(\frac{H-L}{p})$, $p= \frac{H-L}{2^{ADL} - 1}$, where we take $-1$ because we usually do not use 0 to represent
-    \end{itemize}
-\end{itemize}
-
-\subsubsection{Quantization of sensor readings}
-\begin{itemize}
-  \item Digital sensors represent a physical quantity through a $n$-bit number
-  \item $n$ is a typically small number, and thus there are $2^n$ numbers
-  \item Actual physical quantity represented by a real number $x(t) \in R$
-  \item Digital sensor picks \textbf{one of the $2^n$} distinct numbers to represent it, thus sensor readings are quantized
-\end{itemize}
-
-\subsubsection{Ideal digital sensor what should be $n$ and $p$}
-\begin{itemize}
-  \item \textbf{Ideal digital sensor:} 2 physical quantities that differ by the precision $p$ are represented by digital quantites that differ by 1 bit
-  \item Precision and quantization become intertwined
-\end{itemize}
-
-\subsubsection{Sensor Distortion Function}
-\begin{itemize}
-  \item Defines the output of a sensor as a function of input: $f:R \rightarrow \{0, 1, \cdots, 7 \}$
-  \item For sensors with output similar to above, has precision given by following formula $p = \frac{H_L}{2^n}$
-\end{itemize}
-
-\subsubsection{Sampling through analog to digital converter}
-\begin{itemize}
-  \item Physical quantity $x(t)$ is a function of time $t$
-  \item A digital sensor will sample the physical quantity at any particular points in time to create a discrete signal
-  \item Uniform sampling, there is a fixed time interval $T$ between samples
-  \item $T$ is called the sampling interval
-  \item The resulting signal may be modelled as function $s : Z \rightarrow R$ $\forall n \in Z , s(n) = f(x(NT))$
-  \item Physical quantity $x(t)$ is observed only at times $t = nT$
-\end{itemize}
-
-\subsubsection{How does this related to ADCs}
-\begin{itemize}
-  \item The smaller the sampling interval $T$, more costly to provide more bits in an ADC.
-  \item Same cost, faster ADCs typically produce fewer bits and hence have either higher quantization error or smaller range
-\end{itemize}
-
-\subsubsection{Noise in sensors and measurement}
-\begin{itemize}
-  \item Part of signal which we do not want. If we want to measure $x(t)$ and we ended up measuring $x'(t)$ the noist $n(t) = x'(t) - x(t)$
-  \item Noise is the side effect of sensor not measuing exactly what it is supposed to measure: e.g. by sensor imperfection, quantization errors etc
-\end{itemize}
-
-\subsubsection{Motion sensing: accelerometers}
-\begin{itemize}
-  \item measures proper acceleration, sensor circuit measures the position of fixed mass in frame
-  \item mass moves in any direction, gets displaced and results in displacement of mass used to determine acceleration
-  \item Measures usually in $g$s, where $1g = $ Earth's gravity
-\end{itemize}
-
-\subsubsection{Measuring rotation using gyroscope}
-\begin{itemize}
-  \item Not affected by graviational field
-  \item Bulk rotating devices, or more modern MEMs (microelectromechanical systems) levering optical / electromagnetic properties to detect minute changes in orientation of device
-\end{itemize}
-
-\subsubsection{Measuing magnetic field}
-\begin{itemize}
-  \item Measures the magnetic field, usually used in devices such as compasses
-  \item Satellites also often use these magnetometers for localization
-\end{itemize}
-
-\subsubsection{Active sensing: Ultrasound sensor}
-\begin{itemize}
-  \item Emits high freqency sound waves from sesor which bounces from objects present in the environment
-  \item Estimates distance, proximity by measuring time taken for sound waves to bounce back and propagate back to ultrasound device
-  \item Power conusming, though can be used on IoT devices
-  \item Common applicaiton: Robotics, obstacle detection, water level sensing
-\end{itemize}
-
-\subsubsection{Passive Infrared sensor (PIR)}
-\begin{itemize}
-  \item Detect movement in the environment by detecting change in IR levels
-  \item Often come with plastic lens cover to improve field of view and range
-\end{itemize}
-
-\vfill \null
+\null \null \null \null
+\null \null \null \null
 \columnbreak
 
 
 
 \section{6. Backscatter Wireless Communication}
 
-\subsection{Power Consumption}
+\subsection{6.1 Power Consumption}
 \subsubsection{Battery capacity}
 \begin{itemize}
   \item \textbf{Watt-hour (Wh):} unit of energy equivalent to 1 Watt of power expended for 1 hour of time
@@ -1102,7 +925,7 @@ Electronic component that measures physical phenomenon.
 \end{itemize}
 
 
-\subsection{Low-power Wireless Transmission: Backscatter}
+\subsection{6.2 Low-power Wireless Transmission: Backscatter}
 \subsubsection{Backscatter Communication}
 \begin{itemize}
   \item Device does not generate its own power; instead, it varies between absorbing or reflecting signal to modulate data onto existing radio waves in the environment
@@ -1114,21 +937,21 @@ Electronic component that measures physical phenomenon.
 
 \includegraphics*[width=8.5cm, height=2.4cm]{backscatter.png}
 
-\subsubsection{Far-field Backscatter}
+\subsection{6.3 Far-field Backscatter (Radiated Reflection)}
 
 \begin{itemize}
   \item \textbf{RFID}: Radio Frequency Identification, widely deployed backscatter system. Cheap tags, complex readers (low/high/ultra frequency readers).
   \item \textbf{Active / Semi-Passive tags}: Active $\rightarrow$ own power source, semi-passive $\rightarrow$ battery for internal circuitry, rely on reader signal for communication. Greater range but bulky, high cost.
   \item \textbf{PushID [NSDI 2019]}: extend range without modify tag, leverage collaboration between multiple RFID readers. (beamforming)
-  \item \textbf{Decouple signal generation and reception (LoRea)}: long range backscatter transmission, self-interference reduced.
-  \item \textbf{Usages}: ID, transmissions, backscatter as a sensor in gesture monitoring.
+  \item \textbf{Decouple signal generation and reception (LoRea)}: long range backscatter transmission. Dedicated transmitter generates strong signal, separate receiver captures weak backscatter signal. Range up to 3.4 km. Self-interference reduced. 
+  \item \textbf{Backscatter Usages}: ID, transmissions, backscatter as a sensor in gesture monitoring.
   \item Overall, backscatter is essentially 'free' communication (given a high capability device), but difficult to reflect already low energy (doubled path loss there and back), limited range.
 \end{itemize}
 
 
-\subsubsection{Near-field Backscatter}
+\subsection{6.4 Near-field Backscatter (Inductive Coupling)}
 
-\subsubsection{Backscatter Communication using Inductive Coupling}
+\subsubsection{Backscatter Communication using Inductive Coupling (Magnetic Induction)}
 \begin{itemize}
   \item Shared magnetic field created between 2 devices
   \item $\triangle$ current through one induces current charge on other, device can vary load to transmit
@@ -1141,21 +964,9 @@ Electronic component that measures physical phenomenon.
   \item Act as tag/reader (smart phone can power a tag if needed, act as card to respond to reader)
 \end{itemize}
 
-\subsubsection{Wireless communcation through Light}
-\subsubsection{Light Fidelity (LiFi)}
-\begin{itemize}
-  \item \textbf{Advantages:} Illuimination, Energy and Communication
-  \item \textbf{Disadvantages:} 
-  \begin{itemize}
-    \item Cannot propagate through physical boundaries, good for privacy but limited deployable locations for IoT devices
-  \end{itemize}
-\end{itemize}
-
-\vfill \null
+\null \null \null \null
 \columnbreak
 
-\vfill \null
-\columnbreak
 
 \section{7.  Wireless Medium Access Control (MAC)}
 
@@ -1281,7 +1092,7 @@ Electronic component that measures physical phenomenon.
 \centerline{\includegraphics[width = 0.8\linewidth]{MAC}}
 
 
-\subsection{Channelization Protocols}
+\subsection{7.1 Channelization Protocols}
 
 Channelization: divide single communication medium into multiple distinct channels, transmit without collisions through preassign, but rigid allocation wastes capacity under bursty traffic.
 
@@ -1355,7 +1166,7 @@ Channelization: divide single communication medium into multiple distinct channe
   \end{itemize}
 \end{itemize}
 
-\subsection{Random Access Protocols}
+\subsection{7.2 Random Access Protocols}
 In Random Access Protocols (RAPs), users are allowed to transmit at any time without pre-scheduling, but risk collisions. 
 
 For dynamic wireless networks, fixed scheduling often inefficient or impractical:
@@ -1959,7 +1770,7 @@ If all N nodes connected directly, $N(N-1)$ or $O(N^2)$ uni-directional links
   \end{itemize}
 \end{itemize}
 
-\subsection{Routing Metrics: Factors to consider in Routing Decisions}
+\subsection{10.3 Routing Metrics: Factors to consider in Routing Decisions}
 \begin{itemize}
   \item \textcolor{red}{Energy efficiency}
   \item \textcolor{red}{Reliability:} ensure packets successfully delivered (e.g., ETX)
@@ -2014,7 +1825,7 @@ If all N nodes connected directly, $N(N-1)$ or $O(N^2)$ uni-directional links
   \item Using Packet reception ratio (PRR): $ETX = 1/PRR$
 \end{itemize}
 
-\subsection{Routing Algorithms}
+\subsection{10.4 Routing Algorithms}
 
 \subsubsection{Route using shortest path algorithm}
 \begin{itemize}
@@ -2067,7 +1878,7 @@ If all N nodes connected directly, $N(N-1)$ or $O(N^2)$ uni-directional links
   \item \textbf{Assumption}: Due to node mobility, routing path may be available, needs to be ``discovered''
 \end{itemize}
 
-\subsection{Ad-hoc On-demand Distance Vector Routing (AODV)}
+\subsection{10.5 Ad-hoc On-demand Distance Vector Routing (AODV)}
 \begin{itemize}
   \item \textbf{Ad-hoc:} dynamic and temporary networks
   \item \textbf{On-Demand}: Routes are only created when a source node has data to send.
@@ -2159,8 +1970,7 @@ Each node maintains a table that stores:
   \end{itemize}
 \end{itemize}
 
-\subsection{10.3 Load Balancing in Wireless Network}
-% Add before Load Balancing section
+\subsection{10.6 Load Balancing in Wireless Networks}
 
 \subsection{Many-to-one Sensor Networks}
 \begin{itemize}
@@ -2230,6 +2040,18 @@ Each node maintains a table that stores:
   \end{itemize}
 \end{itemize}
 
+\bigskip
+
+\subsection{11.0 Evolution of WiFi}
+In 20 years, WiFi has evolved from 2 Mbps to 9.6 Gbps. Achieved through:
+\begin{enumerate}
+    \item \textbf{Capable Modulation}: Shifting from Spread Spectrum to OFDM/OFDMA.
+    \item \textbf{Bandwidth Expansion}: From 2.4 GHz to 5 GHz/6 GHz, wider channels (20 to 160 MHz).
+\end{enumerate}
+\smallskip
+\centerline{\includegraphics[width = 1\linewidth]{WifiEvolution.jpg}}
+
+
 \vfill \null
 \columnbreak
 
@@ -2252,18 +2074,16 @@ WiFi uses \textbf{CSMA/CA} (Carrier Sense Multiple Access with Collision Avoidan
 \begin{enumerate}
   \item \textbf{Carrier Sense}: Listen to the medium. 
   \item \textbf{If Free}: Wait for a specific \textbf{IFS} (Inter-Frame Spacing). If still free, \textbf{Transmit}.
-  \item \textbf{If Busy (Random Backoff)}: 
+  \item \textbf{If Busy (Random Backoff)}: Select a random number of \textbf{Backoff Slots}.
   \begin{itemize}
-    \item Select a random number of \textbf{Backoff Slots}.
     \item \textbf{Count Down}: Only decrement slots while the medium is idle.
     \item \textbf{On Expiry}: If the medium is busy when the counter reaches zero, \textbf{increase} the maximum backoff range (Binary Exponential Backoff) and repeat.
   \end{itemize}
 \end{enumerate}
 
-\textbf{Slot Time}: The basic unit of time for the protocol, calculated as:
-\begin{center}
-    $\text{Slot Time} = \text{Rx-to-Tx switch time} + \text{Processing delay} + \text{Propagation delay}$
-\end{center}
+\textbf{Slot Time}: basic unit of time for protocol: \\
+$\text{Slot Time} = \text{Rx-to-Tx switch time} + \text{Processing delay} + \text{Propagation delay}$
+
 
 \subsection{11.2 Traffic Priority - Tiered Contention Multiple Access (TCMA)}
 WiFi uses different IFS (inter-frame spacing) durations to ensure certain traffic classes / packets (like ACKs) can `cut the line' before new data starts. (Prioritize communication)
@@ -2277,16 +2097,7 @@ WiFi uses different IFS (inter-frame spacing) durations to ensure certain traffi
 
 \centerline{\includegraphics[width = 1\linewidth]{ifs.png}}
 
-\subsection{11.3 Evolution of WiFi}
-In 20 years, WiFi has evolved from 2 Mbps to 9.6 Gbps. Achieved through:
-\begin{enumerate}
-    \item \textbf{Capable Modulation}: Shifting from Spread Spectrum to OFDM/OFDMA.
-    \item \textbf{Bandwidth Expansion}: From 2.4 GHz to 5 GHz/6 GHz, wider channels (20 to 160 MHz).
-\end{enumerate}
-\smallskip
-\centerline{\includegraphics[width = 0.8\linewidth]{WifiEvolution.jpg}}
-
-\subsection{11.4 Spread Spectrum (Legacy WiFi)}
+\subsection{11.3 Spread Spectrum (Legacy WiFi)}
 The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than required for the data rate to gain robustness against interference and noise.
 
 \subsubsection{1. Frequency Hopping (FHSS)}
@@ -2296,7 +2107,7 @@ The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than requi
   \item \textbf{Cons}: \textcolor{red}{Slow data rates} due to switching delays (`settling time' of radio during a hop).
 \end{itemize}
 
-\centerline{\includegraphics[width = 0.8\linewidth]{fhss.png}}
+\centerline{\includegraphics[width = 0.6\linewidth]{fhss.png}}
 
 
 \subsubsection{2. Direct Sequence (DSSS)}
@@ -2307,13 +2118,13 @@ The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than requi
   \item Essentially, each bit is \textcolor{red}{multiplied by a sequence of bits} with a much higher data rate. Data Bit ($t_b$) $\times$ Chipping Code ($t_c$) = Transmitted Signal. As $t_c \ll t_b$, bandwidth increases.
 \end{itemize}
 
-\centerline{\includegraphics[width = 0.9\linewidth]{dsss.jpg}}
+\centerline{\includegraphics[width = 0.7\linewidth]{dsss.jpg}}
 
 \subsubsection{Spread Spectrum Summary}
 \begin{itemize}
   \item \textbf{Key Idea}: Traffic from other users appears as low-level background noise as they use different hop sequences or chipping codes. Spreading signal over wide spectrum (FHSS: multi-freq hop or DSSS: single frequency), more resilient to interference and eavesdropping.
   \item \textbf{Redundancy}: Extra bandwidth provides frequency-domain redundancy.
-  \item \textbf{Legacy Tech}: Used in 802.11 (Original) and 802.11b; also the foundation for GPS and 3G (CDMA) cellular. Each pair of the TX and RX must coordinate so RX can apply the same code to decode the data.
+  \item \textbf{Legacy}: Used in 802.11 (Original), 802.11b; foundation for GPS, 3G (CDMA) cellular. Each pair of TX and RX must coordinate so RX can apply same code to decode data.
 \end{itemize}
 
 \subsubsection{802.11b Channels (2.4 GHz)}
@@ -2322,7 +2133,7 @@ The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than requi
     \item \textbf{Overlap}: Most overlap significantly, only \textbf{Channels 1, 6, and 11} considered non-overlapping.
 \end{itemize}
 
-\subsection{11.5 OFDM: Orthogonal Frequency Division Multiplexing}
+\subsection{11.4 OFDM: Orthogonal Frequency Division Multiplexing}
 
 \textbf{The Problem: Multipath Interference}: High-speed wireless communication faces two physical challenges due to signals reflecting off walls and objects, creating multiple paths.
 
@@ -2341,9 +2152,7 @@ The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than requi
 
 \centerline{\includegraphics[width = 0.6\linewidth]{interSymbolInterference.jpg}}
 
-\subsubsection{The Mechanics of OFDM}
-
-\subsubsection{Concept 1: Multi-Carrier Modulation (FDM)}
+\subsubsection{Mechanism 1: Multi-Carrier Modulation (FDM)}
 The core idea is to distribute bits over $N$ narrow subcarriers instead of one wide one.
 \begin{itemize}
   \item \textbf{Symbol Duration Extension}: If you split the data across 52 subcarriers, each subcarrier only handles a fraction of the data. This allows each "symbol" to last \textbf{N times longer} in time.
@@ -2351,12 +2160,9 @@ The core idea is to distribute bits over $N$ narrow subcarriers instead of one w
   \item \textbf{Narrow-band Advantage}: Each subcarrier is so narrow that it experiences `flat fading' (easier to fix) rather than `selective fading' (which destroys wide signals).
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{FDM.jpg}}
-\medskip
-
----
 
 
-\subsubsection{Concept 2: The `Orthogonal' Advantage (Achieve higher data rate)}
+\subsubsection{Mechanism 2: The `Orthogonal' Advantage (Achieve higher data rate)}
 How do we pack subcarriers densely without them bleeding into each other?
 \begin{itemize}
   \item \textbf{Traditional FDM}: Requires "Guard Bands" (wasted empty space) between channels.
@@ -2367,7 +2173,7 @@ How do we pack subcarriers densely without them bleeding into each other?
 \centerline{\includegraphics[width = 0.6\linewidth]{orthogonalSubcarriers.jpg}}
 
 
-\subsubsection{Concept 3: Implementation \& 802.11a}
+\subsubsection{Implementation \& 802.11a}
 The math required to turn bits into these overlapping waves is complex:
 \begin{itemize}
   \item \textbf{Signal Processing}: \texttt{IFFT} (Inverse Fast Fourier Transform): Used at the Transmitter to combine all subcarriers into one signal. \texttt{FFT} (Fast Fourier Transform): Used at the Receiver to split the signal back into individual subcarriers.
@@ -2376,19 +2182,13 @@ The math required to turn bits into these overlapping waves is complex:
       \item \textbf{Band}: 5 GHz (cleaner airwaves, more channels than 2.4 GHz). \textbf{Speed}: 54 Mbps.
       \item \textbf{Modulation}: \textbf{QAM} (Quadrature Amplitude Modulation) to pack more bits per subcarrier.
     \end{itemize}
-\end{itemize}
-
-\subsubsection{OFDM vs DSSS, Trade-offs}
-\begin{itemize}
-  \item \textbf{Evolution:} Replace DSSS with Orthogonal Frequency Division Multiplexing
-  \item \textbf{DSSS (Legacy)}: High redundancy, low speed. One signal "spread" thin.
-  \item \textbf{OFDM (Modern)}: High complexity, high speed (throughput), spectral efficiency (dense subcarrier packing). Also robust against narrowband interference, handles multipath effects. Many signals "stacked" efficiently.
+  \item \textbf{OFDM vs DSSS, Trade-offs}: \textbf{Evolution:} Replace DSSS with Orthogonal Frequency Division Multiplexing. \textbf{DSSS (Legacy)} has high redundancy, low speed. One signal "spread" thin. \textbf{OFDM (Modern)} has high complexity, throughput, spectral efficiency. Robust against narrowband interference, multipath effects.
 \end{itemize}
 
 
 
 
-\subsection{11.6 MIMO: Multiple Input Multiple Output}
+\subsection{11.5 MIMO: Multiple Input Multiple Output}
 
 \textbf{Concept: Why use Multiple Antennas?} For wired, add more wires for more speed. In wireless, use multiple antennas to create "virtual wires" in the air.
 
@@ -2434,7 +2234,7 @@ Introduced with 802.11ac, solve `crowded room' problem, many devices connected t
   \item \textbf{Deployment Strategy:}: \textcolor{red}{Routers apply 802.11ac to 5 GHz and 802.11n to 2.4 GHz}
 \end{itemize}
 
-\subsection{11.7 WiFi 6 (802.11ax): High Efficiency Wireless}
+\subsection{11.6 WiFi 6 (802.11ax): OFDMA - High Efficiency Wireless}
 
 \textbf{Goal}: Improve total throughput across \textit{all} devices in a crowded network (High Efficiency), rather than just the peak speed of one device.
 
@@ -2518,8 +2318,14 @@ Based on IEEE 802.15.4, operating at 2.4 GHz using DSSS.
     \end{itemize}
 \end{itemize}
 
+\medskip
 
-\centerline{\includegraphics[width = 0.9\linewidth]{zigbee.jpg}}
+\centerline{\includegraphics[width = 0.95\linewidth]{zigbee.jpg}}
+
+\medskip
+
+\vfill \null
+\columnbreak
 
 \subsection{12.3 Low-Power Wide-Area Network LPWAN: LoRaWAN}
 Long-range Wide-Area Network LoRaWAN: most popular LPWAN protocol.
