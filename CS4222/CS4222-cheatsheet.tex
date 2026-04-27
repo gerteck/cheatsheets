@@ -2428,8 +2428,6 @@ Introduced with 802.11ac, solve `crowded room' problem, many devices connected t
 
 \centerline{\includegraphics[width = 0.9\linewidth]{multiUserMIMO.jpg}}
 
-
-
 \subsubsection{802.11ac - Enhanced MIMO and wider channels}
 \begin{itemize}
   \item \textbf{Implementation (2013):} Update for \textcolor{red}{5 GHz band only}, supports Downlink MU-MIMO (from AP to device), channel widths up to \textcolor{red}{160 MHz}, and higher modulation (256-QAM).
@@ -2449,12 +2447,12 @@ Introduced with 802.11ac, solve `crowded room' problem, many devices connected t
   \end{itemize}
 \end{itemize}
 
-\centerline{\includegraphics[width = 0.8\linewidth]{ofdma.png}}
+\centerline{\includegraphics[width = 0.7\linewidth]{ofdma.png}}
 
 
 \subsubsection{802.11ax (WiFi 6) - 6 GHz Band Extension and Features}
 \begin{itemize}
-  \item \textbf{Standard Timeline:} Standard approved in 2021, though first devices started supporting it in 2019 (WiFi 6).
+  \item \textbf{Standard Timeline:} Approved in 2021, first devices started supporting it in 2019 (WiFi 6).
   \item \textbf{Spectrum}: Works in 2.4 GHz, 5 GHz, and the new \textbf{6 GHz} band (WiFi 6E).
   \item \textbf{6 GHz Band}: Provides 1.2 GHz of new, unlicensed bandwidth (huge increase channels).
   \item \textbf{Up/Down MU-MIMO}: Unlike WiFi 5, support Multi-User MIMO, both uploads/downloads.
@@ -2479,7 +2477,115 @@ Introduced with 802.11ac, solve `crowded room' problem, many devices connected t
     \item \textbf{Modern (11ax)}: Managing high-density environments with many IoT and mobile devices (OFDMA, Scheduling).
 \end{itemize}
 
+\section{12. Low-Power IoT}
 
+IoT devices: power, sensors, wireless communication. Categorize by operating scale (range).
+
+\subsubsection{Categories of IoT Wireless Networks}
+\begin{itemize}
+    \item \textbf{PAN (Personal Area Network)}: Range $< 30$ m. E.g.: \textbf{BLE}, \textbf{Zigbee}, wearables.
+    \item \textbf{LPWAN (Low-Power Wide-Area Network)}: Range $\sim$ tens of km. Example: \textbf{LoRaWAN}. Used for agriculture and industrial monitoring.
+\end{itemize}
+
+\subsection{12.1 PAN Technology: Bluetooth Low Energy (BLE)}
+Designed to replace cables and run on coin cell batteries, use in low energy mode (LE).
+\begin{itemize}
+    \item \textbf{Communication Roles}: \textbf{Advertiser}: Broadcasts packets (e.g., headphone). \textbf{Scanner}: Receives packets without connecting. \textbf{Initiator}: Attempts to form connection (becomes \textbf{Master}).
+    \item \textbf{Channels}: 40 channels total (2 MHz wide).
+    \begin{itemize}
+        \item \textbf{37, 38, 39}: Advertising channels (placed to avoid WiFi interference).
+        \item \textbf{0--36}: Data channels using \textbf{FHSS} (Frequency Hopping Spread Spectrum).
+    \end{itemize}
+    \item \textbf{The Connection Process}
+  \begin{enumerate}
+    \item \textbf{Advertising Event}: \textit{Advertiser} broadcasts packets on advertising channels (periodic).
+    \item \textbf{Initiation}: A \textit{Scanner} receives the advertisement. If it wants to connect, it becomes an \textbf{Initiator} and sends a connection request on the same channel.
+    \item \textbf{Piconet Formation}: If the Advertiser accepts, a \textbf{Piconet} (point-to-point connection) is formed. Initiator becomes \textbf{Master}. Advertiser becomes \textbf{Slave}.
+    \item \textbf{Data Exchange}: Once connected, pair moves to data channels (0-36). Use \textbf{FHSS} to switch channels after connection events (typically every 4.615 ms) to combat interference, fading.
+  \end{enumerate}
+  \item \textbf{Types of BLE Events}: \textbf{Advertising}: Signal wish to pair or relay broadcast message (beacons). \textbf{Periodic Advertising}: device advertises over non-primary channels using hopping pattern. (Intervals can range \textbf{7.5 ms to 81.9 s}). \textbf{Connecting}: handshake pairing device to host.
+\end{itemize}
+
+\subsection{12.2 PAN Technology: ZigBee}
+Based on IEEE 802.15.4, operating at 2.4 GHz using DSSS.
+\begin{itemize}
+    \item \textbf{Mesh Topology}: Unlike BLE (Star), Zigbee supports \textbf{many-to-many} mesh networking, allowing data to hop through routers.
+    \item \textbf{Network Components}:
+    \begin{itemize}
+        \item \textbf{ZigBee Controller (ZC)}: One per network; initiates network functions (assign logical addresses, permits node to join or leave mesh).
+        \item \textbf{ZigBeeRouter (ZR)}: Optional; handles multi-hop routing and joins nodes, handles some of the load of mesh network hopping and routing coordination.
+        \item \textbf{End Device (ZED)}: Simple sensor; no routing logic (e.g. light switch).
+    \end{itemize}
+\end{itemize}
+
+
+\centerline{\includegraphics[width = 0.9\linewidth]{zigbee.jpg}}
+
+\subsection{12.3 Low-Power Wide-Area Network LPWAN: LoRaWAN}
+Long-range Wide-Area Network LoRaWAN: most popular LPWAN protocol.
+\begin{itemize}
+    \item \textbf{Physical Layer (LoRa)}: Uses \textbf{Chirp Spread Spectrum (CSS)}.
+    \begin{itemize}
+      \item \textbf{Chirp}: Signal frequency increases linearly over time. (like chirp)
+      \item \textbf{Spreading Factor (SF)}: Controls symbol duration. Spreads signal across wide frequency band. Higher SF = longer range, robust to noise, multipath fading but \textbf{lower data rate}.
+      \item \textbf{Encoding}: $n$ bits encoded by dividing bandwidth into $2^n$ possible initial frequencies.
+      \item \textbf{Orthogonal}: Diff SFs do not interfere, simultaneous transmissions on same frequency.
+    \end{itemize}
+    \item \textbf{MAC Layer}: 
+    \begin{itemize}
+      \item \textbf{Star Topology}: End-nodes $\rightarrow$ Gateway $\rightarrow$ Backhaul (4G/WiFi) $\rightarrow$ Cloud Server.
+      \item \textbf{Channels}: \textbf{Uplink}: 64 channels (125 kHz) and 8 channels (500 kHz) using frequency hopping. \textbf{Downlink}: 8 channels (500 kHz).
+      \item \textbf{ALOHA Access}: Devices transmit whenever they have data; no carrier sensing.
+      \item \textbf{Diversity}: Rely on random channel selection (63 uplink), orthogonality to min. collisions.
+    \end{itemize}
+    \item \textbf{Constraints \& Weaknesses}: high \textbf{Latency}: (40ms--1.2s per message); no real-time capability. \textbf{Mobility}: Challenging for fast-moving nodes.\textbf{Asymmetry}: Primarily one-way (uplink); downlink is severely limited. \textbf{Dependency}: Lacks full OSI stack; requires a cloud-based interface/subscription.
+\end{itemize}
+
+\section{13. Cellular Networks}
+
+\textbf{`Cell'}: Instead of a high-power tower, area divided into smaller Hexagonal Cells.
+\begin{itemize}
+    \item \textbf{Benefit}: Phones can transmit at much \textbf{lower power} because the tower is closer.
+    \item \textbf{Frequency Reuse}: Neighboring cells use diff freq (channels) to prevent interference.
+    \item \textbf{Generational Evolution of Cellular Networks}:
+\end{itemize}
+
+\subsubsection{1G (Analog) \& 2G (Digital)}
+\begin{itemize}
+    \item \textbf{1G (AMPS)} - Advanced mobile phone services: Analog voice, frequency modulation.
+    \item \textbf{2G (GSM)} - Global System for Mobile Comms: Shift to Digital.
+    \begin{itemize}
+        \item \textbf{Logic}: Combined \textbf{TDMA} (Time Slots) with slow frequency hopping to fight fading.
+        \item \textbf{Features}: Introduced SIM (Subscriber Identity Module) cards, SMS, encryption.
+    \end{itemize}
+    \item \textbf{2.5G (GPRS)} - General Packet Radio Service: \textbf{Packet Switching} for bursty internet data.
+\end{itemize}
+
+\subsubsection{3G (CDMA - Code Division Multiple Access), 4G (LTE - Long Term Evolution)}
+\begin{itemize}
+    \item \textbf{CDMA Principle}: Everyone talks at the same time on the same frequency, but each user uses a unique \textbf{Orthogonal Code}. (Application of DSSS for multiple access). \textbf{Math}: If Code A $\cdot$ Code B = 0, the receiver can "filter out" the unwanted user.
+    \item \textbf{LTE Architecture}: Split into \textbf{RAN} (Radio Access Network / eNodeB) and \textbf{Core Network}. Uses \textbf{OFDMA} and \textbf{MIMO}. Completely IP-based, packet-switched network.
+    \item \textbf{LTE-Advanced}: Introduced Carrier Aggregation (combining channels for up to 100 MHz).
+\end{itemize}
+
+\subsubsection{5G (New Radio)}
+\begin{itemize}
+    \item \textbf{Massive MIMO}: Using arrays with $>64$ antennas for fine-grained beamforming.
+    \item \textbf{Terahertz/mmWave}: Moving to much higher frequencies for Gbps speeds.
+\end{itemize}
+
+\subsection{Evolution Summary Table}
+\begin{center}
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Gen} & \textbf{Rate} & \textbf{Switching} & \textbf{Access Method} \\ \hline
+    1G & 10 Kbps & Circuit & FDMA (Analog) \\ \hline
+    2G & 64 Kbps & Circuit & TDMA / FDMA \\ \hline
+    3G & 2 Mbps & Packet/Circuit & CDMA (DSSS) \\ \hline
+    4G & 100+ Mbps & Packet (IP) & OFDMA / MIMO \\ \hline
+    5G & 10+ Gbps & Packet (IP) & OFDMA / Massive MIMO \\ \hline
+    \end{tabular}
+\end{center}
 
 
 
