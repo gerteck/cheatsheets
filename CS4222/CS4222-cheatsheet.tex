@@ -279,7 +279,7 @@ Antenna size is \textbf{inversely proportional} to frequency of radio wave ($\la
 
 \begin{itemize}
   \item \textbf{Directional Dependence:} Both $G$ and $A_e$ are functions of direction. The value used in link budgets is typically the \textbf{peak value} (main lobe).
-  \item \textbf{Effective Area ($A_e$):} Represents the "power-capturing" cross-section.
+  \item \textbf{Effective Area ($A_e$):} Represents the `power-capturing' cross-section.
   \item Power output evaluated in a direction, relative to isotropic antenna output.
   \item \textbf{Array Gain}: $G_{\text{array}} = G_{\text{single element}}(\text{dBi}) + 10 \log_{10}(N)$, where $N$ is the number of antenna elements in array; $10 \log_{10}(N)$ is the array factor. Multiply unitless gain also works.
 \end{itemize}
@@ -386,7 +386,7 @@ Waves suffer attenuation due to distance, obstacles, interference. Underwater fa
 \begin{itemize}
   \item \textbf{Friis Propagation Model}: Estimates received signal strength and range. Assumes LoS, free-space conditions, no obstacles or interference.
   \begin{itemize}
-    \item \textbf{Friis Transmission Equation}: $P_r = G_r G_t \left( \frac{c}{4\pi f_c d} \right)^\alpha P_t$.     
+    \item \textbf{Friis Transmission Equation}: $P_r = G_r G_t \left( \frac{c}{4\pi f_c d} \right)^\alpha P_t$.   (unitless gains)  
     \item the term $\left( \frac{\lambda}{4\pi d} \right)^\alpha$ captures power reaching receiver, aka path loss factor. FSPL isolates and inverts this term to quantify signal attenuation (loss) over distance in free space.
   \end{itemize}
 \end{itemize}
@@ -466,7 +466,7 @@ Waves suffer attenuation due to distance, obstacles, interference. Underwater fa
     \item \textbf{Effective Isotropic Radiated Power (EIRP)}: total output power w. main lobe gain.
     \item \framebox{$EIRP (\text{dBm}) = P_{TX}(\text{dBm}) + G_{antenna}(\text{dBi}) - L_{\text{cable}}$}
     \item \textbf{Concept}: It treats the \textit{max main lobe gain} as if it were radiated \textit{omnidirectionally}.
-    \item \textbf{Note}: "Theoretical" power. The actual total energy leaving the antenna is still $P_{TX}$.
+    \item \textbf{Note}: `Theoretical' power. The actual total energy leaving the antenna is still $P_{TX}$.
   \end{itemize}
   \item \textbf{Subtracting Losses (dB) from Power (dBm)}
   \begin{itemize}
@@ -519,7 +519,7 @@ LTE Band 3 (Mid) & 1800 MHz & 16.7 cm & 8.3 cm & \textbf{Capacity}: Standard urb
 \hline
 WiFi 2.4 GHz & 2400 MHz & 12.5 cm & 6.25 cm & \textbf{Compatibility}: Wide range but high interference (crowded). \\
 \hline
-5G Sub-6 (n78) & 3500 MHz & 8.6 cm & 4.3 cm & \textbf{Performance}: The "Sweet Spot" for high-speed 5G mobile. \\
+5G Sub-6 (n78) & 3500 MHz & 8.6 cm & 4.3 cm & \textbf{Performance}: The `Sweet Spot' for high-speed 5G mobile. \\
 \hline
 WiFi 5 GHz & 5000 MHz & 6.0 cm & 3.0 cm & \textbf{Throughput}: Fast home networking; poor wall penetration. \\
 \hline
@@ -537,7 +537,7 @@ WiFi 5 GHz & 5000 MHz & 6.0 cm & 3.0 cm & \textbf{Throughput}: Fast home network
 \section{3. Modulation Techniques for Wireless Communication}
 
 \subsubsection{How are radio waves modified to carry information}
-How information 'rides' on radio waves. Radio waves are pure sine waves that carry no information. To modify to send information (e.g. speech, bits):
+How information `rides' on radio waves. Radio waves are pure sine waves that carry no information. To modify to send information (e.g. speech, bits):
 
 \begin{itemize}
   \item Start with low frequency baseband signal (message signal)
@@ -548,7 +548,7 @@ How information 'rides' on radio waves. Radio waves are pure sine waves that car
 This process is called \textbf{modulation}. Modulation Techniques include Amplitude Modulation (AM), Frequency Modulation (FM), Phase Modulation (PM), or vary them together and advanced digital schemes like QAM, PSK.
 
 \subsection{3.1 Modulation}
-Encoding 'baseband' information into analog (continuous, smooth waveform) 'carrier' signal. Baseband signal often $\downarrow$ frequency than carrier. Frequency of carrier dictates spectrum usage.
+Encoding `baseband' information into analog (continuous, smooth waveform)`carrier' signal. Baseband signal often $\downarrow$ frequency than carrier. Frequency of carrier dictates spectrum usage.
 
 \begin{itemize}
   \item \textbf{Why use a high-frequency carrier instead of sending baseband directly?}
@@ -621,13 +621,13 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 \begin{itemize}
   \item Change frequency of carrier signal according to the message signal
   \item Advantages over AM: resilient to interference, spectrum efficiency, used for radio
-  \item \textbf{Bandwidth}: how much "room" signal occupies in frequency spectrum. FM bandwidth depends on how \textit{fast} and \textit{how much} you wiggle carrier freq around $f_c$ to carry information.
+  \item \textbf{Bandwidth}: how much `room' signal occupies in frequency spectrum. FM bandwidth depends on how \textit{fast} and \textit{how much} you wiggle carrier freq around $f_c$ to carry information.
       \[
-        \boxed{s(t) = A_c cos (2\pi f_c t + 2\pi k_f \int m(t) dt))}
+        \boxed{s(t) = A_c cos (2\pi f_c t + 2\pi k_f \int m(t) dt)}
       \] 
     \begin{itemize}
       \item $A_c$ Carrier amplitude, $f_c$ Carrier Frequency
-      \item $k_f$ Frequency sensitivity of modulator (how much carrier freq. changes in response to amplitude of modulating signal)
+      \item $k_f$ Frequency sensitivity of modulator ($\Delta$ carrier freq. to $\Delta$ amp of modulating signal)
       \item $m(t)$ Modulating signal
     \end{itemize}
   \item \textbf{FM Modulation Index: $\beta$}
@@ -667,10 +667,8 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 
 \subsection{3.4 Phase modulation}
 \begin{itemize}
-  \item Change phase of carrier signal according to the message signal
-  \item Integral part of modern communcation standards: Wifi/Television
+  \item Change phase of carrier signal according to the message signal 
   \item Advantages over FM: Better SNR and spectral efficiency
-  \item Uses different phase shifts to represent digital data
   \begin{multicols}{2}
     \begin{center}
       \[
@@ -690,28 +688,38 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 \subsubsection{Binary Phase Shift Keying}
 \begin{itemize}
   \item simple form of phase modulation where phase is shifted between 2 values 
-  \item \textit{Bit 0} $\rightarrow$ 0 degrees ($A\sin (2\pi f_c t)$)
-  \item \textit{Bit 1} $\rightarrow$ 180 degrees ($A\sin(2\pi f_c t + \pi)$)
+  \item \textit{Bit 0} $\rightarrow$ 0 degrees ($A\sin (2\pi f_c t)$); \textit{Bit 1} $\rightarrow$ 180 degrees ($A\sin(2\pi f_c t + \pi)$)
 \end{itemize}
-\includegraphics*[width=8.5cm, height=2.8cm]{bpsk.png}
 
+\centerline{\includegraphics[width = 0.5 \linewidth]{bpsk.png}}
 \subsubsection{Quadrature Binary Phase Shift Keying}
 \begin{itemize}
   \item extends BPSK with 4 distinct phase states, allow encoding of 2 bits/symbols
-  \item \textit{Bit 00} $\rightarrow$ 45 degrees ($A\sin (2\pi f_c t + \pi/8)$)
-  \item \textit{Bit 01} $\rightarrow$ 90 degrees ($A\sin(2\pi f_c t + \pi/4)$)
-  \item \textit{Bit 10} $\rightarrow$ 135 degrees, \textit{Bit 11} $\rightarrow$ 225 degrees
-  \item We are \textit{doubling the bit rate} for the same bandwidth
+  \item \textit{Bit 00} $\rightarrow$ 45 degrees ($A\sin (2\pi f_c t + \pi/8)$, \textit{Bit 01} $\rightarrow$ 90 degrees ($A\sin(2\pi f_c t + \pi/4)$)
+  \item \textit{Bit 10} $\rightarrow$ 135 degrees, \textit{Bit 11} $\rightarrow$ 225 degrees. \textit{double bit rate} for same bandwidth
 \end{itemize}
 
-\subsubsection{Digital equivalent of AM FM and PM modulation}
+\subsection{3.5 Digital Modulation (ASK, FSK, PSK)}
+\textbf{Core Concept}: Map binary bits (0s, 1s) onto carrier wave, `shift' physical discrete states.
+
 \begin{itemize}
-  \item Vary analog signal according to digital bits
-  \begin{itemize}
-    \item ASK: amplitude/FSK: frequency/PSK: phase shift keying
-  \end{itemize}
-  \item Digital variants relevant with respect to computer communication
+  \item \textbf{ASK (Amplitude Shift Keying)}: Varies \textbf{Signal Strength}. 
+    \begin{itemize}
+      \item 1 = Wave Present (High Amplitude); 0 = No Wave (Low/Zero Amplitude). 
+    \end{itemize}
+  \item \textbf{FSK (Frequency Shift Keying)}: Varies \textbf{Signal Speed}.
+    \begin{itemize}
+      \item 1 = High Frequency (tight waves); 0 = Low Frequency (spread waves).
+      \item \textit{Feature}: Highly resistant to noise; common in simple low-power systems.
+    \end{itemize}
+  \item \textbf{PSK (Phase Shift Keying)}: Varies the wave's \textbf{Timing/Starting Point}.
+    \begin{itemize}
+      \item Bits are represented by `jumps' or phase reversals (e.g., a $180^\circ$ flip to signify a bit change).
+    \end{itemize}
+  \item \textbf{Significance}: Computers process discrete binary, antennas broadcast continuous analog waves. Shift Keying as `translation layer' for digital data over physical radio mediums.
 \end{itemize}
+
+
 
 % \subsubsection{Wireless Link quality and Reliability}
 % \begin{itemize}
@@ -723,8 +731,6 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 %   \end{itemize}
 % \end{itemize}
 
-\vfill
-\null
 \columnbreak
 
 \section{4. Channel Capacity and Link Quality}
@@ -841,7 +847,7 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
     \item \textbf{Bias ($b$)}: Offset/reading when true input is zero.
   \end{itemize}
   \item \textbf{Inversion (Calibration)}: To recover physical value from raw reading: $x(t) = \frac{f(x(t)) - b}{a}$.
-  \item \textbf{Saturation}: Real sensors have limited ranges $[L, H]$. Outside this, readings "saturate" (clip to max/min), and the affine model fails.
+  \item \textbf{Saturation}: Real sensors have limited ranges $[L, H]$. Outside this, readings `saturate' (clip to max/min), and the affine model fails.
 \end{itemize}
 
 \subsection{5.2 Electrical Transduction}
@@ -884,7 +890,7 @@ Encoding 'baseband' information into analog (continuous, smooth waveform) 'carri
 \subsection{5.5 Specific Sensor Types}
 \begin{itemize}
   \item \textbf{Active vs. Passive}: Passive sensing (e.g., PIR) is cheaper and lower energy. Active (e.g., Ultrasound) consumes more power.
-  \item \textbf{Motion (Accelerometer)}: Measures "proper acceleration" by mass displacement. Units in $g$.
+  \item \textbf{Motion (Accelerometer)}: Measures `proper acceleration' by mass displacement. Units in $g$.
   \item \textbf{Rotation (Gyroscope)}: Detects orientation changes (MEMS based); unaffected by gravity.
   \item \textbf{Magnetic (Magnetometer)}: Detects Earth's magnetic field; used for compasses/localization.
   \item \textbf{Active (Ultrasound)}: Emits sound and measures Time-of-Flight (ToF). Distance $d = \frac{v \times t}{2}$. Power-hungry but useful for proximity.
@@ -1346,7 +1352,7 @@ IoT MAC has different goals from generic wireless MAC: energy conservation as pr
 \columnbreak
 
 \subsection{8.1 Asynchronous MAC (Sender-Initiated / LPL)}
-Nodes operate on independent schedules. The burden of "finding" receiver on sender.
+Nodes operate on independent schedules. The burden of `finding' receiver on sender.
 
 \subsubsection{Theory: ALOHA with Preamble Sampling}
 \begin{itemize}
@@ -1439,7 +1445,7 @@ Nodes agree on a common wake-up schedule. Neighbors follow same schedule.
 \subsubsection{Wake-Up Receivers (WuRx)}
 \begin{itemize}
   \item \textbf{Add a second, ultra-low-power receiver}: listens continuously while \textbf{Main Radio} stays in deep sleep (5--20mA vs. 1--100$\mu$A).
-  \item \textbf{Operation}: The WuRx detects a specific wake-up signal and triggers an interrupt to "power on" the main radio for data transfer.
+  \item \textbf{Operation}: The WuRx detects a specific wake-up signal and triggers an interrupt to `power on' the main radio for data transfer.
   \item \textbf{Advantages}: Eliminates \textit{idle listening} energy on the main radio. Near-zero power consumption with almost zero latency (no waiting for duty cycle wake-up).
   \item \textbf{Challenges}: \textbf{Low sensitivity} ($\sim$$-55$dBm) means much shorter range than main radio ($\sim$$-100$dBm), \textbf{False Wake-ups}: Interference can trigger main radio, waste power.
 \end{itemize}
@@ -1449,7 +1455,7 @@ Nodes agree on a common wake-up schedule. Neighbors follow same schedule.
 \subsubsection{Sender-Initiated vs. Receiver-Initiated MAC (who triggers handshake)}
 \begin{itemize}
   \item \textbf{Sender-Initiated}: Sender transmits preambles/probes until the receiver wakes up. (E.g. B-MAC, X-MAC, ContikiMAC.) \textbf{Trade-off}: Simple logic, but long preambles waste sender energy and increase collision probability.
-  \item \textbf{Receiver-Initiated}: Receiver wakes up and broadcasts a short \textbf{beacon} ("I'm awake, send data now"). Senders listen for this beacon before transmitting. (E.g. RI-MAC, A-MAC.). \textbf{Tradeoffs}: Eliminate long preambles; more efficient for multiple senders. But, sender must stay awake (idle listen) to catch the beacon; beacons can collide.
+  \item \textbf{Receiver-Initiated}: Receiver wakes up and broadcasts a short \textbf{beacon} (`I'm awake, send data now'). Senders listen for this beacon before transmitting. (E.g. RI-MAC, A-MAC.). \textbf{Tradeoffs}: Eliminate long preambles; more efficient for multiple senders. But, sender must stay awake (idle listen) to catch the beacon; beacons can collide.
 \end{itemize}
 
 \vfill \null
@@ -1459,7 +1465,7 @@ Nodes agree on a common wake-up schedule. Neighbors follow same schedule.
 
 \subsection{Capture Effect (Decoding)}
 \begin{itemize}
-  \item \textbf{Definition}: The ability of a receiver to successfully decode the \textbf{strongest} signal during a collision, effectively "ignoring" weaker interferers.
+  \item \textbf{Definition}: The ability of a receiver to successfully decode the \textbf{strongest} signal during a collision, effectively `ignoring' weaker interferers.
   \item \textbf{The SIR Rule}: Typically requires a Signal-to-Interference Ratio (SIR) $>3$--$6$dB.
   \item \textbf{Quantitative Evidence}: A signal at $-70.89$dBm (strong) can achieve 99\% reception despite collisions if it has a $\sim$10dB advantage over the weak signal.
   \item \textbf{Impact}: Provides a natural \textit{spatial priority} for closer nodes and increases actual ALOHA throughput beyond traditional theoretical limits ($Ge^{-2G}$).
@@ -1630,7 +1636,7 @@ Nodes agree on a common wake-up schedule. Neighbors follow same schedule.
   \item \textcolor{red}{Does not require synchronization with infrastructure!}
   \begin{itemize}
     \item Still requires synchronization between infrastructure nodes
-    \item Does require device to transmit "loud" enough for infrastructure to hear it
+    \item Does require device to transmit `loud' enough for infrastructure to hear it
   \end{itemize}
   \item With different mediums:
   \begin{multicols}{2}
@@ -1912,8 +1918,8 @@ Each node maintains a table that stores:
   \end{center}
   \item \textbf{Sequence Numbers}: Monotonically increasing values used to determine if information is ``fresh.'' A node only updates its table if the incoming SeqNo is higher than its stored value.
   \begin{itemize}
-    \item \textbf{Source SeqNo}: E.g. like a broadcast number, used by receivers to learn the "freshness" of the path \textit{back to the source}.
-    \item \textbf{Destination SeqNo}: Used by the source to specify how "fresh" the route \textit{to the destination} must be that it will accept. If source does not know destination's SeqNo, it can set it to zero, meaning it will accept any route.
+    \item \textbf{Source SeqNo}: E.g. like a broadcast number, used by receivers to learn the `freshness' of the path \textit{back to the source}.
+    \item \textbf{Destination SeqNo}: Used by the source to specify how `fresh' the route \textit{to the destination} must be that it will accept. If source does not know destination's SeqNo, it can set it to zero, meaning it will accept any route.
     \item \textbf{The Rule of Freshness}: A node updates its routing table only if:
       \begin{enumerate}
           \item $\text{Incoming SeqNo} > \text{Stored SeqNo}$ (Newer information), or (Shorter path):
@@ -1950,7 +1956,7 @@ Each node maintains a table that stores:
 \subsubsection{Route Maintenance (Self-Healing)}
 \begin{itemize}
   \item \textbf{Link Break}: Detected when a neighbor fails to acknowledge a transmission.
-  \item \textbf{RERR (Route Error)}: Node that detects break sends a RERR to all "upstream" neighbors.
+  \item \textbf{RERR (Route Error)}: Node that detects break sends a RERR to all `upstream' neighbors.
   \item \textbf{Recovery}: Source node receives the RERR, deletes the stale route, and starts a new RREQ if it still needs to send data.
 \end{itemize}
 
@@ -1958,14 +1964,14 @@ Each node maintains a table that stores:
 \begin{itemize}
   \item \textbf{Upside: Efficiency} 
   \begin{itemize}
-    \item \textcolor{red}{No transmissions unless demand}: Save battery, bandwidth, avoid periodic "heartbeats".
+    \item \textcolor{red}{No transmissions unless demand}: Save battery, bandwidth, avoid periodic `heartbeats'.
     \item \textbf{Dynamic Tolerance}: Routes can break/change w/o penalty if no data currently being sent.
   \end{itemize}
   
   \item \textbf{Downside: Performance Costs}
   \begin{itemize}
-    \item \textcolor{red}{Large, Variable Delay}: The first packet must wait for the full RREQ/RREP "handshake" to complete across the network before it can be sent.
-    \item \textbf{Discovery Overhead}: In high-mobility or high-traffic networks, frequent RREQ broadcasts can lead to a "Broadcast Storm," clogging the channel.
+    \item \textcolor{red}{Large, Variable Delay}: The first packet must wait for the full RREQ/RREP `handshake' to complete across the network before it can be sent.
+    \item \textbf{Discovery Overhead}: In high-mobility or high-traffic networks, frequent RREQ broadcasts can lead to a `Broadcast Storm,' clogging the channel.
     \item \textbf{Stale Cache Issues}: If a cached route is broken, the sender won't know until the data fails and a \textbf{RERR} is received, forcing a costly discovery restart.
   \end{itemize}
 \end{itemize}
@@ -2091,7 +2097,7 @@ WiFi uses different IFS (inter-frame spacing) durations to ensure certain traffi
 \begin{itemize}
   \item \textbf{Hierarchy}: \textbf{SIFS $<$ PIFS $<$ DIFS}
   \item \textbf{SIFS (Short IFS)}: Used for \textbf{Acknowledgements (ACKs)}. Because SIFS is the shortest, an ACK will always be sent before any other device can start a new data transmission.
-  \item \textbf{DIFS (Distributed IFS)}: Used for standard data packets. This is the "normal" waiting time.
+  \item \textbf{DIFS (Distributed IFS)}: Used for standard data packets. This is the `normal' waiting time.
   \item \textbf{Logic}: Shorter wait time = Higher priority. (PIFS: Point Coordination IFS, for control frames)
 \end{itemize}
 
@@ -2102,7 +2108,7 @@ The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than requi
 
 \subsubsection{1. Frequency Hopping (FHSS)}
 \begin{itemize}
-  \item \textbf{Mechanism}: The transmitter "hops" between 80 narrow channels (1 MHz each) in a pseudo-random sequence known to both sender and receiver.
+  \item \textbf{Mechanism}: The transmitter `hops' between 80 narrow channels (1 MHz each) in a pseudo-random sequence known to both sender and receiver.
   \item \textbf{Pros}: Simple hardware; resists interference on specific frequencies.
   \item \textbf{Cons}: \textcolor{red}{Slow data rates} due to switching delays (`settling time' of radio during a hop).
 \end{itemize}
@@ -2155,8 +2161,8 @@ The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than requi
 \subsubsection{Mechanism 1: Multi-Carrier Modulation (FDM)}
 The core idea is to distribute bits over $N$ narrow subcarriers instead of one wide one.
 \begin{itemize}
-  \item \textbf{Symbol Duration Extension}: If you split the data across 52 subcarriers, each subcarrier only handles a fraction of the data. This allows each "symbol" to last \textbf{N times longer} in time.
-  \item \textbf{Why this works}: Longer symbols are "slower." Reflections (Multipath) finish bouncing around before next symbol starts, effectively \textbf{eliminating Inter-Symbol Interference (ISI)}.
+  \item \textbf{Symbol Duration Extension}: If you split the data across 52 subcarriers, each subcarrier only handles a fraction of the data. This allows each `symbol' to last \textbf{N times longer} in time.
+  \item \textbf{Why this works}: Longer symbols are `slower.' Reflections (Multipath) finish bouncing around before next symbol starts, effectively \textbf{eliminating Inter-Symbol Interference (ISI)}.
   \item \textbf{Narrow-band Advantage}: Each subcarrier is so narrow that it experiences `flat fading' (easier to fix) rather than `selective fading' (which destroys wide signals).
 \end{itemize}
 \centerline{\includegraphics[width = 1\linewidth]{FDM.jpg}}
@@ -2165,7 +2171,7 @@ The core idea is to distribute bits over $N$ narrow subcarriers instead of one w
 \subsubsection{Mechanism 2: The `Orthogonal' Advantage (Achieve higher data rate)}
 How do we pack subcarriers densely without them bleeding into each other?
 \begin{itemize}
-  \item \textbf{Traditional FDM}: Requires "Guard Bands" (wasted empty space) between channels.
+  \item \textbf{Traditional FDM}: Requires `Guard Bands' (wasted empty space) between channels.
   \item \textbf{OFDM}: Uses \textbf{Orthogonality}. The subcarriers are mathematically spaced so that the \textbf{peak power} of one carrier happens exactly at the \textbf{null (zero) point} of all other carriers.
   \item \textbf{Spectral Efficiency}: This allows subcarriers to overlap significantly, removing the need for guard bands and maximizing the data rate.
 \end{itemize}
@@ -2182,7 +2188,7 @@ The math required to turn bits into these overlapping waves is complex:
       \item \textbf{Band}: 5 GHz (cleaner airwaves, more channels than 2.4 GHz). \textbf{Speed}: 54 Mbps.
       \item \textbf{Modulation}: \textbf{QAM} (Quadrature Amplitude Modulation) to pack more bits per subcarrier.
     \end{itemize}
-  \item \textbf{OFDM vs DSSS, Trade-offs}: \textbf{Evolution:} Replace DSSS with Orthogonal Frequency Division Multiplexing. \textbf{DSSS (Legacy)} has high redundancy, low speed. One signal "spread" thin. \textbf{OFDM (Modern)} has high complexity, throughput, spectral efficiency. Robust against narrowband interference, multipath effects.
+  \item \textbf{OFDM vs DSSS, Trade-offs}: \textbf{Evolution:} Replace DSSS with Orthogonal Frequency Division Multiplexing. \textbf{DSSS (Legacy)} has high redundancy, low speed. One signal `spread' thin. \textbf{OFDM (Modern)} has high complexity, throughput, spectral efficiency. Robust against narrowband interference, multipath effects.
 \end{itemize}
 
 
@@ -2190,7 +2196,7 @@ The math required to turn bits into these overlapping waves is complex:
 
 \subsection{11.5 MIMO: Multiple Input Multiple Output}
 
-\textbf{Concept: Why use Multiple Antennas?} For wired, add more wires for more speed. In wireless, use multiple antennas to create "virtual wires" in the air.
+\textbf{Concept: Why use Multiple Antennas?} For wired, add more wires for more speed. In wireless, use multiple antennas to create `virtual wires' in the air.
 
 \begin{itemize}
   \item \textbf{Architecture}: $N$ transmit antennas, $M$ receive antennas, create $N \times M$ subchannels.
@@ -2200,7 +2206,7 @@ The math required to turn bits into these overlapping waves is complex:
 
 \subsubsection{Advanced Signal Processing}
 \begin{itemize}
-  \item \textbf{Interference Recovery}: While signals overlap in the air, the receiver uses complex math to "unmix" the streams based on the unique spatial signature of each path.
+  \item \textbf{Interference Recovery}: While signals overlap in the air, the receiver uses complex math to `unmix' the streams based on the unique spatial signature of each path.
   \item \textbf{Beamforming}: Instead of broadcasting in all directions, the AP uses the interaction between antennas to \textbf{focus energy} specifically toward the client.
   \item \textbf{Benefit}: Higher Signal-to-Noise Ratio (SNR) and better range.
 \end{itemize}
@@ -2214,7 +2220,7 @@ The math required to turn bits into these overlapping waves is complex:
   \item \textbf{Wider Channels}: Doubled bandwidth from 20 MHz to \textbf{40 MHz}. (Channel bonding: combine two adjacent channels into one big channel)
   \item \textbf{Dual-Band}: The first standard to work on both \textbf{2.4 GHz} and \textbf{5 GHz} bands.
   \item \textbf{Throughput}: Boosted maximum rates up to \textbf{600 Mbps} (up from 54 Mbps in 802.11g).
-  \item \textbf{Legacy}: 802.11n remains the "baseline" for 2.4 GHz today, as many later standards (like 802.11ac) focus strictly on the 5 GHz band.
+  \item \textbf{Legacy}: 802.11n remains the `baseline' for 2.4 GHz today, as many later standards (like 802.11ac) focus strictly on the 5 GHz band.
 \end{itemize}
 
 \subsubsection{Multi-User MIMO (MU-MIMO)}
@@ -2369,7 +2375,7 @@ Long-range Wide-Area Network LoRaWAN: most popular LPWAN protocol.
 
 \subsubsection{3G (CDMA - Code Division Multiple Access), 4G (LTE - Long Term Evolution)}
 \begin{itemize}
-    \item \textbf{CDMA Principle}: Everyone talks at the same time on the same frequency, but each user uses a unique \textbf{Orthogonal Code}. (Application of DSSS for multiple access). \textbf{Math}: If Code A $\cdot$ Code B = 0, the receiver can "filter out" the unwanted user.
+    \item \textbf{CDMA Principle}: Everyone talks at the same time on the same frequency, but each user uses a unique \textbf{Orthogonal Code}. (Application of DSSS for multiple access). \textbf{Math}: If Code A $\cdot$ Code B = 0, the receiver can `filter out' the unwanted user.
     \item \textbf{LTE Architecture}: Split into \textbf{RAN} (Radio Access Network / eNodeB) and \textbf{Core Network}. Uses \textbf{OFDMA} and \textbf{MIMO}. Completely IP-based, packet-switched network.
     \item \textbf{LTE-Advanced}: Introduced Carrier Aggregation (combining channels for up to 100 MHz).
 \end{itemize}
