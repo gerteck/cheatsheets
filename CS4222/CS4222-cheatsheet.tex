@@ -786,12 +786,12 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
   \item \textbf{Expected Transmission Count (ETX):} Measures expected number of trasmissions (including re-trasmission) required for packet to successfully received. Used in routing algorithms.
   
   \centerline{
-    \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-340\fboxrule}{% 
-      $ETX = \frac{1}{P_{forward} \times P_{reverse}}$
+    \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-150\fboxrule}{% 
+      $ETX = \frac{1}{P_{forward} \times P_{reverse}} = \frac{1}{PRR (\text{Packet Reception Rate})}$
     }} 
   }
   \begin{itemize}
-    \item Lower ETX means fewer transmission and better efficiency, higher leads to increased latency and power consumption
+    \item Lower ETX means fewer transmission needed per packet and better efficiency, higher leads to increased latency and power consumption. $P_{\text{forward}}$: forward packet delivery probability.
   \end{itemize}             
 \end{itemize}
 
@@ -1735,7 +1735,7 @@ Once deployed, sensors have to initiate \textcolor{red}{neighbour discovery} to 
 \begin{itemize}
   \item \textbf{All nodes synchronized} to same clock/time. Nodes scheduled to wake up periodically at same time to transmit/receive.
   \item \textcolor{red}{deterministic} approach | provide guarantee bounds on discovery latency
-  \item \textbf{Disadvantages}: \textcolor{red}{Synchronization} overhead, consumes significant power. \textcolor{red}{Slow discovery process} to detect all nodes. \textcolor{red}{Scalability} issues as network grows, more nodes to sync.
+  \item \textbf{Disadvantages}: \textcolor{red}{Synchronization} overhead, consumes significant power. \textcolor{red}{Slow discovery process} to detect all nodes. (collisions) \textcolor{red}{Scalability} issues as network grows, more nodes to sync.
 \end{itemize}
 
 \subsection{Asynchronous Neighbour Discovery}
