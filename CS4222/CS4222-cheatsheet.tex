@@ -14,6 +14,7 @@
 \usepackage{enumitem} %For edit itemise margins, item and list separations
 \usepackage{amsmath,amsthm,amsfonts,amssymb} % For math
 \usepackage[document]{ragged2e}
+\usepackage{gensymb}
 
 %For pictures / figures
 \usepackage{color,graphicx,overpic}
@@ -537,13 +538,12 @@ WiFi 5 GHz & 5000 MHz & 6.0 cm & 3.0 cm & \textbf{Throughput}: Fast home network
 \section{3. Modulation Techniques for Wireless Communication}
 
 \subsubsection{How are radio waves modified to carry information}
-How information `rides' on radio waves. Radio waves are pure sine waves that carry no information. To modify to send information (e.g. speech, bits):
+Radio waves are pure sine waves that carry no information. To modify to send info:
 
 \begin{itemize}
   \item Start with low frequency baseband signal (message signal)
   \item Use it to modify a high frequency carrier signal (radio wave)
-  \item Transmit modified carrier signal over the air
-  \item Receiver demodulates to recover baseband signal
+  \item Transmit modified carrier signal over air, receiver demodulates to recover baseband signal
 \end{itemize}
 This process is called \textbf{modulation}. Modulation Techniques include Amplitude Modulation (AM), Frequency Modulation (FM), Phase Modulation (PM), or vary them together and advanced digital schemes like QAM, PSK.
 
@@ -563,8 +563,8 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
   \end{itemize}
 \end{itemize}
 
-\centerline{\includegraphics[width = 1\linewidth]{modulation.jpg}}
-\centerline{\includegraphics[width = \linewidth]{modulations.jpg}}
+\centerline{\includegraphics[width = 0.7\linewidth]{modulation.jpg}}
+\centerline{\includegraphics[width = 0.7\linewidth]{modulations.jpg}}
 
 \begin{itemize}
   \item \textbf{Modulation Index $\mu$, $\beta$}: Extent carrier signal is modulated w. message signal. Determines strength of modulated signal, impacts bandwidth, power distribution, overall signal quality.
@@ -585,6 +585,9 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
         \end{itemize}
     \end{multicols}
   \item \textbf{Signal (Single Tone)}: $s(t) = A_c [1 + \mu \cos(2\pi f_m t)] \cos(2\pi f_c t)$
+  \item \textbf{Multi-tone Signal}: $s(t) = A_c \left[1 + \sum_{i=1}^n \mu_i \cos(2\pi f_{m_i} t)\right] \cos(2\pi f_c t)$
+  \item \textbf{Product-to-sum Id}: $\cos A \cos B =  \frac{1}{2} [\cos(A+B) + \cos(A-B)]$, to derive sidebands
+  \item \textbf{Sidebands}: $f_c \pm f_m$. Information-carrying frequencies produced above (USB)/below (LSB) carrier. 2 sidebands per message tone. Standard AM power-inefficient, carrier $\approx 67\%$ power.
   \item \textbf{AM Modulation Index $\mu$}
   \begin{itemize}
     \item For amplitude modulation $(modulation \ index): \mu = A_m / A_c$
@@ -596,25 +599,22 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
   \item \textbf{Multi-tone Modulation Index ($\mu_{total}$)}: message with multiple frequencies with individual indices $\mu_1, \mu_2, \dots, \mu_n$: $\mu_{total} = \sqrt{\mu_1^2 + \mu_2^2 + \dots + \mu_n^2}$
     % \item \textbf{Condition for Distortion:} The peak sum ($\mu_1 + \mu_2 + \dots$) must stay $\leq 1$ to avoid instantaneous overmodulation, though $\mu_{total}$ is used for power.
   \end{itemize}
-  \item \textbf{Frequencies}: Carrier ($f_c$), Lower Sideband ($f_c - f_m$), Upper Sideband ($f_c + f_m$).
-  \item \textbf{Bandwidth}: $\boxed{BW_{AM} = 2 \cdot f_{m,max}}$ (Twice the \textit{highest} message frequency).
-\item \textbf{AM Power Analysis}
+  \item \textbf{AM Power Analysis}
     \begin{itemize}
-      \item Carrier Power: $P_c = \frac{A_c^2}{2R}$ (where $R$ is antenna resistance, often $50\Omega$)
+      \item Carrier Power: $P_c = \frac{A_c^2}{2R}$ ($R$: antenna resistance $\Omega$, i.e. sinusoidal signal power)
+      \item Sideband Power: $P_{sidebands} = P_{sb} = P_c \cdot \frac{\mu_{total}^2}{2}$ = $\frac{A_c^2}{2R} \cdot \frac{\mu_{total}^2}{2}$
+      \item \textit{Direct Calc}: $P_{sb} = \sum_{i=1}^n \left( 2 \cdot \frac{A_{sb, i}^2}{2R} \right)$. The $\times 2$ accounts for the \textbf{pair} (USB + LSB).
       \item Total Transmitted Power: $\boxed{P_t = P_c \left(1 + \frac{\mu_{total}^2}{2}\right)}$
       \item Efficiency ($\eta$): $\eta = \frac{P_{sidebands}}{P_{total}} = \frac{\mu_{total}^2}{2 + \mu_{total}^2}$
     \end{itemize}
 
   \item \textbf{AM Spectrum and Bandwidth}
     \begin{itemize}
-      \item Frequencies present: $f_c$, $f_c \pm f_m$.
-      \item Bandwidth: $\boxed{BW_{AM} = 2 \cdot f_{m,max}}$ 
-      \item \textit{Note: BW is always twice the highest frequency component of the message.}
-      
+      \item \textbf{Frequencies present}: Carrier ($f_c$), Lower Sideband ($f_c - f_m$), Upper Sideband ($f_c + f_m$). (LSB/USB: Find using $f_m = \text{freq}_{component} - f_c$)
+      \item Bandwidth: $\boxed{BW_{AM} = 2 \cdot f_{m,max}}$ \textit{(twice highest frequency component of message)}
     \end{itemize}
 \end{itemize}
 
-\vfill \null 
 \columnbreak
 
 \subsection{3.3 Frequency modulation (FM)}
@@ -623,28 +623,28 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
   \item Advantages over AM: resilient to interference, spectrum efficiency, used for radio
   \item \textbf{Bandwidth}: how much `room' signal occupies in frequency spectrum. FM bandwidth depends on how \textit{fast} and \textit{how much} you wiggle carrier freq around $f_c$ to carry information.
       \[
-        \boxed{s(t) = A_c cos (2\pi f_c t + 2\pi k_f \int m(t) dt)}
+        \boxed{s(t) = A_c cos (2\pi f_c t + 2\pi k_f \int m(\tau) d\tau)}
       \] 
     \begin{itemize}
+      \item E.g. $m(t) = A_m \sin(2\pi f_m t)$: $s(t) = A_c \cos \left( 2\pi f_c t - \beta \cos(2\pi f_m t) \right)$
       \item $A_c$ Carrier amplitude, $f_c$ Carrier Frequency
       \item $k_f$ Frequency sensitivity of modulator ($\Delta$ carrier freq. to $\Delta$ amp of modulating signal)
-      \item $m(t)$ Modulating signal
+      \item $m(t)$ Modulating signal $\implies$ $f_m$ (signal max frequency), $A_m$ (max amplitude)
     \end{itemize}
-  \item \textbf{FM Modulation Index: $\beta$}
+  \item \textbf{FM Modulation Index: $\beta$} (in Radians, Peak Phase Deviation)
   \begin{itemize}
-    \item $\beta(modulation \ index) = \triangle f / f_m$
-    \item $\triangle f$ = Peak frequency deviation (how much carrier frequency changes)
-    \item $f_m$ = Maximum frequency of the modulating signal
-    \item $\beta < 1$: Narrow band signal, $\beta > 1$ Wideband signal.
-    \item FM broadcast uses wideband signal, better noise immunity (less static, hiss)
+    \item $\beta(modulation \ index) = \triangle f / f_m$, where $\triangle f$ = $k_f \cdot A_m$ (Peak frequency deviation)
+    \item $\beta < 1$: Narrow band signal, $\beta > 1$ Wideband (WBFM, $\uparrow$ noise immunity, signal quality).
     \item Given by Carson's rule, bandwidth $B \approx 2 (\triangle f + f_m)$
   \end{itemize}
+  \item \textbf{Significant Sidebands}: FM produces infinite sidebands at $f_c \pm n f_m$ (for $n = 1, 2, \dots$), but only those with $\geq 1\%$ power are significant. Number of significant sideband pairs is approx $N \approx \beta + 1$. Total Spectral components = $2N + 1$ (sideband pairs + carrier).
 \end{itemize}
 
-\subsubsection{What is a phase}
+\subsection{3.4 Phase modulation}
+
 \begin{itemize}
-  \item Represents position of point on waveform cycle, an offset from starting position of sine wave
-  \item Complete cycle of sine wave is 360 degress / 2 $\pi$ radian
+  \item \textbf{Phase}: position of point on waveform cycle, offset from starting position of sine wave
+  \item Complete cycle of sine wave is 360 degrees, i.e. 2 $\pi$ radian
   \begin{multicols}{2}
       \[
         \boxed{s(t) = A \cos(2\pi ft + \phi)}
@@ -656,16 +656,15 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
       \item $\phi$ Phase (phase contstant / offset)
     \end{itemize}
   \end{multicols}
-  \item $\phi$ determines where in its cyclewave is (begins at $t=0$)
-  \item Changing $phi$ shifts waveform left or right in time
-  \item \textbf{\underline{Impact of phase shifts on waves (summation)}} (interference)
+  \item $\phi$ determines where in cyclewave (begins at $t=0$), $\Delta \phi$ is phase shift left/right in time
+  \item \textbf{Impact of phase shifts on waves (summation)} (interference)
   \begin{itemize}
     \item \textit{Constructive:} 2 waves with same phase add tgt to form larger amplitude
-    \item \textit{Destructive:} 2 waves out-of-phase (e.g. 180$\deg$ apart), cancel each other
+    \item \textit{Destructive:} 2 waves out-of-phase (e.g. 180$\degree$ apart), cancel each other
   \end{itemize}
 \end{itemize}
 
-\subsection{3.4 Phase modulation}
+\subsubsection{Phase Modulation (PM)}
 \begin{itemize}
   \item Change phase of carrier signal according to the message signal 
   \item Advantages over FM: Better SNR and spectral efficiency
@@ -688,35 +687,37 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
 \subsubsection{Binary Phase Shift Keying}
 \begin{itemize}
   \item simple form of phase modulation where phase is shifted between 2 values 
-  \item \textit{Bit 0} $\rightarrow$ 0 degrees ($A\sin (2\pi f_c t)$); \textit{Bit 1} $\rightarrow$ 180 degrees ($A\sin(2\pi f_c t + \pi)$)
+  \item \textit{Bit 0} $\rightarrow$ 0$\degree$ ($A\sin (2\pi f_c t)$); \textit{Bit 1} $\rightarrow$ 180$\degree$ ($A\sin(2\pi f_c t + \pi)$)
 \end{itemize}
 
 \centerline{\includegraphics[width = 0.5 \linewidth]{bpsk.png}}
 \subsubsection{Quadrature Binary Phase Shift Keying}
 \begin{itemize}
   \item extends BPSK with 4 distinct phase states, allow encoding of 2 bits/symbols
-  \item \textit{Bit 00} $\rightarrow$ 45 degrees ($A\sin (2\pi f_c t + \pi/8)$, \textit{Bit 01} $\rightarrow$ 90 degrees ($A\sin(2\pi f_c t + \pi/4)$)
-  \item \textit{Bit 10} $\rightarrow$ 135 degrees, \textit{Bit 11} $\rightarrow$ 225 degrees. \textit{double bit rate} for same bandwidth
+  \item \textit{Bit 00} $\rightarrow$ 45$\degree$ ($A\sin (2\pi f_c t + \pi/8)$, \textit{Bit 01} $\rightarrow$ 90$\degree$ ($A\sin(2\pi f_c t + \pi/4)$)
+  \item \textit{Bit 10} $\rightarrow$ 135$\degree$, \textit{Bit 11} $\rightarrow$ 225$\degree$. \textit{double bit rate} for same bandwidth
 \end{itemize}
 
-\subsection{3.5 Digital Modulation (ASK, FSK, PSK)}
+\subsection{3.5 Traditional Digital Modulation (ASK, FSK, PSK)}
 \textbf{Core Concept}: Map binary bits (0s, 1s) onto carrier wave, `shift' physical discrete states.
 
 \begin{itemize}
   \item \textbf{ASK (Amplitude Shift Keying)}: Varies \textbf{Signal Strength}. 
     \begin{itemize}
-      \item 1 = Wave Present (High Amplitude); 0 = No Wave (Low/Zero Amplitude). 
+      \item 1 = Wave Present (High Amplitude); 0 = No Wave (Low/Zero Amplitude).
+      \item \textit{Usage}: E.g. OOK - On-Off Keying, good for short-range LoS, low interference, simplicity 
     \end{itemize}
   \item \textbf{FSK (Frequency Shift Keying)}: Varies \textbf{Signal Speed}.
     \begin{itemize}
       \item 1 = High Frequency (tight waves); 0 = Low Frequency (spread waves).
-      \item \textit{Feature}: Highly resistant to noise; common in simple low-power systems.
+      \item \textit{Usage}: Resistant to noise; medium complexity (low-power system), sufficient range.
     \end{itemize}
   \item \textbf{PSK (Phase Shift Keying)}: Varies the wave's \textbf{Timing/Starting Point}.
     \begin{itemize}
       \item Bits are represented by `jumps' or phase reversals (e.g., a $180^\circ$ flip to signify a bit change).
+      \item E.g. Chirp Spread Spectrum LoRa, robust to interference, long-range, highest complexity
     \end{itemize}
-  \item \textbf{Significance}: Computers process discrete binary, antennas broadcast continuous analog waves. Shift Keying as `translation layer' for digital data over physical radio mediums.
+  \item \textbf{Significance}: Translation layer: Computers binary, antennas continuous analog waves.
 \end{itemize}
 
 
@@ -760,8 +761,13 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
     \item $\downarrow$ = fewer errors + better link perf. $\uparrow$ = data corruption / retransmissions
     \item Wired Ethernet: $10^{-12}$, Wireless Wifi: $10^{-6}$ to $10^{-3}$, Poor cxn = $10^{-2}$ 
   \end{itemize}
+  \item \textbf{BER-PDR Relationship}: PDR depends on BER ($p$) and packet length ($n$).
+  \begin{itemize}
+    \item \textit{Exact}: $PDR = (1-p)^n$ (All $n$ bits must be correct for packet success).
+    \item \textit{Approx}: $PDR \approx e^{-np}$ (Valid for small $p$, large $n$; $np$ is the avg. errors/packet).
+  \end{itemize}
 
-  \item \textbf{Signal-to-Noise Ratio (SNR):} Ratio of signal power to background noise, often measured in decibels (dB). 
+  \item \textbf{Signal-to-Noise Ratio (SNR):} Ratio of signal power to background noise, often measured in decibels (dB). $SNR_{dB} = 10 \log_{10}(SNR_{linear})$. 
   
   \centerline{
     \framebox{\parbox{\dimexpr\linewidth-1\fboxsep-250\fboxrule}{% 
@@ -772,6 +778,9 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
     \item Else $P_{signal} - P_{noise}$ in $dBm$
     \item $\uparrow$ = stronger signal, fewer errors. $\downarrow$ = more packet loss. 
     \item SNR $> 25 dB$ = excellent (4G LTE etc). SNR $< 10 dB$ = unreliable link.
+    \item \textbf{Noise Power Spectral Density ($N_0$):} Noise power per bandwidth ($P_n = N_{0,\text{W/Hz}} \cdot B$); 
+    \item \textbf{Noise Power ($P_n$):} $P_n = 10 \log_{10}(N_{0,\text{dBm/Hz}} \cdot B)$. (log$_{\text{dBm}/\text{Hz}}$; linear$_{\text{W}/\text{Hz}}$ units)
+    \item \textbf{Thermal Noise floor}: $N_0 = k T$, at room temp, $N_0 \approx -174$ dBm/Hz.
   \end{itemize}
 
   \item \textbf{Expected Transmission Count (ETX):} Measures expected number of trasmissions (including re-trasmission) required for packet to successfully received. Used in routing algorithms.
@@ -788,14 +797,14 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
 
 \subsubsection{Understanding Channel Capacity \& Link Quality}
 \begin{itemize}
-    \item \textbf{Definition:} Max rate information can be transmitted over comm. channel without error.
-    \item Channel capacity is measured in the unit of \textbf{bits/second}.
+    \item \textbf{Channel Capacity:} Max rate information can be transmitted over communication channel without error, measured in \textbf{bits/second}.
     \item How does channel capacity relate to link quality?
     \begin{itemize}
-        \item Higher \textbf{SNR} usually leads to a higher capacity. (Bandwidth is the frequency range over which signal is transmitted; wider bandwidth more data can fit, higher rates)
-        \item Factors that reduce link quality: \textbf{Fading, interference}, reducing channel capacity.
+        \item \textbf{Higher SNR}: higher capacity, can distinguish subtle phase/amplitude $\Delta$, more bits/symbol.
+        \item \textbf{Bandwidth} as frequency range signal transmitted; wider bandwidth allows more data to fit, higher transmit rates.
+        \item \textbf{Link Quality Factors}: Distance (path loss), Fading, Obstacles (shadowing) interference, reduce channel capacity.
     \end{itemize}
-    \item Channel Capacity and Link Quality | Shannon Perspective:
+    \item \textbf{Shannon's Channel Capacity Formula} (Theoretical maximum)
     \begin{multicols}{2}
       \begin{center}
         \[
@@ -816,24 +825,23 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
   \item Total bandwidth divided into \textbf{subchannels}, each w. own bandwidth ($B_i$), SNR ($S/N_i$). 
   \begin{itemize}
       \item Capacity per subchannel: $C_i = B_i \log_2(1 + S/N_i)$
-      \item Overall channel capacity = sum of capacities of all subchannels: $C_\text{total} = \sum_i C_i$
+      \item \textbf{Overall Channel capacity}: sum of capacities of all subchannels.
+        \[
+          \boxed{C_{\text{total}} = \sum_i C_i = \sum_i B_i \log_2\!\left(1 + \frac{S}{N_i}\right)}
+        \]
       \item Intuition: Some parts of the channel may experience more noise or interference than others. Treating them separately allows a more accurate capacity estimate.
+      \item Capacity is theoretical upper bound. Real-world factors (protocol overhead, interference, fading) reduce actual throughput below limit. Link quality assessments (PDR, ETX, BER) provide practical insights into how close to theoretical capacity in real deployments.
   \end{itemize}
 \end{itemize}
 
 \subsubsection{Link Quality and Channel Capacity Relationship}
 \begin{itemize}
     \item \textbf{Link quality} is determined by reliability (PDR, ETX), physical-layer conditions (BER, SNR).
-    \item \textbf{High PDR} and \textbf{low ETX} indicate reliable, efficient packet delivery with fewer retransmissions.
-    \item \textbf{Low BER} implies fewer bit errors and less need for retransmission, improving throughput.
-    \item \textbf{Higher SNR} leads to fewer errors and directly increases achievable channel capacity.
-    \item \textbf{Channel capacity} increases with both \textbf{bandwidth} and \textbf{SNR}.
+    \item \textbf{High PDR/SNR}, \textbf{low ETX/BER} : reliable, efficient packet delivery, fewer retransmissions.
     \item \textbf{Poor link conditions} (fading, interference, noise) reduce effective capacity even if theoretical capacity is high. In practice, \textbf{wireless systems aim to maximize SNR and minimize interference} to approach theoretical capacity limits.
 \end{itemize}
 
 
-\null \null \null \null
-\null \null \null \null
 \columnbreak
 
 \section{5. Sensors and Actuators}
