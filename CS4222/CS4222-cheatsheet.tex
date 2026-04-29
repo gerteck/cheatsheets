@@ -684,18 +684,18 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
   \end{multicols}
 \end{itemize}
 
-\subsubsection{Binary Phase Shift Keying}
+\subsubsection{Binary Phase Shift Keying (BPSK)}
 \begin{itemize}
   \item simple form of phase modulation where phase is shifted between 2 values 
   \item \textit{Bit 0} $\rightarrow$ 0$\degree$ ($A\sin (2\pi f_c t)$); \textit{Bit 1} $\rightarrow$ 180$\degree$ ($A\sin(2\pi f_c t + \pi)$)
 \end{itemize}
 
 \centerline{\includegraphics[width = 0.5 \linewidth]{bpsk.png}}
-\subsubsection{Quadrature Binary Phase Shift Keying}
+\subsubsection{Quadrature Phase Shift Keying (QPSK)}
 \begin{itemize}
-  \item extends BPSK with 4 distinct phase states, allow encoding of 2 bits/symbols
+  \item extends BPSK with 4 distinct (closer) phase states, allow encoding of 2 bit/symbol.
   \item \textit{Bit 00} $\rightarrow$ 45$\degree$ ($A\sin (2\pi f_c t + \pi/8)$, \textit{Bit 01} $\rightarrow$ 90$\degree$ ($A\sin(2\pi f_c t + \pi/4)$)
-  \item \textit{Bit 10} $\rightarrow$ 135$\degree$, \textit{Bit 11} $\rightarrow$ 225$\degree$. \textit{double bit rate} for same bandwidth
+  \item \textit{Bit 10} $\rightarrow$ 135$\degree$, \textit{Bit 11} $\rightarrow$ 225$\degree$. \textit{QPSK vs. BPSK}: $2 \times$ bit rate for same bandwidth.
 \end{itemize}
 
 \subsection{3.5 Traditional Digital Modulation (ASK, FSK, PSK)}
@@ -855,7 +855,8 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
     \item \textbf{Bias ($b$)}: Offset/reading when true input is zero.
   \end{itemize}
   \item \textbf{Inversion (Calibration)}: To recover physical value from raw reading: $x(t) = \frac{f(x(t)) - b}{a}$.
-  \item \textbf{Saturation}: Real sensors have limited ranges $[L, H]$. Outside this, readings `saturate' (clip to max/min), and the affine model fails.
+  \item \textbf{Saturation}: Real sensors have limited ranges $[L, H]$. Outside this, readings `saturate' (clip to max/min), and the affine model fails. (E.g. below min, report garbage/min value; above max, report max or err no reading).
+  \item \textbf{Calibration Errors}: Gain error (wrong $a$) i.e. systematic scaling error, Offset error (wrong $b$) i.e. consistent bias.
 \end{itemize}
 
 \subsection{5.2 Electrical Transduction}
@@ -886,19 +887,31 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
       \item $D = \frac{H - L}{p}$ or $D_{dB} = 20\log_{10}(\frac{H-L}{p})$, Precision $p = \frac{H-L}{2^{bits} - 1}$.
     \end{itemize}
   \item \textbf{Quantization}: Mapping continuous $x(t)$ to one of $2^n$ discrete digital values.
+  \item \textbf{Hardware Trade-off}: For a fixed cost, faster ADCs (high $f_s$) typically produce fewer bits, leading to higher quantization error or smaller range.
 \end{itemize}
 
 \subsection{5.4 Sampling and Time}
 \begin{itemize}
+  \item \textbf{Sampling Signal Model}: Maps a physical quantity $x(t)$ to a discrete signal $s: \mathbb{Z} \to \mathbb{R}$.
+  \begin{itemize}
+    \item \textbf{Function}: $s(n) = f(x(nT))$ where $x(t)$ is observed only at discrete times $t = nT$.
+    \item \textbf{Sampling Interval ($T$)}: Fixed time between samples.
+    \item \textbf{Sampling Rate}: $f_s = 1/T$, measured in Samples/second or Hz.
+  \end{itemize}
   \item \textbf{Uniform Sampling}: Discrete signal $s(n) = f(x(nT))$ where $T$ is the sampling interval.
   \item \textbf{Trade-offs}: Smaller $T$ (higher rate) increases ADC cost/power and usually reduces bit-depth (resolution) for the same hardware cost.
-  \item \textbf{Noise}: Undesired signal component $n(t) = x'(t) - x(t)$ caused by quantization errors or imperfections.
+  \item \textbf{Noise}: Undesired signal component $n(t) = x'(t) - x(t)$: quantization err/imperfections.
 \end{itemize}
 
 \subsection{5.5 Specific Sensor Types}
 \begin{itemize}
   \item \textbf{Active vs. Passive}: Passive sensing (e.g., PIR) is cheaper and lower energy. Active (e.g., Ultrasound) consumes more power.
   \item \textbf{Motion (Accelerometer)}: Measures `proper acceleration' by mass displacement. Units in $g$.
+  \begin{itemize}
+    \item \textbf{Model}: $f: (L, H) \to \{0, \dots, 2^b - 1\}$ maps acceleration range to discrete bits.
+    \item \textbf{Tilt Sensing}: Uses gravity to find angle $\theta$: $A[x] = 1g \cdot \sin(\theta)$.
+    \item \textbf{Localization}: Can estimate position $p(t)$ by double integrating acceleration $x(t)$, but error is squared over time. Usually used to `fill gaps' between GPS samples.
+  \end{itemize}
   \item \textbf{Rotation (Gyroscope)}: Detects orientation changes (MEMS based); unaffected by gravity.
   \item \textbf{Magnetic (Magnetometer)}: Detects Earth's magnetic field; used for compasses/localization.
   \item \textbf{Active (Ultrasound)}: Emits sound and measures Time-of-Flight (ToF). Distance $d = \frac{v \times t}{2}$. Power-hungry but useful for proximity.
@@ -913,31 +926,39 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
   \item \textbf{Audio}: Speakers/Horns (e.g., 85 dB horn in Nest Protect).
 \end{itemize}
 
-\null \null \null \null
-\null \null \null \null
+\null
 \columnbreak
 
 
 
-\section{6. Backscatter Wireless Communication}
+\section{6. Power \& Backscatter Wireless Communication}
 
 \subsection{6.1 Power Consumption}
 \subsubsection{Battery capacity}
 \begin{itemize}
   \item \textbf{Watt-hour (Wh):} unit of energy equivalent to 1 Watt of power expended for 1 hour of time
   \item \textbf{Ampere-hour (Ah):} unit of electric charge equal to charge transferred by steady current of 1A flowing for 1 hour
-  \item When \textbf{comparing} ampere-hour ratings of batteries, need to consider voltage to get watt-hour rating for accurate comparison. (Need to be same voltage to compare ampere-hour ratings)
-  \item Typically wireless devices consume more power than batteried devices 
+  \item \textbf{(Ah, mAh) not directly comparable}: only comparable if voltages are identical. E.g. to compare powerbank (mAh), calculate (Wh) with internal voltage to compare. \\ \textbf{True Energy}: $Wh = (Ah \times V) $,  $Wh = \frac{mAh \cdot V}{1000}$.
+  \item \textbf{Power vs. Energy Formulas}:
+  \begin{itemize}
+    \item \textbf{Instantaneous Power}: $P (Watts) = V (Volts) \times I (Amperes)$.
+    \item \textbf{Total Energy}: $E (Wh) = P (W) \times t (hours)$.
+  \end{itemize}
+  \item \textbf{Lifespan Estimation}: $Lifetime (h) = \frac{Capacity (mAh)}{Average Current (mA)}$ or $\frac{Energy (Wh)}{Power (W)}$.
+  \item \textbf{Trade-off}: WiFi (high power, e.g., $\approx 16$h on coin cell) is for data; Bluetooth/Low-power sensors (low power, e.g., $>200$h) are for longevity.
 \end{itemize}
 
-\subsubsection{Device Power consumption}
+\subsubsection{Device Power Consumption Optimization}
 \begin{itemize}
-  \item Wifi state transition for beacon (small information, e.g. existence) communication is faster. However state transition for data communications is still slow due to driver/software overhead
-  \item Power consumption of IoT devices usually dominated by radio communication, (WiFi, Bluetooth), outside of phone display. 
-  \item Optimizing power consumption means optimize communication patterns/ protocols.
-  \item \textbf{Transmission states for wireless networking}, Hence, device \textbf{rarely} transmit continuously. Having \underline{different power states} allow power consumption to be reduced
+    \item \textbf{Dominant Factor}: Radio comms (WiFi, Bluetooth) primary power drain for IoT devices, often exceeding the CPU or sensors.
+    \item \textbf{Power States}: Radios use distinct states (\textit{Transmit, Receive, Idle, Sleep}) to save energy. Optimization involves keeping the radio in \textit{Sleep} mode as much as possible.
+    \item \textbf{State Transition Overhead}: 
+    \begin{itemize}
+        \item Switching from Sleep to Active takes time and energy.
+        \item While low-level tasks (e.g., WiFi Beacons) transition quickly, heavy data communication is delayed by driver/software overhead (e.g. wake CPU, load network stack).
+    \end{itemize}
+    \item \textbf{Optimization Goal} (extend battery life): Maximize `Duty Cycling' (sleep to active time), min. transmit time/freq, data aggregation before transmit, reduce $P_\text{TX}$ if range allows.
 \end{itemize}
-
 
 \subsection{6.2 Low-power Wireless Transmission: Backscatter}
 \subsubsection{Backscatter Communication}
@@ -978,7 +999,6 @@ Encoding `baseband' information into analog (continuous, smooth waveform)`carrie
   \item Act as tag/reader (smart phone can power a tag if needed, act as card to respond to reader)
 \end{itemize}
 
-\null \null \null \null
 \columnbreak
 
 
@@ -1113,13 +1133,12 @@ Channelization: divide single communication medium into multiple distinct channe
 \subsubsection{TDMA | Time Division Multiple Access}
 \begin{itemize}
   \item Split transmission in time, devices share same channel
-  \item Splits time into \underline{fixed-length} windows: each device assigned 1 or more window, can build priority system here with uneven split among devices
-  \item Requires syncrhonization between devices
+  \item Splits time into \underline{fixed-length} windows: devices assigned $\geq$ 1 windows, priority system
   \begin{itemize}
-    \item Often devices must listen periodically to resynchronize
-    \item Less efficient use of slots reduce synchronization
+    \item Devices listen periodically to resynchronize
     \item Large guard windows e.g. $1.5$ second slot for $1$ second trans.
   \end{itemize}
+  \item \textbf{Pros/Cons}: Fixed time slots $\implies$ predictable latency, no collisions, efficient in centralized networks, but not dynamic, struggle in variable loads, dynamic device connections.
 \end{itemize}
 
 \subsubsection{FDMA | Frequency Division Multiple Access}
@@ -2126,7 +2145,7 @@ The goal of Spread Spectrum is to use a \textbf{much wider bandwidth} than requi
 
 \subsubsection{2. Direct Sequence (DSSS)}
 \begin{itemize}
-  \item \textbf{Mechanism}: Each data bit is multiplied by a higher-rate \textbf{Chipping Code}. This `smears' the bit's energy across a wide frequency band (22 MHz in 802.11b).
+  \item \textbf{Mechanism}: Each data bit is multiplied by a higher-rate \textbf{Chipping Code}. This `smears' the bit's energy across a wide frequency band (22 MHz in 802.11b) (Phase Modulation Variant).
   \item \textbf{Robustness}: Even if noise destroys part of the signal, the original bit can often be recovered from the remaining `chips.' (resistant to narrowband interference). (Both RX and TX knows chipping code.) Allow multiple users to share band using different codes.
   \item \textbf{Advantage over FHSS}: \textcolor{red}{Higher Data Rates} because transmission is continuous; no time is wasted hopping between frequencies.
   \item Essentially, each bit is \textcolor{red}{multiplied by a sequence of bits} with a much higher data rate. Data Bit ($t_b$) $\times$ Chipping Code ($t_c$) = Transmitted Signal. As $t_c \ll t_b$, bandwidth increases.
@@ -2344,7 +2363,7 @@ Based on IEEE 802.15.4, operating at 2.4 GHz using DSSS.
 \subsection{12.3 Low-Power Wide-Area Network LPWAN: LoRaWAN}
 Long-range Wide-Area Network LoRaWAN: most popular LPWAN protocol.
 \begin{itemize}
-    \item \textbf{Physical Layer (LoRa)}: Uses \textbf{Chirp Spread Spectrum (CSS)}.
+    \item \textbf{Physical Layer (LoRa)}: Uses \textbf{Chirp Spread Spectrum (CSS)}. (Freq. Modulation Variant)
     \begin{itemize}
       \item \textbf{Chirp}: Signal frequency increases linearly over time. (like chirp)
       \item \textbf{Spreading Factor (SF)}: Controls symbol duration. Spreads signal across wide frequency band. Higher SF = longer range, robust to noise, multipath fading but \textbf{lower data rate}.
