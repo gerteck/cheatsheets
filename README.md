@@ -1,8 +1,8 @@
 # NUS Cheatsheets
 
-A repository of cheatsheets for Modules/Courses taken in previous (and current) AYs.
+A repository of cheatsheets and content notes for courses taken in NUS. Do feel free to open a PR if you spot any errors or mistakes and want to fix it! 
 
-Do drop me a message if there are any errors or mistakes, or open a PR if you'd like to fix it. Additionally, do peruse at your own discretion.
+Hope that you find the notes helpful! &nbsp; ![stars](https://img.shields.io/github/stars/gerteck/cheatsheets?style=social&label=Stars)
 
 ## Contents
 
@@ -22,7 +22,7 @@ Do drop me a message if there are any errors or mistakes, or open a PR if you'd 
 
 - AY23/24 S2
     - CS2106 Introduction to Operating Systems
-    - CS2107 Introudction to Information Security
+    - CS2107 Introduction to Information Security
     - CS3223 Database Systems Implementation
 
 - AY24/25 S2
