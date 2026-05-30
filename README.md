@@ -36,3 +36,4 @@ Hope that you find the notes helpful! &nbsp; ![stars](https://img.shields.io/git
 
 - AY25/26 S2
     - CS4222 Wireless Networking
+    - CS3217 Software Engineering on Modern Application Platforms
